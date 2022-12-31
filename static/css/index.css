@@ -1,0 +1,71 @@
+.background_color{
+    background-color: #545c64;
+}
+.color_fff{
+    color: #fff;
+}
+
+ .position_fixed_bottom{
+     position: absolute;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     z-index: 1999;
+ }
+ .height_100{
+     height: 66px;
+    line-height: 66px;
+
+     width: 100%;
+ }
+ .overflow_x{
+    overflow-x: scroll;
+    flex-wrap: nowrap;
+ }
+ .overflow_x div{
+     width: 100px;
+ }
+ .display_row_center{
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     
+ }
+
+
+
+
+
+
+ .slide-box,li{
+    list-style: none;
+}
+.slide-box{
+    /* margin-top:200px; */
+    display: -webkit-box;
+    overflow-x: auto;
+    /*适应苹果*/
+    -webkit-overflow-scrolling:touch;
+}
+.slide-item{
+    width: 100px;
+    height: 25px;
+    line-height: 25px;
+ 
+    margin-right: 30px;
+    border-right: 1px solid #fff;
+    padding: 0 20px;
+     
+}
+/*隐藏掉滚动条*/
+.slide-box::-webkit-scrollbar{
+    display: none;
+}
+.icons_with{
+  
+    font-size: 30px;
+}
+.margin_left{
+       margin-left: 20px;
+       font-size: 30px;
+}
