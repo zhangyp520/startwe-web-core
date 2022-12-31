@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http:www.thymeleaf.org" style="height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/res_common/third/element-ui/lib/theme-chalk/index.css" />
+    <link rel="stylesheet" href="/res_common/third/progress/nprogress.css" />
+    <link rel="stylesheet" href="/res_common/oui/ui/ui_pc/css/dialog.css"/>
+    <!--portal-->
+    <link href="/res_engine/portal_design/pc/css/portal-common-runtime.css" type="text/css" rel="stylesheet" />
+    <!--page-->
+    <link href="/res_engine/page_design/pc/css/page-common-runtime.css">
+
+    <title>StartWE软件搭建平台</title>
+</head>
+<body>
+
+<div id="app" style="height: 100%">
+    <div id="routerView" data-animationName="fade" style="height: 100%">
+        <oui-view id="router-view-inner" ></oui-view>
+        <script type="text/html" id="router-view-inner-tpl">  </script>
+    </div>
+</div>
+<!--引入进度条-->
+<script type="text/javascript" src="/res_common/third/progress/nprogress.js"></script>
+<script type="text/javascript">
+    NProgress.start();
+    document.onreadystatechange = function () {
+        if (document.readyState === "interactive") {
+            NProgress.set(0.5);
+        } else if(document.readyState === "complete") {
+            NProgress.done();
+        }
+    };
+</script>
+
+<!--第三方公共资源开始-->
+<script src="/res_common/third/vue/dist/vue.min.js"></script>
+<!--<script src="/res_common/third/vue/dist/vue-router.js"></script>-->
+<script src="/res_common/third/element-ui/lib/index.js"></script>
+<script src="/res_common/third/axios/dist/axios.min.js"></script>
+<!--第三方公共资源结束-->
+
+<!--系统公共资源开始-->
+<script type="text/javascript" src="/res_common/oui/system/util.js"></script>
+<script type="text/javascript" src="/res_common/oui/system/component-adapter.js"></script>
+
+
+<!--这是基于oui-view相关公共组件-->
+<script type="text/javascript" charset="utf-8" src="/res_common/third/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/third/template/template_debug_3_0_0.js"></script>
+<!--<script type="text/javascript" charset="utf-8" src="/res_common/oui/core.min.js"></script>-->
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-jsclazz.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-define.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-tags.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/parser.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-datautils.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-common.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-checkform.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/ui/tpl-type.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/ui/base-control.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/ui/form-control.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui-biz-ext.js"></script>
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/ui/ui_pc/dialog/dialog.js"></script>
+
+<!--服务配置-->
+<script type="text/javascript" charset="utf-8" src="/res_common/oui/config.js"></script>
+<!--自定义路由组件-->
+<script type="text/javascript" src="/res_common/oui/system/route.js"></script>
+<script type="text/javascript" src="/context/context.js" charset="utf-8"></script>
+<!--系统公共资源结束-->
+<!--页面入口-->
+<script type="text/javascript" src="/res_common/oui/system/main.js"></script>
+<!--访问方式1: /index4vue.html#${url} -->
+<!--访问方式2: /index4vue.html?url=${url} -->
+
+<script type="text/javascript">
+    var url = oui.getParam('url');
+
+ 
+    if(url){
+        oui.router.push(url);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,843 @@
+<!-- <!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>StartWE</title>
+
+</head>
+<body oui-controller="com.oursui.models.portal.web.PortalController" class="bg-gray">
+    <script type="text/javascript">
+        location.href='/index4vue.html#res_startwe/html/login.vue.html';
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="../css/index.css"  type="text/css" ></link> -->
+    <title>StartWE</title>
+</head>
+<style>
+    html,body{
+        padding: 0;
+        margin: 0;
+
+    }
+    a , a:link{color: #fff; text-decoration: none;}
+    .flex_center{
+        display: flex;
+        justify-content: center;
+    }
+    .flex{
+        display: flex;
+        align-items: center;
+    }
+    .flex_between{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .pc_header{
+        height: 99px;
+        line-height: 99px;
+        background-color: rgba(255, 255, 255, 100);
+        color: rgba(16, 16, 16, 100);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: fixed;
+        width: 100%;
+        border-bottom: 1px solid rgba(187, 187, 187, 100);
+        z-index: 100;
+        top: 0;
+    }
+    .pc_header_logo{
+        width: 169px;
+        height: 60px;
+
+    }
+    .pc_header_right{
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+    }
+    .pc_header_right>div{
+        margin-right: 28px;
+        cursor: pointer;
+    }
+
+    .pc_bgimg>img{
+
+        width: 100%;
+        margin-top: 90px;
+    }
+    .pc_about_title{
+        color: rgba(16, 16, 16, 100);
+        font-size: 28px;
+        text-align: center;
+        padding-top: 66px;
+    }
+    .pc_about_title_border{
+        width: 60px;
+        height: 5px;
+        border-radius: 3px;
+        background-color: rgba(56, 148, 255, 100);
+        margin: auto;
+        margin-top: 5px;
+    }
+    .pc_about_tips{
+        color: rgba(16, 16, 16, 100);
+        font-size: 14px;
+        text-align: center;
+        margin-top: 8px;
+    }
+    .pc_about_conotent{
+        margin-top: 78px;
+        display: flex;
+        justify-content: center;
+    }
+    .pc_about_conotent_left>img{
+        width: 610px;
+        height: 410px;
+        margin-right: 100px;
+    }
+
+    .conotent_right{
+        width: 540px;
+        color: rgba(16, 16, 16, 100);
+        font-size: 20px;
+        line-height: 37px;
+        margin-top: 30px;
+    }
+    .conotent_title{
+        color: rgba(26, 38, 91, 100);
+        font-size: 28px;
+    }
+    .conotent_tips{
+        color: rgba(16, 16, 16, 100);
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .pc_business{
+
+        background-color: rgba(39, 39, 39, 100);
+        margin-top: 135px;
+        padding-top: 42px;
+        padding-bottom: 110px;
+    }
+    .pc_business_title{
+        color: #fff;
+        font-size: 28px;
+        text-align: center;
+
+    }
+    .pc_business_tips{
+        color: #fff;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 8px;
+    }
+    .pc_business_conotent{
+        display: flex;
+        justify-content: center;
+        margin-top: 99px;
+    }
+    .pc_business_box{
+        text-align: center;
+        margin-right: 100px;
+    }
+    .pc_business_icon{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: auto;
+    }
+    .pc_business_text{
+        color: rgba(255, 255, 255, 100);
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    .pc_service{
+
+        padding: 135px 0 135px 0;
+    }
+    .pc_service_box{
+        width: 600px;
+        height: 88px;
+        line-height: 88px;
+        background-color: rgba(244, 244, 244, 100);
+        color: #000000;
+        font-size: 22px;
+        text-align: center;
+        margin-right: 48px;
+        margin-top: 50px;
+    }
+    .pc_example{
+        background-color: rgba(39, 39, 39, 100);
+        padding-top: 42px;
+        padding-bottom: 78px;
+    }
+    .pc_example_box{
+        width: 388px;
+        margin-right: 42px;
+        position: relative;
+        /* cursor: pointer; */
+
+    }
+    .pc_example_content{
+        margin-top: 55px;
+    }
+    .pc_example_box_top{
+        width: 100%;
+        height: 336px;
+    }
+    .pc_example_box_bottom{
+        height: 94px;
+        background-color: #fff;
+        line-height: 94px;
+        text-align: center;
+        font-size: 24px;
+    }
+    .pc_example_box_bottom_s{
+
+        line-height: 30px;
+        font-size: 16px;
+
+    }
+    .hover_title{
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .hover_content{
+        position: absolute;
+        bottom: 0px;
+        left: 10px;
+    }
+    .pc_example_box_hover{
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+        color: #fff;
+        display: none;
+    }
+    .example_center{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 100);
+        font-size: 26px;
+    }
+    .pc_product_content_right>img{
+        width: 600px;
+    }
+    .pc_product_content_left{
+        margin-right: 150px;
+        width: 600px;
+        padding-top: 35px;
+    }
+    .product_left_title{
+        color: rgba(16, 16, 16, 100);
+        font-size: 36px;
+        font-weight: bold;
+    }
+    .product_left_name{
+        color: rgba(16, 16, 16, 100);
+        font-size: 66px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .product_left_content{
+        font-size: 20px;
+        color: rgba(16, 16, 16, 100);
+        line-height: 30px;
+        margin-bottom: 20px;
+    }
+    .product_tips_border{
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #28C445;
+        margin-right: 18px;
+    }
+    .product_tips{
+        color: rgba(16, 16, 16, 100);
+        font-size: 30px;
+    }
+    .product_butleft{
+        width: 200px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        background-color: rgba(56, 148, 255, 100);
+        color: rgba(255, 255, 255, 100);
+        font-size: 20px;
+        border-radius: 4px;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+    .product_butright{
+        width: 200px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        background-color: rgba(255, 68, 0, 100);
+        color: rgba(255, 255, 255, 100);
+        font-size: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .pc_contact{
+        height: 130px;
+        background-color: rgba(16, 16, 16, 100);
+        color: rgba(255, 255, 255, 100);
+        font-size: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .pc_contact>div{
+        margin-right: 135px;
+    }
+    .contact_title{
+        color: rgba(255, 255, 255, 100);
+        font-size: 28px;
+    }
+    .bgcolor{
+        background-color: rgba(39, 39, 39, 100);
+        color: rgba(255, 255, 255, 100);
+        padding-top: 52px;
+        padding-bottom: 85px;
+    }
+    .pc_end{
+        height: 70px;
+        line-height: 70px;
+        color: rgba(255, 255, 255, 100);
+        font-size: 14px;
+        background-color: rgba(39, 39, 39, 100);
+        display: flex;
+        justify-content: center;
+    }
+    .communityModal{
+        position: fixed;
+        top: 99px;
+        width: 274px;
+        padding: 20px 20px 5px 20px;
+        background-color: #fff;
+        font-size: 14px;
+        right: 100px;
+        display: none;
+        border: 1px solid rgba(187, 187, 187, 100);
+        z-index: 102;
+
+    }
+    .QRcode{
+        width: 64px;
+        height: 64px;
+        background-color: red;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    .communityflex{
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+    }
+    .moreicon{
+        width: 100px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+<body onmousemove=/HideMenu()/ oncontextmenu="return false" ondragstart="return false" onselectstart ="return false"  onbeforecopy="return false">
+<div class="pc_header">
+    <div class="pc_header_logo">
+        <img class="pc_header_logo" src="../image/logo.png" alt="">
+    </div>
+    <div class="pc_header_right">
+        <div class="" onclick="Jump('Jump_index',1)">
+            <text class="navigation_01">首页</text>
+        </div>
+        <div class="" onclick="Jump('Jump_01',2)">
+            <text class="navigation_02">关于我们</text>
+        </div>
+        <div class="" onclick="Jump('Jump_02',3)">
+            <text class="navigation_03">业务范围</text>
+        </div>
+        <div class="" onclick="Jump('Jump_03',4)">
+            <text class="navigation_04">服务优势</text>
+        </div>
+        <div class="" onclick="Jump('Jump_04',5)">
+            <text class="navigation_05">服务案列</text>
+        </div>
+        <div class="" onclick="Jump('Jump_05',6)">
+            <text class="navigation_06">我们的产品</text>
+        </div>
+        <div class="" onclick="Jump('Jump_06',7)">
+            <text class="navigation_07">StartWe社区</text>
+        </div>
+    </div>
+</div>
+
+
+<div class="communityModal">
+    <div>社区QQ群：XXXXXXXXXX</div>
+    <div class="communityflex">
+        <div class="QRcode"></div>
+        <div>（群号或扫码入群）</div>
+    </div>
+    <div>社区QQ群：XXXXXXXXXX</div>
+    <div class="communityflex">
+        <div class="QRcode"></div>
+        <div>（群号或扫码入群）</div>
+    </div>
+</div>
+<div class="pc_bgimg" id=Jump_index>
+    <img src="../image/img_01.jpg" alt="">
+</div>
+<div class="pc_about" id='Jump_01'>
+    <div class="pc_about_title">
+        关于我们
+    </div>
+    <div class="pc_about_title_border"></div>
+    <div class="pc_about_tips">
+        About US
+    </div>
+
+    <div class="pc_about_conotent">
+        <div class="pc_about_conotent_left">
+            <img src="../image/img_02.png" alt="">
+        </div>
+        <div class="pc_about_conotent_right">
+            <div class="">
+                <div class="conotent_title">公司简介</div>
+                <div class="conotent_tips">Company Profile</div>
+            </div>
+            <div class="conotent_right">
+                <div>
+                    成都起微网络技术有限公司成立于 2020年7月，是一家数字
+                    化系统研发的新兴企业，公司致力于打造全自动软件工程搭
+                    建平台，为企业提供可灵活定制信息化系统。
+
+                </div>
+                <div>
+                    公司项目覆盖微信小程序、企业官网搭建、企业内部管理系
+                    统、内外共创系统，核心产品是自主研发起微零代码工具平
+                    台，沉淀插件开发、系统集成、数据采集、报表引擎、流程
+                    引擎、业务关系模型、业务呈现模型等技术。
+                    秉承着优化传统软件系统生产过程及为行业生态打造可持续
+                    提升的价值系统的愿景砥砺前行。
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="pc_business" id='Jump_02'>
+        <div class="pc_business_title">
+            业务范围
+        </div>
+        <div class="pc_about_title_border"></div>
+        <div class="pc_business_tips">
+            The Business Bcope
+        </div>
+
+
+        <div class="pc_business_conotent">
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_09.jpg" alt="">
+                </div>
+                <div class="pc_business_text">私有化部署系统</div>
+            </div>
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_10.jpg" alt="">
+                </div>
+                <div class="pc_business_text">saas系统</div>
+            </div>
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_11.jpg" alt="">
+                </div>
+                <div class="pc_business_text">APP</div>
+            </div>
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_12.jpg" alt="">
+                </div>
+                <div class="pc_business_text">小程序</div>
+            </div>
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_13.jpg" alt="">
+                </div>
+                <div class="pc_business_text">定制开发</div>
+            </div>
+            <div class="pc_business_box">
+                <div class="pc_business_icon">
+                    <img class="pc_business_icon" src="../image/img_14.jpg" alt="">
+                </div>
+                <div class="pc_business_text">优化升级</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="pc_service" id='Jump_03'>
+        <div class="pc_about_title" style="margin-top: 0;">
+            服务优势
+        </div>
+        <div class="pc_about_title_border"></div>
+        <div class="pc_about_tips">
+            Service Advantages
+        </div>
+
+        <div class="flex_center">
+            <div class="pc_service_box" id="service_01"  onmouseover='serviceMouse("service_01")' onmouseout='serviceOut("service_01")'>前期沟通</div>
+            <div class="pc_service_box" id='service_02'  onmouseover='serviceMouse("service_02")' onmouseout='serviceOut("service_02")'>需求评估</div>
+        </div>
+        <div class="flex_center">
+            <div class="pc_service_box" id='service_03'  onmouseover='serviceMouse("service_03")' onmouseout='serviceOut("service_03")'>视觉设计</div>
+            <div class="pc_service_box" id='service_04'  onmouseover='serviceMouse("service_04")' onmouseout='serviceOut("service_04")'>技术研发</div>
+        </div>
+    </div>
+
+
+    <!-- 案列推荐 -->
+    <div class='pc_example' id='Jump_04'>
+        <div class="pc_business_title">
+            案例推荐
+        </div>
+        <div class="pc_about_title_border"></div>
+        <div class="pc_business_tips">
+            Recommended Articles
+        </div>
+
+
+        <div class="pc_example_content flex_center">
+            <!-- <div class="pc_example_box">
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_04.jpeg" alt="">
+                </div>
+                <div class="pc_example_box_bottom">智能车间系统</div>
+            </div> -->
+            <div class="pc_example_box"  onmouseover='exampleMouse("example_01","example_hover_01")' onmouseout='exampleOut("example_01","example_hover_01",1)'>
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_04.jpeg" alt="">
+                </div>
+                <div class="pc_example_box_bottom" id='example_01'>智能车间系统</div>
+
+                <div class="pc_example_box_hover" id='example_hover_01'>
+                    <div class="hover_content pc_example_box_bottom_s">
+                        <div class="hover_title">智能车间系统</div>
+                        覆盖汽车维保核心业务运营管理模块数字化浪潮推动
+                        “人、货、款、客、店”的现象级重构提供可持续价
+                        值系统与业务应需扩展能力。
+                    </div>
+                </div>
+            </div>
+            <div class="pc_example_box"  onmouseover='exampleMouse("example_02","example_hover_02")' onmouseout='exampleOut("example_02","example_hover_02",2)'>
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_05.jpeg" alt="">
+                </div>
+                <div class="pc_example_box_bottom" id='example_02'>服装厂管理系统</div>
+
+                <div class="pc_example_box_hover" id='example_hover_02'>
+                    <div class="hover_content pc_example_box_bottom_s">
+                        <div class="hover_title">服装厂管理系统</div>
+                        服装厂管理系统打造服装产业的全生命管理系统，从
+                        设计、原辅材料采购、制造、运输到商城的管理，降
+                        低人员成本，提高工作效率。
+                    </div>
+                </div>
+            </div>
+            <div class="pc_example_box" onmouseover='exampleMouse("example_03","example_hover_03")' onmouseout='exampleOut("example_03","example_hover_03",3)'>
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_06.jpeg" alt="">
+                </div>
+                <div class="pc_example_box_bottom" id='example_03'>景区点歌系统</div>
+                <div class="pc_example_box_hover" id='example_hover_03'>
+                    <div class="hover_content pc_example_box_bottom_s">
+                        <div class="hover_title">景区点歌系统</div>
+                        点歌系统不仅便于对景区音乐播放的管理，且可收集
+                        景点的浏览量进行数据收集，统计景区的音乐量，发
+                        布景点文章咨讯，为景区管理提供便利。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pc_example_content flex_center">
+            <div class="pc_example_box" onmouseover='exampleMouse("example_04","example_hover_04")' onmouseout='exampleOut("example_04","example_hover_04",4)'>
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_07.jpeg" alt="">
+                </div>
+                <div class="pc_example_box_bottom" id='example_04'>教育机构系统</div>
+                <div class="pc_example_box_hover" id='example_hover_04'>
+                    <div class="hover_content pc_example_box_bottom_s">
+                        <div class="hover_title">教育机构系统</div>
+                        用信息化手段来提升管理水平，增强传统的学校管理
+                        需求，提升教务、教学管理能力，快速查看课表、排
+                        课表等数据统计，便捷校方数据分析与管理。
+                    </div>
+                </div>
+            </div>
+            <div class="pc_example_box" onmouseover='exampleMouse("example_05","example_hover_05")' onmouseout='exampleOut("example_05","example_hover_05",5)'>
+                <div class="pc_example_box_top">
+                    <img class="pc_example_box_top" src="../image/img_08.png" alt="">
+                </div>
+                <div class="pc_example_box_bottom" id='example_05'>节目编辑系统</div>
+                <div class="pc_example_box_hover" id='example_hover_05'>
+                    <div class="hover_content pc_example_box_bottom_s">
+                        <div class="hover_title">节目编辑系统</div>
+                        以拖拉组件的形式快速搭建节目框架，对组件进行属
+                        性设置，轻松、高效完成整个节目搭建，相对于传统
+                        的编辑形式效率得到明显提升。
+                    </div>
+                </div>
+            </div>
+            <div class="pc_example_box example_center">
+                <div>
+                    <div style="text-align: center;">
+                        <img class="moreicon" src="../image/img_21.png" alt="">
+                    </div>
+                    <div>底部联系方式</div>
+                    <div>获取更多案列</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 我们的产品 -->
+    <div class="pc_product" id='Jump_05'>
+        <div class="pc_about_title">
+            我们的产品
+        </div>
+        <div class="pc_about_title_border"></div>
+        <div class="pc_about_tips">
+            Our Products
+        </div>
+
+        <div class="pc_product_content flex_center">
+            <div class="pc_product_content_left">
+                <div class="product_left_title">StartWe</div>
+                <div class="product_left_name">零代码开发平台</div>
+                <div class="product_left_content">
+                    <div>
+                        起微零代码平台适用业务范围广泛，自主灵活设计搭建应用；
+                    </div>
+                    <div>
+                        具备项目架构图、门户设计、菜单设计、权限设计、关系引擎、流程引擎、
+                        交互引擎、逻辑引擎、呈现引擎、安全机制、页面模型、数据模型的能力
+                        为你搭建应用保驾护航。
+                    </div>
+                </div>
+                <div class="flex_between">
+                    <div class="flex">
+                        <div class="product_tips_border"></div>
+                        <div class="product_tips">灵活组件</div>
+                    </div>
+                    <div class="flex">
+                        <div class="product_tips_border"></div>
+                        <div class="product_tips">可视化逻辑</div>
+                    </div>
+                </div>
+                <div class="flex_between" style="margin-top:9px;">
+                    <div class="flex">
+                        <div class="product_tips_border"></div>
+                        <div class="product_tips">开发时间短</div>
+                    </div>
+                    <div class="flex">
+                        <div class="product_tips_border"></div>
+                        <div class="product_tips">上手难度低</div>
+                    </div>
+                </div>
+
+                <div class="flex_center" style="margin-top: 70px;">
+                    <div class="product_butleft">了解产品详情</div>
+                    <div class="product_butright" onclick="toLogon()">免费试用</div>
+                </div>
+            </div>
+            <div class="pc_product_content_right">
+                <img src="../image/img_03.png" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="pc_contact" id='Jump_06'>
+        <div class="flex">
+            <img style="width: 50px;height: 50px;margin-right: 10px;" src="../image/img_18.png" alt="">
+            销售热线：138-0807-8013
+        </div>
+        <div class="flex">
+            <img style="width: 50px;height: 50px;margin-right: 10px;" src="../image/img_20.png" alt="">
+            一对一售前售后服务
+        </div>
+        <div class="flex">
+            <img style="width: 50px;height: 50px;margin-right: 10px;" src="../image/img_19.png" alt="">
+            7X24小时技术保障
+        </div>
+    </div>
+
+    <div class="flex_center bgcolor">
+        <div class="flex_center" style="margin-right: 270px;">
+            <div style="margin-right: 124px;">
+                <div class="contact_title">联系我们</div>
+                <div>Contact us</div>
+            </div>
+            <div style="line-height: 40px;margin-top: 10px;">
+                <div>地址：高新区东寺南一路18号1栋1单元14层1414号</div>
+                <div>邮编：610000</div>
+                <div class="flex">
+                    <div style="margin-right: 66px;">电话：028 - 87335679</div>
+                    <div>手机：138 0807 8013</div>
+                </div>
+                <div>邮箱:  startwe@startwe.net</div>
+            </div>
+        </div>
+        <div>
+            <!-- <div class="contact_title">关注我们</div> -->
+            <!-- <div>1</div> -->
+        </div>
+    </div>
+
+    <div class="pc_end">
+        <div style="margin-right: 50px;"><a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2021020732号</a></div>
+        <div>COPYRIGHT ©2020 成都起微网络技术有限公司</div>
+    </div>
+
+</div>
+
+<script>
+
+
+    function serviceMouse(id) {
+        let service  = document.getElementById(id)
+        service.style.backgroundColor = '#28C445'
+        service.style.color = '#fff'
+        if(id == 'service_01') {
+            service.innerHTML = '产品分责任深入分析及了解企业研发需求'
+            return
+        }
+        if(id == 'service_02') {
+            service.innerHTML = '根据企业研发需求，评估开发时间及技术可行性'
+            return
+        }
+        if(id == 'service_03') {
+            service.innerHTML = '设计高保真视觉UI，确定产品风格定位'
+            return
+        }
+        if(id == 'service_04') {
+            service.innerHTML = '对项目进度严格把控，各个团队间紧密衔接'
+            return
+        }
+
+    }
+    function serviceOut (id) {
+        let service  = document.getElementById(id)
+        service.style.backgroundColor = ''
+        service.style.color = ''
+        if(id == 'service_01') {
+            service.innerHTML = '前期沟通'
+            return
+        }
+        if(id == 'service_02') {
+            service.innerHTML = '需求评估'
+            return
+        }
+        if(id == 'service_03') {
+            service.innerHTML = '视觉设计'
+            return
+        }
+        if(id == 'service_04') {
+            service.innerHTML = '技术研发'
+            return
+        }
+    }
+    function exampleMouse(id,hoverId) {
+        let box  = document.getElementById(id)
+        let hoverBox = document.getElementById(hoverId)
+        box.innerHTML = ''
+        hoverBox.style.display = 'block'
+    }
+    function exampleOut (id,hoverId,type) {
+        let box  = document.getElementById(id)
+        let hoverBox = document.getElementById(hoverId)
+        hoverBox.style.display = 'none'
+        if(type == 1) {
+            box.innerHTML = '智能车间系统'
+        }else if(type == 2) {
+            box.innerHTML = '服装厂管理系统'
+        }else if(type == 3) {
+            box.innerHTML = '景区点歌系统'
+        }else if(type == 4) {
+            box.innerHTML = '教育机构系统'
+        }else if(type == 5) {
+            box.innerHTML = '节目编辑系统'
+        }
+
+    }
+    function Jump(id,aIndex) {
+        for (let index = 0; index < 7; index++) {
+            if(aIndex-1 == index) {
+                let box1= document.getElementsByClassName('navigation_0' + (Number(index) + 1))
+                box1[0].style.borderBottom = '2px solid rgba(56, 148, 255, 100)'
+                box1[0].style.paddingBottom = '10px'
+            }else{
+                let box1 = document.getElementsByClassName('navigation_0' + (Number(index) + 1))
+                box1[0].style.borderBottom = ''
+                box1[0].style.paddingBottom = ''
+            }
+        }
+        let community = document.getElementsByClassName('communityModal')
+        if(aIndex == 7) {
+
+            // if(community[0].style.display == '' ||  community[0].style.display == 'none') {
+            //     community[0].style.display = 'block'
+            // }else{
+            //     community[0].style.display = 'none'
+            // }
+        }else{
+            community[0].style.display = 'none'
+            var el = document.getElementById(id)
+            if (!el) {
+                return
+            }
+            window.scrollTo({ 'behavior': 'smooth', 'top': el.offsetTop - 99 })
+        }
+    }
+
+    function toLogon() {
+        window.open('/index4vue.html#res_startwe/html/login.vue.html')
+    }
+
+    if (this._isMobile()) {
+        window.location.href = '/res_apps/startwe/wap.html'
+
+    }else{
+        window.location.href = '/res_apps/startwe/index.html';
+    }
+
+    function _isMobile() {
+        let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+        return flag;
+    }
+</script>
+
+
+
+</body>
+
+</html>

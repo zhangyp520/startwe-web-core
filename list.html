@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+    <link href="res_engine/page_design/pc/page-iconfont/iconfont.css" rel="stylesheet" type="text/css" />
+    <!--字体图标库-->
+    <link href="res_engine/page_design/pc/css/page-common.css" type="text/css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="res_common/third/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="res_common/third/mint-ui/lib/style.css">
+    <link rel="stylesheet" href="res_common/third/progress/nprogress.css" />
+    <link rel="shortcut icon" href="favicon-32.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="res_engine/page_design/pc/css/page-common-runtime.css">
+
+    <!--字体图标库-->
+    <!--<link href="res_engine/page_design/pc/css/page-common.css" type="text/css" rel="stylesheet"/>-->
+    <title>内容布局预览</title>
+    <style type="text/css">
+        body {
+            background: none;
+        }
+
+        .hide {
+            display: none !important;
+        }
+        .control-container-abs input,
+        .control-container-abs textarea{
+            width: 100%;
+            padding: 0 10px;
+            border: 1px solid #e6e6e6;
+            min-height: 30px;
+            line-height: 24px;
+            font-size: 14px;
+            outline: none;
+            pointer-events:all ;
+        }
+        .A4{ width: 98% !important;  height: 100%!important;}
+        .bar{display: none!important;}
+    </style>
+</head>
+
+<body>
+    <div id="app" oui-controller="com.oui.AppController">
+
+        <!--<router-view></router-view>-->
+        <div id="routerView" data-animationName="fade" style="width: 98% ; ">
+
+            <oui-view id="router-view-inner"></oui-view>
+            <script type="text/html" id="router-view-inner-tpl"> </script>
+        </div>
+
+
+    </div>
+    <!--改变显示层大小-->
+    <script type="text/javascript" charset="utf-8" src="res_common/third/jquery/jquery-3.2.1.min.js?_v=1">
+    </script>
+
+    <!--引入进度条-->
+    <script type="text/javascript" src="res_common/third/progress/nprogress.js"></script>
+    <script type="text/javascript">
+        NProgress.start();
+        document.onreadystatechange = function () {
+            if (document.readyState === "interactive") {
+                NProgress.set(0.1);
+            } else if (document.readyState === "complete") {
+                NProgress.done();
+            }
+        };
+    </script>
+
+    <!--第三方公共资源开始-->
+    <script src="res_common/third/vue/dist/vue.min.js"></script>
+    <script src="res_common/third/element-ui/lib/index.js"></script>
+    <script src="res_common/third/mint-ui/lib/index.js"></script>
+    <!--<script src="res_common/third/axios/dist/axios.min.js"></script>-->
+    <!--第三方公共资源结束-->
+
+    <!--系统公共资源开始-->
+
+    <!--这是基于oui-view相关公共组件-->
+    <script type="text/javascript" charset="utf-8"
+        src="res_common/third/template/template_debug_3_0_0.js?_v=1"></script>
+    <!--<script type="text/javascript" charset="utf-8" src="res_common/oui/core.min.js"></script>-->
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-jsclazz.js"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-define.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-tags.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/parser.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/parse-plugin.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-datautils.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-common.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-checkform.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/ui/tpl-type.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/ui/base-control.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/ui/form-control.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/oui-biz-ext.js?_v=1"></script>
+
+    <script type="text/javascript" src="res_common/oui/system/util.js"></script>
+    <script type="text/javascript" src="res_common/oui/system/component-adapter.js"></script>
+    <!--自定义路由组件-->
+    <script type="text/javascript" src="res_common/oui/system/route.js"></script>
+
+
+    <script type="text/javascript">
+        oui.NS("com.oui");
+        var cssArray = [];
+        if (oui.os.mobile) {
+            cssArray = [
+                oui.getContextPath() + "res_common/oui/ui/ui_phone/css/dialog.css",
+                oui.getContextPath() + "res_common/oui/ui/ui_phone/css/control.css",
+            ];
+        } else {
+            cssArray = [
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/css/dialog1.6.css",
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/css/control.css",
+                oui.getContextPath() +
+                "res_common/oui/ui/ui_pc/controls/tips/css/tips.css",
+                oui.getContextPath() +
+                "res_common/third/color-picker/css/spectrum.css",
+                oui.getContextPath() + "res_common/third/shape/css/shape.css",
+            ];
+        }
+        oui.require4notSort(
+            cssArray,
+            function () {},
+            function () {},
+            false
+        );
+        var jsArray = [];
+        if(!oui.os.mobile){
+            jsArray.push(
+                oui.getContextPath()+"res_common/oui/ui/ui_pc/dialog/dialog.js"
+            );
+        } else {
+            jsArray.push(
+                oui.getContextPath()+"res_common/oui/ui/ui_phone/dialog/dialog.js"
+            );
+        }
+        jsArray.push(
+            oui.getContextPath() +
+            "res_engine/page_design/pc/js/page-design.js"
+        );
+        jsArray.push(
+            oui.getContextPath() + "res_engine/page_design/pc/js/page-validate.js"
+        );
+        jsArray.push(
+            oui.getContextPath() +
+            "res_engine/page_design/pc/js/page-controls-list.js"
+        );
+
+
+        oui.require(
+            jsArray,
+            function () {
+                initPage();
+            },
+            function () {},
+            false
+        );
+
+        /**初始化页面 */
+        var initPage = function (){
+            var renderUrl = oui.getParam("renderUrl")
+            var viewId = oui.getParam("viewId")
+            var pageType = oui.getParam("pageType")
+            var viewType = oui.getParam("viewType")
+            var pageId = oui.getParam("pageId")
+            var itemId = oui.getParam("itemId")
+            console.log('list.html:',oui.getParam());
+            var detailData = {};
+            oui.postData(renderUrl, {
+                templateId: viewId,
+                viewType: viewType,
+                pageId:pageId
+            }, (res) => {//加载渲染页面
+
+                debugger;
+                if (res.success) {
+                    var page = res.projectTemplate || res.page;
+                    var controls = page.controls || [];
+                    controls = oui.parseJson(controls); //处理控件字符串为数组
+                    page.events = oui.parseJson(page.events || {}); //处理事件的字符串为对象
+                    page.controls = controls;
+                    page.style = oui.parseJson(page.style);
+                    page.innerStyle = oui.parseJson(page.innerStyle);
+                    page.pageDesignType = page.pageDesignType || 'normalForm';
+                    // console.log('page events',page.events);
+                    //事件的绑定处理
+                    //TODO 在页面设计器中配置的事件没有处理正确前，在这里可以调试，在这里可以预制运行态的默认参数
+                    if(page.events &&  page.events.interaction){
+                        page.events.interaction.forEach(item => {
+                            /*
+                             * 目前这些代码都是暂时写死的，后续设计态配置完善后，需要删除掉
+                             */
+                            if(item.trigMethod = "beforeInit"){ //对应页面加载事件的配置，自动形成的事件交互
+                                item.executeActionConfig.inputParams = [{
+                                    name:'id'
+                                }];
+                                item.executeActionConfig.outputParams=[
+                                    {
+                                        name:'dataObject'
+                                    },{
+                                        name:'success'
+                                    }];
+                                item.executeActionConfig.targetInputParams=[{
+                                    varSourceType:'url', //变量值数据来源 1.url参数 2.自定义页面变量 3.控件值 4.控件的相关数据 5.表单数据  6.当前window全局变量 7.顶层window全局变量 8.本地存储cookie 9.本地存储 sessionStorage 10.本地存储localStorage 11.本地存储 indexedDB
+                                    "name":"itemId", // url参数名
+                                    config:{// 解析变量的特殊配置
+                                    }
+                                }];
+                                item.executeActionConfig.targetOutputParams=[{
+                                    varSourceType:'formValue', //变量值数据来源 1.url参数 2.自定义页面变量 3.控件值 4.控件的相关数据 5.表单数据  6.当前window全局变量 7.顶层window全局变量 8.本地存储cookie 9.本地存储 sessionStorage 10.本地存储localStorage 11.本地存储 indexedDB
+                                    "name":"$formValue", // 更新表单数据
+                                    config:{// 解析变量的特殊配置
+                                    }
+                                }];
+
+                            }
+
+                        });
+
+                    }
+                    //TODO 这里需要 处理 页面 -逻辑绑定，数据渲染的过程处理
+                    try {
+
+                        com.oui.AppController = {
+                            FullName: 'com.oui.AppController',
+                            __data: function () {
+                                return this;
+                            },
+                            cmd4renderPage: function (data, event) {
+                                this.designData = oui.parseJson(oui.parseString(data.designData));
+                                this.mainData = oui.parseJson(oui.parseString(data.mainData));
+                                this.detailData = detailData;
+                                oui.router.refresh();
+                            },
+                            designData: page,
+                            mainData: oui.parseJson(window.mainDataJson || window.parent.mainDataJson || {}),
+                            detailData: detailData||{}
+                        };
+
+
+                    } catch (err) {
+
+                        com.oui.AppController = {
+                            FullName: 'com.oui.AppController',
+                            __data: function () {
+                                return this;
+                            },
+                            cmd4renderPage: function (data, event) {
+                                console.log(data);
+                                this.designData = oui.parseJson(oui.parseString(data.designData));
+                                this.mainData = oui.parseJson(oui.parseString(data.mainData));
+                                this.detailData = detailData;
+                                oui.router.refresh();
+                            }
+                        };
+                    }
+
+
+                    oui.router.push('res_engine/page_design/pc/page-runtime-edit.art.html');
+
+                }
+
+            }, '加载中...');
+        }
+
+
+
+    </script>
+    <script type="text/javascript" src="context/context.js" charset="utf-8"></script>
+    <!--系统公共资源结束-->
+    <!--页面入口-->
+    <script type="text/javascript" src="res_common/oui/system/main.js"></script>
+</body>
+
+</html>

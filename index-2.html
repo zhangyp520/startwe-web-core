@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>首页</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="">
+    <link rel="shortcut icon" type="image/ico" href="img/favicon.png">
+    <link rel="stylesheet" href="./res_common/third/adminlte/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./res_common/third/adminlte/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./res_common/third/adminlte/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="./res_common/third/adminlte/dist/css/tab.css">
+    <link rel="stylesheet" href="./res_common/third/adminlte/dist/css/skins/_all-skins.css">
+    <style>
+        .main-header{
+            z-index: 0;
+        }
+    </style>
+</head>
+
+<body class="hold-transition  sidebar-mini0 w1190 skin-default ">
+<script src="./res_common/third/adminlte/bower_components/jquery/jquery.min.js"></script>
+
+<script src="./res_common/third/adminlte/dist/js/underscore.min.js"></script>
+<script src="./res_common/third/adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./res_common/third/adminlte/bower_components/bootstrap/js/md5.js"></script>
+<script src="./res_common/third/adminlte/dist/js/jquery.cookie.js"></script>
+
+<div id="bodyAutoHeight" style="height: 100%;width:2px;position: absolute;left:0;top:0"></div>
+<div class="wrapper wrapper-menu">
+    <header class="main-header">
+
+        <a href="#" class="logo">
+            <span class="logo-mini"><img src="./res_common/third/adminlte/img/logo-min.png"></span>
+
+            <span class="logo-lg"><img src="./res_common/third/adminlte/img/logo-max.png"
+                                       style="vertical-align: -2px"></span>
+        </a>
+
+        <nav class="navbar navbar-static-top" role="navigation">
+
+
+
+            <div class="news">
+                <span class="newsIcon"><i class="volume"></i></span>
+                <ul class="newsContent">
+                </ul>
+            </div>
+
+            <a href="#" class=" sidebar-toggle fa-navicon fa" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav" id="top-right-nav">
+                    <li>
+                        <div class="sys-warp">
+                            <a href="javascript:void(0);" class="system-question"><span class="head"><img src="./res_common/third/adminlte/img/head.gif" alt=""></span></a>
+                            <div class="sys-dropdown" id="systemData">
+                                <ul>
+                                    <li> <a href="javascript:void(0);">退出</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);"  class="settingsIcon j-fullScreen"><span>全屏</span> <i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+                    </li>
+                    <li><a href="#" class="settingsIcon" data-toggle="control-sidebar"> <i class="fa fa-cog" aria-hidden="true"></i>设置</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+
+    <aside class="main-sidebar">
+        <section class="sidebar body-menu">
+            <ul class="sidebar-menu" data-widget="tree"></ul>
+            <div style="display: none;">
+                <audio id="audio" controls>
+                    <source src="./res_common/third/adminlte/audio/default.mp3" type="audio/ogg"/>
+                </audio>
+                <audio id="audio2" controls>
+                    <source src="./res_common/third/adminlte/audio/notify.wav" type="audio/ogg"/>
+                </audio>
+                <audio id="Auto" controls>
+                    <source src="./res_common/third/adminlte/audio/default.mp3" type="audio/ogg"/>
+                </audio>
+            </div>
+            <a href="javascript:void(0)" class="menu-opt"></a>
+        </section>
+    </aside>
+
+    <div class="childrenBar"></div>
+    <div class="content-wrapper">
+        <div id="tab"></div>
+        <div id="content-wrapper" class="ou-wrap"></div>
+    </div>
+
+    <aside class="control-sidebar control-sidebar-dark" id="right_sidebar">
+
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="control-sidebar-settings-tab"></div>
+
+        </div>
+    </aside>
+
+
+</div>
+
+</body>
+<script type="text/javascript" src="res_common/third/progress/nprogress.js"></script>
+<script type="text/javascript">
+    NProgress.start();
+    document.onreadystatechange = function () {
+        if (document.readyState === "interactive") {
+            NProgress.set(0.5);
+        } else if(document.readyState === "complete") {
+            NProgress.done();
+        }
+    };
+</script>
+<!--第三方公共资源开始-->
+<script src="res_common/third/vue/dist/vue.min.js"></script>
+<!--<script src="../../res_common/third/vue/dist/vue-router.js"></script>-->
+<script src="res_common/third/element-ui/lib/index.js"></script>
+<script src="res_common/third/axios/dist/axios.min.js"></script>
+<!--第三方公共资源结束-->
+
+<!--系统公共资源开始-->
+<script type="text/javascript" src="res_common/oui/system/util.js"></script>
+<script type="text/javascript" src="res_common/oui/system/component-adapter.js"></script>
+<!--自定义路由组件-->
+<script type="text/javascript" src="res_common/oui/system/route.js"></script>
+
+
+
+
+<script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+<script src="res_common/third/template/template_debug_3_0_0.js" charset="utf-8"></script>
+<!--<script type="text/javascript" charset="utf-8" src="res_common/oui/core.min.js"></script>-->
+<script type="text/javascript" charset="utf-8" src="res_common/oui/core.js"></script>
+<script type="text/javascript" charset="utf-8" src="res_common/oui/system/main.js"></script>
+
+
+<script src="./res_common/third/adminlte/dist/js/tab.js"></script>
+<script src="./res_common/third/adminlte/dist/js/index.js"></script>
+<script src="./res_common/third/adminlte/dist/js/index_menu.js"></script>
+<script src="./res_common/third/adminlte/dist/js/index_skins_sidebar.js"></script>
+<script src="./res_common/third/adminlte/dist/js/adminlte.min.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="res_engine/portal/portal-require-2.js"></script>
+
+
+<script>
+
+
+</script>
+
+</html>

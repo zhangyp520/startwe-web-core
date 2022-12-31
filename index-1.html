@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>首页</title>
+
+</head>
+<body class="fixed skin-green">
+
+<link href="./res_engine/page_design/pc/css/page-common-runtime.css" type="text/css" rel="stylesheet"/>
+<link rel="stylesheet" href="./res_common/third/element-ui/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="./res_common/third/mint-ui/lib/style.css">
+
+<link type="text/css" charset="utf-8" rel="stylesheet" href="./res_common/oui/ui/ui_common/themes/theme-1.css?_v=1" />
+<link rel="stylesheet" charset="utf-8" href="./res_engine/portal/css/portal-1.css" />
+<link rel="stylesheet" href="./res_common/third/progress/nprogress.css" />
+
+
+<!--这里是页面主容器-->
+<oui-view id="portal-view" class="container wrapper" oui-controller="com.oui.portal.PortalController" data="getData()"></oui-view>
+
+<!--头部模板-->
+<script type="text/html" id="portal-view-header-tpl">
+<header class="main-header" id="main-header">
+    <a href="javascript: ;" class="logo">
+        <span class="logo-mini hide"></span>
+        <span class="logo-lg"><b>X</b>Admin</span>
+    </a>
+    <nav class="navbar navbar-static-top">
+        <!--第一级菜单-->
+        <div id="firstnav" class="navbar-firstnav">
+            <!-- 边栏切换按钮-->
+            <a href="#" class="sidebar-toggle hide"></a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li>当前业务系统
+                        <select oui-e-change="event2selectSys" >
+                            {{each PortalController.data.sys as item}}
+                            {{if PortalController.data.sysId ==item.id}}
+                                <option value="{{item.id}}" selected="selected">{{item.display}}</option>
+                            {{else}}
+                                <option value="{{item.id}}">{{item.display}}</option>
+                            {{/if}}
+                            {{/each}}
+                        </select>
+                    </li>
+                    <!--<li>消息</li>-->
+                    <!--<li>刷新</li>-->
+                    <!--<li>设置</li>-->
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+</script>
+<!--左侧菜单模板-->
+<script type="text/html" id="portal-view-menu-tpl">
+    <li node-menu-id="{{nodeMenu.id}}" class="node-menu {{PortalController.findMenuActiveCls(nodeMenu)}}">
+        {{if PortalController.hasChildMenus(nodeMenu.id)}}
+        <a href="#" url="#" node-menu-id="{{nodeMenu.id}}" oui-e-click="event2clickMenu" >
+            <i class="iconfont menu-icon"></i>
+            <span>{{nodeMenu.display}}</span>
+            <span class="pull-right-container">
+                <i class="iconfont menu-icon"> > </i>
+            </span>
+        </a>
+        <ul class="treeview-menu {{PortalController.findChildMenusContainerCls(nodeMenu)}}">
+            {{each PortalController.findChildMenus(nodeMenu.id) as childMenu cIndex}}
+                {{include 'portal-view-menu-tpl' ({nodeMenu:childMenu})}}
+            {{/each}}
+        </ul>
+        {{else}}
+        <a href="#" node-menu-id="{{nodeMenu.id}}" oui-e-click="event2clickMenu">
+            <i class="iconfont menu-icon"></i>
+            <span>{{nodeMenu.display}}</span>
+        </a>
+        {{/if}}
+    </li>
+</script>
+
+<!--菜单导航公共模板-->
+<script type="text/html" id="portal-menu-path-tpl">
+    {{each PortalController.findPathMenusByMenuId(menuId) as item index}}
+    <a href="#" menu-id="{{item.id}}" oui-e-click="com.portal.PortalController.event2doMenuAction">{{item.display}}</a> /
+    {{/each}}
+    {{if PortalController.findMenuById(menuId)}}
+    <a>{{PortalController.findMenuById(menuId).display}}</a>
+    {{/if}}
+</script>
+
+<!--根菜单模板-->
+<script type="text/html" id="portal-view-root-menu-tpl">
+    <ul class="sidebar-menu" id="portal-view-root-menu">
+        {{each PortalController.findRootMenus() as rootMenu rIndex}}
+        {{include 'portal-view-menu-tpl' ({nodeMenu:rootMenu})}}
+        {{/each}}
+    </ul>
+</script>
+<!--portal的呈现主体模板-->
+<script type="text/html" id="portal-view-tpl">
+    {{include 'portal-view-header-tpl'}}
+    <aside class="main-sidebar">
+        <ul class="sidebar">
+            <!--<div class="input-group sidebar-form">-->
+                <!--<input type="text" name="search" class="form-control" placeholder="搜索菜单">-->
+                    <!--<span class="input-group-btn">-->
+                        <!--<i class="iconfont"></i>-->
+                    <!--</span>-->
+            <!--</div>-->
+            {{include 'portal-view-root-menu-tpl'}}
+        </ul>
+    </aside>
+    <div class="content-wrapper">
+
+        <div class="tab-content-wrapper main">
+            <div class="content panel">
+                <div class="panel-head nav-tabs">
+                    <ul class="nav nav-tabs box box-tabs">
+                        {{each PortalController.findInnerTabs() as innerTab tabIndex}}
+                            {{include 'content-body-tab-label-tpl' ({innerTab:innerTab})}}
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="box-content panel-body">
+                    <!-- 引入 html -->
+                    {{each PortalController.findInnerTabs() as innerTab tabIndex}}
+                    {{include 'content-body-tab-content-tpl' ({innerTab:innerTab})}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="main-footer hide"></footer>
+</script>
+
+<!--tabs页签标题模板-->
+<script type="text/html" id="content-body-tab-label-tpl">
+    <li  class="tab-label {{PortalController.findActiveCls(innerTab)}}" node-menu-json="{{oui.parseString(innerTab)}}" oui-e-{{PortalController.data.clickName}}="event2showTabContent"  node-menu-id="{{innerTab.id}}">
+        <a >{{innerTab.display}}</a>
+        <span class="tab-label-icon" oui-e-{{PortalController.data.clickName}}="event2removeTab" node-menu-json="{{oui.parseString(innerTab)}}"  node-menu-id="{{innerTab.id}}" >x</span>
+    </li>
+</script>
+
+<!--tabs页签内容模板-->
+<script type="text/html" id="content-body-tab-content-tpl">
+    <div class="tab-content pg-body {{PortalController.findActiveCls(innerTab)}}" node-menu-id="{{innerTab.id}}" >
+        <div class="pg-body-loading">{{innerTab.display}} loading</div>
+    </div>
+</script>
+
+
+
+
+<div id="app">
+    <div id="routerView" data-animationName="fade">
+
+        <oui-view id="router-view-inner" ></oui-view>
+        <script type="text/html" id="router-view-inner-tpl">  </script>
+    </div>
+</div>
+<!--引入进度条-->
+<script type="text/javascript" src="./res_common/third/progress/nprogress.js"></script>
+<script type="text/javascript">
+    NProgress.start();
+    document.onreadystatechange = function () {
+        if (document.readyState === "interactive") {
+            NProgress.set(0.5);
+        } else if(document.readyState === "complete") {
+            NProgress.done();
+        }
+    };
+</script>
+
+<!--第三方公共资源开始-->
+<script src="./res_common/third/vue/dist/vue.min.js"></script>
+<!--<script src="./res_common/third/vue/dist/vue-router.js"></script>-->
+<script src="./res_common/third/element-ui/lib/index.js"></script>
+<script src="./res_common/third/axios/dist/axios.min.js"></script>
+<!--第三方公共资源结束-->
+
+<!--系统公共资源开始-->
+<script type="text/javascript" src="./res_common/oui/system/util.js"></script>
+<script type="text/javascript" src="./res_common/oui/system/component-adapter.js"></script>
+<!--自定义路由组件-->
+<script type="text/javascript" src="./res_common/oui/system/route.js"></script>
+
+
+<!--这是基于oui-view相关公共组件-->
+<script type="text/javascript" charset="utf-8" src="./res_common/third/jquery/jquery-3.2.1.min.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/third/template/template_debug_3_0_0.js?_v=1"></script>
+<!--<script type="text/javascript" charset="utf-8" src="./res_common/oui/core.min.js"></script>-->
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-jsclazz.js"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-define.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-tags.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/parser.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-datautils.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-common.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-checkform.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/ui/tpl-type.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/ui/base-control.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/ui/form-control.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="./res_common/oui/system/oui-biz-ext.js?_v=1"></script>
+
+<script type="text/javascript" src="context/context.js?_v=1" charset="utf-8"></script>
+<!--系统公共资源结束-->
+<!--页面入口-->
+<script type="text/javascript" src="./res_common/oui/system/main.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="./res_engine/portal/js/portal-require.js?_v=1"></script>
+
+</body>
+</html>
+
+

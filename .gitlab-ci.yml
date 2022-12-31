@@ -1,0 +1,11 @@
+image:
+  name: startwe/web:1.6
+
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  script:
+    - echo "ssh server and git pull"
+    - /root/deploy.sh $DEV_SERVER_USER $DEV_SERVER_PWD

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>StartWE</title>
+    <style type="text/css" rel="stylesheet">
+        .navbar-fixed-bottom, .navbar-fixed-top{
+            z-index: auto !important;
+        }
+    </style>
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_common/third/bootstrap-3.3.7/css/bootstrap.min.css?_v=1.1" data-url="/res_common/third/bootstrap-3.3.7/css/bootstrap.min.css?_v=1.1">
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_engine/portal/css/portal.css" data-url="/res_engine/portal/css/portal.css">
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_engine/portal/css/h-multi-menu.css" data-url="/res_engine/portal/css/h-multi-menu.css">
+
+    <link rel="stylesheet" href="res_common/third/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="res_common/third/progress/nprogress.css" />
+    <link rel="shortcut icon" href="favicon-32.ico" type="image/x-icon" />
+
+    <style>
+        .pg-container{
+        height: 100%;
+        }
+        body{
+            background-color: #2E2F33!important;
+        }
+    </style>
+</head>
+<body oui-controller="com.startwe.models.portal.web.PortalController" class="bg-gray">
+
+
+   <!--/头部-->
+
+    <script type="text/html" id="menu-path-tpl">
+
+    </script>
+
+   <div class="pg-container">
+       <!--正文-->
+       <div class="pg-body" style="height: 100%">
+           <div>
+           </div>
+       </div>
+   </div>
+    <!--/正文-->
+
+    <!--引入进度条-->
+    <script type="text/javascript" src="res_common/third/progress/nprogress.js"></script>
+    <script type="text/javascript">
+        NProgress.start();
+        document.onreadystatechange = function () {
+            if (document.readyState === "interactive") {
+                NProgress.set(0.5);
+            } else if(document.readyState === "complete") {
+                NProgress.done();
+            }
+        };
+    </script>
+
+    <!--第三方公共资源开始-->
+    <script src="res_common/third/vue/dist/vue.min.js"></script>
+    <!--<script src="../../res_common/third/vue/dist/vue-router.js"></script>-->
+    <script src="res_common/third/element-ui/lib/index.js"></script>
+    <script src="res_common/third/axios/dist/axios.min.js"></script>
+    <!--第三方公共资源结束-->
+
+    <!--系统公共资源开始-->
+    <script type="text/javascript" src="res_common/oui/system/util.js"></script>
+    <script type="text/javascript" src="res_common/oui/system/component-adapter.js"></script>
+    <!--自定义路由组件-->
+    <script type="text/javascript" src="res_common/oui/system/route.js"></script>
+
+    <script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+    <script src="res_common/third/jquery/jquery-3.2.1.min.js" charset="utf-8"></script>
+    <script src="res_common/third/template/template_debug_3_0_0.js" charset="utf-8"></script>
+    <!--<script type="text/javascript" charset="utf-8" src="res_common/oui/core.min.js"></script>-->
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/core.js"></script>
+    <script type="text/javascript" charset="utf-8" src="res_engine/portal/portal-require.js"></script>
+
+</body>
+</html>

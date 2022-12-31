@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>工作台</title>
+        <link rel="stylesheet" type="text/css" href="./res_common/third/layui/css/layui.css"/>
+		<link rel="stylesheet" type="text/css" href="./res_common/third/adminlte/dist/css/workbench.css"/>
+		<style>
+			.inform-annunciate>li{
+				list-style-type: none !important;
+				display: flex;
+				justify-content: space-between;
+			}
+			.inform-annunciate>li>div{
+				display: inline;
+			}
+			.inform-annunciate>li>span{
+				margin: 0 50px;
+			}
+
+
+		</style>
+	</head>
+	<body>
+		<div class="work-warp">
+			<div class="work-all">
+				<ul class="work-list">
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>新增广告资源</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>自主开发</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>自主开发</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>电话量</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>客户上门</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>签单</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>业绩</span>
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)">
+							<p>32</p>
+							<span>本月接单/月接单容量</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="today-data">
+				<h3 class="today-tit">今日数据预估</h3>
+				<ul class="today-data-list">
+					<li>
+						<big>234</big>
+						<p>电话量</p>
+					</li>
+					<li>
+						<big>234</big>
+						<p>签单数</p>
+					</li>
+					<li>
+						<big>234</big>
+						<p>收款</p>
+					</li>
+					<li>
+						<big>234</big>
+						<p>自主开发</p>
+					</li>
+				</ul>
+			</div>
+			<div class="today-wait" id="waits">
+				<div class="work-tit">
+					<h3>通知公告</h3>
+				</div>
+				<ul class="inform-annunciate">
+					<li>
+						<p><a href="#">通知</a></p>
+						<span>2020-9-6</span>
+					</li>
+					<li>
+						<p><a href="#">通知</a></p>
+						<span>2020-9-6</span>
+					</li>
+					<li>
+						<p><a href="#">通知</a></p>
+						<span>2020-9-6</span>
+					</li>
+					<li>
+						<p><a href="#">通知</a></p>
+						<span>2020-9-6</span>
+					</li>
+				</ul>
+			</div>
+			<div class="today-wait">
+				<div class="today-wait-warp">
+					<div class="work-tit">
+						<h3>今日待办</h3>
+					</div>
+					<div class="today-wait-content">
+						<ul class="today-wait-list">
+							<li>
+								<a href="#">
+									<big>10</big>
+									<p>待接收</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>2</big>
+									<p>预约上门客户</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>2</big>
+									<p>今日待跟进</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>15</big>
+									<p>明天掉库</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>15</big>
+									<p>2天后掉库</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>0</big>
+									<p>今日生日客户</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>1</big>
+									<p>明日还款客户</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>1</big>
+									<p>逾期跟进</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="today-wait">
+				<div class="today-wait-warp">
+					<div class="work-tit">
+						<h3>数据预警</h3>
+					</div>
+					<div class="today-wait-content">
+						<ul class="today-wait-list">
+							<li>
+								<a href="#">
+									<big class="red">80%</big>
+									<p>掉库率</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big>2</big>
+									<p>月剩余接单量</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big class="green">10</big>
+									<p>订单退单</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<big class="blue">10</big>
+									<p>订单暂缓</p>
+								</a>
+							</li>
+							<li class="win50b">
+								<a href="#">
+									<big class="yellow">15</big>
+									<p>客户属性完善率不达标</p>
+								</a>
+							</li>
+							<li class="win50b">
+								<a href="#">
+									<big>0</big>
+									<p>金额超过30万客户即将掉库</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="annulus-warp">
+				<div class="annulus-main">
+					<div class="work-tit">
+						<p><span>白名单</span><em>共87条</em></p>
+						<span>到期日期：09.30</span>
+					</div>
+					<div class="annulus-content" id="white"></div>
+				</div>
+			</div>
+			<div class="annulus-warp">
+				<div class="annulus-main">
+					<div class="work-tit">
+						<p><span>广泛资源</span><em>共87条</em></p>
+						<span>到期日期：09.30</span>
+					</div>
+					<div class="annulus-content" id="abroad"></div>
+				</div>
+			</div>
+			<div class="annulus-warp">
+				<div class="annulus-main">
+					<div class="work-tit">
+						<p><span>推荐资源</span><em>共87条</em></p>
+						<span>到期日期：09.30</span>
+					</div>
+					<div class="annulus-content" id="recommend"></div>
+				</div>
+			</div>
+
+			<div class="today-wait">
+				<div class="work-tit">
+					<h3>营销活动</h3>
+				</div>
+				<div class="marketing-campaign">
+					<div class="marketing-tit">
+						<h4>Lorem</h4>
+						<p>2020-9-6</p>
+					</div>
+					<div class="marketing-txt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget</div>
+				</div>
+			</div>
+		</div>
+<!--待办区域-->
+		<script type="text/html" id="waits-tpl">
+			<div class="" id="waits">
+				<div class="work-tit">
+					<h3>我的待办</h3>
+				</div>
+				<ul class="inform-annunciate">
+					{{each portal.tasks as item index}}
+					<li>
+						<div>  <a href="#">{{item.partiName}}-{{item.processInstName}}</a> </div>
+						<span>{{formatTime(item.startTime)}}</span>
+						<span><a
+								item-flow-id="{{item.processDefName}}"
+								item-workitem-id="{{item.workItemID}}"
+								item-process-inst-id="{{item.processInstID}}"
+								item-activity-id="{{item.activityDefID}}"
+								item-activity-inst-id="{{item.activityInstID}}"
+								href="javascript:void"
+								onclick="cfg.click2detail(this)">查看详情</a></span>
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+		</script>
+
+		<!--待办区域结束-->
+		<script src="./res_common/third/jquery/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./res_common/third/echarts/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="./res_common/third/template/template_debug_3_0_0.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var oui = window.top.oui;
+			var cfg ={
+				projectId:'420520291509207040', //暂时指定固定项目id
+				renderTask:function(tasks){
+					if(!this._renderTask){
+						this._renderTask =template.compile(document.getElementById('waits-tpl').innerHTML);
+					}
+					return this._renderTask({
+						formatTime:cfg.formatTime,
+						portal:{
+							tasks:tasks
+						}
+					});
+				},
+				click2detail:function(el){
+					//item-id="{{item.processInstID}}" item-def="{{item.processDefName}}"
+					//target="_blank" href="/portal4vue.html#/res_engine/approval_form/approvalform.vue.html?formId=page_435695479813046272"
+					var processInstID = $(el).attr('item-process-inst-id'); //指定流程实例Id
+					var flowId = $(el).attr('item-flow-id'); //指定流程定义Id
+					var activityDefineId = $(el).attr('item-activity-id');//活动定义id
+					var activityInstID = $(el).attr('item-activity-inst-id');
+					var workItemID = $(el).attr('item-workitem-id');
+					//根据流程找活动 ，根据活动找配置路径，
+					//根据流程实例找 对应表单行数据
+					var findTaskDetailUrl = this.findTaskDetailUrl;
+					var url =findTaskDetailUrl;
+					url = oui.addParam(url,'flowId',flowId);
+					url = oui.addParam(url,'activityId',activityDefineId);
+
+					window.top.oui.postData(url,{},function(res){
+						//TODO 跳转页面
+
+						var url = window.top.oui.JsonPathUtil.getJsonByPath('otherAttrs.implementation.manualActivity.customURL.urlInfo',res.node);
+						var pageId = oui.getParamByUrl(url||'','selectPageId');
+						var getTaskParamsUrl = cfg.getTaskParamsUrl;
+						window.top.oui.postData(getTaskParamsUrl,{
+							processInstId:processInstID,
+							pageId:pageId,
+							flowId:flowId
+						},function(res){
+							var dataId = res.dataId;
+
+							var portalUrl = oui.getContextPath()+'portal4vue.html#';
+							var approvalUrl ='res_engine/approval_form/approvalform.vue.html';
+							/*
+
+							 this.currentlineIds = "manualActivity_8e085b9a-248e-4dbd-b2b6-55afca3485ce";
+							 this.historyLineIds = "startActivity_manualActivity";
+							 */
+
+							cfg.queryProcessLog({
+								processInstId:processInstID,
+								projectId:cfg.projectId
+							},function(res){
+
+								approvalUrl = oui.addParams(approvalUrl,{
+									formId:pageId,
+									flowId:flowId,
+									dataId:dataId,
+									activityDefineId:activityDefineId,
+									activityInstId:activityInstID,
+									workItemId:workItemID,
+									processInstId:processInstID,
+									projectId:cfg.projectId,
+									userId:oui.cookie('userName'),
+									userName:oui.cookie('userName'),
+									currentNodeIds:activityDefineId
+
+								});
+								portalUrl = portalUrl+approvalUrl;
+								window.top.oui.openWindow({
+									url:portalUrl
+								});
+							});
+
+
+						},null,'加载中。。。');
+
+						//拿到表单Id 再根据表单Id 获取
+					},null,'加载中。。。');
+
+
+				},
+				queryProcessLog:function(param,callback){
+					var url =  cfg.getProcessLogByProcessInstIDUrl;
+					window.top.oui.postData(url,param,function(res){
+						console.log(res);
+						callback&&callback(res);
+					},null,'加载中...');
+				},
+				formatTime:function(s){
+					//20201130175239
+					var year = s.substring(0,4);
+					var month = s.substring(4,6);
+					var d = s.substring(6,8);
+					var h = s.substring(8,10);
+					var min = s.substring(10,12);
+					var sec = s.substring(12,14);
+					return year+'-'+month+'-'+d+' '+h+':'+min+':'+sec;
+
+				},
+				loadMyTask:function(){
+					var me = this;
+					var url = window.top.oui.getContextPath()+'com.startwe.models.project.web.ProjectPortalController.loadPortalApi.biz';
+					window.top.oui.postData(url,{},function(res){
+						var url = res.getMyTaskUrl;
+						me.getMyTaskUrl = url;
+						me.findTaskDetailUrl = res.findTaskDetailUrl;
+						me.getTaskParamsUrl = res.getTaskParamsUrl;
+						me.getProcessLogByProcessInstIDUrl = res.getProcessLogByProcessInstIDUrl;
+						url = oui.addParam(url,'projectId',cfg.projectId); //todo这里暂时写死，后续 通过系统配置后授权才可访问
+						url = oui.addParam(url,'userId',oui.cookie('userName'));
+						window.top.oui.postData(url,{},function(res){
+							var tasks= res.tasks[1] ||[];
+							var html = cfg.renderTask(tasks);
+							document.getElementById('waits').innerHTML = html;
+						},null,'加载中。。。');
+					},function(){
+					},'加载中');
+				}
+			};
+			$(function(){
+				var data=[
+			                {value:6, name:'待完成'},
+			                {value:12, name:'已完成'}
+				         ];
+				var myChart = echarts.init(document.getElementById('white'));
+				var myChart_abroad = echarts.init(document.getElementById('abroad'));
+				var myChart_recommend = echarts.init(document.getElementById('recommend'));
+				var option = {
+				    legend: {
+				        orient: 'vertical',
+//				        x: 'right',
+				        right:'50',
+				        top:'50',
+				    	itemWidth:10,
+				    	itemHeight:8,
+				    	itemGap:20,
+				        data:['待完成','已完成'],
+				        formatter: function (name) {
+				        	var pieVal;
+				        	$.each(data,function (i,vals) {
+	                           if(name===vals.name) {
+	                               pieVal=vals.value;
+	                           }
+	                       });
+	                       return name+'  '+pieVal;
+						}
+				    },
+				    color:['#36a3f7','#c8e4fb'],
+				    series: [
+				        {
+				            name:'访问来源',
+				            type:'pie',
+				            radius: ['30%', '60%'],
+				            center : ['30%','50%'],
+				            avoidLabelOverlap: false,
+				            label: {
+				                normal: {
+				                    show: false,
+				                    position: 'center'
+				                },
+				                emphasis: {
+				                    show: false,
+				                    textStyle: {
+				                        fontSize: '30',
+				                        fontWeight: 'bold'
+				                    }
+				                }
+				            },
+				            labelLine: {
+				                normal: {
+				                    show: false
+				                }
+				            },
+				            data:data
+				        }
+				    ]
+				};
+				myChart.setOption(option);
+				myChart_abroad.setOption(option);
+				myChart_recommend.setOption(option);
+				cfg.loadMyTask();
+			});
+
+		</script>
+	</body>
+</html>

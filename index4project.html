@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>StartWE</title>
+    <style type="text/css" rel="stylesheet">
+        .navbar-fixed-bottom, .navbar-fixed-top{
+            z-index: 399 !important;
+        }
+
+
+        .flex-header{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header-items{
+            margin-left:-150px;
+            height:100%;
+        }
+
+        .header-items li{
+            float:left;
+            height:100%;
+            margin:0 20px;
+            line-height:62px;
+            
+        }
+
+        .header-items li:hover{
+            color:#1890FF;
+        }
+
+        .header-items li.active{
+            border-bottom:2px solid #1890FF;
+            color:#1890FF;
+        }
+        .hand{
+            cursor: pointer;
+        }
+
+    </style>
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_common/third/bootstrap-3.3.7/css/bootstrap.min.css?_v=1.1" data-url="/res_common/third/bootstrap-3.3.7/css/bootstrap.min.css?_v=1.1">
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_engine/portal/css/portal.css" data-url="/res_engine/portal/css/portal.css">
+    <link type="text/css" rel="stylesheet" class="loaded" href="/res_engine/portal/css/h-multi-menu.css" data-url="/res_engine/portal/css/h-multi-menu.css">
+
+    <link href="/res_engine/page_design/pc/page-iconfont/iconfont.css" rel="stylesheet" type="text/css"/><!--字体图标库-->
+    <link rel="stylesheet" href="res_common/third/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="res_common/third/progress/nprogress.css" />
+    <link rel="shortcut icon" href="favicon-32.ico" type="image/x-icon" />
+
+    <style>
+        .oui-class-ouiview{
+            width: 100% !important;
+        }
+        .pg-container{
+            min-height: inherit !important;
+        }
+    </style>
+</head>
+<body oui-controller="com.startwe.models.portal.web.PortalController" class="bg-gray">
+    <!-- 头部-->
+    <!-- <oui-view id="pg-header-view" class="pg-header oui-class-ouiview" data="com.startwe.models.portal.web.PortalController.getData()">
+    </oui-view> -->
+    <!--头部模板 pg-header-view-tpl -->
+    <script type="text/html" id="pg-header-view-tpl" charset="UTF-8">
+        {{if PortalController.data.inIframe}}
+        <style type="text/css">
+            .pg-block-header{
+                display: none !important;
+            }
+            body{
+                padding-top:0;
+            }
+            .pg-container{
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .pg-footer{
+                display: none !important;
+            }
+        </style>
+        {{/if}}
+
+        {{if !PortalController.data.inIframe}}
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    {{include 'header-menu'}}
+                </div>
+            </div>
+        </nav>
+        {{/if}}
+    </script>
+
+    <script type="text/html" id="header-menu">
+        <div class="pg-nav-menu">
+            <ul>
+                {{include 'tree-menu' ({menu:null})}}
+            </ul>
+        </div>
+    </script>
+    <script type="text/html" id="tree-menu">
+        {{if menu==null}}
+
+            {{each PortalController.findRootMenus() as rootMenu}}
+            <li>
+                <a href="#" oui-e-click="event2doActionByMenu" menu-params="{{oui.parseString(rootMenu.params||'')}}" menu-id="{{rootMenu.id}}">
+                    {{rootMenu.display}}
+                    {{if PortalController.findChildMenus(rootMenu.id).length}}
+                    <i class="menu-icon-arrow"></i>
+                    {{/if}}
+                </a>
+                {{if PortalController.findChildMenus(rootMenu.id)&& PortalController.findChildMenus(rootMenu.id).length}}
+                <ul>
+                {{each PortalController.findChildMenus(rootMenu.id) as childMenu}}
+                    {{include 'tree-menu' ({menu:childMenu})}}
+                {{/each}}
+                </ul>
+                {{/if}}
+            </li>
+            {{/each}}
+        {{/if}}
+        {{if menu!=null}}
+            <li>
+                <a href="#"  oui-e-click="event2doActionByMenu" menu-params="{{oui.parseString(menu.params||'')}}" menu-id="{{menu.id}}">{{menu.display}}
+                    {{if PortalController.findChildMenus(menu.id).length}}
+                    <i class="menu-icon-arrow"></i>
+                    {{/if}}
+                </a>
+                {{if PortalController.findChildMenus(menu.id)&& PortalController.findChildMenus(menu.id).length}}
+                <ul>
+                {{each PortalController.findChildMenus(menu.id) as childMenu}}
+                {{include 'tree-menu' ({menu:childMenu})}}
+                {{/each}}
+                </ul>
+                {{/if}}
+            </li>
+        {{/if}}
+    </script>
+
+
+   <!--/头部-->
+    <script type="text/html" id="menu-path-tpl">
+        {{each PortalController.findPathMenusByMenuId(menuId) as item index}}
+            <a href="#" menu-id="{{item.id}}" oui-e-click="com.startwe.models.portal.web.PortalController.event2doMenuAction">
+                {{item.display}}:
+                {{if item.id=='project-design'}}
+                <span>{{PortalController.findProjectName(ProjectController4Design.data.project)}}</span>
+                {{/if}}
+            </a>
+        {{/each}}
+        <!-- <span>{{PortalController.findMenuById(menuId).display}}:</span> -->
+        {{if menuId=='project-design'}}
+            <div class="flex-header">
+                <span class="project-title hand" menu-action-id="backhistory" oui-e-click="com.startwe.models.project.web.ProjectController4Design.event2menuAction"><img src="image/left-jt.png" /> {{ProjectController4Design.data.project.name}}</span>
+                <div>
+                    <ul class="header-items">
+                        <li class="active">项目架构</li>
+                        <li class="hand" node-id="{{ProjectController4Design.data.project.id}}" menu-action-id="designPortal" oui-e-click="com.startwe.models.project.web.ProjectController4Design.event2menuAction">门户设计</li>
+                        <li class="hand" node-id="{{ProjectController4Design.data.project.id}}" menu-action-id="editProjectConfig" oui-e-click="com.startwe.models.project.web.ProjectController4Design.event2menuAction">项目配置</li>
+                    </ul>
+                </div>
+                <div></div>
+            </div>
+        {{/if}}
+        {{if menuId=='interaction-design'}}
+            <span>{{ProjectController4Design.data.currentNode.node.name}}</span>
+        {{/if}}
+        {{if menuId=='logic-design'}}
+            <span>{{ProjectController4Design.data.currentNode.node.name}}</span>
+        {{/if}}
+    </script>
+
+    <div class="pg-container">
+    <!--正文-->
+        <div class="pg-body">
+            <div class="container">
+            </div>
+        </div>
+    </div>
+    <!--<div class="pg-footer" style="position: fixed; bottom:0">-->
+        <!--<div class="pg-ft-wrap">-->
+            <!--<span>版权所有 Powered by StartWE</span>-->
+            <!--<a href="#">蜀ICP备18031704号</a>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--/正文-->
+    <div>
+        <oui-include type="module" ref="mydrawer" url="res_startwe/html/workArea/drawer.vue.html">
+        </oui-include>
+    </div>
+    <!--引入进度条-->
+    <script type="text/javascript" src="res_common/third/progress/nprogress.js"></script>
+    <script type="text/javascript">
+        NProgress.start();
+        document.onreadystatechange = function () {
+            if (document.readyState === "interactive") {
+                NProgress.set(0.5);
+            } else if(document.readyState === "complete") {
+                NProgress.done();
+            }
+        };
+    </script>
+
+    <!--第三方公共资源开始-->
+    <script src="res_common/third/vue/dist/vue.min.js"></script>
+    <!--<script src="../../res_common/third/vue/dist/vue-router.js"></script>-->
+    <script src="res_common/third/element-ui/lib/index.js"></script>
+    <script src="res_common/third/axios/dist/axios.min.js"></script>
+    <!--第三方公共资源结束-->
+
+    <!--系统公共资源开始-->
+    <script type="text/javascript" src="res_common/oui/system/util.js"></script>
+    <script type="text/javascript" src="res_common/oui/system/component-adapter.js"></script>
+    <!--自定义路由组件-->
+    <script type="text/javascript" src="res_common/oui/system/route.js"></script>
+
+
+
+
+    <script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+    <script src="res_common/third/jquery/jquery-3.2.1.min.js" charset="utf-8"></script>
+    <script src="res_common/third/template/template_debug_3_0_0.js" charset="utf-8"></script>
+    <!--<script type="text/javascript" charset="utf-8" src="res_common/oui/core.min.js"></script>-->
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/core.js"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/system/main.js"></script>
+    <!--服务配置-->
+    <script type="text/javascript" charset="utf-8" src="/res_common/oui/config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="res_engine/portal/portal-require.js"></script>
+
+</body>
+</html>

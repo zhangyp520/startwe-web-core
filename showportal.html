@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>门户访问</title>
+
+
+    <link href="res_engine/page_design/pc/page-iconfont/iconfont.css" rel="stylesheet" type="text/css" />
+    <!--字体图标库-->
+    <link rel="stylesheet" href="res_common/third/element-ui/lib/theme-chalk/index.css"> 
+    <link rel="shortcut icon" href="favicon-32.ico" type="image/x-icon" />
+
+</head>
+
+<body class="bg-gray">
+
+ 
+
+    <!--第三方公共资源开始-->
+    <script src="res_common/third/vue/dist/vue.min.js"></script>
+    <script src="res_common/third/vue/dist/vue-router.js"></script>
+    <script src="res_common/third/element-ui/lib/index.js"></script>
+    <script src="res_common/third/axios/dist/axios.min.js"></script>
+    <!--第三方公共资源结束-->
+    <!--系统公共资源开始-->
+    <script type="text/javascript" src="res_common/oui/system/util.js"></script>
+    <script type="text/javascript" src="/res_common/oui/system/component-adapter.js"></script>
+
+
+ 
+    <script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+    <script src="res_common/third/jquery/jquery-3.2.1.min.js" charset="utf-8"></script>
+    <!-- <script src="res_common/third/template/template-4.3.js" charset="utf-8"></script> -->
+    <script src="res_common/third/template/template_debug_3_0_0.js" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8" src="res_common/oui/core.js"></script>
+    <!-- <script type="text/javascript" src="res_common/oui/system/main.js"></script> -->
+    <!-- import form-create/element -->
+    <script src="res_common/third/formcreate/form-create.min.js"></script>
+
+
+
+    <style>
+        .swheader{
+            display: flex;
+            justify-content: space-between;
+            height:60px;
+            line-height: 60px;
+            font-size: 20px;
+            padding:0px 20px
+        }
+
+        .swfooter{
+            /* background-color: #ccc; */
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+    <div id="app">
+        <form-create :rule="rule" v-model="fApi" :option="options" @swmenu-click="menuclick" /> 
+        <!-- <oui-include url="res_common/oui/ui/ui_pc/components/tableList.vue.html"   ></oui-include> --> 
+ 
+     </div>
+
+     <script>
+
+ 
+    window.App  = new Vue({
+            el: '#app',
+            data: {
+                message: '门户',
+                loadProjectPortalDesignUrl: '',
+                renderUrl: '',
+                contentJson: null,
+                fApi: {},
+                rule: null,
+                options: {
+                    submitBtn: false
+                },
+                data:{},
+                msg: 'hello'
+            },
+            mounted() {
+                var baseUrl = oui.getParam()
+                this.loadProjectPortalDesignUrl = baseUrl.loadProjectPortalDesignUrl
+
+
+                this.loadPortalData();
+
+                var cssArray = [];
+                if (oui.os.mobile) {
+                    cssArray = [
+                        oui.getContextPath() + "res_common/oui/ui/ui_phone/css/dialog.css",
+                        oui.getContextPath() + "res_common/oui/ui/ui_phone/css/control.css",
+                    ];
+                } else {
+                    cssArray = [
+                        oui.getContextPath() + "res_common/oui/ui/ui_pc/css/dialog1.6.css",
+                        oui.getContextPath() + "res_common/oui/ui/ui_pc/css/control.css",
+                        oui.getContextPath() +
+                        "res_common/oui/ui/ui_pc/controls/tips/css/tips.css",
+                        oui.getContextPath() +
+                        "res_common/third/color-picker/css/spectrum.css",
+                        oui.getContextPath() + "res_common/third/shape/css/shape.css",
+                    ];
+                }
+                oui.require4notSort(
+                    cssArray,
+                    function () {},
+                    function () {},
+                    false
+                );
+                var jsArray = [];
+                if(!oui.os.mobile){
+                    jsArray.push(
+                        oui.getContextPath()+"res_common/oui/ui/ui_pc/dialog/dialog.js"
+                    );
+                } else {
+                    jsArray.push(
+                        oui.getContextPath()+"res_common/oui/ui/ui_phone/dialog/dialog.js"
+                    );
+                }
+                jsArray.push(
+                    oui.getContextPath() +
+                    "res_engine/page_design/pc/js/page-design.js"
+                );
+                jsArray.push(
+                    oui.getContextPath() + "res_engine/page_design/pc/js/page-validate.js"
+                );
+                jsArray.push(
+                    oui.getContextPath() +
+                    "res_engine/page_design/pc/js/page-controls-list.js"
+                );
+
+                oui.require(
+                    jsArray,
+                    function () {
+                        
+                    },
+                    function () {},
+                    false
+                );
+
+
+ 
+
+            },
+            methods: {
+                 
+                menuclick(inject) {
+                    let itemdata = inject.inject
+
+                    let updateData = {
+                        type: "iframe",
+                        name: "pageiframe",
+                        height: "500",
+                        props: {
+                            height: document.body.scrollHeight,
+                            width: "100%",
+                            scrolling: 0,
+                            marginwidth: 0,
+                            frameborder: "no"
+                        }
+                    }
+
+                    if (itemdata.event == 1) //内部页面
+                    {
+                        let viewId = itemdata.viewId4DB
+                        let viewType = itemdata.viewType
+                        let viewName = itemdata.viewName
+
+
+                        oui.getData(this.renderUrl, {
+                            templateId: viewId,
+                            viewType: viewType,
+                        }, (res) => {
+                            if (res.success) {
+
+                              
+
+                                var pageId = res.projectTemplate.pageId 
+
+                                oui.storage.set('pageId',pageId);
+                                //替换iframe为div
+                                updateData = Object.assign(updateData, { 
+                                    props: {
+
+                                        height: document.body.scrollHeight,
+                                        width: "100%",
+                                        scrolling: 0,
+                                        marginwidth: 0,
+                                        frameborder: "no",
+                                        id:"showlistportal",
+                                        src:"list.html?renderUrl="+ encodeURIComponent(this.renderUrl)+"&excutedSelectedLogicUrl="+encodeURIComponent(this.excutedSelectedLogicUrl)+"&viewId="+viewId+"&viewType="+viewType+"&pageType=list&pageId="+pageId
+                                    },
+                                     
+                                }) 
+
+                                this.fApi.updateRule('pageiframe', updateData)
+ 
+ 
+
+                                this.$nextTick(()=>{  
+
+
+                                })
+                               
+
+                                
+
+                            }
+                        })
+ 
+                    }
+
+
+                    if (itemdata.event == 2) //外部页面
+                    {
+
+
+                        updateData = Object.assign(updateData, {
+                            props: {
+                                src: itemdata.forwardUrl,
+                                height: document.body.scrollHeight,
+                                width: "100%",
+                                scrolling: 0,
+                                marginwidth: 0,
+                                frameborder: "no"
+                            }
+                        })
+
+
+                    }
+                    this.fApi.updateRule('pageiframe', updateData)
+
+
+
+                },
+                loadPortalData() {
+ 
+                    oui.postData(this.loadProjectPortalDesignUrl, {}, (res) => {
+                        
+                        if (res.success && res.portal) {
+                            this.rule = JSON.parse(res.portal.content || "[]") 
+                            this.renderUrl = res.portal.extraAttrs.renderPagesUrl
+                            this.excutedSelectedLogicUrl = res.portal.extraAttrs.excutedSelectedLogicUrl
+                            oui.storage.set('renderUrl',this.renderUrl);
+                            oui.storage.set('excutedSelectedLogicUrl',this.excutedSelectedLogicUrl);
+                            // this.fApi = formCreate.create(this.contentJson)
+                        }
+                    })
+
+                },
+                loadlistData() {
+                    oui.postData(this.renderUrl, {
+                        templateId: this.templateId,
+                    }, (res) => {
+                        if (res.success) {
+
+                            // let projectListTemplate = res.projectListTemplate;
+                            let content = JSON.parse(res.projectListTemplate.content);
+
+                            console.info(content)
+
+                            // this.fApi = formCreate.create(this.contentJson)
+                        }
+                    })
+                },
+                findCurrentPropslUrl() {
+                    let currentControldata =
+                    com.oui.absolute.AbsoluteDesign.data.currentControl;
+                    if (
+                    currentControldata &&
+                    currentControldata.id &&
+                    currentControldata.controlType
+                    ) {
+                    // console.log("---->", currentControldata.controlType); 
+                    //组件属性面板地址
+                    return (
+                        "res_engine/page_design/pc/components-biz-prop-tpl/detail/" +
+                        currentControldata.controlType +
+                        ".vue.html"
+                    );
+                    } else {
+                    return "res_engine/page_design/pc/components-biz-prop-tpl/default.vue.html";
+                    } 
+                },
+                findControlUrl(id) {
+                    
+                    return 'res_common/oui/ui/ui_pc/components/tableList.vue.html';
+                    if(control && control.hasAssociation){ //存在关联关系
+                        //TODO 后续考虑 多端 的关联控件适配
+                        return 'res_common/oui/ui/ui_pc/components/association.vue.html';
+                    }else if(control){
+                        return 'res_common/oui/ui/ui_pc/components/'+control.controlType+'.vue.html';
+                    }
+                    return '';
+                },
+                getData: function() {
+                    var me = this;
+                    return me.data;
+                },
+            },
+        })
+    oui.app = window.App;
+    </script>
+</body>
+
+</html>

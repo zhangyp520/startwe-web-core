@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+加载中...
+<div id="iframe-content" style="display: none"> </div>
+<script type="text/javascript" src="res_common/third/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+    var url = location.search; //获取url中"?"符后的字串
+    var map ={};
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(url.indexOf("?")+1);
+        var strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            map[strs[i].split("=")[0]] = decodeURIComponent(strs[i].split("=")[1]);
+        }
+    }
+    var url = map.url||'';
+
+    var div =  document.getElementById('iframe-content');
+    div.innerHTML='<iframe src="'+url+'"></iframe>';
+</script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>StartWE</title>
+</head>
+
+<style>
+    html,body{
+    margin: 0;
+    padding: 0;
+    background-color: rgba(248, 248, 248, 100);
+}
+.header{
+    height: 55px;   
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(248, 248, 248, 100);
+    z-index: 2;
+}
+.logo{
+    width: 82px;
+    margin: auto;
+}
+.headimg{
+  
+    width: 100%;
+}
+.box{
+    width: 176px;
+    height: 273px;
+    border: 2px solid rgba(69, 151, 255, 100);
+    margin: 70px 0 0 34px;
+}
+.introduce{
+ 
+    line-height: 25px;
+    font-size: 12px;
+    position: absolute;
+    top: 40px;
+    left: 89px;
+    background-color: rgba(248, 248, 248, 100);
+    z-index: 1;
+}
+.business{
+    height: 180px;
+    background-image: url('../image/img_15.jpg');
+    background-size: 100%;
+    margin-top:66px;
+  
+    color: rgba(255, 255, 255, 100);
+}
+.business_title{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 21px;
+}
+.title_e{
+    font-size: 10px;
+}
+.business_icon{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: auto;
+}
+.business_title_flex{
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+    overflow: auto;
+    padding: 0 30px;
+  
+}
+.margin_right_43{
+    margin-right: 43px;
+}
+.size_mini{
+    font-size: 8px;
+    width: 90px;
+    margin-top: 10px;
+}
+.advantage{
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: center;
+    padding: 60px 0;
+}
+.advantage_title_left{
+    font-size: 14px;
+    font-weight: bold;
+}
+.border_1{
+    width: 25px;
+    height: 1px;
+    background-color: #bbbbbb;
+}
+.border_2{
+    width: 36px;
+    height: 56px;
+    border-left: 1px solid #bbbbbb;
+    border-top: 1px solid #bbbbbb;
+    border-bottom: 1px solid #bbbbbb;
+}
+.flex{
+    display: flex;
+    align-items: center;
+}
+.border_box{
+    background-color: #28C445;
+    width: 20px;
+    height: 20px;
+    transform:rotate(50deg);
+}
+.advantage_title{
+    font-size: 12px;
+    font-weight: bold;
+}
+.advantage_content{
+    font-size: 8px;
+    margin-top: -10px;
+}
+.position_a{
+    position: absolute;
+
+}
+.margin_top_border{
+    line-height: 33px;
+}
+.example_title{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+.example_title_e{
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+
+}
+.example_img{
+    width: 250px;
+    margin-top: 30px;
+    margin: auto;
+}
+.example_img_text{
+    font-size: 10px;
+
+}
+.example_img_content{
+    width: 250px;
+    font-size: 10px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.products{
+    position: relative;
+}
+.products_title{
+    font-size: 14px;
+    font-weight: bold;
+}
+.products_title_e{
+    font-size: 10px;
+}
+.products_img{
+    width: 100%;
+}
+.products_title_s{
+    font-size: 10px;
+    font-weight: bold;
+    
+}
+.products_title_x{
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 23px;
+}
+.products_flex{
+    display: flex;
+    align-items: center;
+}
+.products_but_left{
+    height: 20px;
+    padding: 0 5px;
+    background-color:#3894FF;
+    font-size: 10px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+.products_but_right{
+    height: 20px;
+    padding: 0 5px;
+    background-color: #FF4400;
+    font-size: 10px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    border-radius: 4px;
+}
+.products_p{
+    position: absolute;
+    top: 50px;
+    left: 75px;
+}
+.telephone{
+    height: 50px;
+    background-color:#3894FF;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.contact{
+    background-color: #41BFFF;
+    color: #fff;
+    font-size: 10px;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+.contact_content{
+    margin-left: 18px;
+    margin-top: 8px;
+}
+.recordNo{
+    background-color: #41BFFF;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.contact_icon{
+    width: 50px;
+    
+}
+.menu_box{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(16, 16, 16, 0.6);
+    z-index: 3;
+    display: none;
+}
+.menu_left{
+   
+    position: absolute;
+    left: 0;
+    background-color: #fff;
+    bottom: 0;
+    top: 0;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 50px;
+    padding-left: 66px;
+    padding-top: 70px;
+    padding-right: 66px;
+    
+}
+.menu{
+    position: absolute;
+    left: 18px;
+}
+.menu>img{
+    width: 25px;
+    height: 25px;
+}
+.close{
+    position: absolute;
+    right: 10px;
+    top: 0;
+ 
+}
+</style>
+<body>
+   <div class="">
+        <div class="header">
+            <div class="menu" onclick="openMenu()">
+                <img src="../image/img_17.png" alt="">
+            </div>
+            <img class="logo" src="../image/logo.png" alt="">
+        </div>
+        <div style="margin-top: 55px;">
+            <img class="headimg" src="../image/img_01.jpg" alt="">
+        </div>
+
+        <div style="position: relative;" id="Jump_01">
+            <div class="box">
+                
+            </div>
+            <div class="introduce">
+                <div>公司简介</div>
+                <div>成都起微网络技术有限公司</div>
+                <div> 成立于 2020年07月01日，</div>
+                <div>是一家专注计算机软件开发及应用</div> 
+                <div>的高新技术企业，</div> 
+                <div>为企业提供私有化部署、开发及优化升级服务。</div>
+                <div> 公司的核心产品是自主研发</div>
+                <div>[startwe 起微]零代码工具平台。</div>
+            </div>
+        </div>
+
+        <div class="business" id="Jump_02">
+            <div class="business_title">
+                <span>业务范围</span> <span class="title_e">The Business Bcope</span>
+
+                <div class="business_title_flex">
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_09.jpg" alt="">
+                        </div>
+                        <div class="size_mini">私有化部署系统</div>
+                    </div>
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_10.jpg" alt="">
+                        </div>
+                        <div class="size_mini">saas系统</div>
+                    </div>
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_11.jpg" alt="">
+                        </div>
+                        <div class="size_mini">APP</div>
+                    </div>
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_12.jpg" alt="">
+                        </div>
+                        <div class="size_mini">小程序</div>
+                    </div>
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_13.jpg" alt="">
+                        </div>
+                        <div class="size_mini">定制开发</div>
+                    </div>
+                    <div class="margin_right_43">
+                        <div class="business_icon">
+                            <img class="business_icon" src="../image/img_14.jpg" alt="">
+                        </div>
+                        <div class="size_mini">优化升级</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="advantage" id="Jump_03">
+            <div class="advantage_title_left">
+                <div>服</div>
+                <div>务</div>
+                <div>优</div>
+                <div>势</div>
+            </div>
+
+            <div>
+                <div class="flex">
+                    <div class="border_1"></div>
+                    <div class="flex">
+                        <div style="margin-right: 5px;">
+                        
+                            <div class="border_2"></div>
+                            <div class="border_2"></div>
+                            <div class="border_2"></div>
+                        </div>
+
+
+                        <div>
+                            <div class="flex margin_top_border">
+                                <div class="border_box"></div>
+                                <div style="margin-left: 5px;">
+                                    <div class="advantage_title">前端沟通</div>
+                                    <div class="advantage_content">产品负责人深入分析及了解企业研发需求</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex margin_top_border">
+                                <div class="border_box"></div>
+                                <div style="margin-left: 5px;">
+                                    <div class="advantage_title">前端沟通</div>
+                                    <div class="advantage_content">产品负责人深入分析及了解企业研发需求</div>
+                                </div>
+                            </div>
+                            <div class="flex margin_top_border">
+                                <div class="border_box"></div>
+                                <div style="margin-left: 5px;">
+                                    <div class="advantage_title">前端沟通</div>
+                                    <div class="advantage_content">产品负责人深入分析及了解企业研发需求</div>
+                                </div>
+                            </div>
+                            <div class="flex margin_top_border">
+                                <div class="border_box"></div>
+                                <div style="margin-left: 5px;">
+                                    <div class="advantage_title">前端沟通</div>
+                                    <div class="advantage_content">产品负责人深入分析及了解企业研发需求</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+
+        </div>
+
+
+
+
+        <div class="example" id="Jump_04">
+            <div class="example_title">案列分析</div>
+            <div class="example_title_e">Recommended Articles</div>
+
+
+            <div style="text-align: center;">
+                <img class="example_img" src="../image/img_04.jpeg" alt="">
+                <div class="example_img_text">智能车间系统</div>
+            </div>
+            <div class="example_img_content">覆盖汽车维保核心业务运营管理模块数字化浪潮推动
+                “人、货、款、客、店”的现象级重构提供可持续价
+                值系统与业务应需扩展能力。
+            </div>
+            <div style="text-align: center;">
+                <img class="example_img" src="../image/img_05.jpeg" alt="">
+                <div class="example_img_text">服装厂管理系统</div>
+            </div>
+            <div class="example_img_content">服装厂管理系统打造服装产业的全生命管理系统，从
+                设计、原辅材料采购、制造、运输到商城的管理，降
+                低人员成本，提高工作效率。
+            </div>
+            <div style="text-align: center;">
+                <img class="example_img" src="../image/img_06.jpeg" alt="">
+                <div class="example_img_text">景区点歌系统</div>
+            </div>
+            <div class="example_img_content">点歌系统不仅便于对景区音乐播放的管理，且可收集
+                景点的浏览量进行数据收集，统计景区的音乐量，发
+                布景点文章咨讯，为景区管理提供便利。
+            </div>
+            <div style="text-align: center;">
+                <img class="example_img" src="../image/img_08.png" alt="">
+                <div class="example_img_text">节目编辑系统</div>
+            </div>
+            <div class="example_img_content">以拖拉组件的形式快速搭建节目框架，对组件进行属
+                性设置，轻松、高效完成整个节目搭建，相对于传统
+                的编辑形式效率得到明显提升。
+            </div>
+            <div style="text-align: center;">
+                <img class="example_img" src="../image/img_07.jpeg" alt="">
+                <div class="example_img_text">教育机构系统</div>
+            </div>
+            <div class="example_img_content">
+                用信息化手段来提升管理水平，增强传统的学校管理
+                需求，提升教务、教学管理能力，快速查看课表、排
+                课表等数据统计，便捷校方数据分析与管理。
+            </div>
+        </div>
+
+
+
+        <div class="products" id="Jump_05">
+            <div style="margin-left: 23px;">
+                <div class="products_title_e">Our Products</div>
+                <div class="products_title">我们的产品</div>
+            </div>
+            <div>
+                <img class="products_img" src="../image/img_03.png" alt="">
+            </div>
+            <div class="products_p">
+                <div class="products_title_s">StartWe</div>
+                <div class="products_title_x">零代码开发平台</div>
+                <div class="products_flex">
+                    <div class="products_but_left">了解产品详情</div>
+                    <div class="products_but_right">免费试用</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="telephone" id="Jump_06">
+            <div style="margin-right: 35px;">一对一售前售后服务</div>
+            <div>7x24小时技术保障</div>
+        </div>
+
+
+        <div class="contact" id="porft-me">
+            <div>
+                <div style="font-size: 12px;">联系我们</div>
+                <div class="contact_content">
+                    <div>地址：高新区东寺南一路18号1栋1单元14层1414号</div>
+                    <div>邮编：610000</div>
+                    <div>电话：028 - 87335679</div>
+                    <div>手机：138 0807 8013</div>
+                    <div>邮箱: startwe@startwe.net</div>
+                </div>
+            </div>
+            <div style="padding-top:35px;">
+                <div style="font-size: 12px;">关于我们</div>
+                <div>
+                    <img class="contact_icon" src="../image/img_16.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="recordNo">
+            <div>
+                蜀ICP备:蜀ICP备18031704号
+            </div>
+           <div>
+            COPYRIGHT(©) 2021 成都起微网络技术有限公司
+           </div>
+        </div>
+
+
+        <div class="menu_box">
+            <div class="menu_left">
+                <div class="close" onclick="closeMenu()">
+                    X
+                </div>
+                <div onclick="Jump('Jump_01')">首页</div>
+                <div onclick="Jump('Jump_01')">关于我们</div>
+                <div onclick="Jump('Jump_02')">业务范围</div>
+                <div onclick="Jump('Jump_03')">服务优势</div>
+                <div onclick="Jump('Jump_04')">服务案列</div>
+                <div onclick="Jump('Jump_05')">我们的产品</div>
+                <div onclick="community()">StartWe社区</div>
+            </div>
+           
+        </div>
+        
+       
+   </div>
+
+
+
+
+
+
+
+    <script>
+        function openMenu() {
+            let menu = document.getElementsByClassName('menu_box')
+            menu[0].style.display = 'block'
+        }
+        function closeMenu () {
+            let menu = document.getElementsByClassName('menu_box')
+            menu[0].style.display = 'none'
+        }
+        function Jump (id) {
+            let menu = document.getElementsByClassName('menu_box')
+            menu[0].style.display = 'none'
+            window.location.hash = id;
+
+        }
+        function community () {
+
+        }
+        if (!this._isMobile()) {
+            window.location.href = '/index4go.html'
+        }
+        function _isMobile() {
+            let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+            return flag;
+        }
+    
+    </script>
+
+
+
+</body>
+
+</html>
