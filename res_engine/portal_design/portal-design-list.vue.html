@@ -1,0 +1,1061 @@
+<!-- 首页内容 -->
+<template>
+    <div>
+        <div class="portal-list">
+            <!-- 标题 -->
+            <!-- 圈子内容 -->
+            <el-container>
+                <el-header>
+                    <el-button icon="el-icon-plus" type="primary" @click="dialogVisible = true">新建门户</el-button>
+                </el-header>
+                <el-main class="portal-present-main">
+                    <div v-if="portalList.length">
+                        <div class="portal-present-list" v-for="(item,index) in portalList" key="item">
+                            <div class="img">
+                                <img src="res_engine/page_design/pc/images/1.6/icons/portal-list-demo.svg" />
+                            </div>
+                            <p> {{item.name}} </p>
+                            <div class="open-status" v-if="item.delFlag==1">
+                                <img src="res_engine/page_design/pc/images/1.6/icons/is_used.svg" />
+                            </div>
+                            <!-- 菜单 -->
+                            <div class="portal-more">
+                                <el-dropdown @command="handleCommand">
+                                    <div class="portal-more">
+                                        <img src="res_engine/page_design/pc/images/1.6/icons/portal-more.svg" />
+                                    </div>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item :command="{item:item,index:index,fun:menus.action}"
+                                            v-for="(menus,index) in getDiffMenu(item)" :disabled="menus.disabled">
+                                            <div :class="['menu-titlebox',] ">
+                                                <img :src="menus.src" />
+                                                {{menus.title==''?item.delFlag==1?'停用':'启用':menus.title}}
+                                            </div>
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else >
+                        <el-empty description="请通过新建门户添加" style="margin: 0 auto;"></el-empty>
+                    </div>
+                </el-main>
+            </el-container>
+            <!-- 确认删除弹框 -->
+            <div class="del-dialog" v-if="delProtal">
+                <el-dialog title="确认删除" :visible.sync="delProtal" width="30%" :append-to-body="true">
+                    <span>确认删除{{delTitle}}吗？</span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="delProtal = false">取 消</el-button>
+                        <el-button type="primary" @click="DelConfirmClick()">确 定</el-button>
+                    </span>
+                </el-dialog>
+            </div>
+            <!-- 添加弹框 -->
+
+
+            <!-- 新建门户弹窗 -->
+            <el-dialog title="新建门户" :visible.sync="dialogVisible" width="793px" @open="reSetLayout"
+                :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true">
+                <el-input v-model="name" id="layout_name" placeholder="请输入门户名称"></el-input>
+                <p class="text">选择门户布局方案</p>
+                <div class="layout-case">
+
+                    <div @click="activeBox(index+1)" v-for="(item,index) in layoutCase"
+                        :class="{layoutActive: layoutCaseActive === (index+1)}">
+                        <img :src="item.src" />
+                    </div>
+
+                </div>
+                <p class="text">选择页面或设置页面尺寸</p>
+                <div class="layout-size-box">
+
+                    <div class="layout-size">
+                        <div class="layout-size-img" @click="pageActiveBox(1)"
+                            :class="{layoutActive: layoutPageActive === 1}">
+                            <img src="res_engine/page_design/pc/images/1.6/icons/web.svg" />
+                        </div>
+                        <div class="layout-set-size">
+                            Web
+                            <el-select v-model="defaultDpi" placeholder="请选择分辨率" name="layoutDpi" style="border:none;"
+                                :filterable="true" @change="getCurrentVal">
+                                <el-option-group v-for="group in terminaDeviceList" :key="group.name"
+                                    :label="group.name">
+
+                                    <el-option v-for="subItem in group.subTrees" :label="subItem.screenResolution"
+                                        :value="subItem.screenResolution">
+                                    </el-option>
+                                </el-option-group>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="layout-size">
+                        <div class="layout-size-img" @click="pageActiveBox(2)"
+                            :class="{layoutActive: layoutPageActive === 2}">
+                            <img src="res_engine/page_design/pc/images/1.6/icons/yemian.svg" />
+                        </div>
+                        <div class="layout-set-size">
+                            自定义
+                            <div>
+                                W
+                                <el-input type="text" class="input-line" id="diy_width" v-model.number="diy_width"
+                                    style="width:45px;"></el-input>
+                                H
+                                <el-input type="text" class="input-line" id="diy_height" v-model.number="diy_height"
+                                    style="width:45px;"></el-input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="confirmClick">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 自定义尺寸提醒框 -->
+            <el-dialog title="提示" :visible.sync="diyDialogVisible" width="30%">
+                <span>这是一段信息</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                </span>
+            </el-dialog>
+
+        </div>
+    </div>
+
+</template>
+
+
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                uploadState: true,
+                value: 2,
+                nameTips: false,
+                currentDelPortal: '',
+                delTitle: '',
+                delProtal: false,
+                name: '',
+                dialogVisible: false,
+                createProjectPortalUrl: '',
+                showUploadText: false,
+                showEditText: false,
+                showDelText: false,
+                uploadIconUrl: '/res_startwe/assets/shangxian1.png',
+                editUrl: '/res_startwe/assets/bianji1.png',
+                delUrl: '/res_startwe/assets/delw.png',
+                current: 0,
+                isShow: false,
+                circleId: '',
+                projectId: '',
+                portalList: null,
+                drawer: false,
+                direction: 'rtl',
+                sizeBox: '35%',
+                dialogVisible: false,
+                // 选择门户布局方案
+                layoutCaseActive: 1,
+                layoutCase: [{
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout1.svg',
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout2.svg',
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout3.svg',
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout4.svg',
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout5.svg',
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/layout6.svg',
+                    },
+                ],
+                // 选择页面或设置页面尺寸
+                terminaDeviceList: [],
+                defaultDpi: '1400x900',
+                layoutDpi: '1400x900',
+                layoutPageActive: 1,
+                diy_width: '',
+                diy_height: '',
+                diyDialogVisible: false
+
+            }
+        },
+        created() {},
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.circleId = this.$router.query.circleId;
+            this.projectId = this.$router.query.projectId;
+            // 获取门户列表
+            this.portalDataList();
+        },
+        methods: {
+            //跳转到模板页面
+            getDiffMenu(item){
+                return [{
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-design.svg',
+                        'title': '设计',
+                        'action': this.editClick,
+                        'disabled': false
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-edit.svg',
+                        'title': '编辑名称',
+                        'action': this.editLayoutName,
+                        'disabled': false
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-copy.svg',
+                        'title': '复制',
+                        'action': '',
+                        'disabled': true
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-import.svg',
+                        'title': '导入',
+                        'action': '',
+                        'disabled': false
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-export.svg',
+                        'title': '导出',
+                        'action': '',
+                        'disabled': false
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-visit.svg',
+                        'title': '访问',
+                        'action': this.visitPortal,
+                        'disabled': false
+                    },  
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-deactivate.svg',
+                        'title': '',
+                        'action': this.changStatusClick,
+                        'disabled': false
+                    },
+                    {
+                        'src': 'res_engine/page_design/pc/images/1.6/icons/portal-menu-delete.svg',
+                        'title': '删除',
+                        'action': this.delClick,
+                        'disabled': item.delFlag == 1
+                    }
+                ];
+            },
+            queryPortalTemplates: function () {
+                var url = 'res_engine/portal_design/templateMall.vue.html';
+                url = oui.setParam(url, 'createProjectPortalUrl', this.createProjectPortalUrl);
+                url = oui.setParam(url, 'projectId', this.projectId);
+                url = oui.setParam(url, 'circleId', this.circleId);
+                url = oui.getContextPath() + 'index4vue.html#' + url;
+                oui.openWindow({
+                    url: url,
+                    openType: '_blank'
+                });
+            },
+            // 编辑跳转
+            editClick: function (item) {
+                //var url = oui.getContextPath() + 'res_engine/portal_design/portal-design.html';
+                // var url = oui.getContextPath() + 'res_engine/portal_design/pc2/page-design.html';
+
+                // url = oui.addParams(url, {
+                //     circleId: item.circleId,
+                //     projectId: item.projectId,
+                //     portalId: item.id,
+                //     loadProjectTreeUrl: item.extraAttrs.loadProjectTreeUrl,
+                //     loadProjectPortalUrl: item.extraAttrs.loadProjectPortalUrl,
+                //     viewType: 'normal'
+                // });
+
+                // oui.openWindow({
+                //     url: url,
+                //     openType: '_blank',
+                //     windowParams: oui.parseString({
+                //         pageDesignType: 'normalForm'
+                //     }),
+                //     pageDesignType: 'normalForm'
+                // });
+
+                //跳转到 新版vue门户设计页面  url 附带登陆token信息
+                //读取出 cookies 
+ 
+                var  portalBaseUrl = oui_context.portalWebSite + 'design/portal'
+                 
+                portalBaseUrl = oui.addParams(portalBaseUrl, { 
+                    projectId: item.projectId,
+                    portalId: item.id, 
+                    setlayout: 1,//默认布局 
+                    loadProjectPortalUrl: item.extraAttrs.loadProjectPortalUrl, 
+                }); 
+                var url =  portalBaseUrl  + "&token=" +  oui.util.createLoginTokenStr()  
+                window.open(url);
+
+           
+
+            },
+            // 确定删除
+            DelConfirmClick: function () {
+                var me = this;
+                var item = me.currentDelPortal;
+                var url = item.extraAttrs.removeProjectPortalUrl;
+                oui.postData(url, {}, function (res) {
+                    me.portalDataList();
+                    me.delProtal = false;
+                    // oui.go4replace(location.href, {
+                    //     _t: new Date().getTime()
+                    // });
+                }, function (res) {
+
+                }, '删除中...');
+            },
+            // 点击删除按钮
+            delClick: function (item) {
+                var me = this;
+                me.delProtal = true;
+                me.delTitle = item.name;
+                me.currentDelPortal = item;
+            },
+            // 访问项目
+            visitPortal:function(item){
+
+              
+                var renderUrl = encodeURIComponent(item.extraAttrs.renderPagesUrl)
+                var loadProjectPortalDesignUrl = encodeURIComponent(item.extraAttrs.loadProjectPortalDesignUrl)
+                //获取列表访问地址  
+                var url  = "/showportal.html?loadProjectPortalDesignUrl="+loadProjectPortalDesignUrl+"&nodeType%3DpageList";
+
+                window.open(url) 
+                 
+            },
+            // 启用/停用按钮
+            changStatusClick: function (item) {
+                debugger
+                var me = this;
+                // 修改门户状态：1.启用；2.停用
+                var stateMsg = item.delFlag == 2 ? '启用' : '停用';
+                this.$confirm('确定要 ' + stateMsg + ' 此门户吗?', '提示信息', {
+                    type: 'warning'
+                }).then(() => {
+                    const loading = this.$loading({
+                        background: 'rgba(0, 0, 0, 0.4)'
+                    });
+                    // 访问接口
+                    oui.postData(this.enableOrDisableUrl, {
+                        circleId: this.circleId,
+                        projectId: this.projectId,
+                        id: item.id,
+                        delFlag: item.delFlag == 1 ? 2 : 1
+                    }, function (res) {
+                        if (res.success == true) {
+                            me.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                            //window.location.reload();
+                            me.portalDataList();
+                            loading.close();
+                            return;
+                        }
+                        me.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                        loading.close();
+                    }, function (res) {
+                        me.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                        loading.close();
+                    });
+                }).catch(() => {
+
+                });
+            },
+            // 修改门户名称
+            editLayoutName: function (item) {
+                var me = this;
+
+                this.$prompt('请输入门户名称', '提示', {
+                    inputPlaceholder: item.name,
+                    closeOnClickModal: false,
+                    inputPattern: /[^\s]/,
+                    inputErrorMessage: '请填写正确的门户名称'
+                }).then(({
+                    value
+                }) => {
+                    const loading = this.$loading({
+                        background: 'rgba(0, 0, 0, 0.4)'
+                    });
+                    // 访问接口
+                    oui.postData(this.updateNameUrl, {
+                        circleId: this.circleId,
+                        projectId: this.projectId,
+                        id: item.id,
+                        name: value,
+                    }, function (res) {
+                        if (res.success == true) {
+                            me.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                            // window.location.reload();
+                            me.portalDataList();
+                            loading.close();
+                            return;
+                        }
+                        me.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                        loading.close();
+                    }, function (res) {
+                        me.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                        loading.close();
+                    });
+
+                }).catch(() => {
+
+                });
+            },
+            // 自定义检查提醒
+            openAlert: function (msg) {
+                this.$alert(msg, '提示信息', {
+                    type: 'warning',
+                });
+            },
+            // 确认添加
+            confirmClick: function () {
+                var me = this,
+                    // 自定义宽度
+                    diyWidth = 0,
+                    // 自定义高度   
+                    diyHeight = 0,
+                    // 门户名称
+                    layoutName = '';
+
+                layoutName = $('#layout_name').val();
+                if (!layoutName) {
+                    this.openAlert('请填写门户名称');
+                    return;
+                }
+
+                // 自定义分辨率
+                if (this.layoutPageActive == 2) {
+                    diyWidth = parseInt($('#diy_width').val());
+                    diyHeight = parseInt($('#diy_height').val());
+                    if (!diyWidth || !diyHeight) {
+                        this.openAlert('请完整填写自定义尺寸');
+                        return;
+                    }
+                    saveLayoutDpi = diyWidth + 'x' + diyHeight;
+                } else {
+                    saveLayoutDpi = this.layoutDpi;
+                }
+                let project = com.startwe.models.project.web.ProjectController4Design.data.project
+                oui.postData(me.createProjectPortalUrl, {
+                    projectPortal: {
+                        json: '{}',
+                        name: layoutName,
+                        circleId: project.circleId,
+                        // templateId: "模板id",
+                        // menuId: "菜单id",
+                        projectId: project.id,
+                        layOut: this.layoutCaseActive,
+                        otherAttrs: saveLayoutDpi
+                    }
+                }, function (res) {
+                    // oui.go4replace(location.href, {
+                    //     _t: new Date().getTime()
+                    // });
+                    me.name = "";
+                    me.portalDataList();
+                }, function (res) {
+                    me.$message(res)
+                }, '加载中...');
+
+                me.dialogVisible = false;
+
+            },
+            // 添加事件
+            addClick: function () {
+                // var me = this;
+                // me.dialogVisible = true;
+
+                // 以下是抽屉的
+                this.drawer = true;
+            },
+            // portal列表数据拿取
+            portalDataList: function () {
+                
+                var me = this;
+                console.log('portalDataList', com.startwe.models.project.web.ProjectController4Design.data.queryPortalsByProjectIdUrl) 
+                //var url = this.$router.query.queryPortalsByProjectIdUrl;
+                let url = com.startwe.models.project.web.ProjectController4Design.data.queryPortalsByProjectIdUrl;
+                oui.postData(url, {}, function (res) {
+                    me.createProjectPortalUrl = res.createProjectPortalUrl;
+                    me.portalList = res.projectPortals || null;
+                    // 终端分辨率
+                    me.terminaDeviceList = res.terminaDeviceData || [];
+                    // 启用/停用门户
+                    me.enableOrDisableUrl = res.enableOrDisableUrl || '';
+                    // 修改门户名称URL
+                    me.updateNameUrl = res.updateNameUrl || '';
+
+                }, function (res) {
+
+                }, '加载中...');
+            },
+            // 门户项移入
+            enter: function (index) {
+                this.isShow = true;
+                this.current = index;
+            },
+            // 门户项移出
+            leave: function () {
+                this.current = null;
+                this.isShow = false;
+            },
+            // 上传图片切换
+            uploadIcon: function (index) {
+                this.uploadIconUrl = "/res_startwe/assets/shangxian2.png";
+                this.showUploadText = true;
+            },
+            leaveUploadIcon: function () {
+                this.uploadIconUrl = "/res_startwe/assets/shangxian1.png";
+                this.showUploadText = false;
+            },
+            // 编辑图片切换
+            editIcon: function (index) {
+                this.editUrl = "/res_startwe/assets/bianji2.png";
+                this.showEditText = true;
+            },
+            leaveEditIcon: function () {
+                this.editUrl = "/res_startwe/assets/bianji1.png";
+                this.showEditText = false;
+            },
+            // 删除图片切换
+            delIcon: function (index) {
+                this.delUrl = "/res_startwe/assets/shanchu1.png";
+                this.showDelText = true;
+            },
+            leaveDelIcon: function () {
+                this.delUrl = "/res_startwe/assets/delw.png";
+                this.showDelText = false;
+            },
+            showPortalIcon: function () {
+                this.portalMore = true;
+            },
+            handleCommand(command) {
+                command.fun(command.item);
+            },
+            activeBox: function (index) {
+                this.layoutCaseActive = index;
+            },
+            pageActiveBox: function (index) {
+                this.layoutPageActive = index;
+            },
+            reSetLayout: function () {
+                this.layoutCaseActive = 1;
+                this.layoutPageActive = 1;
+            },
+            getCurrentVal: function (val) {
+
+                this.layoutDpi = val;
+            },
+
+        }
+    }
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .del-dialog {
+        z-index:9999;
+    }
+
+    /* 备案号 */
+
+    .pg-ft-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        /* position: absolute;
+        bottom: 10px; */
+    }
+
+    .pg-ft-wrap>span {
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* 内容开始 */
+
+    .banner {
+        width: 100%;
+        height: auto;
+    }
+
+    /* 圈子 */
+
+    .portal-list {
+        margin: auto;
+    }
+
+    /* 圈子标题 */
+
+    .portal-list-title {
+        font-size: 26px;
+        font-weight: bold;
+        margin: 40px 0 20px 0;
+    }
+
+    /* 圈子内容 */
+
+    .portal-list-content {
+        display: flex;
+        /* justify-content: space-between; */
+        flex-wrap: wrap;
+        margin-bottom: 100px;
+
+    }
+
+    /* 每个小盒子 */
+
+    .portal-list-content>div {
+
+        width: 270px;
+        height: 160px;
+        /* height: 280px; */
+        border: 1px solid #E9E9E9;
+        border-radius: 2px;
+    }
+
+    .portal-list-content>div {
+        margin-right: 30px;
+        margin-top: 30px;
+    }
+
+    .portal_inbox {
+        position: relative;
+    }
+
+    .content-box {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .moduleShow {
+        width: 270px;
+        height: 160px;
+        border-radius: 2px;
+        background: rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .moduleShow>div {
+        height: 100%;
+        width: 33%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .moduleShow>div:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .moduleShow>div>div {
+        color: #fff;
+        font-size: 12px;
+        margin-top: 12px;
+        padding: 0 3px;
+        border-radius: 5px;
+        line-height: 23px;
+        background-color: #524D62;
+    }
+
+    .inbox_Title {
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.80);
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .inbox_Title:hover {
+        color: #7863FF;
+        text-decoration: underline;
+    }
+
+    .inbox_date {
+        font-size: 14px;
+        color: #979797;
+        line-height: 40px;
+    }
+
+    .inbox_content {
+        font-size: 16px;
+        line-height: 30px;
+        color: #979797;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        height: 90px;
+        cursor: pointer;
+    }
+
+    .inbox_content:hover {
+        text-decoration: underline;
+    }
+
+    .inbox_icon {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .inbox_icon>div {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+    .inbox_icon>div>span {
+        color: #979797;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    /* 最后一个小盒子————添加圈子 */
+
+    .add-portal {
+        display: flex;
+    }
+
+    .add-portal:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .add-portal>div {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        flex-direction: column;
+    }
+
+    .add-portal>div:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .add-portal>div>img {
+        height: 20px;
+        width: 20px;
+    }
+
+    /* 删除 */
+
+    .del_circle {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        cursor: pointer;
+    }
+
+    .el-drawer__header>span {
+        font-family: PingFangSC-Medium, 微软雅黑;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 22px;
+        font-weight: 500;
+    }
+
+    /* 新建门户按钮 */
+    .el-container>.el-header>.el-button--primary {
+        background: #3491FA;
+        border: 1px solid #3491FA;
+        border-radius: 2px;
+        padding: 8px 20px;
+    }
+
+    /* 门户列表 */
+    .portal-present-list {
+        background: rgba(216, 216, 216, 0.00);
+        border: 1px solid #DDDDDD;
+        width: 160px;
+        height: 160px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .portal-present-list:hover .el-dropdown {
+        display: block;
+    }
+
+    .portal-present-main>div {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+
+
+    .portal-present-list>p {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        height: 30px;
+        line-height: 30px;
+        font-weight: 400;
+        text-align: center;
+    }
+
+    .portal-present-list>.img {
+        width: 100%;
+        height: 122px;
+        display: flex;
+        margin-bottom: 5px;
+    }
+
+    .portal-present-list>.img>img {
+        margin: auto;
+        margin-top: 30px;
+    }
+
+    .portal-present-list>.open-status {
+        width: 80px;
+        height: 80px;
+        position: absolute;
+        top: 0;
+    }
+
+    /* ,.portal-more */
+    .portal-present-list .el-dropdown {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: 8px;
+        right: 2px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .el-dropdown-menu {
+        width: 136px;
+        background: #464646;
+        border: none;
+    }
+
+    .el-dropdown-menu__item {
+        font-size: 14px;
+        color: #FFFFFF;
+        font-weight: 400;
+        padding: 0;
+    }
+
+    .popper__arrow {
+        display: none !important;
+    }
+
+    .el-dropdown-menu .menu-titlebox {
+        margin: 0 auto;
+        /* background: #3491FA; */
+        border-radius: 2px;
+        width: 126px;
+        height: 36px;
+    }
+
+    .menu-titlebox img {
+        margin: 0 6px 0 8px;
+    }
+
+    .el-dropdown-menu__item:focus,
+    .el-dropdown-menu__item:not(.is-disabled):hover {
+        background-color: transparent;
+        color: #FFFFFF;
+    }
+
+    .el-dropdown-menu__item .menu-titlebox:focus,
+    .el-dropdown-menu__item .menu-titlebox:hover {
+        background: #3491FA;
+        color: #FFFFFF;
+    }
+
+    .el-dialog__title {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 22px;
+        font-weight: 500;
+    }
+
+    .el-button--default {
+        border-radius: 2px;
+        width: 96px;
+        height: 36px;
+    }
+
+    .dialog-footer .el-button--primary {
+        background: #3491FA;
+        border-radius: 2px;
+        width: 96px;
+        height: 36px;
+        margin-left: 24px !important;
+    }
+
+    .el-input__inner {
+        background: #FFFFFF;
+        border: 1px solid #D9D9D9;
+        border-radius: 2px;
+    }
+
+    .el-dialog__body .text {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 22px;
+        font-weight: 500;
+        margin-top: 18px;
+    }
+
+    .layout-case {
+        display: flex;
+        margin-top: 12px;
+    }
+
+    /* 布局方案选择框 */
+    .layout-case div {
+        background: rgba(249, 249, 249, 0.00);
+        border-radius: 2px;
+        width: 115px;
+        height: 82px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        margin-right: 22px;
+    }
+
+    .layout-case div:hover,
+    .layout-case-active,
+    .layout-size-img:hover,
+    .layoutActive {
+        border: 0.8px solid #3491FA;
+        cursor: pointer;
+    }
+
+    /* 选择页面或设置页面尺寸 */
+    .layout-case .layout-size {
+        width: 110px;
+        height: 110px;
+        margin-right: 80px;
+    }
+
+    .layout-size-box {
+        display: flex;
+
+    }
+
+    .layout-size-box .layout-size {
+        width: 130px;
+        margin-right: 80px;
+    }
+
+    .layout-size-box .layout-size-img {
+        width: 120px;
+        height: 110px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+
+    .layout-size-img img {
+        width: 79px;
+        height: 67px;
+    }
+
+    .layout-set-size {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .input-line input {
+        height: 20px;
+        width: 45px;
+        border: none;
+        padding: 0 6px;
+        border-bottom: 1px #D9D9D9 solid;
+    }
+
+    .el-select .el-input__inner {
+
+        border: none;
+        font-size: 14px;
+        color: #7F7F7F;
+        font-weight: 400;
+
+    }
+
+    /* 弹窗居中 */
+    .el-dialog {
+        display: flex;
+        flex-direction: column;
+        margin: 0 !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .el-dialog .el-dialog__body {
+        flex: 1;
+        overflow: auto;
+    }
+</style>

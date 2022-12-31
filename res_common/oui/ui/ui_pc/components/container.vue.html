@@ -1,0 +1,103 @@
+<!--
+    容器组件 具备声明 oui-container
+    子组件占位符 必须声明 oui-container-flag
+-->
+<template>
+    <div class="oui-container" draggable="true">
+
+        <div class="oui-container-main">
+            <div class="oui-container-placeholder">容器组件 请拖拽组件到这里</div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                console.log(this.bindProp)
+                this.onUpdate && this.onUpdate(key, v, ov, {
+                    value: v,
+                    data4DB: v,
+                    display: v
+                }); //外部构造的方法调用
+            }
+        },
+        mounted() {
+            var self = this
+
+            console.log(this.control)
+            console.log(this.otherAttrs);
+
+            console.log(this.otherAttrs.headerheight)
+        }
+    }
+</script>
+
+<style>
+    .control-abs-container .control-inner-abs .control-container-abs,
+    .oui-container {
+        height: 100%;
+        width: 100%;
+
+    }
+
+    .oui-container .el-container {
+        height: 100%;
+    }
+
+    .oui-container-header,
+    .oui-container-aside,
+    .oui-container-main,
+    .oui-container-footer {
+        display: flex;
+        background-color: #e6e6e6;
+        border: 1px solid #ffffff;
+    }
+
+    .oui-container-main {
+        height: 100%;
+    }
+
+    .oui-container-placeholder {
+        min-height: 60px;
+        height: 100%;
+        width: 100%;
+        background-color: #f0f0f0;
+        border: 1px dotted;
+        color: #a7b1bd;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    /**
+    *重写样式
+    */
+    .el-header,
+    .el-footer,
+    .el-main {
+        padding: 0;
+    }
+</style>

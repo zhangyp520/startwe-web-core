@@ -1,0 +1,115 @@
+<template>
+    <div class="body-background">
+        <div class="content">
+            <el-container :style="containerHeight">
+                <el-aside class="aside" width="200px">
+                    <el-menu :default-active="currentPage" @select="menuSelect">
+                        <template v-for="(menu,index) in menus">
+                            <el-menu-item v-if="menu.submenus.length == 0" :index="menu.pageurl">
+                                <i :class="menu.icon"></i>
+                                <span slot="title">{{menu.title}}</span>
+                            </el-menu-item>
+                            <el-submenu v-else :index="menu.pageurl">
+                                <template slot="title">
+                                    <i :class="menu.icon"></i>
+                                    <span>{{menu.title}}</span>
+                                </template>
+                                <el-menu-item v-for="(submenu,subindex) in menu.submenus" :index="submenu.pageurl">{{submenu.title}}</el-menu-item>
+                            </el-submenu>
+                        </template>
+                    </el-menu>
+                </el-aside>
+                <el-main>
+                    <div v-show="currentPage == 'email'">
+                        <oui-include  type="module" url="res_startwe/html/workArea/settings/email.vue.html">
+                        </oui-include>
+                    </div>
+                    <div v-show="currentPage == 'message'">
+                        <oui-include  type="module" url="res_startwe/html/workArea/settings/message.vue.html">
+                        </oui-include>
+                    </div>
+                    <div v-show="currentPage == 'db'">
+                        <oui-include  type="module" url="res_startwe/html/workArea/settings/db.vue.html">
+                        </oui-include>
+                    </div>
+                </el-main>
+            </el-container>
+        </div>
+    </div>
+</template>
+<script>
+    export default{
+        templateType:"vue",
+        el:"home",
+        data:function(){
+            return {
+                    currentPage:"email",
+                    menus:[{
+                        icon:"el-icon-message",
+                        title:"邮件配置",
+                        pageurl:"email",
+                        submenus:[]
+                    },{
+                        icon:"el-icon-chat-dot-round",
+                        title:"短信配置",
+                        pageurl:"message",
+                        submenus:[]
+                    },{
+                        icon:"el-icon-coin",
+                        title:"存储配置",
+                        pageurl:"db",
+                        submenus:[]
+                    }]
+                }
+        },
+        methods:{
+            menuSelect:function(index, indexarray){
+                let [url] = [...indexarray].reverse();
+                console.log('menuSelect', url)
+                this.currentPage = url;
+            }
+        },
+        mounted: function(){
+            this.containerHeight = `height:${document.documentElement.clientHeight - 86}px`;
+            let that = this;
+            window.onresize = function () {
+                that.containerHeight = `height:${document.documentElement.clientHeight - 86}px`;
+            }
+        }
+    }
+</script>
+<style>
+    .el-form {
+        width: 95%;
+        margin: 0 auto;
+    }
+    .el-menu{
+        background-color: unset;
+        border-right:none;
+    }
+    .blue-color{
+        color:aqua
+    }
+    .content{
+        min-height: 450px;
+    }
+
+    .el-aside{
+        box-shadow: 0px 2px 6px 0px rgba(0, 21, 41, 0.12);
+        overflow: hidden;
+        position: relative;
+        z-index:99;
+    }
+    .body-background{
+        background: #F5F5F5;
+    }
+
+    .aside{
+        background-color:#fff;
+    }
+
+    .el-menu-item.is-active{
+        border-right: 2px solid #409EFF;
+        background-color:#ecf5ff;
+    }
+</style>

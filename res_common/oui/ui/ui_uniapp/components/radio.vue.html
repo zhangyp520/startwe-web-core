@@ -1,0 +1,68 @@
+<!--单选组-->
+<template >
+   <div class="radio-group-outer"  >
+       <el-radio-group v-model="value"
+                       :tempStyle="style"
+                       :id="id"
+                       :name="name"
+                       :bindProp="bindProp"
+                       :class="cls"
+                       :placeholder="placeholder"
+                       @change="_controlOnUpdate"
+               >
+           <el-radio v-for="item in data" :label="item.value" >{{item.display}}</el-radio>
+       </el-radio-group>
+   </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                otherAttrs:{},
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        mounted:function(){
+            if(!this.data.length){
+                if(this.otherAttrs&&this.otherAttrs.data){
+                    this.data = this.otherAttrs.data;
+                }
+            }
+        },
+        methods:{
+
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                var data4db = {};
+                if(v){
+                    var one = oui.findOneFromArrayBy(this.data,function(item){
+                        if((item.value+'') == (v+'')){
+                            return true;
+                        }
+                    });
+                    data4db = one;
+                }
+                console.dir(this);
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:data4db, display:data4db.display }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+.el-radio-group.control-field-value-abs{
+    line-height: 35px;
+}
+.radio-group-outer{
+    line-height: 35px
+}
+</style>

@@ -1,0 +1,31 @@
+<oui-view id="view-portal-page-info" class="container" oui-controller="com.startwe.models.page.web.PageRuntime"  data="com.startwe.models.page.web.PageRuntime.getData()">
+
+</oui-view>
+<script type="text/html" id="view-portal-page-info-tpl">
+    <div class="pg-block" >
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:nodeId})}}
+        </div>
+        <div class="pg-block-cont " >
+            {{if nodeType=='page' }}
+                <link type="text/css" rel="stylesheet" href="/res_engine/page_design/pc/css/page-common-runtime.css"/>
+                {{=content}}
+            {{/if}}
+
+            {{if nodeType=='pageList' }}
+            {{=content}}
+            {{/if}}
+
+
+            {{if (nodeType!='page')&&(nodeType!='pageList')}}
+                {{each content as item index}}
+                <a href="#" oui-e-{{clickName}}="event2showChildMenus" menu-id="{{item.id}}">{{item.display}}</a>
+                {{/each}}
+            {{/if}}
+
+            {{if (!content)||(!content.length)}}
+            暂无内容
+            {{/if}}
+        </div>
+    </div>
+</script>

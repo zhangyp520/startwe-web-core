@@ -1,0 +1,598 @@
+
+<template >
+   <div class="menuNav_box  wrapper"  >
+    <!--<div class="menuNav_left"></div>-->
+
+        <div class="menNav_crumbs_title head"    >
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+                <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+                <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+
+        <div class="content" style="width: 350px;" >
+
+
+            <el-tabs type="border-card"   style="width: 350px;"  >
+                <el-tab-pane>
+                    <span slot="label"> 业务字段</span>
+                    <el-tree
+
+                            :data="data"
+                            :props="props4bizFields"
+                            accordion
+                            :load="loadNode"
+                            lazy
+                            @node-click="handleNodeClick">
+                    </el-tree>
+                </el-tab-pane>
+                <el-tab-pane label="呈现设计">
+
+
+                    <el-menu
+                            default-active="2"
+                            class="el-menu-vertical-demo"
+                            @open="handleOpen"
+                            @select="handleSelect"
+                            @close="handleClose">
+                        <el-submenu :index="index+1"  v-for="(item, index) in treeData" :key="index">
+                            <template slot="title">
+                                <span>{{item.name}}</span>
+                            </template>
+                            <el-menu-item-group    >
+                                <el-menu-item  v-for="(it, index4child) in item.child" :key="index4child" :index="(index+1)+'-'+(index4child+1)">{{it.name}}</el-menu-item>
+
+                            </el-menu-item-group>
+
+                        </el-submenu>
+
+                    </el-menu>
+
+
+
+                </el-tab-pane>
+                <el-tab-pane label="高级设计">高级设计</el-tab-pane>
+            </el-tabs>
+
+
+
+            <!--<div class="menuNav_right">-->
+                <!--<div class="menNav_left_item">-->
+                    <!--<i class="el-icon-edit-outline"></i>-->
+                    <!--<span class="right-title_text">业务字段</span>-->
+                <!--</div>-->
+            <!--</div>-->
+
+        </div>
+
+       <div class="foot"></div>
+    <!--<div class="menuNav_right">-->
+        <!--<div v-for='(item,index) in arr' :key='index'>-->
+            <!--<div class="menNav_table">{{item.label}}</div>-->
+            <!--<div class="menNav_flexBetween">-->
+                <!--<div class="menNav_button design-item components-children-item"  v-for='(i,key) in item.content' :key='key'-->
+                <!--:control-abs-name="i.name"-->
+                <!--:control-abs-htmltype="i.htmlType"-->
+                <!--:control-abs-controltype="i.controlType"-->
+                <!--control-abs-formfield="true" control-abs-style="{layoutType:'oneLine'}" control-abs-innerstyle="{}" control-abs-otherattrs="{}"-->
+                <!--control-abs-events="{}" drag-status=""-->
+                <!--control-abs-description="插入文本">{{i.name}}</div>-->
+
+            <!--</div>-->
+           <!-- -->
+        <!--</div>-->
+    <!--</div>-->
+
+   </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                data: [{
+                    label: '一级 1',
+                    children: [{
+                        label: '二级 1-1',
+                        children: [{
+                            label: '三级 1-1-1',
+                            children: [{
+                                label: '三级 1-1-1'
+                            }]
+                        }]
+                    }]
+                }, {
+                    label: '一级 2',
+                    children: [{
+                        label: '二级 2-1',
+                        children: [{
+                            label: '三级 2-1-1'
+                        }]
+                    }, {
+                        label: '二级 2-2',
+                        children: [{
+                            label: '三级 2-2-1'
+                        }]
+                    }]
+                }, {
+                    label: '一级 3',
+                    children: [{
+                        label: '二级 3-1',
+                        children: [{
+                            label: '三级 3-1-1'
+                        }]
+                    }, {
+                        label: '二级 3-2',
+                        children: [{
+                            label: '三级 3-2-1'
+                        }]
+                    }]
+                }],
+                props4bizFields: {
+                    label: 'name',
+                    children: 'zones',
+                    isLeaf: 'leaf'
+                },
+                arr:[
+                    {
+                        label:'容器',
+                        content:[]
+                    },
+                    {
+                        label:'按钮',
+                        content:[]
+                    },
+                    {
+                        label:'表格',
+                        content:[]
+                    },
+                    {
+                        label:'其他',
+                        content:[]
+                    }
+                ],
+                restaurants: [],
+                state: '',
+                treeData: [
+                    {
+                        id: 1,
+                        name: '列表呈现设计',
+                        child: [
+                            {
+                                //前后端统一结构
+                                id: 1,
+                                name: '员工信息-列表1',
+                                templateType: 1,
+                                //前端需要的
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 2,
+                                name: '员工信息-列表2',
+                                templateType: 1,
+                                selected: false  //是否被选中
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: '编辑呈现设计',
+                        child: [
+                            {
+                                id: 3,
+                                name: '员工信息编辑1',
+                                templateType: 2,
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 4,
+                                name: '员工信息编辑2',
+                                templateType: 2,
+                                selected: false  //是否被选中
+                            },
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: '详情呈现设计',
+                        child: [
+                            {
+                                id: 5,
+                                name: '员工信息详情1',
+                                templateType: 3,
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 6,
+                                name: '员工信息详情2',
+                                templateType: 3,
+                                selected: false  //是否被选中
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        name: '报表呈现设计',
+                        child: [
+                            {
+                                id: 7,
+                                name: '员工信息报表1',
+                                templateType: 4,
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 8,
+                                name: '员工信息报表2',
+                                templateType: 4,
+                                selected: false  //是否被选中
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        name: '原型呈现设计',
+                        child: [
+                            {
+                                id: 9,
+                                name: '员工信息原型1',
+                                templateType: 5,
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 10,
+                                name: '员工信息原型2',
+                                templateType: 5,
+                                selected: false  //是否被选中
+                            }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        name: '打印呈现设计',
+                        child: [
+                            {
+                                id: 11,
+                                name: '员工信息打印1',
+                                templateType: 6,
+                                selected: false  //是否被选中
+                            },
+                            {
+                                id: 12,
+                                name: '员工信息打印2',
+                                templateType: 6,
+                                selected: false  //是否被选中
+                            }
+                        ]
+                    }
+
+                ],
+                currentPageFields: [
+                    {
+                        bizId: 'name',
+                        name: '姓名',
+                        id: 1,
+                    }
+                ]
+
+            }
+        },
+        mounted: function () {
+            let arr = com.oui.absolute.AbsoluteDesign.defaultControls
+            for (const item of arr) {
+                if(item.htmlType == 'tableLine'){
+                    this.arr[0].content.push(item)
+                }else if(item.htmlType == 'button') {
+                    this.arr[1].content.push(item)
+                }else if(item.htmlType == 'textInput') {
+                    this.arr[2].content.push(item)
+                }else{
+                    this.arr[3].content.push(item)
+                }
+            }
+            this.restaurants = this.loadAll();
+        },
+        methods:{
+
+            loadNode: function(node, resolve) {
+                if (node.level === 0) {
+                    return resolve([{ name: 'region' }]);
+                }
+                if (node.level > 1) return resolve([]);
+
+                setTimeout(() => {
+                    const data = [{
+                        name: 'leaf',
+                        leaf: true
+                    }, {
+                        name: 'zone'
+                    }];
+
+                    resolve(data);
+                }, 500);
+            },
+            handleNodeClick: function(data) {
+                console.log(data);
+            },
+                    handleOpen: function(key, keyPath){
+                console.log(key, keyPath);
+            },
+            handleClose: function(key, keyPath){
+                console.log(key, keyPath);
+            },
+            handleSelect: function(key, keyPath){
+                console.log(key, keyPath);
+            },
+
+            querySearch: function(queryString, cb) {
+                var restaurants = this.restaurants;
+                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter: function(queryString) {
+                return (restaurant) = function() {
+                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+            loadAll: function() {
+                return [
+                    { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+                    { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
+                    { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+                    { "value": "泷千家(天山西路店)", "address": "天山西路438号" },
+                    { "value": "胖仙女纸杯蛋糕（上海凌空店）", "address": "上海市长宁区金钟路968号1幢18号楼一层商铺18-101" },
+                    { "value": "贡茶", "address": "上海市长宁区金钟路633号" },
+                    { "value": "豪大大香鸡排超级奶爸", "address": "上海市嘉定区曹安公路曹安路1685号" },
+                    { "value": "茶芝兰（奶茶，手抓饼）", "address": "上海市普陀区同普路1435号" },
+                    { "value": "十二泷町", "address": "上海市北翟路1444弄81号B幢-107" },
+                    { "value": "星移浓缩咖啡", "address": "上海市嘉定区新郁路817号" },
+                    { "value": "阿姨奶茶/豪大大", "address": "嘉定区曹安路1611号" },
+                    { "value": "新麦甜四季甜品炸鸡", "address": "嘉定区曹安公路2383弄55号" },
+                    { "value": "Monica摩托主题咖啡店", "address": "嘉定区江桥镇曹安公路2409号1F，2383弄62号1F" },
+                    { "value": "浮生若茶（凌空soho店）", "address": "上海长宁区金钟路968号9号楼地下一层" },
+                    { "value": "NONO JUICE  鲜榨果汁", "address": "上海市长宁区天山西路119号" },
+                    { "value": "CoCo都可(北新泾店）", "address": "上海市长宁区仙霞西路" },
+                    { "value": "快乐柠檬（神州智慧店）", "address": "上海市长宁区天山西路567号1层R117号店铺" },
+                    { "value": "Merci Paul cafe", "address": "上海市普陀区光复西路丹巴路28弄6号楼819" },
+                    { "value": "猫山王（西郊百联店）", "address": "上海市长宁区仙霞西路88号第一层G05-F01-1-306" },
+                    { "value": "枪会山", "address": "上海市普陀区棕榈路" },
+                    { "value": "纵食", "address": "元丰天山花园(东门) 双流路267号" },
+                    { "value": "钱记", "address": "上海市长宁区天山西路" },
+                    { "value": "壹杯加", "address": "上海市长宁区通协路" },
+                    { "value": "唦哇嘀咖", "address": "上海市长宁区新泾镇金钟路999号2幢（B幢）第01层第1-02A单元" },
+                    { "value": "爱茜茜里(西郊百联)", "address": "长宁区仙霞西路88号1305室" },
+                    { "value": "爱茜茜里(近铁广场)", "address": "上海市普陀区真北路818号近铁城市广场北区地下二楼N-B2-O2-C商铺" },
+                    { "value": "鲜果榨汁（金沙江路和美广店）", "address": "普陀区金沙江路2239号金沙和美广场B1-10-6" },
+                    { "value": "开心丽果（缤谷店）", "address": "上海市长宁区威宁路天山路341号" },
+                    { "value": "超级鸡车（丰庄路店）", "address": "上海市嘉定区丰庄路240号" },
+                    { "value": "妙生活果园（北新泾店）", "address": "长宁区新渔路144号" },
+                    { "value": "香宜度麻辣香锅", "address": "长宁区淞虹路148号" },
+                    { "value": "凡仔汉堡（老真北路店）", "address": "上海市普陀区老真北路160号" },
+                    { "value": "港式小铺", "address": "上海市长宁区金钟路968号15楼15-105室" },
+                    { "value": "蜀香源麻辣香锅（剑河路店）", "address": "剑河路443-1" },
+                    { "value": "北京饺子馆", "address": "长宁区北新泾街道天山西路490-1号" },
+                    { "value": "饭典*新简餐（凌空SOHO店）", "address": "上海市长宁区金钟路968号9号楼地下一层9-83室" },
+                    { "value": "焦耳·川式快餐（金钟路店）", "address": "上海市金钟路633号地下一层甲部" },
+                    { "value": "动力鸡车", "address": "长宁区仙霞西路299弄3号101B" },
+                    { "value": "浏阳蒸菜", "address": "天山西路430号" },
+                    { "value": "四海游龙（天山西路店）", "address": "上海市长宁区天山西路" },
+                    { "value": "樱花食堂（凌空店）", "address": "上海市长宁区金钟路968号15楼15-105室" },
+                    { "value": "壹分米客家传统调制米粉(天山店)", "address": "天山西路428号" },
+                    { "value": "福荣祥烧腊（平溪路店）", "address": "上海市长宁区协和路福泉路255弄57-73号" },
+                    { "value": "速记黄焖鸡米饭", "address": "上海市长宁区北新泾街道金钟路180号1层01号摊位" },
+                    { "value": "红辣椒麻辣烫", "address": "上海市长宁区天山西路492号" },
+                    { "value": "(小杨生煎)西郊百联餐厅", "address": "长宁区仙霞西路88号百联2楼" },
+                    { "value": "阳阳麻辣烫", "address": "天山西路389号" },
+                    { "value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13" }
+                ];
+            },
+            handleSelect: function(item) {
+                console.log(item);
+            },
+            handleIconClick: function(ev) {
+                console.log(ev);
+            },
+            selectClick: function(data) {
+                for (const item of this.treeData) {
+                    if (item.id === data.templateType){
+                        for (const it of item.child) {
+                            if (it.id === data.id){
+                                it.selected = true;
+                            }else{
+                                it.selected = false;
+                            }
+                        }
+                    } else {
+                        for (const it of item.child) {
+                            it.selected = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .menuNav_box{
+        /*position: relative;*/
+        /*width: 350px;*/
+       /*height: 100vh;*/
+        /*display: flex;*/
+
+    }
+    .menNav_crumbs_title{
+        margin-top: 10px;
+        height: 40px;
+        width: 350px;
+    }
+    .menNav_content{
+        display: flex;
+    }
+    .menNav_left_item{
+        margin-top: 10px;
+        min-height: 25px;
+        font-size: 14px;
+    }
+    .menNav_item_list{
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+    .menNav_list_icon{
+        width: 30px;
+    }
+    .menNav_list_tree{
+        width: 110px;
+        font-size: 14px;
+    }
+    .item-tree{
+        overflow: auto;
+        height: 220px;
+    }
+    .item_click{
+        color: black;
+        padding: 7px 0;
+    }
+    .item_click_blue{
+        color: cornflowerblue;
+    }
+    .add_button{
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid rgba(223, 223, 223, 100);
+        padding-bottom: 16px;
+    }
+    .right-title_text{
+        margin-left: 10px;
+    }
+
+    .menNav_flexBetween{
+        display: flex;
+        justify-content: space-between;
+        flex-flow: wrap;
+    }
+    .menuNav_left{
+        width: 100%;
+        height: 100%;
+
+    }
+    .menuNav_right{
+        width: 100%;
+
+        border-left: 1px solid rgba(223, 223, 223, 100);
+        padding: 0px 16px;
+        overflow: auto;
+    }
+    /*滚动条样式*/
+    .menuNav_right::-webkit-scrollbar {
+         width: 4px;
+         /*height: 4px;*/
+     }
+    .menuNav_right::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+
+        background: rgba(0,0,0,0.2);
+    }
+    .menuNav_right::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+        border-radius: 0;
+        background: rgba(0,0,0,0.1);
+    }
+    .item-tree::-webkit-scrollbar {
+        width: 4px;
+        /*height: 4px;*/
+    }
+    .item-tree::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+
+        background: rgba(0,0,0,0.2);
+    }
+    .item-tree::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+        border-radius: 0;
+        background: rgba(0,0,0,0.1);
+    }
+    .menNav_table{
+        color: rgba(102, 102, 102, 100);
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .menNav_button{
+        margin-top: 15px;
+        width: 100px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 5px;
+        text-align: center;
+        border: 1px solid rgba(187, 187, 187, 100);
+        color: rgba(91, 107, 114, 100);
+        font-size: 12px;
+    }
+   .content .el-tabs__item{
+               padding: 0 15px!important;
+           }
+    .design-left{
+        font-size:14px
+    }
+    .el-menu-vertical-demo{
+        /*max-height:100vh;*/
+        overflow-y:scroll ;
+    }
+    html,body{
+        height: 100%;
+    }
+    body{
+        margin: 0;
+    }
+    .bottoms{
+        background: #F4F4F4;
+        padding: 0;
+        position: absolute;
+        left: 0px;
+        top: 50px;
+        bottom: 0px;
+        overflow: auto;
+        overflow-y: scroll;
+    }
+
+    .wrapper {
+        height: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .head {
+        border: 1px solid red;
+        padding: 15px;
+        flex-shrink: 0;
+        margin-bottom: 10px;
+    }
+
+    .content {
+        border: 1px solid blue;
+        flex: 1;
+        padding: 15px;
+        margin-bottom: 10px;
+        line-height: 50px;
+        overflow: auto;
+    }
+
+    .foot {
+        flex-shrink: 0;
+        padding: 10px;
+        border: 1px solid green;
+    }
+</style>

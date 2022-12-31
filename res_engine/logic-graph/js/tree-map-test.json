@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "parentId": null,
+    "sort": 0,
+    "name": "start"
+  },
+  {
+    "id": "734681335114533157",
+    "parentId": "1",
+    "name": "总裁会"
+  }
+]
+

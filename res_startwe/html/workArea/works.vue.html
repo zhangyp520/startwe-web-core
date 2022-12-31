@@ -1,0 +1,694 @@
+<template>
+    <div>
+        <h2 class="header">工作台</h2>
+        <div class="tabs-box">
+            <el-tabs v-model="activeName">
+                <el-tab-pane label="我的项目" name="1">
+                    <div :class="projectView">
+                        <div>
+                            <div v-if="orgProjectDatas.length == 0" class="no-project">
+                                <span class="fs-16">当前暂无项目</span>
+                                <span class="fs-12">你可以根据需要主动创建一个项目</span>
+                            </div>
+                            <el-button size="mini" type="primary" icon="el-icon-plus" @click="createingProject()" >创建项目</el-button>
+                            <!-- <el-button size="mini" icon="el-icon-download">导入项目</el-button> -->
+                        </div>
+                        <div class="right-area" v-if="orgProjectDatas.length > 0">
+                            <el-input size="mini" suffix-icon="el-icon-search" placeholder="请输入" v-model="searchStr" @input="searchProject"></el-input>
+                            <div :class="ListClass" @click="setShowType('list')"></div>
+                            <div :class="GridClass" @click="setShowType('grid')"></div>
+                        </div>
+                    </div>
+                    <div class="project-area" v-if="projectDatas.length > 0">
+                        <div v-if="showType == 'list'">
+                            <el-table :data="projectDatas" style="width: 100%">
+                                <el-table-column
+                                    label="项目名称"
+                                    >
+                                    <template slot-scope="scope" class="titel-row">
+                                        <div class="project-title">
+                                          <img :src="scope.row.img" class="project-img"/>
+                                          <div class="project-content margin-left10">
+                                            <div class="title">{{scope.row.name}}</div>
+                                            <div class="tip description-row text-too-long-ellipsis" :title="scope.row.description">{{scope.row.description}}</div>
+                                          </div>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="创建时间"
+                                    >
+                                    <template slot-scope="scope">
+                                        <div class="project-content">
+                                            <span class="tip">{{scope.row.createTime}}</span>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="操作"
+                                    >
+                                    <template slot-scope="scope">
+                                        <div class="actives-area">
+                                            <el-button type="text" @click="event2designProject(scope.row)">设计项目</el-button>
+                                            <el-divider direction="vertical"></el-divider>
+                                            <el-button type="text" @click="event2viewProject(scope.row)"   >访问项目</el-button>
+                                            <el-divider direction="vertical"></el-divider>
+                                            <el-button type="text" @click="createingProject(scope.row)">编辑</el-button>
+                                            <el-divider direction="vertical"></el-divider>
+                                            <el-dropdown placement="bottom" trigger="hover"  @command="listCommand">
+                                                <span class="el-dropdown-link">
+                                                    <el-button type="text">更多</el-button><i class="el-icon-arrow-down el-icon--right"></i>
+                                                </span>
+                                                <el-dropdown-menu slot="dropdown">
+                                                  <el-dropdown-item icon="el-icon-download" :command="importProject(scope.row)">导入</el-dropdown-item>
+                                                  <el-dropdown-item icon="el-icon-upload2" :command="exportProject(scope.row)">导出</el-dropdown-item>
+                                                  <!-- <el-dropdown-item icon="el-icon-document-copy">复制</el-dropdown-item> -->
+                                                  <!-- <el-dropdown-item icon="el-icon-star-off">设为星标</el-dropdown-item> -->
+                                                  <el-dropdown-item icon="el-icon-delete" :command="deleteProject(scope.row)">删除</el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </el-dropdown>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <div v-if="showType == 'grid'" class="grid-style">
+                            <div v-for="project in gridDataNumberFix(projectDatas)" :class="flexItemClass(project.type)">
+                                <template v-if="project.type == undefined">
+                                    <div class="box-left">
+                                        <img :src="project.img" class="grid-box-header"/>
+                                    </div>
+                                    <div class="box-right">
+                                        <div class="project-name">
+                                            <div>{{project.name}}</div>
+                                            <el-dropdown placement="bottom" @command="listCommand">
+                                                <i class="el-icon-more transform"></i>
+                                                <el-dropdown-menu slot="dropdown">
+                                                  <el-dropdown-item icon="el-icon-edit" :command="event2designProjectGrid(project)">设计项目</el-dropdown-item>
+                                                  <el-dropdown-item icon="el-icon-s-home" :command="event2viewProjectGrid(project)">访问项目</el-dropdown-item>
+                                                  <el-dropdown-item icon="el-icon-edit-outline" divided :command="createingProjectGrid(project)">编辑项目</el-dropdown-item>
+                                                  <el-dropdown-item icon="el-icon-download" :command="importProject(project)">导入</el-dropdown-item>
+                                                  <el-dropdown-item icon="el-icon-upload2" :command="exportProject(project)">导出</el-dropdown-item>
+                                                  <!-- <el-dropdown-item icon="el-icon-document-copy">复制</el-dropdown-item> -->
+                                                  <!-- <el-dropdown-item icon="el-icon-star-off"divided>设为星标</el-dropdown-item> -->
+                                                  <el-dropdown-item icon="el-icon-delete"divided :command="deleteProject(project)">删除</el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </el-dropdown>
+                                        </div>
+                                        <div class="grid-box-time tip fs-12">
+                                            {{project.createTime}}
+                                        </div>
+                                        <div class="tip">
+                                            {{project.description}}
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="orgProjectDatas.length > 0 && projectDatas.length == 0" class="project-area">
+                        <div class="no-project">
+                            <span class="fs-16">没有查询到相关数据</span>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <!-- <el-tab-pane label="我的圈子" name="2" disabled="true">我的圈子</el-tab-pane> -->
+            </el-tabs>
+        </div>
+        <el-dialog
+            :title="projectInfo.title"
+            :visible.sync="showProjectInfo"
+            width="50%"
+            before-close="showProjectInfo = false">
+            <el-form ref="projectInfo" :model="projectInfo" :rules="rules" label-width="80px">
+                <el-form-item label="项目名称" prop="name">
+                    <el-input v-model="projectInfo.name" maxlength="20" ></el-input>
+                </el-form-item>
+                <el-form-item v-if="projectInfo.title != '创建项目'" label="项目标识" prop="enName">
+                    <el-input :disabled="true"  v-model="projectInfo.enName" maxlength="20"></el-input>
+                </el-form-item>
+                <el-form-item label="项目描述">
+                    <el-input v-model="projectInfo.description" type="textarea" maxlength="200"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="showProjectInfo = false">取 消</el-button>
+                <el-button type="primary" @click="createOrUpdateProject">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="导入项目" 
+        :visible.sync="showImportProject" 
+        width="400px" 
+        before-close="showImportProject = false">
+            <el-upload
+                class="upload-demo"
+                drag
+                :action="importUrl"
+                :on-success="uploadOverHandle"
+                :show-file-list="false"
+                :multiple="false">
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            </el-upload>
+        </el-dialog>
+    </div>
+</template>
+<script>
+    export default{
+        methods:{
+            event2designProject: function (row) {
+                var url = oui.getContextPath() + 'index4project.html';
+                url = oui.setParam(url, 'loadMenusUrl', 'res_engine/portal/menus/project-tree.json');
+                url = oui.addParams(url, {
+                    urlParams: oui.parseString({
+                        circleId: row.circleId || '',
+                        id: row.id,
+                        loadProjectDesignPath: row.extraAttrs.loadProjectUrl
+                    })
+                });
+                oui.router.push(url)
+            },
+
+            event2designProjectGrid( row ){
+                console.log('event2designProjectGrid');
+                return function(){
+                    var url = oui.getContextPath() + 'index4project.html';
+                    url = oui.setParam(url, 'loadMenusUrl', 'res_engine/portal/menus/project-tree.json');
+                    url = oui.addParams(url, {
+                        urlParams: oui.parseString({
+                            circleId: row.circleId || '',
+                            id: row.id,
+                            loadProjectDesignPath: row.extraAttrs.loadProjectUrl
+                        })
+                    });
+                    oui.router.push(url)
+                }
+            },
+            //访问项目
+            event2viewProject:function(row){
+
+                if(row.extraAttrs.isHavePortals==='false'){
+                    this.$message({
+                        message: '当前项目尚未配置门户页面，暂不支持访问',
+                        type: 'warning'
+                    });
+                    return
+                }
+
+                 
+
+                var renderUrl = encodeURIComponent(row.extraAttrs.renderPagesUrl)
+                var loadProjectPortalDesignUrl = encodeURIComponent(row.extraAttrs.loadProjectPortalDesignUrl)
+                //获取列表访问地址  
+                var url  = "/showportal.html?loadProjectPortalDesignUrl="+loadProjectPortalDesignUrl+"&nodeType%3DpageList";
+
+                window.open(url)
+            },
+
+            event2viewProjectGrid:function(row){
+                return function(){
+                    console.info(row,'row')
+                    var renderUrl = encodeURIComponent(row.extraAttrs.renderPagesUrl)
+                    var loadProjectPortalDesignUrl = encodeURIComponent(row.extraAttrs.loadProjectPortalDesignUrl)
+                    //获取列表访问地址  
+                    var url  = "/showportal.html?loadProjectPortalDesignUrl="+loadProjectPortalDesignUrl+"&loadMenusUrl=%2FBZZBVf.biz%3Fid%3D629585360082436096%26nodeId%3D301376127285161707%26nodeType%3DpageList";
+
+                    window.open(url)
+                }
+            },
+            searchProject:function(str){
+                let filterList = [];
+                this.orgProjectDatas.forEach(function(item){
+                    if(item.name.indexOf(str) != -1){
+                        filterList.push(item);
+                    }
+                })
+                this.projectDatas = filterList;
+                
+                console.log('searchProject', a == "", this.orgProjectDatas, this.projectDatas);
+            },
+            uploadOverHandle:function(response, file, fileList){
+                console.log('upload success', response, file, fileList);
+                if( response.success ){
+                    this.$message({
+                        message:'导入成功',
+                        type:'success'
+                    });
+                    this.showImportProject = false;
+                } else {
+                    this.$message({
+                        message: response.msg,
+                        type:'error'
+                    });
+                }
+            },
+            createingProjectGrid:function( project = null ){
+                console.log('createingProjectGrid', project);
+                let that = this;
+                return function(){
+                    that.projectInfo.title = "编辑项目";
+                    that.projectInfo.circleId = project.circleId;
+                    that.projectInfo.name = project.name;
+                    that.projectInfo.description = project.description;
+                    that.projectInfo.enName = project.enName;
+                    that.projectInfo.id = project.id;
+
+                    that.updateProjectUrl = project.extraAttrs.saveProjectUrl;
+                    that.showProjectInfo = true;
+                }
+            },
+            importProject:function( item ){
+                let that = this;
+                return function(){
+                    let importUrl = item.extraAttrs.importUrl;
+                    that.importUrl = oui.addParams(importUrl,{
+                        tokenId:oui.cookie('tokenId'),
+                        nodeId:item.id,
+                        nodeType:'project'
+                    });
+                    that.showImportProject = true;
+                }
+            }, 
+            deleteProject:function( item ){
+                let that = this;
+                return function(){
+                    that.$confirm('确认删除该项目？','警告',{
+                        type: 'warning'
+                    }).then(function(){
+                        let deleteUrl = item.extraAttrs.removeProjectUrl;
+                        oui.postData(deleteUrl, {
+                            id: item.id
+                        }, function( res ){
+                            if( res.success ){
+                                // that.getProjects()
+                                document.location.reload();
+                            }
+                        })
+                    }).catch(()=>{})
+                    
+                }
+            },
+            exportProject:function( item ){
+                return function(){
+                    console.log('exportProject!!!!', item);
+                    let exportUrl = item.extraAttrs.exportUrl;
+                    exportUrl = oui.addParams(exportUrl,{
+                        userId:oui.cookie('userId'),
+                        tokenId:oui.cookie('tokenId'),
+                        nodeId:item.id,
+                        nodeType:'project'
+                    });
+                    oui.downloadFile(exportUrl);
+                }
+            },
+            listCommand:function( fn ){
+                fn();
+            },
+            createOrUpdateProject:function(){
+                let { projectInfo } = this;
+                let that = this;
+                if(projectInfo.title == "创建项目"){
+                    oui.postData(this.createProjectUrl, 
+                    {"project": {
+                        "circleId": this.circleId,
+                        "name": projectInfo.name,
+                        //"enName": projectInfo.enName,
+                        "description": projectInfo.description,
+                        "id": ""
+                    }}, 
+                    function( res ){
+                        if( res.success ){
+                            that.showProjectInfo = false;
+                            that.getProjects();
+                        }
+                    })
+                }else if( projectInfo.title == "编辑项目" ){
+                    oui.postData(this.updateProjectUrl, 
+                    {"project": {
+                        "circleId": projectInfo.circleId,
+                        "name": projectInfo.name,
+                        "enName": projectInfo.enName,
+                        "description": projectInfo.description,
+                        "id": projectInfo.id
+                    }}, 
+                    function( res ){
+                        if( res.success ){
+                            that.showProjectInfo = false;
+                            that.getProjects();
+                        }
+                    })
+                }
+            },
+            getProjects:function(){
+                let that = this;
+                var str = oui.storage.get('startwe_menus');
+                var startwe_menus = oui.parseJson(str || '[]');
+                let circle_create_by_me
+
+                let circle = oui.findOneFromArrayBy(startwe_menus, function (item) {
+                    if (item.id == 'circle_create_by_me') {
+                        return true;
+                    }
+                });
+                //首先获取圈子信息
+                oui.postData(circle.params.initPath, {}, function(res){
+                    if( res.success && res.circles.length > 0){
+                        that.circleId = res.circles[0].id
+                        that.enName = res.circles[0].enName+"_"
+                        console.log('获取到的圈子id为>', that.circleId);
+
+                        //获取项目信息
+                        that.one = oui.findOneFromArrayBy(startwe_menus, function (item) {
+                        if (item.id == 'project-list') {
+                                return true;
+                            }
+                        });
+                        console.log('that.one', that.one);
+                        oui.postData(that.one.params.initPath, {
+                            circleId: that.circleId
+                        }, function(res){
+                            that.createProjectUrl = res.createProjectUrl;
+                            let projectdatas = res.projects.map(( project ) => {
+                                //添加默认头像
+                                if(project.extraAttrs.iconId){
+                                    project.img = "/res_startwe/assets/"+project.extraAttrs.iconId.replace("default_",'')+".png";
+                                }else{
+                                    project.img = "res_startwe/assets/temp/project.png";
+                                }
+                                  
+                                return project;
+                            });
+                            that.projectDatas = [...projectdatas];
+                            that.orgProjectDatas =[...projectdatas];
+                        },function(err){
+                            console.log('getProjects error!', err)
+                        });
+                    }else{
+                        oui.alert("获取圈子信息失败！将无法对项目操作。");
+                    }
+                },function(err){
+                    console.log('getProjects error!', err)
+                });
+            },
+            createingProject:function(project = null){
+                console.log('createingProject', project);
+                //如果project为空则创建项目，如果不为空则project为项目信息对象，进入修改分支4
+                
+                if(project){
+                    this.projectInfo.title = "编辑项目";
+                    this.projectInfo.circleId = project.circleId;
+                    this.projectInfo.name = project.name;
+                    this.projectInfo.description = project.description;
+                    this.projectInfo.enName = project.enName;
+                    this.projectInfo.id = project.id;
+
+                    this.updateProjectUrl = project.extraAttrs.saveProjectUrl;
+                } else {
+                    this.projectInfo.title = "创建项目";
+                    this.projectInfo.circleId = this.circleId;
+                    this.projectInfo.name = "";
+                    this.projectInfo.description = "";
+                    this.projectInfo.enName = this.enName;
+                }
+                this.showProjectInfo = true;
+            },
+            setShowType:function( type ){
+                if( type === 'grid'){
+                    this.GridClass = "hand main7 flex-col";
+                    this.ListClass = "hand main6 flex-col opcy";
+                } else {
+                    this.GridClass = "hand main7 flex-col opcy";
+                    this.ListClass = "hand main6 flex-col";
+                }
+                this.showType =  type;
+            },
+            gridDataNumberFix:function( datas ){
+                let fixNumber = datas.length % 3;
+                let fixItem = [];
+                for(let i = 0; i < (3-fixNumber); i++){
+                  fixItem.push({
+                    type:"fix"
+                  })
+                }
+
+                let finalArray = [...datas, ...fixItem];
+                console.log('finalArray', finalArray);
+                return finalArray;
+            },
+            flexItemClass:function( type ){
+                return type == "fix" ? "" : "project-box";
+            }
+        },
+        watch:{
+            'orgProjectDatas':function(newDatas){
+                console.log('watch orgProjectDatas', newDatas);
+                this.projectView = newDatas.length > 0 ? "active-area" : "active-area-none";
+            }
+        },
+        computed:{
+        },
+        data:function(){
+            return {
+                test1:"",
+                activeName:"",
+                showType:"list",
+                projectView:"active-area-none",
+                showProjectInfo:false,
+                showImportProject:false,
+                searchStr:"",
+                GridClass: "hand main7 flex-col opcy",
+                ListClass: "hand main6 flex-col",
+                createProjectUrl:"",
+                importUrl:"",
+                circleId:null,
+                enName:null,
+                projectInfo:{
+                    title:"",
+                    projectImg:"",
+                    name:"",
+                    enName:"",
+                    description:""
+                },
+                rules:{
+                    name:[{ required: true, message: '请输入项目名称', trigger: 'blur' }],
+                    enName:[{ required: true, message: '请输入项目标识', trigger: 'blur' }]
+                },
+                orgProjectDatas:[],
+                projectDatas:[],
+                one:null
+            }
+        },
+        mounted:function(){
+            this.activeName = "1";
+            this.getProjects();
+        }
+    }
+</script>
+<style scoped>
+    .header{
+        font-size: 20px;
+        font-weight: 500;
+        height:60px;
+        background-color: #fff;
+        padding:16px 32px;
+    }
+    
+    .tabs-box{
+        background-color: #fff;
+    }
+
+    .active-area{
+        display: flex;
+        justify-content: space-between;
+        padding: 24px 32px;
+    }
+
+    .active-area-none{
+        display: block;
+        background-color:#F5F5F5;
+        text-align: center;
+    }
+
+    .right-area div{
+        margin-left:10px;
+    }
+
+    .main6 {
+        width: 28px;
+        height: 28px;
+        background: url('/res_startwe/assets/i_list.png')
+            100% no-repeat;
+    }
+    
+    .main7 {
+        width: 28px;
+        height: 28px;
+        background: url('/res_startwe/assets/i_dashitu.png')
+            100% no-repeat;
+    }
+
+    .right-area{
+        display: flex;
+        flex-wrap:nowrap;
+        justify-content: center;
+    }
+
+    .project-area{
+        background-color: #F5F5F5;
+        padding: 20px 0;
+    }
+
+    .project-title{
+        display: flex;
+    }
+
+    .el-tabs__nav{
+        margin-left:32px;
+    }
+
+    .margin-left10{
+        margin-left:10px;
+    }
+
+    .project-content{
+        float:left;
+    }
+
+    .project-content .title{
+        font-size: 14px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        min-width: 300px;
+    }
+
+    .box-right .tip, .project-content .tip{
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    .description-row{
+        width:500px;
+    }
+
+    .username{
+        width: 60px;
+        display: inline-block;
+        line-height: 14px;
+    }
+
+    .text-too-long-ellipsis{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .project-img{
+        width:48px;
+        height:48px;
+        float:left;
+        border-radius: 3px;
+    }
+
+    .project-area .cell{
+        padding-left:48px;
+    }
+
+    .el-table th.el-table__cell>.cell{
+        padding-left:48px;
+    }
+
+    .el-dropdown-link, .actives-area{
+        color: #1890FF;
+    }
+
+    .el-tabs__header{
+        margin:0px
+    }
+
+    .grid-style{
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .grid-style > div{
+        width:32%;
+        padding:10px;
+        margin-bottom:24px;
+    }
+
+    .grid-style > div.project-box{
+        height: 184px;
+        background: #FFFFFF;
+        border-radius: 2px;
+        border: 1px solid #E9E9E9;
+        display: flex;
+        justify-content:flex-start;
+    }
+
+    .grid-style > div.project-box:hover{
+        box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.09);
+    }
+
+    .box-left{
+        padding:14px;
+    }
+
+    .box-right{
+        padding:14px 14px 0px 0px;
+        flex-grow: 1;
+    }
+
+    .box-right > .project-name{
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .no-project{
+        padding-top: 380px;
+        background: url(/res_startwe/assets/kong.png) 20px 234px no-repeat;
+        width: 210px;
+        margin: 0px auto;
+        text-align: center;
+    }
+
+    .grid-box-header{
+        width: 48px;
+        height: 48px;
+        border-radius: 24px;
+    }
+
+    .grid-box-time{
+        margin:5px 0px;
+    }
+
+    .transform{
+        transform: rotate(90deg);
+        color:#1890FF;
+    }
+    
+    .no-project span{
+        display: block;
+        padding-bottom:9px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.5);
+    }
+
+    .fs-16{
+        font-size: 16px !important;
+    }
+
+    .fs-12{
+        font-size: 12px !important;
+    }
+    .opcy{
+        opacity: 0.3;
+    }
+
+    .hand{
+       cursor: pointer; 
+    }
+</style>

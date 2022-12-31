@@ -1,0 +1,276 @@
+<!-- 按钮组件 -->
+<template>
+    <div class="button-outer" :style="{textAlign:buttonAlign}" v-show="!hidden">
+        <el-button v-if="buttonLayout=='onlyIcon' || buttonLayout=='leftIcon'" :tempStyle="style" :title="title"
+            :id="id" :bindProp="bindProp" :class="cls" v-model="title" @click="event2click" :placeholder="placeholder"
+            :icon="iconCls" :plain="plain" :round="round" :circle="circle" :disabled="disabled" :size="buttonSize"
+            :type="buttonShowType">
+            {{getDisplay()}}
+        </el-button>
+        <el-button v-if="buttonLayout=='rightIcon'" :tempStyle="style" :title="title" :id="id" :bindProp="bindProp"
+            :class="cls" v-model="title" @click="event2click" :placeholder="placeholder" :plain="plain" :round="round"
+            :circle="circle" :disabled="disabled" :size="buttonSize" :type="buttonShowType">
+            {{title||display}}<i :class="iconCls+' el-icon--right'"></i>
+        </el-button>
+        <el-button v-if="buttonLayout=='onlyText'" :tempStyle="style" :title="title" :id="id" :bindProp="bindProp"
+            :class="cls" v-model="title" @click="event2click" :placeholder="placeholder" :plain="plain" :round="round"
+            :circle="circle" :disabled="disabled" :size="buttonSize" :type="buttonShowType">
+            {{title||display}}
+        </el-button>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                id: '',
+                name: '',
+                data: {},
+                bindProp: '',
+                style: '',
+                cls: '',
+                placeholder: '',
+                iconCls: '',
+                title: '',
+                value: '',
+                display: '',
+                buttonLayout: 'onlyText', //onlyText,leftIcon,rightIcon,onlyIcon
+                buttonShowType: 'primary', //default,primary,success,info,warning,danger,text
+                plain: false,
+                round: false,
+                circle: false,
+                disabled: false,
+                events: {},
+                detailTableFullName: '',
+                rowIndex: -1,
+                buttonSize: 'default',
+                buttonAlign: "left",
+                hidden: false,
+               
+            }
+        },
+        mounted: function () {
+            this.title = this.title || this.display;
+
+            this.bind_Events();
+
+            if(this.otherAttrs){
+                this.title = this.control.name;
+
+                if (this.otherAttrs.buttonShowType) {
+                    this.buttonShowType = this.otherAttrs.buttonShowType;
+                }
+                if (this.otherAttrs.buttonAlign) {
+                    this.buttonAlign = this.otherAttrs.buttonAlign;
+                }
+                //是否禁用
+                if (this.otherAttrs.disabled) {
+                    this.disabled = this.otherAttrs.disabled;
+                }
+                if (this.otherAttrs.hidden) {
+                    this.hidden = this.otherAttrs.hidden;
+                }
+                if (this.otherAttrs.id) {
+                    this.id = this.otherAttrs.id;
+                }
+            }
+
+
+        },
+        methods: {
+            bind_Events() {
+                var me = this
+
+                var inited = false
+                
+
+
+                if (this.control && this.control.events ) {
+
+                    let interaction = this.control.events.interaction
+
+
+
+
+                    const clickEvent = function (item,currqueue) {
+         
+
+                        var formData = me.getPageData().getFormValue()
+                        // console.info(this.control,'this.control') 
+
+
+                        let postFormData = formData
+
+                        postFormData.id = "" //新增 
+
+                        var param = oui.getParam()
+
+
+                        if (param.viewType == 2) //编辑
+                        {
+                            postFormData.id = param.itemId
+                        }
+
+
+                        oui.postData(item.executeActionConfig.executePath, {
+
+                            formData: postFormData,
+                            id: postFormData.id
+
+                        }, (res) => {
+                            if (res.success) {
+
+                                window.parent.App.$message({
+                                    message: '数据保存成功',
+                                    type: 'success'
+                                });
+
+                                //返回列表 
+                                 referurl = document.referrer;
+                                 window.location.href = referurl;
+
+                                currqueue.inited = true;
+
+                            }
+
+                        }, function (msg) {
+
+                            window.parent.App.$message({
+                                message: msg,
+                                type: 'error'
+                            });
+                        })
+
+
+
+                    }
+
+                    const clickEvent1 = function () {
+                        console.info('tiem')
+                    }
+
+
+                    var runList = []
+                    //处理回调
+                    function createEvent(item) {
+                        runList.push({
+                            run: function () {
+                                
+                               
+                                //判断回调类型
+                                if(item.executeAction == 'pageTurn' && item.executePath ==  'externalLink')  //页面跳转
+                                {
+                                    
+                                    if(item.linkAddress){
+                                        window.location.href = item.linkAddress;
+                                    }else{ //无设置返回上一页
+                                        referurl = document.referrer;
+                                        window.location.href = referurl; 
+                                    }
+                                     
+                                } 
+
+                                this.inited = true;
+                              
+                            }
+                        });
+
+                        if (item.callbackInteractive) {
+                            createEvent(item.callbackInteractive)
+                        } else {
+                            return ''
+                        }
+
+                    }
+
+                    //遍历交互事件
+                    oui.eachArray(interaction, function (item) {
+
+
+                        if (item.trigMethod == "click") { //单击事件
+
+                            runList.push({
+                                run:  function()  {
+                                    clickEvent(item,this)  
+                                }
+                            })
+
+                            if (item.callbackInteractive) {
+                                createEvent(item.callbackInteractive)
+                            }
+
+                            me.onSingleClick = function () {
+                                var qu  =  oui.Queue.createNewQueue() 
+                                console.info(qu,'qu')
+                                qu.addAll(runList);
+                                qu.start(function () {
+                                    console.info('complete')
+                                });
+                            }
+
+                        }
+                        if (item.trigMethod == "pageTurn") { //外部链接
+
+                       
+                                if( item.executePath ==  'externalLink')  //页面跳转
+                                {
+                                    
+                                    if(item.linkAddress){
+                                        window.location.href = item.linkAddress;
+                                    }else{ //无设置返回上一页
+                                        referurl = document.referrer;
+                                        window.location.href = referurl; 
+                                    }
+                                     
+                                } 
+                                if( item.executePath ==  'pageModel')  { //跳转到页面模型
+
+                                    var param = oui.getParam() 
+                                    var renderUrl = param.renderUrl
+                                    var pageId = param.pageId
+                                    var modelpageurl = "list.html?renderUrl=" + encodeURIComponent(renderUrl) +
+                                        "&pageType=page&viewType=1&pageId=" + pageId
+                                     
+                                        window.location.href = modelpageurl; 
+                                }
+
+
+                        }
+
+
+                    });
+
+
+
+
+
+                }
+            },
+            //获取明细对象
+            getDetail() {
+                if (this.detailTableFullName) { //明细表处理
+                    return oui.util.eval(this.detailTableFullName);
+                }
+                return null;
+            },
+            getDisplay() {
+                if (this.buttonLayout == 'onlyIcon') {
+                    return '';
+                }
+                return this.title || this.display;
+            },
+            event2click() { //icon图标点击事件
+
+                debugger;
+                // this.onSingleClick && this.onSingleClick();
+                this.onClick && this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

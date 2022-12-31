@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="74px" height="74px" viewBox="0 0 74 74" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>label</title>
+    <defs>
+        <linearGradient x1="24.3996996%" y1="26.9106629%" x2="49.8798937%" y2="49.8916741%" id="linearGradient-1">
+            <stop stop-color="#FF9E9E" offset="0%"></stop>
+            <stop stop-color="#DB5555" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="门户列表" transform="translate(-864.000000, -127.000000)">
+            <g id="label" transform="translate(864.000000, 127.000000)">
+                <path d="M73.386,0 L0,73.386 L0,36.616 L36.616,0 L73.386,0 Z" id="形状结合备份" fill="url(#linearGradient-1)"></path>
+                <text id="已启用" transform="translate(28.071068, 27.928932) rotate(-45.000000) translate(-28.071068, -27.928932) " font-family="jiangchengzhiyinti400W, 江城知音体" font-size="16" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="3.07106781" y="33.9289322">已启用</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

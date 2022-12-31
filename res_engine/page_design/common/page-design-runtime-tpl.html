@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script type="text/html" id="htmlTypes">
+        image:{
+        name:'image'
+        },
+        qrcode:{
+        name:'qrcode'
+        },
+        barcode:{
+        name:'barcode'
+        },
+        label: {
+        name: 'label'
+        },//文本输入
+        //------- 外部接口传入控件类型 ---------------------
+        textInput: {
+        name: 'textInput'
+        },
+        selectInput: {
+        name: 'selectInput'
+        },
+        repeatSelect: {
+        name: 'repeatSelect'
+        },
+        read: {
+        name: 'read'
+        },
+        other: {
+        name: 'other'
+        }
+    </script>
+
+    <!--运行态模板设置-->
+
+    <!--二维码模板-->
+    <script type="text/html" id="page_runtime_control_qrcode">
+        <img src="{{data.url}}" class="control-field-html-{{control.htmlType}} control-field-{{control.controlType}}" />
+    </script>
+    <!--条形码模板-->
+    <script type="text/html" id="page_runtime_control_barcode">
+        <img src="{{data.url}}" class="control-field-html-{{control.htmlType}} control-field-{{control.controlType}}" />
+    </script>
+    <!--图片模板-->
+    <script type="text/html" id="page_runtime_control_image">
+        {{if !control.controlType}}
+            <img src="{{control.otherAttrs.img}}" class="control-field-html-{{control.htmlType}} control-field-{{control.controlType}}" />
+        {{else}}
+            <img src="{{data.url}}" class="control-field-html-{{control.htmlType}} control-field-{{control.controlType}}" />
+        {{/if}}
+    </script>
+    <!--插入文本-->
+    <script type="text/html" id="page_runtime_control_label">
+        {{data.value}}
+    </script>
+    <!--文本输入类-->
+    <script type="text/html" id="page_runtime_control_textInput">
+        {{data.value}}
+    </script>
+    <!--选择输入类-->
+    <script type="text/html" id="page_runtime_control_selectInput">
+        {{data.value}}
+    </script>
+    <!--平铺输入类-->
+    <script type="text/html" id="page_runtime_control_repeatSelect">
+        {{data.value}}
+    </script>
+    <!--查看类-->
+    <script type="text/html" id="page_runtime_control_read">
+        {{data.value}}
+    </script>
+    <!--other-->
+    <script type="text/html" id="page_runtime_control_other">
+        {{data.value}}
+    </script>
+</body>
+</html>
+

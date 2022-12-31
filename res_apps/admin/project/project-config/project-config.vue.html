@@ -1,0 +1,55 @@
+<!--多页签控件-->
+<template >
+    <div>
+        <oui-include url="res_common/oui/ui/ui_pc/components/tabs.vue.html" ref="project_config_tabs" type="module" data="tabsData"></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            var orgCfgId = oui.getUUIDLong();
+            var flowEngineCfgId = oui.getUUIDLong();
+            this.tabsData ={
+                value:orgCfgId,
+                data: [
+                    {
+                        "display":"组织机构模型配置1",
+                        "id":orgCfgId,
+                        "value":orgCfgId,
+                        "contentType":"pageUrl",
+                        "url":"res_apps/project/project-config/org-engine-config.vue.html"
+                    }
+                    ,
+                    {
+                        "display":"流程引擎配置",
+                        "id":flowEngineCfgId,
+                        "value":flowEngineCfgId,
+                        "contentType":"pageUrl",
+                        "url":"res_apps/project/project-config/flow-engine-config.vue.html"
+                    }
+                ]
+            };
+            return {
+                tabsData: this.tabsData
+            }
+        },
+        mounted:function(){
+
+            var me = this;
+            this.$nextTick(function(){
+                me.refresh();
+            });
+        },
+        methods:{
+            getTabsData:function(){
+                return this.tabsData;
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,538 @@
+
+<template >
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="text-right-control" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="倒计时" name="1">
+                    <div class="text-public-box">
+                        <span>截止时间</span>
+                        <div class="bgcolor-color-piker">
+                            <el-date-picker
+                                    v-model="deadline"
+                                    type="datetime"
+                                    placeholder="选择倒计时截止日期时间" @change="handleDeadlineChange" class="date-type">
+                            </el-date-picker>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>显示格式</span>
+                        <div class="bgcolor-color-piker">
+                            <el-select v-model="countdownCheckList" placeholder="请选择" class="date-type" @change="handleCountdownCheckListChange">
+                                <el-option
+                                        v-for="item in countdownCheckLists"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>结束显示</span>
+                        <div class="bgcolor-color-piker">
+                            <el-input class="date-type" v-model="endRemind" placeholder="例：倒计时结束" @change="handleEndRemindChange"></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>文字颜色</span>
+                        <div class="text-color-piker">
+                            <el-color-picker v-model="textColor" @change="changeTextColor"></el-color-picker>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>背景颜色</span>
+                        <div class="bgcolor-color-piker">
+                            <el-color-picker v-model="backgroundColor" @change="changeCountdownBackgroundColor"></el-color-picker>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>字体&emsp;&emsp;</span>
+                        <div class="bgcolor-color-piker">
+                            <div class="font-family-input-box">
+                                <el-select class="font-family-input" v-model="fontFamily" filterable placeholder="请选择" @change="changeFontFamily">
+                                    <el-option
+                                            v-for="item in fontFamilies"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div class="font-size-select-box">
+                                <el-select v-model="fontSize" class="font-size-select" @change="changeFontSize">
+                                    <el-option v-for="item in font" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="text-public-box">
+                        <span>文字效果</span>
+                        <div class="bgcolor-color-piker">
+                            <el-select v-model="textEffect" placeholder="请选择" class="date-format" @change="changeTextEffect">
+                                <el-option v-for="item in textEffects" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div> -->
+                    <div class="text-public-box">
+                        <span>行间距&emsp;</span>
+                        <div class="bgcolor-color-piker">
+                            <el-input v-model="rowSpacing" class="row-spacing-input"></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>内间距&emsp;</span>
+                        <div class="bgcolor-color-piker">
+                            <el-input v-model="textPadding" class="text-padding-input"></el-input>
+                        </div>
+                    </div>
+
+                    <div class="text-icon">
+                        <el-tooltip class="item" effect="dark" content="加粗" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/bold.png" @click='Bold'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="倾斜" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/italic.png" @click='italic'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="下划线" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/underscore.png" @click='underline'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除线" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/strikethrough.png" @click='linethrough'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="左对齐" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/alignLeft.png" @click='textstyle(1)'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="右对齐" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/alignRight.png" @click='textstyle(2)'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="居中" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/centered.png" @click='textstyle(3)'></img>
+                        </el-tooltip>
+                    </div>
+
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                slbHeight: '',
+                rightToolbarData: {},
+                //截止时间
+                deadline: "",
+                //要显示的倒计时格式
+                countdownCheckList: ["天","时","分","秒"],
+                // 字体大小
+                countdownCheckLists: [{
+                    value: ["天","时","分","秒"],
+                    label: 'x天x时x分x秒'
+                }, {
+                    value: ["时","分","秒"],
+                    label: 'x时x分x秒'
+                }, {
+                    value: ["分","秒"],
+                    label: 'x分x秒'
+                }, {
+                    value: ["秒"],
+                    label: 'x秒'
+                }, {
+                    value: ["分"],
+                    label: 'x分'
+                }, {
+                    value: ["时"],
+                    label: 'x时'
+                }, {
+                    value: ["天"],
+                    label: 'x天'
+                }],
+                //结束提醒
+                endRemind: "",
+                activeNames: "1",
+                currentControl: {},
+                // 内边距
+                textPadding:'',
+                // 行间距
+                rowSpacing:'',
+                // 字体颜色
+                textColor: '#000',
+                // 背景颜色
+                backgroundColor: '',
+                // 字体大小
+                font: [{
+                    value: '12',
+                    label: '12'
+                }, {
+                    value: '14',
+                    label: '14'
+                }, {
+                    value: '16',
+                    label: '16'
+                }, {
+                    value: '18',
+                    label: '18'
+                }],
+                fontSize: '14',
+                // 字体样式
+                fontFamily: 'SimSun',
+                fontFamilies: [{
+                    value: 'SimSun',
+                    label: '宋体 SimSun'
+                }, {
+                    value: 'SimHei',
+                    label: '黑体 SimHei'
+                }, {
+                    value: 'Microsoft YaHei',
+                    label: '微软雅黑 Microsoft YaHei'
+                }, {
+                    value: 'Microsoft JhengHei',
+                    label: '微软正黑体 Microsoft JhengHei'
+                }],
+                // 文字效果
+                textEffects: [{
+                    value: '1',
+                    label: '无'
+                }, {
+                    value: '2',
+                    label: '2'
+                }],
+                textEffect: '1'
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            //拷贝
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.otherAttrs.deadline) {
+                this.deadline = this.currentControl.otherAttrs.deadline;
+            }
+            if (this.currentControl.otherAttrs.countdownCheckList) {
+                this.countdownCheckList = this.currentControl.otherAttrs.countdownCheckList;
+            }
+            if (this.currentControl.otherAttrs.endRemind) {
+                this.endRemind = this.currentControl.otherAttrs.endRemind;
+            }
+            if (this.currentControl.style.backgroundColor) {
+                this.backgroundColor = this.currentControl.style.backgroundColor;
+            }
+            if (this.currentControl.innerStyle.styleField.color) {
+                this.textColor = this.currentControl.innerStyle.styleField.color
+            }
+            if (this.currentControl.innerStyle.styleField.fontSize) {
+                this.fontSize = this.currentControl.innerStyle.styleField.fontSize
+            }
+            if (this.currentControl.innerStyle.styleField.fontFamily) {
+                this.fontFamily = this.currentControl.innerStyle.styleField.fontFamily
+            }
+            if (this.currentControl.otherAttrs.textEffect) {
+                this.textEffect = this.currentControl.otherAttrs.textEffect;
+            }
+
+        },
+        methods:{
+            //更新
+            updateCurrentControl:function(){
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if(currentControl&&currentControl.id){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //处理截止日期改变事件
+            handleDeadlineChange: function () {
+                this.currentControl.otherAttrs.deadline = this.deadline;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.deadline = this.currentControl.otherAttrs.deadline;
+                this.updateCurrentControl();
+
+            },
+            //处理时间显示格式改变事件
+            handleCountdownCheckListChange: function () {
+                this.currentControl.otherAttrs.countdownCheckList = this.countdownCheckList;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.countdownCheckList = this.currentControl.otherAttrs.countdownCheckList;
+                this.updateCurrentControl();
+            },
+            //结束提示语改变事件
+            handleEndRemindChange: function () {
+                this.currentControl.otherAttrs.endRemind = this.endRemind;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.endRemind = this.currentControl.otherAttrs.endRemind;
+                this.updateCurrentControl();
+            },
+            //倒计时整体背景颜色改变事件
+            changeCountdownBackgroundColor: function () {
+                this.currentControl.style.backgroundColor = this.backgroundColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.backgroundColor = this.currentControl.style.backgroundColor;
+                this.updateCurrentControl();
+            },
+            //文本字体颜色改变事件
+            changeTextColor: function () {
+                this.currentControl.innerStyle.styleField.color = this.textColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.color = this.currentControl.innerStyle.styleField.color;
+                this.updateCurrentControl();
+            },
+            //文本字体大小改变事件
+            changeFontSize: function () {
+                this.currentControl.innerStyle.styleField.fontSize = this.fontSize;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontSize = this.currentControl.innerStyle.styleField.fontSize;
+                this.updateCurrentControl();
+            },
+            //文本字体样式改变事件
+            changeFontFamily: function () {
+                this.currentControl.innerStyle.styleField.fontFamily = this.fontFamily;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontFamily = this.currentControl.innerStyle.styleField.fontFamily;
+                this.updateCurrentControl();
+            },
+            //文本字体效果改变事件
+            changeTextEffect: function () {
+                this.currentControl.otherAttrs.textEffect = this.textEffect;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textEffect = this.currentControl.otherAttrs.textEffect;
+                this.updateCurrentControl();
+            },
+            //加粗
+            Bold() {
+                this.currentControl.otherAttrs.bold = this.currentControl.otherAttrs.bold ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.bold = this.currentControl.otherAttrs.bold;
+                this.updateCurrentControl();
+            },
+            //倾斜
+            italic() {
+                this.currentControl.otherAttrs.italic = this.currentControl.otherAttrs.italic ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.italic = this.currentControl.otherAttrs.italic;
+                this.updateCurrentControl();
+            },
+            //下划线
+            underline() {
+                this.currentControl.otherAttrs.underline = this.currentControl.otherAttrs.underline ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.underline = this.currentControl.otherAttrs.underline;
+                this.updateCurrentControl();
+            },
+            //删除线 
+            linethrough() {
+                this.currentControl.otherAttrs.linethrough = this.currentControl.otherAttrs.linethrough ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.linethrough = this.currentControl.otherAttrs.linethrough;
+                this.updateCurrentControl();
+                
+            },
+            //文字对齐
+            textstyle(type) {
+                this.currentControl.otherAttrs.textstyle = type
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textstyle = this.currentControl.otherAttrs.textstyle;
+                this.updateCurrentControl();
+            },
+        }
+    }
+</script>
+
+<style scoped>
+    body {
+        background: #666;
+    }
+    .el-collapse{
+        border:none;
+    }
+    .text-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .text-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .text-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+        width: 70%;
+        padding-right: 20px;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    /* 类型 */
+
+    .date-type .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .date-type .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .date-type .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .date-type .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 外层公共盒子 */
+
+    .text-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .text-public-box>span {
+        /* margin-right: 8px; */
+        color: #fff;
+        /* margin-left: 10px; */
+        width: 30%;
+        text-align: center;
+    }
+    /* 文字颜色选择器 */
+
+    .text-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .text-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .text-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+    .font-family-input-box {
+        margin-right: 10px;
+        width: 80%;
+    }
+    /* 字体类型 */
+
+    .font-family-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    /* .font-family-input-box {
+        margin-right: 10px;
+        width: 47%;
+    } */
+    .font-size-select-box {
+        width: 20%;
+        margin-right: 10px;
+    }
+    /* 字体大小 */
+
+    .font-size-select .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-size-select .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__icon {
+        line-height: 30px;
+    }
+    /* <!-- 格式 --> */
+
+    .date-format .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .date-format .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .date-format .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .date-format .el-input__icon {
+        line-height: 30px;
+    }
+    /* 内边距 */
+    .text-padding-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+    /* 行间距 */
+    .row-spacing-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+    .text-icon{
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+        height: 50px;
+        margin: 10px 10px 0 10px;
+        cursor: pointer;
+    }
+</style>

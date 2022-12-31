@@ -1,0 +1,28 @@
+<!--多选组 TODO -->
+<template >
+    <div>
+        <el-input-number v-model="num" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                num: 1
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+            handleChange(value) {
+                console.log(value);
+            }
+        }
+    }
+</script>
+
+<style>
+   
+</style>

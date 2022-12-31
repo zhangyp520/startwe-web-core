@@ -1,0 +1,32 @@
+<!--选部门 控件 TODO-->
+<template >
+    <el-input :tempStyle="style" :id="id" :name="name" :bindProp="bindProp" :class="cls" v-model="value" @change="_controlOnUpdate" :placeholder="placeholder"></el-input>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

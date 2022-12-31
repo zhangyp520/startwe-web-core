@@ -1,0 +1,227 @@
+
+<template>
+    <div class="oui-class-countdown curr">
+        <span v-show="showDay">{{days}}天</span>
+        <span v-show="showHour">{{hours}}时</span>
+        <span v-show="showMinute">{{minutes}}分</span>
+        <span v-show="showSecond">{{seconds}}秒</span>
+        <span v-show="showEndRemind">{{endRemind}}</span>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                showDay: true,
+                showHour: true,
+                showMinute: true, //分
+                showSecond: true, //秒
+                showEndRemind: false, //秒
+                countdownCheckList: [],
+                deadline: "",
+                endRemind: "选择时间后开始倒计时",
+                days: 0,
+                hours: 0,
+                minutes: 0, //分
+                seconds: 0, //秒
+                intervals:1,//间隔时间
+                timerType:'setInterval',// setTimeout,setInterval;
+                bold:'',
+                italic:'',
+                underline:'',
+                linethrough:'',
+                textstyle:''
+
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.countdownCheckList) {
+                this.countdownCheckList = this.control.otherAttrs.countdownCheckList;
+                console.log(this.countdownCheckList);
+                if (this.countdownCheckList.indexOf("天") >= 0) {
+                    this.showDay = true;
+                }else{
+                    this.showDay = false;
+                }
+                if (this.countdownCheckList.indexOf("时") >= 0) {
+                    this.showHour = true;
+                }else{
+                    this.showHour = false;
+                }
+                if (this.countdownCheckList.indexOf("分") >= 0) {
+                    this.showMinute = true;
+                }else{
+                    this.showMinute = false;
+                }
+                if (this.countdownCheckList.indexOf("秒") >= 0) {
+                    this.showSecond = true;
+                }else{
+                    this.showSecond = false;
+                }
+            }
+            if (this.control.otherAttrs.deadline) {
+                this.deadline = oui.dateStrByTime(this.control.otherAttrs.deadline, 'yyyy-MM-dd HH:mm:ss');
+                var totalSeconds = parseInt((oui.dateByDateStr(this.deadline).getTime() - new Date().getTime()) / 1000);
+                if (totalSeconds <=0) {
+                    return;
+                }
+                if (this.showDay && this.showHour && this.showMinute && this.showSecond) {
+                    this.days = parseInt(totalSeconds / (60 * 60 * 24));
+                    this.hours = parseInt((totalSeconds - (this.days*24*60*60))/(60*60));
+                    this.minutes = parseInt((totalSeconds - (this.days*24*60*60) - (this.hours*60*60))/(60));
+                    this.seconds = parseInt((totalSeconds - (this.days*24*60*60) - (this.hours*60*60)-(this.minutes*60)));
+                }else if (!this.showDay && this.showHour && this.showMinute && this.showSecond) {
+                    this.hours = parseInt(totalSeconds / (60 * 60));
+                    this.minutes = parseInt((totalSeconds - (this.hours*60*60))/(60));
+                    this.seconds = parseInt((totalSeconds - (this.hours*60*60)-(this.minutes*60)));
+                }else if (!this.showDay && !this.showHour && this.showMinute && this.showSecond) {
+                    this.minutes = parseInt(totalSeconds/60);
+                    this.seconds = parseInt((totalSeconds - (this.minutes*60)));
+                }else if (!this.showDay && !this.showHour && !this.showMinute && this.showSecond) {
+                    this.seconds = totalSeconds;
+                }else if (!this.showDay && !this.showHour && this.showMinute && !this.showSecond) {
+                    this.minutes = parseInt(totalSeconds/60);
+                    this.seconds = parseInt((totalSeconds - (this.minutes*60)));
+                }else if (!this.showDay && this.showHour && !this.showMinute && !this.showSecond) {
+                    this.hours = parseInt(totalSeconds / (60 * 60));
+                    this.minutes = parseInt((totalSeconds - (this.hours*60*60))/(60));
+                    this.seconds = parseInt((totalSeconds - (this.hours*60*60)-(this.minutes*60)));
+                }else if (this.showDay && !this.showHour && !this.showMinute && !this.showSecond) {
+                    this.days = parseInt(totalSeconds / (60 * 60 * 24));
+                    this.hours = parseInt((totalSeconds - (this.days*24*60*60))/(60*60));
+                    this.minutes = parseInt((totalSeconds - (this.days*24*60*60) - (this.hours*60*60))/(60));
+                    this.seconds = parseInt((totalSeconds - (this.days*24*60*60) - (this.hours*60*60)-(this.minutes*60)));
+                }
+            }
+            if (this.control.otherAttrs.endRemind) {
+                this.endRemind = this.control.otherAttrs.endRemind;
+            }
+
+
+
+            if(this.control.otherAttrs.bold) {
+                this.bold = 'font-weight: bold !important;'
+            }else{
+                this.bold = ''
+            }
+            if(this.control.otherAttrs.italic) {
+                this.italic = 'font-style:oblique !important;'
+            }else{
+                this.italic = ''
+            }
+            if(this.control.otherAttrs.underline) {
+                this.underline = 'text-decoration:underline !important;'
+            }else{
+                this.underline = ''
+            }
+            if(this.control.otherAttrs.linethrough) {
+                this.linethrough = 'text-decoration:line-through !important;'
+            }else{
+                this.linethrough = ''
+            }
+            if(this.control.otherAttrs.textstyle == 1) {
+                this.textstyle = 'text-align:left;'
+            }else if(this.control.otherAttrs.textstyle == 2) {
+                this.textstyle = 'text-align:center;'
+            }else{
+                this.textstyle = 'text-align:right;'
+            }
+
+
+            // 倒计时
+            this.timer();
+        },
+        methods:{
+            // 倒计时
+            timer:function() {
+                var _this = this;
+                var _time = this._time;
+                if(_time){
+                    clearInterval(_time);
+                }
+                this.onStart();
+                this._time = window.setInterval(function() {
+                    if (_this.seconds === 0 && _this.minutes !== 0) {
+                        _this.seconds = 59;
+                        _this.minutes -= 1;
+                    } else if (_this.seconds === 0 && _this.minutes === 0  && _this.hours == 0 && _this.days !== 0) {
+                        _this.seconds = 59;
+                        _this.minutes = 59;
+                        _this.hours = 23;
+                        _this.days -= 1;
+                    } else if (_this.seconds === 0 && _this.minutes === 0 && _this.hours !== 0) {
+                        _this.seconds = 59;
+                        _this.minutes = 59;
+                        _this.hours -= 1;
+                    } else if (_this.seconds === 0 && _this.minutes === 0 && _this.hours === 0 && _this.days === 0) {
+                        _this.seconds = 0;
+                        _this.showDay = false;
+                        _this.showHour = false;
+                        _this.showMinute = false;
+                        _this.showSecond = false;
+                        _this.showEndRemind = true;
+                        _this.onStop();
+                        window.clearInterval(_this.time);
+                        return;
+                    }else {
+                        _this.seconds -= 1;
+                    }
+                    _this.runner();//每次执行的任务
+                }, this.intervals*1000);
+            },
+            onStart:function(){
+
+            },
+            start:function(){
+                this.timer();
+            },
+            stop:function(){
+                this.onStop();
+                window.clearInterval(this._time);
+            },
+            onStop:function(){
+
+            },
+            runner:function(){
+
+                //外部传入的自定义函数,todo
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .oui-class-countdown{
+        font-size: 14px;
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{linethrough}}
+        {{textstyle}}
+    }
+    .oui-class-countdown.curr span{
+    {{style}}
+    }
+    .oui-class-countdown.curr span{
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+    }
+</style>

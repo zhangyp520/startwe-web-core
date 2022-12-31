@@ -1,0 +1,79 @@
+
+<!--横向时间日程-->
+<!--
+findYearDisplay,
+findMonthDayDisplay,
+findSimpleDisplay,
+findDetailDisplay
+
+-->
+<script type="text/html" id="tpl-0">
+    <ul class="time-axis-content">
+        {{each data as item index}}
+        <li class="time-axis-item" cell-date="{{item.value}}" {{clickName}}="oui.getByOuiId({{ouiId}}).event2select4timeline(this)" >
+            <span class="time-axis-item-year">{{oui.getByOuiId(ouiId).findYearDisplay(item)}}</span>
+
+            <span class="time-axis-item-dot"><i class="dotStyle {{item.iconCls}}"></i> </span>
+
+            <span class="time-axis-item-info">
+                <i class="time-axis-item-info-text textTime">{{oui.getByOuiId(ouiId).findMonthDayDisplay(item)}}</i>
+                <i class="time-axis-item-info-text">{{oui.getByOuiId(ouiId).findSimpleDisplay(item)}}</i>
+            </span>
+            {{if oui.getByOuiId(ouiId).findDetailDisplay(item)}}
+            <div class="time-axis-tips">
+                <div class="time-axis-tips-area">
+                    {{=oui.getByOuiId(ouiId).findDetailDisplay(item)}}
+                </div>
+            </div>
+            {{/if}}
+        </li>
+        {{/each}}
+    </ul>
+</script>
+<script type="text/html" id="tpl-1" target-tpl-id="tpl-0">
+</script>
+<script type="text/html" id="tpl-2">
+    <div class="calendar-header textCenter">
+        <button  {{clickName}}="oui.getByOuiId({{ouiId}}).event2prev()" class="calendar-last">上月</button>
+        <div class="calendar-info">{{oui.getByOuiId(ouiId).findCurrentDate().y}}-{{oui.getByOuiId(ouiId).findCurrentDate().m}}</div>
+        <button  {{clickName}}="oui.getByOuiId({{ouiId}}).event2next()" class="calendar-next">下月</button>
+    </div>
+    <div class="calendar-content">
+        <table class="calendarTable">
+            <thead>
+            <tr>
+                <td>一</td>
+                <td>二</td>
+                <td>三</td>
+                <td>四</td>
+                <td>五</td>
+                <td>六</td>
+                <td>日</td>
+            </tr>
+            </thead>
+            <tbody>
+            {{each oui.getByOuiId(ouiId).findRows() as row index}}
+            <tr>
+                {{each row.cells as cell cellIndex}}
+                <td cell-date="{{cell.date}}" cell-day="{{cell.day}}" {{clickName}}="oui.getByOuiId({{ouiId}}).event2select(this)">
+                    <div class="dateInfo {{if cell.siblings}}siblings{{/if}} {{if oui.getByOuiId(ouiId).eqToday(cell)}}today{{/if}} ">{{oui.getByOuiId(ouiId).findCellDisplay(cell)}}</div>
+                    <div class="dateIdentification">
+                        {{each oui.getByOuiId(ouiId).findCellIcons(cell) as cellIcon cellIconIndex}}
+                        <i class="identification-dot dot-color-{{cellIconIndex+1}} {{cellIcon.cls}}"></i>
+                        {{/each}}
+                    </div>
+                </td>
+                {{/each}}
+            </tr>
+            {{/each}}
+    </tbody>
+    </table>
+    </div>
+</script>
+
+
+
+
+
+
+

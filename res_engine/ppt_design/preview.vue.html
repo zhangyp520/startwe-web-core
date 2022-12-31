@@ -1,0 +1,792 @@
+<template>
+    <div class="preview-box">
+        <div class="bigbox"></div>
+        <div class="preview-box-left">
+            <div class="preview-box-post">
+                <button class="nextbut" @click='upper'>
+                    <i class="el-icon-arrow-left"></i>
+                </button>
+
+                <!-- 渐变 -->
+                <div v-if='imgType == 2'>
+                    <div class="num">{{sort + 1}}/{{pageList.length}}</div>
+                    <div v-for="(item,index) in pageList" :key="item">
+                        <div v-show="item.Sort == sort" class="anim-opacity2">
+                            <oui-include type="module" :ref="'type_2'+getRefId(item)" :url="getIncludeUrl(item)"
+                                :data="getIncludeData(item)"></oui-include>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 普通 -->
+                <div v-if='imgType == 1 || imgType == 4 || imgType == 3'>
+                    <div class="num">{{carouselIndex}}/{{pageList.length}}</div>
+                    <el-carousel :style="{width:pageWidth}" :height='pageHight' :direction="direction" :autoplay=looping
+                        :type=carouselType ref='img' indicator-position="none" arrow="never" :interval=interval>
+                        <el-carousel-item v-for="(item,index) in pageList" :key="item">
+                            <div>
+                                <oui-include type="module" :ref="'type_4'+getRefId(item)" :url="getIncludeUrl(item)"
+                                    :data="getIncludeData(item)"></oui-include>
+                            </div>
+                        </el-carousel-item>
+                    </el-carousel>
+                </div>
+
+                <!-- 3d旋转 -->
+              
+                <div v-show='imgType == 0'>
+                    <div class="num">{{index3d}}/{{pageList.length}}</div>
+                    <div class="swiper-container" v-show='direction=="vertical"'>
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide" v-for="(item,index) in pageList" :key="item">
+                                <oui-include type="module" :ref="'type_2'+getRefId(item)" :url="getIncludeUrl(item)"
+                            :data="getIncludeData(item)"></oui-include>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-containers" v-show='direction=="horizontal"'>
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide" v-for="(item,index) in pageList" :key="item">
+                                <oui-include type="module" :ref="'type_2'+getRefId(item)" :url="getIncludeUrl(item)"
+                            :data="getIncludeData(item)"></oui-include>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="nextbut" @click='lower'>
+                    <i class="el-icon-arrow-right"></i>
+                </button>
+
+            </div>
+        </div>
+
+
+        <div class="preview-box-right">
+            <div class="preview-box-iuput">
+                <span>节目名称</span>
+                <div class="public-box-iuput">
+                    <el-input v-model='pptName' class="weather-city-input"></el-input>
+                </div>
+            </div>
+            <div class="preview-box-iuput-none">
+                <span>翻页方向</span>
+                <div class="public-box-iuput">
+                    <div class="public-box-iuput">
+                        <el-select v-model='directiontype' placeholder="请选择" class="date-type" @change="changePreImg">
+                            <el-option v-for="item in directionType" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="preview-img" v-if='directionImgType == 0'>
+                        <div v-for='(item,index) in imgList' :key='index'
+                            :class='imgType == index ? "previewborder" : "" ' @click='changePer(index)'>
+                            <img :src="item.value" alt="">{{item.label}}
+                        </div>
+                    </div>
+
+                    <div class="preview-img" v-else>
+                        <div v-for='(item,index) in imgLists' :key='index'
+                            :class='imgType == index ? "previewborder" : "" ' @click='changePer(index)'>
+                            <img :src="item.value" alt="">{{item.label}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-box-iuput">
+                <span>单页时长</span>
+                <div class="automatic-positioning">
+                    <el-switch v-model="onepagetime">
+                    </el-switch>
+                </div>
+                <div class="positioning-text" v-if='onepagetime'>
+                    手动设置
+                    <div class="preview-s">
+                        <el-input v-model='intervalS' maxlength='2' class="weather-city-input" @change='timeChange'>
+                        </el-input><span>s</span>
+                    </div>
+                </div>
+            </div>
+            <div class="preview-box-iuput">
+                <span>循环播放</span>
+                <div class="automatic-positioning">
+                    <el-switch v-model="looping" @change="handlePositioningChange">
+                    </el-switch>
+                </div>
+                <div class="positioning-text">开启后页面将按顺序循环播放</div>
+            </div>
+
+            <i class="layui-icon layedit-tool-b" title='加租'></i>
+            <div class="preview-box-bottom">
+                <el-button type="primary" @click='submitTranslate'>提交审核</el-button>
+                <el-button class="preview-but" @click='saveDesign'>保存</el-button>
+                <el-button class="preview-but" @click='close'>取消</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                carouselIndex:1,
+                carouselType: '',
+                interval: '3000',
+                intervalS: '3',
+                onepagetime: false,
+                looping: false,
+                currentIndex: 0,
+                animation3d: '',
+                sort: 0,
+                pageData4prev: {},
+                pageId: com.oui.absolute.AbsoluteDesign.pageId,
+                direction: 'vertical',
+                pageWidth: '',
+                pageHight: '',
+                pageData: {},
+                type: 1,
+                meindex: 0,
+                positioning: true,
+                animation: 1,
+                pptName: '',
+                directiontype: 'portrait',
+                directionImgType: 0,
+                directionType: [{
+                    value: 'portrait',
+                    label: '纵向（上下）'
+                }, {
+                    value: 'transverse',
+                    label: '横向（左右）'
+                }],
+                imgType: 0,
+                imgList: [
+                    {
+                        value: '/res_engine/ppt_design/images/three-dimensionalRotation.png',
+                        label: '立体旋转'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/ordinary.png',
+                        label: '普通'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/graduallyAppear.png',
+                        label: '渐显'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/cover.png',
+                        label: '覆盖'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/cascade.png',
+                        label: '层叠'
+                    }
+                ],
+                imgLists: [
+                    {
+                        value: '/res_engine/ppt_design/images/img_04.png',
+                        label: '立体旋转'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/img_05.png',
+                        label: '普通'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/img_03.png',
+                        label: '渐显'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/img_05.png',
+                        label: '覆盖'
+                    },
+                    {
+                        value: '/res_engine/ppt_design/images/img_02.png',
+                        label: '层叠'
+                    }
+                ],
+                pageList: [],
+                swiperlist:null,
+                swiperIndex:0,
+                setTime:null,
+                swiperlists:null,
+                index3d:1,
+            }
+        },
+        watch: {
+            looping(val, newval) {
+                if(val) {
+                    if(Number(this.intervalS)) {
+                        this.timer()
+                    }
+                }else{
+                    clearInterval(this.setTime)
+                }
+            }
+        },
+        mounted() {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.pptName = com.oui.absolute.AbsoluteDesign.pptName;
+            this.pageWidth = com.oui.absolute.AbsoluteDesign.data.style.width + 'px'
+            this.pageHight = com.oui.absolute.AbsoluteDesign.data.style.height + 'px'
+            this.initSwiper()
+            this.init()
+           
+        },
+        methods: {
+            timer() {
+               this.setTime = setInterval(() => {
+                    this.lower()
+                },Number(this.intervalS) * 1000)
+            },
+
+            initSwiper() {
+                setTimeout(() => {
+                    this.swiperlist = new Swiper('.swiper-container', {
+                        direction : 'vertical',
+                        effect: 'cube',
+                        grabCursor: true,
+                        autoplay: false,
+                        loop: true,
+                        speed:Number(this.intervalS) * 100,
+                        watchSlidesProgress:true,
+                        cubeEffect: {
+                            shadow: true,
+                            slideShadows: true,
+                            shadowOffset: 20,
+                            shadowScale: 0.94,
+                        },
+                        observer:true,
+                        pagination: {
+                            el: '.swiper-pagination',
+                        }
+                    });
+                    this.swiperlists = new Swiper('.swiper-containers', {
+                        direction : 'horizontal',
+                        effect: 'cube',
+                        grabCursor: true,
+                        autoplay: false,
+                        loop: true,
+                        speed:Number(this.intervalS) * 100,
+                        watchSlidesProgress:true,
+                        cubeEffect: {
+                            shadow: true,
+                            slideShadows: true,
+                            shadowOffset: 20,
+                            shadowScale: 0.94,
+                        },
+                        observer:true,
+                        pagination: {
+                            el: '.swiper-pagination',
+                        }
+                    });
+                }, 5000);
+            },
+            init: function () {
+                var me = this;
+                var pageList = com.oui.absolute.AbsoluteDesign.pageList || [];
+                var pageId = com.oui.absolute.AbsoluteDesign.pageId || '';
+                for (const key in pageList) {
+                   if(pageList[key].PageId == pageId) {
+                       this.swiperIndex = key
+                   }
+                }
+                oui.setPageParam('ppt_design_data', oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data)));
+                var qu1 = oui.Queue.createNewQueue();
+                var dataMap = {};
+                oui.eachArray(pageList, function (item) {
+                    qu1.add({
+                        pageId: item.PageId,
+                        run: function () {
+                            var curr = this;
+                            oui.ajaxPost(oui.pptAjaxConfig.loadPageByPageIdUrl, {
+                                "PageId": this.pageId,
+                            }, function (res) {
+                                var pageData = oui.parseJson(res.PageData);
+                                dataMap[curr.pageId] = pageData;
+                                curr.inited = true;
+                            }, function (error) {
+                                alert('操作失败')
+                            });
+                        }
+                    });
+                });
+                if (pageList.length) {
+                    this.currentIndex = 0;
+                }
+                qu1.start(function () {
+                    me.$set(me, 'pageList', pageList);
+                    oui.setPageParam('preview_dataMap', dataMap);
+                    console.log('加载完成了....', dataMap);
+                });
+            },
+
+            getRefId: function (item) {
+                return 'ref_' + item.PageId
+            },
+            getIncludeUrl: function (item) {
+                var url = 'res_common/oui/ui/ui_pc/components/pptPage.vue.html';
+                url = oui.addParams(url, {
+                    pageId: item.PageId
+                });
+                console.log('inlcude:', url);
+                return url;
+            },
+            getIncludeData: function (item) {
+                var includeData = this._includeData || {};
+                this._includeData = includeData;
+                if (!includeData[item.PageId]) {
+                    includeData[item.PageId] = {
+                        pageId: item.PageId,
+                        $router: {
+                            query: {
+                                pageId: item.PageId
+                            }
+                        }
+                    };
+                }
+                return includeData[item.PageId];
+
+            },
+            handlePositioningChange(e) {
+                this.looping = e
+                this.swiperlist.param.autoplay = e
+            },
+            timeChange() {
+                this.interval = this.intervalS * 1000
+                this.swiperlist.param.speed = this.intervalS * 1000
+                this.swiperlists.param.speed = this.intervalS * 1000
+
+            },
+            /*上一个*/
+            upper() {
+                if (this.imgType == 0) {
+                    if(this.direction == 'vertical') {
+                        if(this.index3d == 1) {
+                            this.index3d = this.pageList.length
+                        }else{
+                            this.index3d--
+                        }
+                        this.swiperlist.slidePrev()
+                    }else{
+                        if(this.index3d == 1) {
+                            this.index3d = this.pageList.length
+                        }else{
+                            this.index3d--
+                        }
+                        this.swiperlists.slidePrev()
+                    }
+                    return
+                }
+
+                if (this.imgType == 1 || this.imgType == 4 || this.imgType == 3) {
+                    if(this.carouselIndex== 1) {
+                        this.carouselIndex = this.pageList.length
+                    }else{
+                        this.carouselIndex --
+                    }
+                    this.$refs.img.prev();
+                    return
+                }
+                if (this.imgType == 2) {
+                    this.sort--
+                    if (this.sort < 0) {
+                        let arr = []
+                        for (const item of this.pageList) {
+                            arr.push(item.Sort)
+                        }
+                        arr.sort(function (a, b) {
+                            return a - b;
+                        });
+                        this.sort = arr[arr.length - 1]
+                    }
+                    return
+                }
+            },
+            /*下一个*/
+            lower: function (a, b) {
+                var me = this;
+                if (this.imgType == 0) {
+                    if(this.direction == 'vertical') {
+                        this.swiperlist.slideNext()
+                        if(this.pageList.length <= this.index3d) {
+                            this.index3d = 1
+                        }else{
+                            this.index3d++
+                        }
+                    }else{
+                        this.swiperlists.slideNext()
+                        if(this.pageList.length <= this.index3d) {
+                            this.index3d = 1
+                        }else{
+                            this.index3d++
+                        }
+                    }
+                    return
+                }
+                if (this.imgType == 1 || this.imgType == 4 || this.imgType == 3) {
+                    if(this.pageList.length <= this.carouselIndex) {
+                        this.carouselIndex = 1
+                    }else{
+                        this.carouselIndex ++ 
+                    }
+                    this.$refs.img.next();
+                    return
+                }
+                if (this.imgType == 2) {
+                    let arr = []
+                    for (const item of this.pageList) {
+                        arr.push(item.Sort)
+                    }
+                    arr.sort(function (a, b) {
+                        return a - b;
+                    });
+                    this.sort++
+                    if (this.sort - 1 == arr[arr.length - 1]) {
+                        this.sort = 0
+                    }
+
+                    return
+                }
+            },
+            //改变走马灯类型
+            changePer(index) {
+                console.log(index)
+                if (index == 4 || index == 3) {
+                    this.carouselType = 'card'
+                    this.imgType = index
+                    return
+                } else {
+                    this.carouselType = ''
+                }
+                this.imgType = index
+            },
+            /*切换方向*/
+            changePreImg(e) {
+                this.index3d = 1
+                this.directionImgType = e == 'transverse' ? 1 : 0
+                this.direction = e == 'transverse' ? 'horizontal' : 'vertical'
+                this.initSwiper()
+               
+            },
+            /*关闭弹框*/
+            close() {
+                window.postMessage({
+                    cmd: 'cmd4hide',
+                    param: {
+                        pershow: false
+                    }
+                }, '*');
+            },
+            // 保存页面设计
+            saveDesign:function() {
+                var me = this;
+                com.oui.absolute.AbsoluteDesign.savePageDesign(function(res){
+                    me.savePagesByTranslateId();
+                });
+            },
+            //保存整个节目的设计
+            savePagesByTranslateId:function() {
+                let me = this;
+                //成功回调 再保存界面所有数据
+                oui.ajaxPost(oui.pptAjaxConfig.savePagesByPptIdUrl, {
+                    "Pages": com.oui.absolute.AbsoluteDesign.pageList
+                }, function (res) {
+                    me.$message({
+                        message: '保存成功..........！',
+                        type: 'success'
+                    });
+                    //成功回调 todo 给提示
+                    console.log("保存整个节目信息成功",res);
+                }, function (res) {
+                    //失败回调
+                    console.log("保存整个节目信息失败",res);
+                });
+            },
+            //提交审核
+            submitTranslate:function () {
+                var pptId = com.oui.absolute.AbsoluteDesign.pptId;
+                //成功回调 再保存界面所有数据
+                oui.ajaxPost(oui.pptAjaxConfig.submitPPtUrl, {
+                    "TranslateId": pptId
+                }, function (res) {
+                    me.$message({
+                        message: '节目提交审核成功..........！',
+                        type: 'success'
+                    });
+                    //成功回调
+                    console.log("节目提交审核成功",res);
+                }, function (res) {
+                    //失败回调
+                    console.log("节目提交审核失败",res);
+                });
+            },
+        }
+    }
+
+</script>
+<style>
+    .bigbox {
+        opacity: 0.8;
+        background: #5d5d5d;
+        position: absolute;
+        right: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+    }
+
+    .preview-box {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .preview-box-left {
+        display: flex;
+        align-items: center;
+        width: 70%;
+        height: 100%;
+        /* opacity: 0.8;
+    background: #5d5d5d; */
+        justify-content: space-evenly;
+        position: relative;
+    }
+
+    .preview-box-post {
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .preview-box-right {
+        padding-top: 5%;
+        padding-left: 30px;
+        width: 30%;
+        height: 100%;
+        background: #3c3c3c;
+        position: relative;
+    }
+
+    /* 外层公共盒子 */
+
+    .preview-box-iuput {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .preview-box-iuput-none {
+        display: flex;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .preview-box-iuput-none>span {
+        color: #fff;
+        padding-right: 20px;
+        padding-left: 20px;
+        text-align: left;
+    }
+
+    .preview-box-iuput>span {
+        color: #fff;
+        padding-right: 20px;
+        padding-left: 20px;
+        text-align: left;
+    }
+
+    .weather-city-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .positioning-text {
+        margin-left: 10px;
+        color: #cccccc;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .positioning-text>div {
+        margin-left: 10px;
+        width: 80px;
+    }
+
+    .preview-s {
+        display: flex;
+        align-items: center;
+    }
+
+    .preview-s>span {
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .date-type .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .public-box-iuput {
+        width: 70%;
+    }
+
+    .preview-img {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .preview-img>div {
+        margin-top: 16px;
+        width: 64px;
+        height: 64px;
+        border-radius: 6px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px solid #6c6c6c;
+        cursor: pointer;
+    }
+
+    .previewborder {
+        border: 2px solid #3489ff !important;
+    }
+
+    .preview-img>div>img {
+        width: 100%;
+        height: 100%;
+        margin-bottom: 5px;
+    }
+
+    .preview-box-bottom {
+        position: absolute;
+        bottom: 0;
+        height: 88px;
+        left: 0;
+        right: 0;
+        line-height: 88px;
+        border-top: 1px solid #6c6c6c;
+        padding-left: 28px;
+
+    }
+
+    .preview-but {
+        border: 1px solid #6c6c6c;
+        background: rgba(255, 120, 107, 0.00);
+        margin-left: 15px;
+        color: #fff;
+    }
+
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 200px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: #d3dce6;
+    }
+
+    .el-carousel__container {
+        height: {
+                {
+                pageHight
+            }
+        }
+
+        ;
+    }
+
+    .nextbut {
+        border: none;
+        outline: none;
+        padding: 0;
+        margin: 0;
+        height: 40px;
+        width: 40px;
+        cursor: pointer;
+        transition: .3s;
+        border-radius: 50%;
+        background-color: rgba(31, 45, 61, .11);
+        color: #fff;
+        top: 50%;
+        z-index: 10;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 12px;
+    }
+
+
+    .el-carousel__item--card {
+        width: 100% !important;
+    }
+
+    .el-carousel__item--card.is-active {
+        transform: translateY(0px) scale(1) !important;
+    }
+
+    /*渐显动画*/
+    .anim-opacity2 {
+        animation: 3s opacity2 0s infinite;
+        animation-iteration-count: 1;
+        min-width: 1080px;
+        min-height: 680px;
+    }
+
+    @keyframes opacity2 {
+        0% {
+            opacity: 0
+        }
+
+        50% {
+            opacity: .8;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .swiper-container {
+        width: {{pageWidth}};
+       
+        height: {{pageHight}};
+    }
+    .swiper-containers {
+        width: {{pageWidth}};
+       
+        height: {{pageHight}};
+    }
+    .num{
+        text-align: center;
+        font-size: 25px;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+</style>

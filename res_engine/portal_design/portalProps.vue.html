@@ -1,0 +1,874 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : slbHeight } ">
+        <el-scrollbar style="height: 100%;background-color: #ffffff;">
+            <div>
+                <div class="right_title">页面设置</div>
+                <div class="pageSetUp">
+                    <div>
+                        <!-- <div class="fillTitle">
+                            <span class="inner-title">透明背景</span>
+                        </div> -->
+                        <div class="fillBox">
+                            <div>
+                                <span class="inner-title">纯色背景</span>
+                                <el-color-picker v-model="portalBackgroundColor" @change="changePortalBackgroundColor"
+                                    class="colorPicker">
+                                </el-color-picker>
+                            </div>
+
+                            <!-- <el-input v-model="portalBackgroundColor" class="fillInput"></el-input>
+                            <el-input v-model="opacity" class="alphaInput" @change="changePortalOpacity"></el-input> -->
+                        </div>
+                        <div class="locationSetting">
+                            <div class="W  location_inner">
+                                <span>W</span>
+                                <input type="text" v-model="PageW" @change="changePageW">
+                            </div>
+                            <div class="H  location_inner" >
+                                <span>H</span>
+                                <input type="text" v-model="PageH" @change="changePageH">
+                            </div>
+                        </div>
+
+                        <div class="imgBG">
+                            <span class="inner-title">图片背景</span>
+                            <el-button type="danger" icon="el-icon-close" circle @click="deletePortalBackgroundImage"
+                                v-if="portalImgDelTips"></el-button>
+                            <div class="uploadBox">
+                                <el-upload class="avatar-uploader" :action="uploadPortalBgImgUrl"
+                                    :show-file-list="false" :on-success="portalBgImgSuccess"
+                                    :on-remove="handleBgImgRemove" :before-upload="beforePortalBgImgUpload">
+                                    <img v-if="portalImageUrl" :src="portalImageUrl" class="avatar">
+                                    <div v-else>
+                                        <i class="el-icon-plus avatar-uploader-icon"></i>
+                                        <div class="imgPos">
+                                            <div>为了适配更多机型</div>
+                                            <div>推荐使用纯色背景</div>
+                                        </div>
+                                    </div>
+                                </el-upload>
+                            </div>
+                        </div>
+                        <div>
+                            <el-checkbox label="验证登录"></el-checkbox>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <oui-include type="module" url="res_engine/portal_design/portalTemplateMenu.vue.html">
+                </oui-include>
+        </el-scrollbar>
+
+
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                PageW: '',
+                PageH: '',
+                style: '',
+                otherAttrs: '',
+                innerStyle: '',
+                //门户整体背景颜色透明度
+                opacity: '100%',
+                clientHeight: '', //浏览器可视区域高度
+                slbHeight: '',
+                //门户整体背景颜色
+                portalBackgroundColor: '',
+                //门户整体背景图片删除按钮
+                portalImgDelTips: false,
+                //回显门户背景图片地址
+                portalImageUrl: '',
+                //背景图片大小
+                backgroundSize: '100% 100%',
+                //背景图片重复
+                backgroundRepeat: 'no-repeat',
+                //保存门户背景图片信息
+                portalBgImgData: [],
+                //上传门户背景图片地址
+                uploadPortalBgImgUrl: '',
+
+                /** 页面默认样式**/
+                "style": {
+                    backgroundImageName: '', //默认图片
+                    backgroundImage: '', //'url(' + oui.getContextPath() + 'res_engine/page_design/pc/images/timg.jpg' + ')'
+                    backgroundImageFillType: 'center',
+                    backgroundColor: '',
+                    width: 210,
+                    height: 297,
+                    paperType: 'A4',
+                    theme: '',
+                    cellType: 'mm',
+                    currControlZIndex: 0
+                },
+                "innerStyle": { //页面内控件样式
+                    "style": { //控件外框样式
+                        width: 230,
+                        height: 42,
+                        backgroundColor: '',
+                        borderRadius: 0,
+                        opacity: 1,
+                        zIndex: 0,
+                        layoutType: 'oneLine', //默认并列显示
+                        /** 边框 粗细 ***/
+                        borderLeftWidth: 0,
+                        borderTopWidth: 0,
+                        borderBottomWidth: 0,
+                        borderRightWidth: 0,
+
+                        /** 边框颜色***/
+                        borderLeftColor: '#e6e6e6',
+                        borderTopColor: '#e6e6e6',
+                        borderBottomColor: '#e6e6e6',
+                        borderRightColor: '#e6e6e6',
+
+
+                        /** 边框样式***/
+                        borderLeftStyle: 'solid',
+                        borderTopStyle: 'solid',
+                        borderBottomStyle: 'solid',
+                        borderRightStyle: 'solid'
+                    },
+                    "styleTitle": { //控件标题样式
+                        color: '#333333',
+                        lineHeight: 1.6,
+                        backgroundColor: '',
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        textAlign: 'left',
+                        verticalAlign: 'middle',
+                        whiteSpace: 'normal'
+                    },
+                    "styleFieldOuter": { //控件值外框
+                    },
+                    "styleInnerOuter": { //控件值和控件标题共同外框
+                        verticalAlign: 'middle'
+                    },
+                    "styleField": { //控件值样式
+                        color: '#333333',
+                        backgroundColor: '',
+                        lineHeight: 1.6,
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        textAlign: 'left',
+
+                        /** 边框 粗细 ***/
+                        borderLeftWidth: 1,
+                        borderTopWidth: 1,
+                        borderBottomWidth: 1,
+                        borderRightWidth: 1,
+
+                        /** 边框颜色***/
+                        borderLeftColor: '#e6e6e6',
+                        borderTopColor: '#e6e6e6',
+                        borderBottomColor: '#e6e6e6',
+                        borderRightColor: '#e6e6e6',
+
+
+                        /** 边框样式***/
+                        borderLeftStyle: 'solid',
+                        borderTopStyle: 'solid',
+                        borderBottomStyle: 'solid',
+                        borderRightStyle: 'solid',
+                        whiteSpace: 'normal'
+                    }
+                }
+            }
+        },
+        created() {},
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+            //上传背景图片的地址
+            this.uploadPortalBgImgUrl = url;
+            //门户数据
+            var portalData = com.oui.absolute.AbsoluteDesign.data;
+            console.log('控件数据', com.oui.absolute.AbsoluteDesign.data.controls);
+
+            var style = oui.parseJson(oui.parseString(portalData.style));
+            this.PageW = style.width
+            this.PageH = style.height
+            var otherAttrs = oui.parseJson(oui.parseString(portalData.otherAttrs));
+            var innerStyle = oui.parseJson(oui.parseString(portalData.innerStyle));
+            this.style = style;
+            this.otherAttrs = otherAttrs;
+            this.innerStyle = innerStyle;
+            //加载门户背景颜色
+            this.portalBackgroundColor = portalData.style.backgroundColor;
+            //背景颜色透明度加载
+            if (portalData.style.opacity) {
+                this.opacity = portalData.style.opacity;
+            }
+            //背景图片加载
+            if (portalData.style.backgroundImage) {
+                var newImgurl = portalData.style.backgroundImage;
+                var new2ImgUrl = newImgurl.substring(newImgurl.indexOf("(") + 1, newImgurl.lastIndexOf(")"));
+                this.portalImageUrl = new2ImgUrl;
+                if (portalData.otherAttrs.portalBgImgData) {
+                    this.portalBgImgData = oui.parseJson(oui.parseString(portalData.otherAttrs.portalBgImgData));
+                    this.portalImgDelTips = true;
+                }
+            }
+            //背景图片大小加载
+            if (portalData.style.backgroundSize) {
+                this.backgroundSize = portalData.style.backgroundSize;
+            }
+            //背景图片是否重复加载
+            if (portalData.style.backgroundRepeat) {
+                this.backgroundRepeat = portalData.style.backgroundRepeat;
+            }
+
+            this.clientHeight = `${document.documentElement.clientHeight}`; //获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 80 + 'px';
+            }
+        },
+        watch: {
+            clientHeight() { //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        methods: {
+            changePageW() { //改变页面宽高
+                console.log(com.oui.absolute.AbsoluteDesign.data.style, '改变高')
+                com.oui.absolute.AbsoluteDesign.data.style.width = this.PageW
+                this.updateCurrentControl();
+
+            },
+            changePageH() { //改变页面宽高
+                console.log(com.oui.absolute.AbsoluteDesign.data.style, '改变高')
+                com.oui.absolute.AbsoluteDesign.data.style.height = this.PageH
+                this.updateCurrentControl();
+
+            },
+            //todo
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var portalData = Design.data;
+                $('.el-tooltip__popper').remove();
+                Design.setCurrPropsData4page('props', 'down2selectPage');
+                // if(portalData&&portalData.id){
+                //     Design.changed4props({},function(){
+                //         Design.setCurrPropsData(portalData, 'center', 'down2selectField');
+                //     });
+                // }
+            },
+            //处理图片删除
+            handleBgImgRemove: function () {
+
+            },
+            changeFixed(clientHeight) {
+                this.slbHeight = clientHeight - 80 + 'px';
+            },
+            //门户整体背景透明度改变事件
+            changePortalOpacity: function () {
+                this.style.opacity = this.opacity;
+                var portalData = com.oui.absolute.AbsoluteDesign.data;
+                portalData.style = oui.parseJson(oui.parseString(this.style));
+                this.updateCurrentControl();
+            },
+            //门户整体背景颜色改变事件
+            changePortalBackgroundColor: function () {
+                this.style.backgroundColor = this.portalBackgroundColor;
+                var portalData = com.oui.absolute.AbsoluteDesign.data;
+                portalData.style = oui.parseJson(oui.parseString(this.style));
+                this.updateCurrentControl();
+            },
+            // 门户背景图片上传
+            portalBgImgSuccess: function (res, file) {
+                let me = this;
+                if (res.success) {
+                    console.log('图片上传', res.success)
+                    var id = res.ids[0]; //上传成功
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    me.portalImageUrl = imgUrl;
+                    me.style.backgroundImage = 'url(' + me.portalImageUrl + ')';
+                    me.style.backgroundSize = me.backgroundSize;
+                    me.style.backgroundRepeat = me.backgroundRepeat;
+                    if (this.portalBgImgData.length >= 1) {
+                        oui.postData(oui.getContextPath() +
+                            'com.startwe.models.file.web.FileController.delFiles.biz', {
+                                userId: oui.cookie('userId'),
+                                tokenId: oui.cookie('tokenId'),
+                                targetUserId: oui.cookie('userId'),
+                                files: me.portalBgImgData,
+                                projectId: oui.getParam("projectId")
+                            },
+                            function (res) {},
+                            function (res) {});
+                        me.portalBgImgData.splice(0, 1);
+                        me.portalBgImgData.push({
+                            id: res.ids[0],
+                            imgUrl: me.portalImageUrl
+                        });
+                    } else {
+                        me.portalBgImgData.push({
+                            id: res.ids[0],
+                            imgUrl: me.portalImageUrl
+                        });
+                    }
+                    var portalData = com.oui.absolute.AbsoluteDesign.data;
+                    me.otherAttrs.portalBgImgData = oui.parseJson(oui.parseString(me.portalBgImgData));
+                    portalData.style = oui.parseJson(oui.parseString(me.style));
+                    portalData.otherAttrs = oui.parseJson(oui.parseString(me.otherAttrs));
+                    this.saveDesign(function () {
+                        me.updateCurrentControl();
+                    });
+                    this.portalImgDelTips = true;
+                }
+            },
+            //保存设计
+            saveDesign: function (callback) {
+                var me = com.oui.absolute.AbsoluteDesign;
+                var data = me.getDesignData();
+                me.paramCfg.page = data;
+                me.updateParamCfgSource(me.paramCfg); //更新调用处参数
+                var plugin = me.plugin || {};
+                me.hasChange = false;
+                var param = oui.getParam();
+                if (param.portalId) {
+                    oui.postData(me.updateProjectPortalUrl, {
+                        projectPortal: data
+                    }, function (res) {
+                        callback && callback();
+                    }, function (res) {}, '保存中...');
+                }
+            },
+            //门户整体背景图片删除
+            deletePortalBackgroundImage: function () {
+                var portalData = com.oui.absolute.AbsoluteDesign.data;
+                let that = this;
+                oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId'),
+                    files: that.portalBgImgData,
+                    projectId: oui.getParam("projectId")
+                }, function (res) {
+                    portalData.style.backgroundImage = "";
+                    that.saveDesign(function () {
+                        that.updateCurrentControl();
+                    });
+                    that.portalImgDelTips = false;
+                }, function (res) {});
+            },
+            //上传图片
+            beforePortalBgImgUpload(file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true && isLt2M;
+            }
+        }
+    }
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .pageSetUpBg {
+        display: flex;
+        align-items: center;
+    }
+
+    .pageSetUpBgImg {
+        display: flex;
+        align-items: center;
+
+    }
+
+    .pageSetUpBgImg .el-radio__input {
+        margin-top: -120px;
+    }
+
+    .pageSetUp .el-radio {
+        display: flex;
+    }
+
+    .presentation-box {
+        margin-top: 20px;
+    }
+
+    .presentation-box .el-select {
+        width: 100%;
+    }
+
+    .presentation-list>div {
+        padding: 0 10px;
+    }
+
+    .presentation-list>div:hover {
+        background: #FF7D82;
+        color: #fff;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+        width: 80px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border: 1px solid #979797;
+        border-radius: 4px;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        border-radius: 1px;
+    }
+
+    .fillColorRadio {
+        margin-right: 0;
+    }
+
+    .fillColorRadio .el-radio__inner {
+        margin-top: 2px;
+    }
+
+    .uploadRadio .el-radio__inner {
+        margin-top: 12px;
+    }
+
+    .fillCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .fillCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .fillCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .fillCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .bgColorPiker .el-color-picker__trigger {
+        border: none;
+        width: 74px;
+        height: 40px;
+    }
+
+    .bgColorPiker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .bgColorPiker.el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    .bgColorPiker .el-color-picker__color-inner {
+        width: 62px;
+        height: 28px;
+        border-radius: 2px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        /* margin-top: 30px; */
+        position: relative;
+    }
+
+    .imgBG .el-button.is-circle {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 20px;
+        right: 8px;
+        z-index: 2;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        width: 200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .location_inner {
+        margin-top: 10px;
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+    }
+
+    .location_inner>input {
+        width: 50px;
+        text-align: center;
+        outline: none;
+        margin-right: 5px;
+    }
+
+
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+
+    .el-slider__bar {
+        background: #FF7D82;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 70%;
+        margin-left: 10px;
+    }
+
+    .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    }
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .addTitle {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #8c939d;
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 26px;
+    }
+
+    .imgPos {
+        position: absolute;
+        bottom: 5px;
+        transform: scale(0.7);
+        color: #8c939d;
+        width: 100%;
+    }
+
+    .border {
+        border: 1px solid #8c939d;
+    }
+    .el-color-picker__empty{
+        display: none;
+    }
+</style>

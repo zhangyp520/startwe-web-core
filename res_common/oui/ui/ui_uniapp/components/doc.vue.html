@@ -1,0 +1,61 @@
+
+<template >
+    <div class="oui-class-doc curr">
+        <img class="oui-class-img" :src="docImgUrlList[0]">
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                placeholder:'',
+                docImgUrlList: [],
+
+                // 自动切换
+                docSwitch: true,
+                //填充样式
+                fillStyle: '',
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+             
+            if(this.control.otherAttrs.docImgUrlList&&this.control.otherAttrs.docImgUrlList.length > 0) {
+                this.docImgUrlList = this.control.otherAttrs.docImgUrlList
+
+                console.log(this.docImgUrlList,2131232)
+            }
+            if (this.control.otherAttrs.fillStyle) {
+                this.fillStyle = this.control.otherAttrs.fillStyle;
+            }
+            if (typeof this.control.otherAttrs.docSwitch !== 'undefined') {
+                this.docSwitch = this.control.otherAttrs.docSwitch;
+            }
+        },
+        methods:{
+        }
+    }
+</script>
+
+<style>
+    .oui-class-doc{
+        margin-bottom: 20px;
+    }
+    .oui-class-doc.curr img{
+
+        {{style}}
+
+    }
+    .oui-class-img{
+        height: 100% !important;
+        max-width: 100% !important;
+
+    }
+</style>

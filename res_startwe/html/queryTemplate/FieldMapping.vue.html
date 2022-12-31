@@ -1,0 +1,108 @@
+<!-- 字段映射设置弹窗 -->
+<template>
+    <div>
+        <el-table style="width: 100%"  :data="tableData">
+            <el-table-column type='index' label="序号">
+                <template slot-scope="scope">
+                    <div class="index_numberBox">
+                        <img src="/res_startwe/assets/sort.png" alt="">
+                        <span class="index_number">{{scope.row.index}}</span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="defaultnName" label="默认名称">
+                <template slot-scope="scope">
+                    <el-input placeholder="单行输入框[新的页面25]" v-model="scope.row.defaultnName" clearable>
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column prop="displayDame" label="显示名称">
+                <template slot-scope="scope">
+                    <el-input placeholder="单行输入框" v-model="scope.row.displayDame" clearable>
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column prop="fieldVariableAlias" label="字段变量别名">
+                <template slot-scope="scope">
+                    <el-input placeholder="enter_1" v-model="scope.row.fieldVariableAlias" clearable>
+                    </el-input>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="submit_button">
+            <el-button>取消</el-button>
+            <el-button type="primary">确认</el-button>
+        </div>
+    </div>
+
+
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                tableData: [
+                    {index:1, defaultnName: '单行输入框[新的页面25]', displayDame: '单行输入框', fieldVariableAlias: 'enter_1' },
+                    {index:2, defaultnName: '单行输入框[新的页面25]', displayDame: '单行输入框', fieldVariableAlias: 'enter_1' },
+                    {index:3, defaultnName: '单行输入框[新的页面25]', displayDame: '单行输入框', fieldVariableAlias: 'enter_1' },
+                    {index:4, defaultnName: '单行输入框[新的页面25]', displayDame: '单行输入框', fieldVariableAlias: 'enter_1' }
+                ],
+                defaultnName: '单行输入框[新的页面25]',
+                displayDame: '单行输入框',
+                fieldVariableAlias: 'enter_1'
+
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        /* font-size: 14px; */
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+    /* 内容 */
+    .index_numberBox{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .index_number{
+        color: #1890FF;
+        margin-left: 5px;
+    }
+    .submit_button {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+</style>

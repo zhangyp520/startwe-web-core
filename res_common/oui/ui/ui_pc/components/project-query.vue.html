@@ -1,0 +1,85 @@
+<!--多选组 TODO -->
+<template>
+    <div class="query_box" :style="styleFun()">
+        <div class="query_flex" :style="fun()" v-for='(item,index) in num'>
+            <!-- <div style="margin-right: 15px;">查询条件</div> -->
+            <el-select v-model="value" placeholder="请选择" size='mini'>
+                <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+            </el-select>
+            <el-input v-model="input" placeholder="请输入内容" size='mini' style="margin:0 15px;"></el-input>
+            <el-button plain size='mini'>重置</el-button>
+            <el-button plain size='mini'>查询</el-button>
+        </div>
+    
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        
+
+        data: function () {
+            return {
+                options: [],
+                value: '',
+                input:'',
+                num:1,
+                fun:function() {
+                    if(this.num > 1 ) {
+                        let number = 100/com.oui.absolute.AbsoluteDesign.data.otherAttrs.numValue
+
+                        console.log(number,'几列')
+
+                        console.log('width:' + number + '%;')
+                        this.styleFun()
+                        return 'width:' + number + '%;'
+                    }
+                },
+                styleFun:function(){
+                    if(this.numValue > 1) {
+                        return "display: flex;justify-content: space-between;flex-wrap: wrap;"
+       
+                    }   
+                },
+                numValue:2
+            }
+        },
+        mounted: function () {
+
+            let dataList = this.control.otherAttrs.dataList
+            let num = com.oui.absolute.AbsoluteDesign.data.otherAttrs.numValue
+            if(num) {
+                this.numValue = num
+
+                console.log(this.numValue,'duolie')
+            }
+            if(dataList) {
+                this.num = dataList.length
+        
+            }
+            
+        },
+        methods: {
+
+        }
+    }
+</script>
+
+<style>
+    .query_box{
+        font-size: 14px;
+        
+    }
+    .query_flex{
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+ 
+</style>

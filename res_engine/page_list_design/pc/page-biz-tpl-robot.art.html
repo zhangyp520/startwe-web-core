@@ -1,0 +1,197 @@
+<!--按钮 button组件的业务属性扩展-->
+<template >
+
+    <div>
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+                    <div class="fieldname">业务描述</div>
+                    <div class="fieldblock">
+                <textarea bindPropAfter="changed4props" placeholder="业务描述"
+                          bindProp="otherAttrs.bizDes"
+                          value="{{otherAttrs.bizDes}}">{{otherAttrs.bizDes}}</textarea>
+                    </div>
+                    <div class="fielderror" id="check_page_otherAttrs_bizDes">
+                        {{if AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <!--在这里扩展自定义业务设置-->
+            </div>
+        </div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">事件脚本<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field " >
+                    <button class="design-des-btn design-btn-text"
+                            title="设置页面加载前事件"
+
+                            invoke-prop="events.beforeInit"
+                            eventType="script4beforeInit"
+                            code-max-length="5000"
+                            error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                            error-msg-max="设置页面加载前事件脚本，长度不能超过5000个字符"
+                            oui-e-click="event2showCodeDialog"
+                            >设置页面加载前事件</button>
+                </div>
+            </div>
+        </div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">事件脚本<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field " >
+                    <button class="design-des-btn design-btn-text"
+                            title="设置页面加载前事件"
+
+                            invoke-prop="events.beforeInit"
+                            eventType="script4beforeInit"
+                            code-max-length="5000"
+                            error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                            error-msg-max="设置页面加载前事件脚本，长度不能超过5000个字符"
+                            oui-e-click="event2showCodeDialog"
+                            >设置页面加载前事件</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+//        useVDom:true,//art 使用虚拟Dom,默认值为true
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                otherAttrs:{
+                    bizDes:''
+                },
+                fieldErrorId:'',
+                AbsoluteDesign:{findCheckMessage:function(){}},
+                id:'' //控件id
+            }
+        },
+
+        mounted:function(){
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.otherAttrs = designer.data.otherAttrs;
+            var keys ='bizDes'.split(','); //配置当前的key列表
+
+            for(var i= 0,len=keys.length;i<len;i++){
+                var key = keys[i];
+                if(typeof designer.data.otherAttrs[key] =='undefined'){
+                    designer.data.otherAttrs[key]='';
+                }
+            }
+            this.fieldErrorId = 'check_page_'+'_otherAttrs_bizDes';
+            this.refresh(); //手动刷新
+        },
+        methods:{
+
+            /** 显示 脚本dialog **/
+            event2showCodeDialog:function event2showCodeDialog(cfg){
+                var _self = this;
+
+                var title = $(cfg.el).attr('title'); //扫码结果处理脚本
+                var errorMsgMax = $(cfg.el).attr('error-msg-max'); //'输入扫码脚本长度不能超过error-msg-max个字符'
+                var codeMaxLength = $(cfg.el).attr('code-max-length');//脚本最大长度，默认code-max-length
+                var compileErrorMsg = $(cfg.el).attr('error-msg-compile');//脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                if(codeMaxLength){
+                    codeMaxLength = parseInt(codeMaxLength);
+                }
+                codeMaxLength = codeMaxLength || 2000;
+
+                var prop = $(cfg.el).attr('invoke-prop');
+                var eventType = $(cfg.el).attr('eventType');
+
+                var scriptJson = oui.JsonPathUtil.getJsonByPath(prop,this.AbsoluteDesign.data);
+                if(!scriptJson){
+                    scriptJson ={};
+                }
+                //页面默认加载脚本在这里
+                var defaultParams = {"params":[],"startCode":"","bodyCode":"var pageData = this.getPageData();\nvar designer = pageData.getDesigner();\nvar controls = designer.controls||[];\nvar count =0;\n\nfor(var i=0,len=controls.length;i<len;i++){\n  if((controls[i].formField||controls[i].isFormField) && (!controls[i].detailId)){\n    count++;\n    pageData.mainData[controls[i].bizId] = {\n      value:'测试-'+count, //组件实际值，用于数据库存储\n      display:'测试-'+count, //组件的显示值，用于后台数据存储使用\n      data4DB:{'test':'这里是对数据的扩展'+count} // data4DB是扩展表单提交数据的额外属性,根据特殊场景处理\n    }\n }\n}\npageData.refresh(); ","endCode":"","returnType":"string"};
+
+                scriptJson.eventType=eventType;
+                var json = $.extend({},defaultParams,scriptJson,true);
+
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    console.log(jsonResult);
+                    console.log(oui.parseString(jsonResult));
+                    scriptJson.eventType = eventType;
+                    oui.JsonPathUtil.setObjByPath(prop,_self.AbsoluteDesign.data,jsonResult,true);
+                },{
+                    title:title,
+                    contentStyle:''//dialog样式相关
+                });
+            },
+            onUpdate:function(cfg){
+                var designer = this.getDesigner();
+                var key = $(cfg.el).attr('bindProp');
+                var v = oui.JsonPathUtil.getJsonByPath(key,this);
+                designer.bizPropsUpdate&&designer.bizPropsUpdate(key,v); //属性值变更无需强制刷新，用户体验更好
+
+
+                //TODO 这里是值改变事件
+            },
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+
+    /*富文本按钮样式*/
+    .design-des-btn {
+        background-size: 16px auto;
+        min-width: 24px;
+        height: 24px;
+        line-height: 24px;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 0;
+        outline: none;
+        border-radius: 3px;
+        border: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .design-des-btn:hover {
+        background-color: #63a4ed;
+    }
+    .design-des-btn.design-btn-text{
+        background: #2C82FC;
+        min-width: 24px;
+        padding: 0 7px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+</style>
+
+

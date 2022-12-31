@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>登陆 StartWE </title>
+</head>
+<body oui-controller="com.startwe.models.account.web.AccountController">
+    <div class="pg-log-box">
+        <div class="pg-log-content">
+            <div class="pg-log-wrap">
+                <div class="log-header">
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <h2>欢迎登录</h2>
+                        </div>
+                        <div class="col-xs-5 text-right">
+                            <a href="reg.html">注册账号</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="log-input-box log-input-user">
+                    <em></em>
+                    <input type="text" name="name" placeholder="手机号/邮箱">
+                    <label></label>
+                </div>
+
+                <div class="log-input-box log-input-pwd">
+                    <em></em>
+                    <input type="password" name="pass" placeholder="密码">
+                    <label></label>
+                </div>
+
+                <div class="log-btn-box">
+                    <a href="#" oui-e-click="login" class="log-btn">立即登录</a>
+                    <a href="#" oui-e-click="" class="log-tip">忘记密码?</a>
+                </div>
+            </div>
+
+            <div class="log-third">
+                <h3>社交账号登录</h3>
+                <ul class="third-opt">
+                    <li class="left"><a href="#"></a></li>
+                    <li class="center"><a href="#"></a></li>
+                    <li class="right"><a href="#"></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //直接跳转到首页,因为该页面未来不需要了
+        location.href = '/index.html';
+    </script>
+    <script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8" src="../../res_common/third/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../../res_common/third/template/template_debug_3_0_0.js" charset="utf-8"></script>
+
+    <script type="text/javascript" charset="utf-8" src="../../res_common/oui/core.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/account-require.js"></script>
+
+</body>
+</html>

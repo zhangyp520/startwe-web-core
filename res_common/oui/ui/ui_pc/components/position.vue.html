@@ -1,0 +1,128 @@
+<template>
+    <el-input :tempStyle="style" type="text" :id="id" :name="name" :bindProp="bindProp" :class="cls" v-model="value"
+        prefixIcon="" @change="_controlOnUpdate" :placeholder="placeholder">
+    </el-input>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                id: '',
+                name: '',
+                data: {},
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: '',
+            }
+        },
+        mounted() {
+
+            var me = this
+
+            if (this.otherAttrs.defaultText) { //默认内容
+                this.value = this.otherAttrs.defaultText;
+            }
+ 
+            // axios({
+            //     method:'get', 
+            //     url: "http://192.168.0.111:8085/com.startwe.models.project.web.LocalMapController.getLocalMapData.biz",
+            //     data: {location:[104.0582269,30.5087106].join(",")}
+            // }).then(function(res){
+            // if(res.code == 0 ){
+            //     console.info(res);
+            //     this.value = res.data;s
+            // }else{
+            //     console.info(res.msg)
+            // }
+            // }).catch(function (res) {
+            // });
+
+ 
+            const loadiplocation = ()=>{
+
+                 var  url  = com.oui.absolute.AbsoluteDesign.getLocalMapDataURl
+                    oui.postData( url, { },
+                        function(res) {
+                           
+                            me.value = res.data;
+                        }
+                    )
+            }
+
+          
+
+            if(navigator.geolocation)
+            {
+                navigator.geolocation.getCurrentPosition(function(position){
+                    // 获取成功
+                    console.debug(position); 
+                    let lat = [position.coords.latitude, position.coords.longitude];
+
+                    $.ajax(
+                        {
+                            url:url,
+                            data:{location: lat.join(',')},
+                            success:(res)=>{
+                                console.info(res);
+                            }
+
+                        }
+                    );
+                    oui.postData(
+                        url,
+                        {
+                            location: lat.join(','), 
+                        },
+                        function(res) {
+                            console.info(res,'res');
+                        }
+                    ) 
+                }, function(error){
+                    loadiplocation();
+                    console.debug(error);
+                    // // 获取失败
+                    // switch (error.code) {
+                    //     case error.PERMISSION_DENIED:
+                    //         alert("您拒绝对获取地理位置的请求");
+                    //         break;
+                    //     case error.POSITION_UNAVAILABLE:
+                    //         alert("位置信息是不可用的");
+                    //         break;
+                    //     case error.TIMEOUT:
+                    //         alert("请求您的地理位置超时");
+                    //         break;
+                    //     case error.UNKNOWN_ERROR:
+                    //         alert("未知错误");
+                    //         break;
+                    // }
+                });
+            }
+            else
+            {
+
+                loadiplocation();
+                console.debug('不支持获取GPS地理位置');
+            }
+
+            
+        },
+        methods: {
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, { //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value: v, //值
+                    data4DB: v, //提交到后端的额外数据
+                    display: v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

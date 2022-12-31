@@ -1,0 +1,471 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>系统设置</el-breadcrumb-item>
+                <el-breadcrumb-item>员工管理</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <!-- 放置路由占位符，渲染组件部分 -->
+            <!-- <router-link ></router-link> -->
+            <!-- 主体内容区域 -->
+            <!-- 查询员工区域开始 -->
+            <div class="vehicle">
+
+                <div class="grid_content">
+                    <el-input placeholder="请输入员工名称" v-model="employeeFormVale.empName" style="width: 160px;">
+                    </el-input>
+                    <el-button style="margin-left: 24px;" @click='cleanOptions'>重置</el-button>
+                    <el-button type="primary" style="margin-left: 24px;" @click="queryEmployeeInfoList">查询</el-button>
+                </div>
+            </div>
+            <!-- 查询员工区域结束 -->
+
+            <!-- 查询员工区域结束 -->
+
+            <!-- 工单表格区域容器 -->
+            <div class="table_box">
+                <!-- 新增员工的按钮区域 -->
+                <el-row>
+                    <el-button type="primary" class="el-icon-plus staff_button" @click="toAddEmployeeInfoPage">新增员工</el-button>
+                </el-row>
+                <!-- 按钮结束 -->
+
+                <!-- 表格区域开始 -->
+                <div class="Table_head">
+                    <!-- 表格头部 -->
+                    <template>
+                        <el-table :data="employeeList" style="width: 100%"  v-loading="loading" >
+                            <el-table-column class="newform_bgc" type='index' prop="" label="编号" align="center">
+                            </el-table-column>
+                            <el-table-column prop="empName" label="员工姓名" align="center">
+                            </el-table-column>
+                            <el-table-column prop="deptName" label="所属部门" align="center"></el-table-column>
+                            <el-table-column prop="createTime" label="创建时间" sortable align="center"></el-table-column>
+                            <el-table-column prop="creatorName" label="创建人员" align="center"></el-table-column>
+                            <el-table-column prop="roleName" label="权限角色" align="center"></el-table-column>
+                            <el-table-column prop="empSex" label="性别" :formatter="formatEmpSex" align="center"></el-table-column>
+                            <el-table-column label="操作" align="center">
+                                <template slot-scope="scope">
+                                    <el-button type="text" style="margin-right:16px ;"
+                                               @click='toUpdateEmployeeInfoPage(scope.row)'>查看
+                                    </el-button>
+                                    <el-switch  class="tableScopeSwitch" v-model="scope.row.state" :active-value=1 :inactive-value=2
+                                               active-color="#1890FF" active-text="启用" inactive-text="禁用"
+                                               inactive-color="#eee" @change='changeEmployeeState(scope.row)'>
+                                    </el-switch>
+                                </template>
+                            </el-table-column>
+
+                        </el-table>
+                    </template>
+                </div>
+                <!-- 表格区域结束 -->
+
+                <!-- 分页开始 -->
+                <div class="page">
+                    <div class="block">
+                        <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                                       :current-page="employeeFormVale.currentPage" :page-sizes="[1, 3, 5, 10, 20]"
+                                       :page-size="employeeFormVale.pageSize"
+                                       :total="employeeFormVale.total" layout="total, sizes, prev, pager, next, jumper">
+                        </el-pagination>
+                    </div>
+                </div>
+                <!-- 分页结束 -->
+            </div>
+        </el-main>
+
+        <!-- element组件的布局容器结束 -->
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                roleType:"",
+                empId:"",
+                deptId:"",
+                employeeList: [],
+                // 列表数据
+                employeeFormVale: {
+                    // 员工名称
+                    empName: '',
+                    // 控制开关的开启和关闭 需要动态来改变他的值默认让他为true
+                    state: 1,
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            let loginUser = window.localStorage.getItem("loginUser");
+            let loginUserInfo = oui.parseJson(loginUser);
+            this.roleType = loginUserInfo.roleType;
+            this.empId = loginUserInfo.id;
+            this.deptId = loginUserInfo.deptId;
+            // 渲染类表数据
+            this.queryEmployeeInfoList()
+
+        },
+        methods: {
+            // 重置项目和input框
+            cleanOptions() {
+                this.employeeFormVale.empName = '';
+                this.queryEmployeeInfoList();
+            },
+            formatEmpSex: function (row) {
+                if (row.empSex == 1) {
+                    return "男";
+                } else if (row.empSex == 2) {
+                    return "女";
+                }
+            },
+            // 跳转到新增新增员工页面
+            toAddEmployeeInfoPage() {
+                oui.router.push('res_apps/car/html/staffmanagement/addemployee.vue.html')
+            },
+            // 最开始初始化获取列表数据 渲染列表数据
+            queryEmployeeInfoList() {
+                var that = this;
+                if (that.roleType == 4 || that.roleType == 6 || that.roleType == 7) {
+                    oui.ajaxPost('company/employeeInfo/queryEmployeeByDeptId', {
+                            'deptId': that.deptId,
+                            'empName': that.employeeFormVale.empName,
+                            "pager": {
+                                "page": that.employeeFormVale.currentPage,
+                                "rows": that.employeeFormVale.pageSize
+                            }
+                        },
+                        function (res) {
+                            that.employeeList = res.resultObj.employees || [];
+                            that.employeeFormVale.total = res.resultObj.total || [];
+                            that.loading=false;
+                        },
+                        function (res) {
+                            that.$message.error(res.message);
+                        }
+                    );
+                }else {
+                    oui.ajaxPost('company/employeeInfo/queryEmployee', {
+                            'empName': that.employeeFormVale.empName,
+                            "pager": {
+                                "page": that.employeeFormVale.currentPage,
+                                "rows": that.employeeFormVale.pageSize
+                            }
+                        },
+                        function (res) {
+                            that.employeeList = res.resultObj.employees || [];
+                            that.employeeFormVale.total = res.resultObj.total || [];
+                            that.loading=false;
+                        },
+                        function (res) {
+                            that.$message.error(res.message);
+                        }
+                    );
+                }
+            },
+
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.employeeFormVale.currentPage = val;
+                this.queryEmployeeInfoList();
+
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.employeeFormVale.pageSize = val;
+                this.queryEmployeeInfoList();
+
+            },
+
+            // 查找员工 跳转到员工查看页面
+            toUpdateEmployeeInfoPage(row) {
+                oui.router.push('res_apps/car/html/staffmanagement/viewemployees.vue.html', {
+                    empId: row.id,
+                    confirmPassword: row.empPassword,
+                    deptId: row.deptId,
+                    empName: row.empName,
+                    empPassword: row.empPassword,
+                    empPhoneNo: row.empPhoneNo,
+                    empSex: row.empSex,
+                    roleId: row.roleId,
+                    state: row.state
+                })
+            },
+            // 改变开关的启用状态
+            changeEmployeeState(row) {
+              var that = this;
+                oui.ajaxPost('company/employeeInfo/changeEmployeeState', {
+                        "id": row.id
+                    }, 
+                    function (res) {
+                        if (row.state == 1) {
+                            that.$message({
+                                message: '员工启用成功',
+                                type: 'success'
+                            });
+                        } else {
+                            that.$message({
+                                message: '员工禁用成功',
+                                type: 'success'
+                            });
+                        }
+                    },
+                    function (res) {
+                        that.$message.error(res.message);
+                    }
+                )
+
+            }
+
+
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+        /* 开关按钮文字提示 */
+.tableScopeSwitch .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+/*打开时文字位置设置*/
+.tableScopeSwitch .el-switch__label--right {
+  z-index: 1;
+  right: 5px;
+}
+/*关闭时文字位置设置*/
+.tableScopeSwitch .el-switch__label--left {
+  z-index: 1;
+  left: 5px;
+}
+/*显示文字*/
+.tableScopeSwitch .el-switch__label.is-active {
+  display: block;
+}
+.tableScopeSwitch.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 55px !important;    /*开关按钮的宽度大小*/
+}
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        /* height: 900px; */
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 208px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+        width: 39px;
+      }
+
+      .tac.el-col.el-menu.el-menu-item{
+        width: 39px;
+      } */
+    .el-col {
+        margin: 1px 1px;
+    }
+
+    /* 文字盒子span */
+    .el-icon-menu > span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+
+    .el-main {
+        padding: 0 20px;
+    }
+
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+      height: 50px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar > img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+
+    /* 员工查询区域组件样式 */
+
+
+    /* 在厂车辆数量情况 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+        height: 80px;
+        margin: 24px 0px;
+        line-height: 80px;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+
+    /* 新增员工工单表格处 */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        margin-bottom: 21px;
+        background-color: #fff;
+        padding: 24px 24px;
+    }
+
+
+    .staff_button {
+        margin-bottom: 20px;
+    }
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

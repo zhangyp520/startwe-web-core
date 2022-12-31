@@ -1,0 +1,314 @@
+<!-- 固定过滤条件设置弹窗 -->
+<template>
+    <div class="filterRuleContainer">
+        <!-- 头部买面包屑 -->
+        <div>
+            <el-breadcrumb separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item :to="{ path: '/' }">条件设置</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/' }">条件设置</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 内容 -->
+        <!-- 添加规则 -->
+        <div class="filter_rule">
+            <div class="rule_title">添加规则</div>
+            <div class="filter_Box">
+                <div class="filter_innerBox">
+                    <img src="/res_startwe/assets/add_3.png" alt="">
+                    <div>并关系(and)</div>
+                </div>
+                <div class="filter_innerBox">
+                    <img src="/res_startwe/assets/add_3.png" alt="">
+                    <div>或关系(or)</div>
+                </div>
+            </div>
+        </div>
+        <!-- 匹配规则 -->
+        <div class="MatchingRules">
+            <div>匹配以下规则</div>
+            <div class="Rules_innerbox">
+                <div>
+                    <el-select placeholder="请选择">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-select placeholder="运算符">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-input></el-input>
+                </div>
+                <div class="Rules_operation">
+                    <div>
+                        <img src="/res_startwe/assets/add_2.png" alt="">
+                    </div>
+                    <div>
+                        <img src="/res_startwe/assets/del_2.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="Rules_innerbox">
+                <div>
+                    <el-select placeholder="请选择">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-select placeholder="运算符">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-input></el-input>
+                </div>
+                <div class="Rules_operation">
+                    <div>
+                        <img src="/res_startwe/assets/add_2.png" alt="">
+                    </div>
+                    <div>
+                        <img src="/res_startwe/assets/del_2.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 匹配其他规则 -->
+        <div class="otherMatchingRules">
+            <div class="otherBox">
+                <div class="other_innerbox">
+                    <div class="otherBoxTitle">或&nbsp;&nbsp;匹配以下规则</div>
+                    <div class="del_innerBox">
+                        <img src="/res_startwe/assets/del_1.png" alt="">
+                        <div>删除或关系</div>
+                    </div>
+                    <div class="del_innerBox">
+                        <img src="/res_startwe/assets/del_1.png" alt="">
+                        <div>删除并关系</div>
+                    </div>
+                </div>
+
+                <div class="Rules_innerbox">
+                    <div>
+                        <el-select placeholder="请选择">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-select placeholder="运算符">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-input></el-input>
+                    </div>
+                    <div class="Rules_operation">
+                        <div>
+                            <img src="/res_startwe/assets/add_2.png" alt="">
+                        </div>
+                        <div>
+                            <img src="/res_startwe/assets/del_2.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="Rules_innerbox">
+                    <div>
+                        <el-select placeholder="请选择">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-select placeholder="运算符">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-input></el-input>
+                    </div>
+                    <div class="Rules_operation">
+                        <div>
+                            <img src="/res_startwe/assets/add_2.png" alt="">
+                        </div>
+                        <div>
+                            <img src="/res_startwe/assets/del_2.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- 按钮 -->
+        <div class="submitBtn">
+            <el-button>取消</el-button>
+            <el-button type="primary">确认</el-button>
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                form: {
+                    region: ''
+                },
+                textarea: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容 */
+
+    .filterRuleContainer {
+        margin: 20px 20px 0 20px;
+    }
+
+    /* 添加规则 */
+
+    .filter_rule {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .rule_title {
+        line-height: 32px;
+    }
+
+    .filter_Box {
+        display: flex;
+        margin-left: 10px;
+    }
+
+    .filter_innerBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 108px;
+        height: 32px;
+        border: 1px solid #1890FF;
+        border-radius: 5px;
+        /* font-size: 14px; */
+        color: #1890FF;
+        margin-right: 20px;
+
+    }
+
+    .filter_innerBox>img {
+        margin-right: 5px;
+    }
+
+    /* 匹配规则 */
+
+    .MatchingRules {
+        margin-top: 20px;
+    }
+
+    .Rules_innerbox {
+        display: flex;
+        /* justify-content: space-around; */
+        margin-top: 10px;
+    }
+
+    .Rules_innerbox>div:not(:last-child) {
+        margin-right: 20px;
+    }
+
+    .Rules_operation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .Rules_operation>div {
+        margin-right: 10px;
+    }
+
+    /* 匹配其他规则 */
+
+    .otherMatchingRules {
+        margin-top: 20px;
+        background-color: #F4F4F4;
+        padding: 10px 0;
+    }
+
+    .otherBox {
+        margin: 0 10px;
+    }
+
+    .other_innerbox {
+        display: flex;
+    }
+
+    .del_innerBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 108px;
+        height: 32px;
+        border: 1px solid #FF1818;
+        border-radius: 5px;
+        /* font-size: 14px; */
+        color: #FF1818;
+        margin-right: 20px;
+
+    }
+
+    .del_innerBox>img {
+        margin-right: 5px;
+    }
+
+    .otherBoxTitle {
+        line-height: 32px;
+        margin-right: 10px;
+    }
+
+    /* 提交按钮 */
+
+    .submitBtn {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+    }
+</style>

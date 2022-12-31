@@ -1,0 +1,218 @@
+<!-- 选择执行项目 -->
+<template>
+    <div class="tel_box">
+        <div class="Customer_search">
+            <el-input placeholder="请输入" v-model="maintainItemFormValue.itemName"
+                style="width: 200px; margin-left:8px">
+            </el-input>
+           
+                <el-button  class="buttom_c" style="height: 40px;" @click='cleanOptions'>重置</el-button>
+    
+ 
+                <el-button type="primary" class="buttom_c"   style="height: 40px;" @click="queryMaintainItemList">查询</el-button>
+
+        </div>
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+                <el-table :data="maintainItemList" style="width: 100%; text-align: center;" 
+                highlight-current-row  @current-change="handleSelectionChange">
+                    <el-table-column prop="itemType" :formatter="formatType" label="类型" width="200">
+                    </el-table-column>
+                    <el-table-column prop="itemName" label="项目名称" width="200">
+                    </el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" width="200"></el-table-column>
+                    <el-table-column prop="itemWorkHours" label="项目工时" width="100"></el-table-column>
+                </el-table>
+            </template>
+        </div>
+
+        <!-- 表格区域结束 -->
+
+        <!-- 分页开始 -->
+        <div class="page">
+            <div class="block">
+                <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                    :current-page="maintainItemFormValue.currentPage" :page-sizes="[1, 3, 5, 10, 20]"
+                    :page-size="maintainItemFormValue.pageSize" :total="maintainItemFormValue.total"
+                    layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </div>
+        </div>
+        <!-- 分页结束 -->
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 项目展示列表数据
+                maintainItemList: [],
+                maintainItemFormValue: {
+                    //input框输入的项目名称
+                    itemName: '',
+                    itemType: "",
+                    // 关键字区域项目状态
+                    status: '',
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                },
+
+            }
+        },
+        // 员工列表数据结束
+        created() {
+            // // 加载 css3布局样式和首页样式
+            // oui.require([
+            //     '/res_apps/car-1/css/css3-flex.css',
+            //     '/res_apps/car-1/css/home.css'
+            // ])
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.queryMaintainItemList();
+        },
+        methods: {
+            // 获取项目列表数据
+            queryMaintainItemList: function () {
+                var that = this;
+                oui.ajaxPost('company/maintainItem/queryMaintainItem', {
+                    "itemName": that.maintainItemFormValue.itemName,
+                    "itemType": that.maintainItemFormValue.itemType,
+                    "pager": {
+                        "page": that.maintainItemFormValue.currentPage,
+                        "rows": that.maintainItemFormValue.pageSize
+                    },
+                    "status": that.maintainItemFormValue.status
+                },
+                    function (res) {
+                        that.maintainItemList = res.resultObj.maintainItems;
+                        that.maintainItemFormValue.total = res.resultObj.total
+                    },
+                    function (res) {
+                        that.$message({
+                            message: '网络出错，请稍后重试',
+                            type: 'warning'
+                        })
+                    });
+            },
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.maintainItemFormValue.currentPage = val;
+                this.queryMaintainItemList();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.maintainItemFormValue.pageSize = val;
+                this.queryMaintainItemList();
+            },
+            // 重置项目和input框
+            cleanOptions() {
+                this.maintainItemFormValue.itemName = '';
+                this.queryMaintainItemList();
+            },
+            formatType(row) {
+                if (row.itemType == 1) {
+                    return "维修项目"
+                } else if (row.itemType == 2) {
+                    return "保养项目"
+                } else if (row.itemType == 3) {
+                    return "其他项目"
+                }
+            },
+            formatStatus(row) {
+                if (row.status == "Y") {
+                    return "启用"
+                } else if (row.status == "N") {
+                    return "禁用"
+                }
+            },
+
+            handleSelectionChange : function(val) {
+                console.log(val);
+                // 把取到的值，用一个变量存起来，并把放在全局，让底层页面用
+                oui.getTop().oui.setPageParam('projectExecutionData',oui.parseString(val));
+            }
+        }
+
+
+
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 列表头部内容居中 */
+    .el-table {
+        text-align: center !important;
+    }
+
+    /* 列表行的内容居中 */
+    /* 每行的内容居中 */
+    .el-table th {
+        text-align: center !important;
+    }
+
+    /* 设置每列内容为居中显示 */
+    .el-table td {
+        text-align: center !important;
+    }
+
+    .tel_box {
+        /* width: 430px;
+        height: 240px; */
+        margin: 24px auto;
+        box-sizing: border-box;
+    }
+
+    .Customer_search {
+        width: 500px;
+        margin: 0 20px;
+
+    }
+
+    /* 搜索区 */
+    .Customer_search_input .el-input__icon {
+        color: #1890FF;
+    }
+    .buttom_c{
+        height: 40px !important;
+    }
+
+    /* 类表的样式 */
+    /* 表格数据 居中对齐*/
+
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域结束----- */
+</style>

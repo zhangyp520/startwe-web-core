@@ -1,0 +1,253 @@
+<!-- 新建项目 -->
+<template>
+    <div>
+        <!-- 头部 -->
+        <div>
+            <oui-include type="module" url="/res_startwe/html/home.vue.html">
+            </oui-include>
+        </div>
+        <!-- 内容 -->
+        <div class="addProject">
+            <!-- 内容 -->
+            <div class="addProjectWrapper">
+                <!-- 标题 -->
+                <div class="addProjectTitle">新建项目</div>
+                <!-- 内容 -->
+                <el-form class="addProjectContent" :model="projectList" :rules="rules" ref="projectList">
+                    <!-- 小盒子 -->
+                    <div class="addProject_inbox">
+                        <div class="in_title">项目名称</div>
+                        <el-form-item prop="name">
+                            <el-input class="in_input" v-model="projectList.name">
+                            </el-input>
+                        </el-form-item>
+                    </div>
+                    <div class="addProject_inbox">
+                        <div class="in_title">项目标识</div>
+                        <el-form-item prop="enName">
+                            <el-input class="in_input" v-model="projectList.enName">
+                            </el-input>
+                            <div class="in_tips">*必须以圈子的账号作为项目唯一标识的前缀</div>
+                        </el-form-item>
+                    </div>
+                    <div class="addProject_inbox">
+                        <div class="in_title">项目描述</div>
+                        <div id="textContent">
+                            {{projectList.description}}
+                        </div>
+                    </div>
+                </el-form>
+                <div class="submitBtn">
+                    <div>
+                        <el-button @click="goBackClick">返回</el-button>
+                        <el-button type="primary" @click="keepClick">保存</el-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                projectList: {
+                    circleId: '',
+                    name: '',
+                    enName: '',
+                    description: '',
+                    id: ''
+                },
+                createProjectUrl: '',
+                loadUrl: '',
+                saveUrl: '',
+                // 每个对象的验证规则
+                rules: {
+                    name: [
+                        { required: true, message: '请输入项目名称', trigger: 'blur' },
+                    ],
+                    enName: [
+                        { required: true, message: '请输入项目标识', trigger: 'blur' },
+                    ],
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            // 获取跳转带入参数
+            var createProjectUrl = this.$router.query.createProjectUrl || '';
+            var circleId = this.$router.query.circleId || '';
+            var enName = this.$router.query.enName || '';
+            var saveUrl = this.$router.query.saveUrl || '';
+            var loadUrl = this.$router.query.loadUrl || '';
+
+            // 将带入参数赋值给当前组件变量
+            this.createProjectUrl = createProjectUrl;
+            this.projectList.circleId = circleId;
+            this.projectList.enName = enName + `_`;
+            this.saveUrl = saveUrl;
+            this.loadUrl = loadUrl;
+            this.textContent();
+
+        },
+        methods: {
+            // 富文本
+            textContent: function () {
+                var me = this;
+                oui.require([
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/css/bootstrap.min.css",
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/js/bootstrap.min.js",
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.css',
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.min.js',
+                    oui.getContextPath() + 'res_common/third/editor/dist/lang/summernote-zh-CN.js'], function () {
+
+                        me.$nextTick(function () {
+                            $('#textContent').summernote({
+                                height: 300,
+                                tabsize: 2,
+                                lang: 'zh-CN'
+                            });
+                        });
+                    });
+            },
+            // 返回
+            goBackClick: function () {
+                var that = this;
+                oui.router.push('res_startwe/html/circle/circleDetails.vue.html', {
+                    // 将跳转页面需要的数据带过去
+                    saveUrl: that.saveUrl,
+                    loadUrl: that.loadUrl,
+                    id: that.projectList.circleId
+                })
+            },
+            // 保存
+            keepClick: function () {
+                var me = this;
+                me.projectList.description = $('#textContent').summernote('code');
+                var param = {
+                    project: me.projectList
+                };
+                oui.postData(me.createProjectUrl, param, function (res) {
+                    if (res.success) {
+                        me.projectList.id = res.projectId;
+                        oui.getTop().oui.alert('保存成功');
+
+                    } else {
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                    oui.router.push('res_startwe/html/circle/circleDetails.vue.html', {
+                        // 将跳转页面需要的数据带过去
+                        saveUrl: me.saveUrl,
+                        loadUrl: me.loadUrl,
+                        id: me.projectList.circleId
+                    })
+                }, function (err) {
+                    oui.getTop().oui.alert(err);
+                }, '保存中...');
+            },
+
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .el-form-item {
+        width: 94%;
+    }
+
+    .el-select {
+        width: 100%;
+    }
+
+    .note-editor.note-frame {
+        border: 1px solid #DCDFE6;
+        width: 94%;
+    }
+
+
+    /* 内容 */
+
+    .addProject {
+        background-color: #f2f2f2;
+    }
+
+    .addProjectWrapper {
+        width: 80%;
+        margin: auto;
+        padding: 40px 0;
+    }
+
+    .addProjectTitle {
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .addProjectContent {
+        margin-top: 40px;
+    }
+
+    .addProject_inbox {
+        display: flex;
+    }
+
+    .in_title {
+        font-size: 14px;
+        margin-right: 10px;
+        line-height: 40px;
+    }
+
+    /* .in_input>input {
+        width: 100%;
+        height: 30px;
+        border: 1px solid #999;
+        outline: none;
+        padding: 0 10px;
+    } */
+
+    .in_tips {
+        color: #999;
+        margin-top: 5px;
+    }
+
+    /* 提交按钮 */
+
+    .submitBtn>div {
+        display: flex;
+        justify-content: center;
+    }
+</style>

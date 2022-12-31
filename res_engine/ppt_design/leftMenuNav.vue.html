@@ -1,0 +1,1133 @@
+<!--左侧菜单-->
+<template>
+    <div class="left-menu">
+        <div class="ppt-tabs">
+            <div :class="`${showPages ? 'active' : null} ppt-tab-item`" @click="showPage">
+                <img src="/res_engine/ppt_design/images/ic_page.png" />
+                <div class="ppt-tabs-tit">页面</div>
+            </div>
+            <div :class="`${!showPages ? 'active' : null} ppt-tab-item`" @click="showModule">
+                <img src="/res_engine/ppt_design/images/ic_tpl.png" />
+                <div class="ppt-tabs-tit">模板</div>
+            </div>
+        </div>
+        <div v-if="showPages" class="ppt-pages">
+            <div class="ppt-contents">
+                <div v-for="item in pageList" class="ppt-page">
+                    <div :class="pageId ==item.PageId?'ppt-page-bg-outer active':'ppt-page-bg-outer'"
+                        @click="TloadPage(item)">
+                        <div class="ppt-page-bg" :style="findStyle(item)">
+                            <img v-if="item.PageImgUrl" class="ppt-page-image-mini" :src="item.PageImgUrl" />
+                        </div>
+                    </div>
+                    <div class="ppt-page-image-name">{{item.PageName}}</div>
+                    <el-dropdown trigger="click" class="ppt-page-operate-button" placement="bottom-start"
+                        @command="executeCommand">
+                        <img src="/res_engine/ppt_design/images/more_icon.png" @click="showMenus(item)"></img>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="addPptPage">添加页面</el-dropdown-item>
+                            <el-dropdown-item command="clonePptPage">复制</el-dropdown-item>
+                            <el-dropdown-item command="showSavePage2Template">另存为模板</el-dropdown-item>
+                            <el-dropdown-item command="removePptPage">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+                <div class="add-new" @click="addPptPage()">
+                    <div class="add-new-bg"></div>
+                </div>
+            </div>
+        </div>
+        <div v-else class="ppt-modules">
+            <el-tabs v-model="activeName" @tab-click="handleClickMenu" stretch="true">
+                <el-tab-pane label="我的模板" name="1">
+                    <div class="ppt-module-page-option">
+                        <el-select v-model="groupingOfMy" placeholder="所有" @change="handleGroupingOfMyChange">
+                            <el-option v-for="item in groupingData" :key="item.TagId" :label="item.Name"
+                                :value="item.TagId">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="ppt-box-flex">
+                        <div class="ppt-listbox" v-for="item in pageTemplateData">
+                            <div class="ppt-adding" v-if='item.addshow'>
+                                已添加
+                            </div>
+                            <img :src="item.PageImgUrl">
+                            <div class="ppt-icon">
+                                <div @click='preview(item.PageData)'><img
+                                        src="/res_engine/ppt_design/images/ic_media.png" alt=""></div>
+                                <div @click='addpage(item)'><img src="/res_engine/ppt_design/images/ic_plus.png" alt="">
+                                </div>
+                            </div>
+                            <div class="ppt-bot-botright">{{item.PageNum}}</div>
+                            <div class="ppt-box-bottom">{{item.TemplateName}}</div>
+                        </div>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="全部模板" name="0">
+                    <div class="ppt-module-page-option">
+                        <el-select v-model="groupingOfAll" placeholder="所有" @change="handleGroupingOfAllChange">
+                            <el-option v-for="item in groupingData" :key="item.TagId" :label="item.Name"
+                                :value="item.TagId">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="ppt-box-flex">
+                        <div class="ppt-listbox" v-for="item in pageTemplateData">
+                            <div class="ppt-adding" v-if="item.addshow">
+                                已添加
+                            </div>
+                            <img :src="item.PageImgUrl">
+                            <div class="ppt-icon">
+                                <div><img src="/res_engine/ppt_design/images/ic_media.png" alt=""></div>
+                                <div @click='addpage(item)'><img src="/res_engine/ppt_design/images/ic_plus.png" alt="">
+                                </div>
+                            </div>
+                            <div class="ppt-bot-botright">{{item.PageNum}}</div>
+                            <div class="ppt-box-bottom">{{item.TemplateName}}</div>
+                        </div>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+
+        <!-- 弹框 -->
+        <div class="keep_model" v-if='isShowPage2Template'>
+            <div class="keep_model_box">
+                <div class="keep_model_title">
+                    另存为模板
+                </div>
+                <div class="keep_model_input">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="模板名称" prop="name">
+                            <el-input v-model="ruleForm.name" size="small"></el-input>
+                        </el-form-item>
+                        <el-form-item label="模板分组" prop="region">
+                            <el-select v-model="ruleForm.region" placeholder="请选择模板分组" size="small" class="option">
+                                <el-option v-for="item in groupingData" :key="item.TagId" :label="item.Name"
+                                    :value="item.TagId">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="模板类别" prop="resource">
+                            <el-radio-group v-model="ruleForm.resource">
+                                <el-radio :label="1">私人模板</el-radio>
+                                <el-radio :label="0">公共模板</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <div class="keep_model_but">
+                            <el-button @click='isShowPage2Template = false'>取消</el-button>
+                            <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+                        </div>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed-box" v-if='previewMoadl'>
+            <oui-include type="module" url='res_engine/ppt_design/preview.vue.html' :data="rightToolbarData">
+            </oui-include>
+        </div>
+
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                previewMoadl: false,
+                rightToolbarData: {},
+                currentMenuPageId: '',
+                activeName: "1",
+                showPageOperateMenu: false,
+                pageId: '',
+                menuTop: '45px',
+                groupingOfMy: '',
+                groupingOfAll: '',
+                pageList: [],
+                // moduleListMy: [{num:2,addType:true,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:2,addType:true,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:2,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:2,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}],
+                // moduleListAll: [{num:1,addType:true,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:1,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:1,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}, {num:1,addType:true,img:"/res_engine/ppt_design/images/a10c046990dbf3523b67376a6fd34342.jpg"}],
+                showPages: true,
+                isShowPage2Template: false, //是否显示 保存页面为模板的弹框
+                ruleForm: {
+                    name: '',
+                    region: '',
+                    resource: ""
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '请输入模板名称', trigger: 'blur' },
+                    ],
+                    region: [
+                        { required: true, message: '请选择活动分组', trigger: 'change' }
+                    ],
+                    resource: [
+                        { required: true, message: '请选择活动类别', trigger: 'change' }
+                    ],
+
+                },
+                pageId: '',
+                //分组数据
+                groupingData: [],
+                //页面模板数据
+                pageTemplateData: []
+            }
+        },
+
+        created: function () {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+
+            this.init();
+            this.queryGroupingData();
+        },
+        methods: {
+            executeCommand: function (command) {
+                this[command] && this[command](this.currentMenuPageId);
+            },
+            handleClickMenu: function (tab, event) {
+                let me = this;
+                var TagId = '';
+                if (me.activeName && me.activeName == "1") {
+                    TagId = me.groupingOfMy;
+                } else {
+                    TagId = me.groupingOfAll;
+                }
+                //显示模板页签
+                oui.ajaxPost(oui.pptAjaxConfig.queryTemplatesUrl, {
+                    "TagId": TagId, //节目id
+                    "IsPrivated": me.activeName, //节目id
+                }, function (res) {
+                    //保存成功后,跳转到模板卡片列表
+                    //TODO
+                    console.log('查询出来的模板', res);
+                    me.pageTemplateData = res;
+                    me.addshow(res)
+                }, function (res) {
+                    console.log("查询模板失败");
+                });
+            },
+            init: function () {
+                var me = this;
+                var pageList = com.oui.absolute.AbsoluteDesign.pageList || [];
+                var pageId = com.oui.absolute.AbsoluteDesign.pageId || '';
+                var pptId = com.oui.absolute.AbsoluteDesign.pptId || '';
+                var width = com.oui.absolute.AbsoluteDesign.width || '';
+                var height = com.oui.absolute.AbsoluteDesign.height || '';
+                me.width = width;
+                me.height = height;
+                me.pageId = pageId;
+                me.pptId = pptId;
+                me.$set(me, 'pageList', pageList);
+                me.isFirstInit = true;
+
+                if (!pageList.length) {
+                    //如果页面没有，默认新增空页面
+                    this.newPage();
+                } else {
+                    this.messageFunction = function (event) {
+                        if (!event.data) {
+                            return;
+                        }
+                        me.onMessage && me.onMessage(event.data);
+                    };
+                    window.addEventListener('message', this.messageFunction);
+                }
+
+
+                console.log(this.pageList)
+            },
+            onMessage: function (data) {
+                this[data.cmd] && this[data.cmd](data.param);
+            },
+            cmd4updatePageImgUrl: function (param) {
+                var _timer = oui.getPageParam('timer_leftMenu');
+                if (_timer) {
+                    clearTimeout(_timer);
+                }
+                var pageId = this.pageId;
+                var one = oui.findOneFromArrayBy(this.pageList || [], function (item) {
+                    if (item.PageId == pageId) {
+                        return true;
+                    }
+                });
+                _timer = setTimeout(function () {
+                    var curr = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                    var $paper = $(".ppt-paper-area");
+                    if (curr && curr.id && curr.controlType) { //控件存在
+                        var $el = $('[id=' + curr.id + '][drag-status=dragging]', $paper[0]);
+                        if ($el && $el.length) {
+                            return;
+                        }
+                    }
+                    //值改变逻辑
+                    html2canvas($paper[0]).then(function (canvas) {
+                        var contentWidth = canvas.width;
+                        var contentHeight = canvas.height;
+                        var extra_canvas = document.createElement("canvas");
+
+                        var w = 154 * contentWidth / contentHeight;
+                        var h = 154;
+
+                        extra_canvas.setAttribute('width', w);
+                        extra_canvas.setAttribute('height', h);
+
+                        var ctx = extra_canvas.getContext('2d');
+                        ctx.drawImage(canvas, 0, 0, w, h);
+                        var imgUrl = extra_canvas.toDataURL();
+                        if (one) {
+                            one.PageImgUrl = imgUrl;
+                            com.oui.absolute.AbsoluteDesign.pageImgUrl = imgUrl;
+                            console.log('update....');
+                        }
+                    });
+                }, 300);
+                oui.setPageParam('timer_leftMenu', _timer);
+
+            },
+            showMenus: function (item) {
+                this.pageId = item.PageId;
+                if (this.currentMenuPageId == item.PageId) {
+                    this.showPageOperateMenu = false;
+                    this.currentMenuPageId = '';
+                } else {
+                    let findIndex = this.pageList.findIndex(itemTo => itemTo.PageId == item.PageId);
+                    this.menuTop = 45 + 198.8 * findIndex + "px";
+                    this.showPageOperateMenu = true;
+                    this.currentMenuPageId = item.PageId;//设置当前页面id
+                }
+            },
+            findStyle: function (item) {
+                var width = this.width;
+                var height = this.height;
+                if (width && height && item.PageImgUrl) {
+                    var h = 154;
+                    var w = (h * width / height).toFixed(3);
+                    if (w > 166) {
+                        w = 166;
+                    }
+                    return 'width:' + w + 'px;height:' + h + 'px;background-color:#393939;background-image:none';
+                }
+                return '';
+            },
+            //添加节目页面
+            addPptPage: function (pageId) {
+                debugger;
+                var me = this;
+                //ajax 请求添加页面并保存 页面列表
+                if (!com.oui.absolute.AbsoluteDesign.hasSaveData()) {
+                    //没有保存 则先保存后新增
+                    com.oui.absolute.AbsoluteDesign.savePageDesign(function (res) {
+                        me.newPage(pageId);
+                    });
+                } else {
+                    //如果保存了则直接新增
+                    me.newPage(pageId);
+                }
+            },
+            //新增页面到节目中
+            newPage: function (pageId, callback) {
+                debugger
+                var me = this;
+                var pageName = "页面" + (me.pageList.length + 1);
+                oui.ajaxPost(oui.pptAjaxConfig.newPageUrl, {
+                    "PageName": pageName,
+                    "TranslateId": me.pptId, //节目id
+                    "TemplateId": null,
+                    "PageData": oui.parseString({
+
+                    })
+                }, function (res) {
+                    debugger
+                    var id = res.PageId + ''; //新增产生的id
+                    //將新增的頁面id放入简要信息列表 进行保存提交
+                    var newItem = {
+                        PageId: id,
+                        PageName: pageName,
+                        TranslateId: me.pptId
+                    };
+                    if (pageId) {//指定页面后面新增
+                        var currIdx = -1;
+                        oui.findOneFromArrayBy(me.pageList, function (pageItem, idx) {
+                            if (pageItem.PageId == pageId) {
+                                currIdx = idx;
+                                return true;
+                            }
+                        });
+                        if (currIdx > -1) {
+                            me.pageList.splice(currIdx + 1, 0, newItem);
+                        } else {
+                            me.pageList.push(newItem);
+                        }
+                    } else {
+                        me.pageList.push(newItem);
+                    }
+                    me.savePageList(function () {
+                        //指向新页面
+                        me.loadPage(newItem);
+                    });
+                });
+            },
+            //判断是否保存，没有保存则先保存后克隆
+            clonePptPage: function (pageId) {
+                var me = this;
+                //ajax 请求添加页面并保存 页面列表
+                if (!com.oui.absolute.AbsoluteDesign.hasSaveData()) {
+                    //没有保存 则先保存后克隆
+                    com.oui.absolute.AbsoluteDesign.savePageDesign(function (res) {
+                        me.clonePage(pageId);
+                    });
+                } else {
+                    //如果保存了则直接克隆
+                    me.clonePage(pageId);
+                }
+            },
+            //判断是否保存，没有保存则先保存后删除
+            removePptPage: function (pageId) {
+                var me = this;
+                //ajax 请求添加页面并保存 页面列表
+                if (!com.oui.absolute.AbsoluteDesign.hasSaveData()) {
+                    //没有保存 则先保存后克隆
+                    com.oui.absolute.AbsoluteDesign.savePageDesign(function (res) {
+                        me.removePage(pageId);
+                    });
+                } else {
+                    //如果保存了则直接克隆
+                    me.removePage(pageId);
+                }
+            },
+            //删除页面
+            removePage: function (pageId) {
+                var me = this;
+                var currIdx = -1;
+                var currPage = oui.findOneFromArrayBy(me.pageList, function (pageItem, idx) {
+                    if (pageItem.PageId == pageId) {
+                        currIdx = idx;
+                        return true;
+                    }
+                });
+                if (!currPage) { //异常操作情况
+                    return;
+                }
+                oui.ajaxPost(oui.pptAjaxConfig.removePageUrl, {
+                    "TranslateId": me.pptId, //节目id
+                    "PageId": pageId
+                }, function (res) {
+                    if (currIdx > -1) {
+                        me.pageList.splice(currIdx, 1); //删除指定元素
+                        if (currIdx < me.pageList.length) {
+                            me.savePageList(function () {
+                                //指向下一个页面加载
+                                me.loadPage(me.pageList[currIdx]);
+                            });
+                        } else {
+                            currIdx--;
+                            if (currIdx > -1) {
+                                me.savePageList(function () {
+                                    //指向下一个页面加载
+                                    me.loadPage(me.pageList[currIdx]);
+                                });
+                            } else {//至少需要一个页面
+                                me.newPage();
+                            }
+                        }
+                    }
+                });
+            },
+            //显示另存页面为模板的弹框
+            showSavePage2Template: function (pageId) {
+                this.isShowPage2Template = true;
+            },
+            //另存页面为模板
+            savePage2Template: function (pageId, templateData) {
+                var me = this;
+                var currIdx = -1;
+                var currPage = oui.findOneFromArrayBy(me.pageList, function (pageItem, idx) {
+                    if (pageItem.PageId == pageId) {
+                        currIdx = idx;
+                        return true;
+                    }
+                });
+                if (!currPage) { //异常操作情况
+                    return;
+                }
+                //TODO
+                oui.ajaxPost(oui.pptAjaxConfig.saveToTemplateUrl, {
+                    "TranslateId": me.pptId, //节目id
+                    "PageId": pageId,
+                    "PageImgUrl": currPage.PageImgUrl,
+                    "TemplateName": templateData.templateName,
+                    "GroupId": templateData.groupId,
+                    "TemplateType": templateData.templateType
+                }, function (res) {
+                    //保存成功后,跳转到模板卡片列表
+                    //TODO
+                });
+            },
+            //克隆一个页面
+            clonePage: function (pageId, callback) {
+                var me = this;
+                var pageName = "页面" + (me.pageList.length + 1);
+                var currIdx = -1;
+                var data4page = com.oui.absolute.AbsoluteDesign.getDesignData();
+                var currPage = oui.findOneFromArrayBy(me.pageList, function (pageItem, idx) {
+                    if (pageItem.PageId == pageId) {
+                        currIdx = idx;
+                        return true;
+                    }
+                });
+                if (!currPage) { //异常操作情况
+                    return;
+                }
+                var simpleJson = oui.parseJson(oui.parseString(currPage));
+                var cloneData4page = oui.parseJson(oui.parseString(data4page));
+                var pageImgUrl = '';
+                //调用后台接口 克隆图片 TODO
+                //TODO 前端构造远程图片流文件，然后 进行图片上传，回调后将图片地址 写到 新页面中
+
+                oui.ajaxPost(oui.pptAjaxConfig.newPageUrl, {
+                    "PageName": pageName,
+                    "PageImgUrl": pageImgUrl,//图片地址克隆
+                    "TranslateId": me.pptId, //节目id
+                    "TemplateId": simpleJson.TemplateId,
+                    "PageData": oui.parseString(cloneData4page)
+                }, function (res) {
+                    var id = res.PageId + ''; //新增产生的id
+                    //將新增的頁面id放入简要信息列表 进行保存提交
+                    var newItem = {
+                        PageId: id,
+                        PageName: pageName,
+                        TranslateId: me.pptId,
+                        PageImgUrl: pageImgUrl,
+                        TemplateId: simpleJson.TemplateId
+                    };
+                    if (currIdx > -1) {
+                        me.pageList.splice(currIdx + 1, 0, newItem);
+                    } else {
+                        me.pageList.push(newItem);
+                    }
+                    me.savePageList(function () {
+                        //指向新页面
+                        me.loadPage(newItem);
+                    });
+                });
+            },
+
+            //保存页面列表
+            savePageList: function (callback) {
+                var me = this;
+                oui.ajaxPost(oui.pptAjaxConfig.savePagesByPptIdUrl, {
+                    "Pages": me.pageList
+                }, function (res) {
+                    callback && callback(res);
+                });
+            },
+            //  预览
+            previewPageTemplate: function (item) {
+                console.log('item', item);
+            },
+            //使用模板创建新页面
+            addpage: function (item) {
+                var me = this;
+                var pageId = com.oui.absolute.AbsoluteDesign.pageId
+                oui.ajaxPost(oui.pptAjaxConfig.SaveTemplateToTranslateUrl, {
+                    "TranslateId": me.pptId, //节目id
+                    "TemplateId": item.TemplateId,
+                    "PageId": pageId
+                }, function (res) {
+                    var url = oui.getContextPath() + 'res_engine/ppt_design/ppt-design.html';
+                    var pptId = oui.getParam('pptId');
+                    url = oui.addParams(url, {
+                        pptId: pptId,
+                        pageId: pageId
+                    });
+                    oui.go4replace(url);
+                }, function (res) {
+                    me.$message({
+                        message: '模板应用失败！',
+                        type: 'error'
+                    });
+                });
+            },
+            //加载节目中的某个页面
+            loadPage: function (item) {
+                var me = this;
+                //加载指定页面
+                if (me.pageId != item.PageId) { //非当前页面才切换
+                    var url = oui.getContextPath() + 'res_engine/ppt_design/ppt-design.html';
+                    var pptId = oui.getParam('pptId');
+                    url = oui.addParams(url, {
+                        pptId: pptId,
+                        pageId: item.PageId
+                    });
+                    oui.go4replace(url);
+                }
+            },
+            showPage: function () {
+                this.showPages = true;
+                //显示页面列表页签
+            },
+            showModule: function () {
+                let me = this;
+                this.showPages = false;
+                //显示模板页签
+                oui.ajaxPost(oui.pptAjaxConfig.queryTemplatesUrl, {
+                    "TagId": me.groupingOfMy, //节目id
+                    "IsPrivated": me.activeName, //节目id
+                }, function (res) {
+                    me.pageTemplateData = res;
+                    me.addshow(res)
+                }, function (res) {
+                    me.$message({
+                        message: '模板查询失败！',
+                        type: 'error'
+                    });
+                });
+            },
+            queryGroupingData: function () {
+                let me = this;
+                //显示模板页签
+                oui.ajaxPost(oui.pptAjaxConfig.queryCheckTagListUrl, {
+                }, function (res) {
+                    me.groupingData = res.TagDetialList;
+                }, function (res) {
+                    me.$message({
+                        message: '模板分组查询失败！',
+                        type: 'error'
+                    });
+                });
+            },
+            //我的模板下拉框选择改变事件
+            handleGroupingOfMyChange: function () {
+                let me = this;
+                oui.ajaxPost(oui.pptAjaxConfig.queryTemplatesUrl, {
+                    "TagId": me.groupingOfMy,
+                    "IsPrivated": me.activeName,
+                }, function (res) {
+                    me.pageTemplateData = res;
+                    me.addshow(res)
+                }, function (res) {
+                    me.$message({
+                        message: '模板查询失败！',
+                        type: 'error'
+                    });
+                });
+            },
+            //全部模板下拉框选择改变事件
+            handleGroupingOfAllChange: function () {
+                let me = this;
+                oui.ajaxPost(oui.pptAjaxConfig.queryTemplatesUrl, {
+                    "TagId": me.groupingOfAll,
+                    "IsPrivated": me.activeName,
+                }, function (res) {
+                    me.pageTemplateData = res;
+                    me.addshow(res)
+                }, function (res) {
+                    me.$message({
+                        message: '模板查询失败！',
+                        type: 'error'
+                    });
+                });
+            },
+            //提交
+            submitForm(formName) {
+                let me = this;
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost(oui.pptAjaxConfig.loadPageByPageIdUrl, {
+                            "PageId": this.pageId,
+                        }, function (res) {
+                            oui.ajaxPost(oui.pptAjaxConfig.saveToTemplateUrl, {
+                                "TemplateName": me.ruleForm.name,
+                                "PageName": res.PageName,
+                                "TagId": me.ruleForm.region,
+                                "IsPrivate": me.ruleForm.resource,
+                                "PageImgUrl": res.PageImgUrl,
+                                "PageData": oui.parseString(res.PageData)
+                            }, function (res) {
+                                me.$message({
+                                    message: '页面另存为模板成功！',
+                                    type: 'success'
+                                });
+                                me.isShowPage2Template = false
+                            }, function (error) {
+                                alert('操作失败')
+                            });
+                        }, function (error) {
+                            alert('操作失败')
+                        });
+                        return
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            //查询已添加
+            addshow(res) {
+                let pageList = com.oui.absolute.AbsoluteDesign.pageList
+                for (const item of pageList) {
+                    for (const i of res) {
+                        if (item.TemplateId == i.TemplateId) {
+                            i.addshow = true
+                        }
+                    }
+                }
+            },
+            //模板预览
+            preview() {
+                this.previewMoadl = true
+              
+            },
+            //关闭预览弹框
+            cmd4hide: function (param) {
+                this.previewMoadl = false
+            },
+
+        }
+    }
+
+</script>
+<style>
+    .left-menu {
+        background: #3c3c3c;
+        height: 100%;
+        display: flex;
+    }
+
+    .ppt-tabs {
+        width: 50px;
+        height: 100%;
+        display: flex;
+        background: #292929;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .ppt-tabs-tit {
+        color: #ffffff;
+    }
+
+    .ppt-tab-item {
+        opacity: 0.65;
+        cursor: pointer;
+        padding-top: 20px;
+    }
+
+    .ppt-tab-item:hover,
+    .ppt-tab-item.active {
+        opacity: 1;
+        background: #383838;
+    }
+
+    .ppt-pages {
+        background: #3c3c3c;
+        padding: 10px;
+        width: 300px;
+
+        overflow-y: auto;
+    }
+
+    .ppt-page-operate-button {
+        display: inline-block;
+        visibility: hidden;
+        position: relative;
+        right: -188px;
+        top: -213px;
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 100;
+    }
+
+    .ppt-page:hover>.ppt-page-operate-button {
+        display: inline-block;
+        visibility: visible;
+    }
+
+    .ppt-modules {
+        background: #3c3c3c;
+        width: 300px;
+        overflow-y: auto;
+    }
+
+    .ppt-contents {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ppt-contents-module {
+        padding: 10px;
+        display: flex;
+        flex-flow: wrap;
+    }
+
+    .add-new,
+    .ppt-page-bg-outer {
+        cursor: pointer;
+        color: #757678;
+        width: 220px;
+        height: 220px;
+        opacity: 1;
+        background: rgba(48, 48, 48, 0.24);
+        border: 1px solid #4c4c4c;
+        border-radius: 5px;
+        font-size: 30px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-new:hover {
+        width: 220px;
+        height: 220px;
+        opacity: 1;
+        background: rgba(239, 239, 239, 0.00);
+        border: 2px solid #4a80f6;
+        border-radius: 6px;
+    }
+
+    .ppt-page-bg-outer.active,
+    .ppt-page-bg-outer:hover {
+        width: 170px;
+        height: 170px;
+        opacity: 1;
+        background: rgba(239, 239, 239, 0.00);
+        border: 2px solid #4a80f6;
+        border-radius: 6px;
+    }
+
+    .add-new-bg {
+        width: 28px;
+        height: 28px;
+        background-image: url("/res_engine/ppt_design/images/ic_add_page.png");
+    }
+
+    .add-new:hover .add-new-bg {
+        background-image: url("/res_engine/ppt_design/images/ic_add_hover.png");
+    }
+
+    .ppt-page>.ppt-page-bg-outer {
+
+        width: 220px;
+        height: 220px;
+        background: #393939;
+    }
+
+    .ppt-page-bg {
+        background-image: url("/res_engine/ppt_design/images/back.png");
+        width: 85px;
+        height: 154px;
+        position: relative;
+    }
+
+    img.ppt-page-image-mini {
+        width: 100%;
+        /*height: 100%;*/
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: 0;
+        margin: auto;
+    }
+
+    .ppt-page>.ppt-page-image-name {
+        height: 8px;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .ppt-module {
+        width: 120px;
+        height: 120px;
+        opacity: 1;
+        background: #383838;
+        border: 1px solid #4c4c4c;
+        border-radius: 5px;
+        margin-right: 10px;
+        margin-top: 20px;
+        margin-left: 10px;
+    }
+
+    .ppt-page-menu-div {
+        position: relative;
+        top: 1px;
+        right: 1px;
+        width: 0;
+        height: 0;
+    }
+
+    .ppt-page-menu {
+        width: 120px;
+        height: 130px;
+        position: relative;
+        float: left;
+        right: 85px;
+        background: #333333;
+        border-radius: 2px;
+        box-shadow: 5px 5px 5px #33333301;
+        color: #999999;
+        z-index: 9999;
+    }
+
+    .ppt-page-menu div {
+        cursor: pointer;
+        margin-left: 8px;
+        margin-right: 8px;
+        margin-top: 10px;
+    }
+
+    .ppt-menu-page-num {
+        font-size: 12px;
+        position: relative;
+        top: -26px;
+        left: 94px;
+        display: inline;
+        opacity: 1;
+        color: #ffffff;
+        padding: 1px 5px;
+        background: rgba(0, 255, 0, 0.00);
+        border: 1px solid #ffffff;
+        border-radius: 3px;
+    }
+
+    .ppt-menu-page-add {
+        font-size: 12px;
+        position: relative;
+        top: -135px;
+        left: 69px;
+        display: inline;
+        opacity: 1;
+        color: #ffffff;
+        background: #4980FE;
+        border-radius: 3px;
+        padding: 1px 4px;
+    }
+
+    .ppt-module-page-img {
+        height: 100%;
+        /* margin-left: 29px;
+        margin-right: 29px; */
+        position: relative;
+    }
+
+    .ppt-module-page-img img {
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .ppt-module-page-option .el-input__inner {
+        background: #303030;
+        border: 1px solid #4d4d4d;
+    }
+
+    .ppt-module-page-option .el-select {
+        width: 258px;
+    }
+
+    .ppt-module-page-option {
+        text-align: center;
+        height: 40px;
+    }
+
+    .el-tabs__item.is-active {
+        opacity: 0.75;
+        color: #ffffff !important;
+    }
+
+    .el-tabs__active-bar {
+        opacity: 0.75;
+        background-color: #ffffff !important;
+    }
+
+    .el-dropdown-menu {
+        border: 0 !important;
+        background: #303030 !important;
+    }
+
+    .el-dropdown-menu__item:focus,
+    .el-dropdown-menu__item:not(.is-disabled):hover {
+        background: #3E3E3E !important;
+        color: #fff !important;
+    }
+
+    .el-dropdown-menu__item {
+        color: #B5B5B5 !important;
+    }
+
+    .el-popper[x-placement^=bottom] .popper__arrow {
+        display: none;
+    }
+
+    .el-popper[x-placement^=bottom] {
+        margin-top: 0;
+    }
+
+    /*弹框*/
+    .keep_model {
+        position: fixed;
+        right: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 102;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .keep_model_box {
+        position: absolute;
+        height: 320px;
+        width: 450px;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+    .keep_model_title {
+        height: 40px;
+        line-height: 40px;
+        color: #3D464D;
+        padding-left: 15px;
+        border-bottom: 1px solid #dcdcdc;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .keep_model_input {
+        padding-right: 20px;
+    }
+
+    .option {
+        width: 100%;
+    }
+
+    .keep_model_but {
+        width: 100%;
+        position: absolute;
+        background: #f5f5f5;
+        padding: 10px;
+        bottom: 0;
+        text-align: right;
+    }
+
+    .ppt-icon {
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: 0;
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        color: #ffffff;
+        opacity: 0;
+        cursor: pointer;
+        background-color: rgb(57, 57, 57);
+
+    }
+
+    .ppt-icon:hover {
+        opacity: 1;
+        background-color: rgba(128, 128, 128, 0.283);
+    }
+
+    .ppt-title {
+        position: absolute;
+        bottom: 0;
+        color: #ffffff;
+        z-index: 100;
+    }
+
+    .ppt-box-flex {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 30px 0px 30px 0px;
+
+    }
+
+    .ppt-listbox {
+        width: 120px;
+        height: 120px;
+        opacity: 1;
+        background: #383838;
+        border: 1px solid #4c4c4c;
+        border-radius: 5px;
+        margin-right: 10px;
+        margin-left: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .ppt-listbox>img {
+        width: 100%;
+        max-height: 100%;
+    }
+
+    .ppt-adding {
+        padding: 5px;
+        font-size: 12px;
+        transform: scale(0.8);
+        transform-origin: 0 0 0;
+        border-radius: 2px;
+        color: white;
+        background-color: rgb(73, 128, 245);
+        position: absolute;
+        top: 5px;
+        right: -5px;
+    }
+
+    .ppt-box-bottom {
+        position: absolute;
+        bottom: -26px;
+        text-align: center;
+        color: #ffffff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 80%;
+        right: 0;
+        left: 0;
+        margin: auto;
+
+    }
+
+    .ppt-bot-botright {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        border-radius: 2px;
+        border: 1px solid #fff;
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        transform: scale(.8);
+    }
+
+    .fixed-box {
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100000;
+    }
+</style>

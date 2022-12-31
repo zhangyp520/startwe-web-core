@@ -1,0 +1,638 @@
+<template>
+  <div id="customer">
+    <!-- 面包屑头部盒子开始 -->
+    <div class="crumbs">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item> <a  href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a></el-breadcrumb-item>
+        <el-breadcrumb-item>客户中心</el-breadcrumb-item>
+        <el-breadcrumb-item>新增客户</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <!-- 面包屑头部盒子结束 -->
+    <el-main>
+
+      <!-- 右侧内部表单布局容器开始-- -->
+      <!-- 第一行数据 -->
+      <div class="content">
+        <!-- 第一层 -->
+        <div class="billing_time">
+          <ul>
+            <li><div>开单时间：</div><span>2020-11-12 11：22</span></li>
+            <li><div>接待人：</div><span>小马</span></li>
+            <li><div>进厂时间：</div><span>2020-11-12 10：22</span></li>
+
+          </ul>
+        </div>
+        <!-- 第二层 -->
+
+        <div class="list_form">
+
+          <el-form :inline="true" label-position="top" label-width="80px" :model="formLabelAlign">
+            <div class="customer_name">
+              <ul>
+                <li>
+                  <el-form-item label="客户名称">
+                    <el-input v-model="formLabelAlign.name"></el-input>
+                  </el-form-item>
+
+                </li>
+                <li>
+                  <el-form-item label="联系方式">
+                    <el-input v-model="formLabelAlign.name"></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="业务类型" >
+                    <el-select style="width: 300px;" v-model="formLabelAlign.business_type" placeholder="维修">
+                      <el-option label="维修" value="shanghai"></el-option>
+                      <el-option label="保养" value="beijing"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </li>
+              </ul>
+            </div>
+
+            <div class="vehicle_fuel_volume">
+
+              <ul>
+                <li>
+                  <el-form-item label="车载油量">
+                    <el-select v-model="formLabelAlign.oil_quantity" placeholder="车载油量">
+                      <el-option label="1/2" value="shanghai"></el-option>
+                      <el-option label="2/2" value="beijing"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="车辆品牌">
+                    <el-input v-model="formLabelAlign.name" suffix-icon="el-icon-search"></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="车牌号码">
+                    <el-input v-model="formLabelAlign.name"></el-input>
+                  </el-form-item>
+                </li>
+              </ul>
+            </div>
+
+            <div class="source_of_customers">
+              <ul>
+                <li>
+                  <el-form-item label="客户来源">
+                    <el-select v-model="formLabelAlign.business_type" placeholder="自主到店">
+                      <el-option label="自主到店" value="shanghai"></el-option>
+                      <el-option label="车友会客户" value="beijing"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="进场里程">
+                    <el-input v-model="formLabelAlign.name"></el-input>
+                  </el-form-item>
+                </li>
+                <li></li>
+              </ul>
+            </div>
+
+            <div class="customer_notes">
+              
+              <ul>
+                <li>
+                  <el-form-item label="客户备注">
+                    <el-input type="textarea" v-model="formLabelAlign.customer_notes" resize="none" maxlength="120"
+                      label-width="140px" :rows="2"></el-input>
+                  </el-form-item>
+                </li>
+              </ul>
+
+            </div>
+
+            <div>
+              <ul>
+                <li>
+                  <el-form-item label="客户随车物品">
+                    <el-input type="textarea" v-model="formLabelAlign.customer_items" resize="none" maxlength="60"
+                    label-width="140px" :rows="2"></el-input>
+                  </el-form-item>
+                </li>
+              </ul>
+
+            </div>
+            <!-- 返回和保存 -->
+          <div class="return_and_save">
+            
+              <el-form-item>
+                <el-button>返回</el-button>
+                <el-button type="primary">保存</el-button>
+              </el-form-item>
+            
+          </div>
+            
+
+          </el-form>
+        </div>
+      </div>
+
+
+      <div></div>
+
+      <!-- 右侧内部表单布局容器结束 -->
+    </el-main>
+    <!-- </el-main> -->
+
+  </div>
+</template>
+<script>
+  export default {
+    templateType: 'vue',
+    el: 'home',
+    data: function () {
+      return {
+        //  控制input前面的文字位于的位置默认是右上方
+        formLabelAlign: {
+          // 客户名称
+          name: '',
+          // 电话号码
+          tel: '',
+          // 业务类型
+          business_type: '',
+          // 车载油量
+          oil_quantity: "",
+          // 车辆品牌
+          brand: "",
+          // 车牌号码
+          license_plate: "",
+          // 客户来源
+          source: "",
+          // 进厂里程
+          entry_process: "",
+          // 客户备注
+          customer_notes: "",
+          // 客户随车物品
+          customer_items: ""
+
+
+
+
+
+
+        },
+
+
+        // 侧边栏数据结束
+
+        // 内部侧边栏 左侧客户区域的数据开始
+        Internal_customers: [
+          { name: "已完成" },
+          { name: "进行中" },
+          { name: "待付款" },
+
+        ],
+
+        // 内部侧边栏 左侧客户区域的数据结束
+
+
+
+
+        //关键字区域开始
+        // 下拉选项的数据
+        options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value: '',
+
+        // 关键字input框内容
+        input: '',
+        // 关键字区域结束
+
+        // 表格下方的 分页区域数据 开始
+
+        currentPage1: 5,
+        currentPage2: 5,
+        currentPage3: 5,
+        currentPage4: 4,
+        // 表格下方的 分页区域数据 结束
+
+
+
+        // 员工列表数据开始
+        tableData: [
+          { lv: 1, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 2, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 3, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 4, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 5, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 6, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 7, name: '雷谊帮', water: '2234', profit: '5123' },
+          { lv: 8, name: '雷谊帮', water: '2234', profit: '5123' }
+        ]
+        // 员工列表数据结束
+
+      }
+    },
+    created() {
+      // // 加载 css3布局样式和首页样式
+      // oui.require([
+      //     '/res_apps/car-1/home/css/css3-flex.css',
+      //     '/res_apps/car-1/home/css/home.css'
+      // ])
+    },
+    mounted: function () {
+      if(this.isLoading){
+        return ;
+      }
+      this.isLoading = true;
+      // 加载 echarts 进行图表渲染
+      // oui.require([
+      //     '/res_common/third/echarts/echarts.min.js'
+      // ], (res) => {
+      //     this.$nextTick(() => {
+      //         var myChart = echarts.init(document.getElementById('main'));
+      //         myChart.setOption(this.option);
+      //     })
+      // })
+    },
+    methods: {
+      // 点击按钮跳转地砖
+      handleClick: function (item) {
+        // this.$router.push(url,param||{});
+        debugger
+        oui.router.push(item.url)
+        // this.$router.push("www.baidu.com")
+        console.log(item.url);
+
+
+      }
+    }
+  }
+</script>
+<style>
+  .customer {
+    width: 1040px;
+    height: 700px;
+  }
+
+  html {
+    margin: 0 0px;
+    /* width: 1040px; */
+    /* height: 700px; */
+    /* background-color: rgb(243, 228, 21); */
+  }
+
+  * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+  /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+  .el-main {
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    color: #333;
+
+  }
+
+
+  /* 自己的样式 */
+
+  /* 文字盒子span */
+  .el-icon-menu>span {
+    margin-left: 1px;
+  }
+
+
+  .el-menu {
+    border: 0;
+    margin: 0 0;
+    padding: 0 0;
+  }
+
+
+
+  /* 面包屑区域 */
+  /* .crumbs {
+      border: 1px solid rgb(119, 241, 108);
+  
+    } */
+
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+
+  /* 内容主体区域 */
+
+  .content {
+    background-color: #fff;
+    padding: 20px;
+  }
+
+  /* 第一行内容 */
+  .billing_time>ul {
+    display: flex;
+    justify-content: space-between;
+
+  }
+  .billing_time>ul>li>div{
+display: inline-block;
+  }
+  .billing_time>ul>li>span {
+    font-size: 14px;
+    color: rgb(0, 0, 0, 0.5);
+
+  }
+/* 第二行 */
+  .billing_time>ul>li {
+    width: 300px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .customer_name>ul {
+    display: flex;
+    justify-content: space-between;
+
+  }
+  .customer_name>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+/* 第三行 */
+.vehicle_fuel_volume>ul{
+  display: flex;
+    justify-content: space-between;
+}
+.vehicle_fuel_volume>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+
+/* 第四行 */
+.source_of_customers>ul{
+  display: flex;
+    justify-content: space-between;
+}
+.source_of_customers>ul>li{
+  width: 300px;
+    /* height: 30px; */
+}
+/* 第五行 */
+.customer_notes>ul{
+  display: flex;
+    justify-content: space-between;
+}
+.customer_notes>ul>li{
+width: 63%;
+  /* background-color: rgb(8, 143, 125); */
+}
+/* 修改全局文本框的样式 */
+.el-textarea{
+width: 765px;
+
+}
+/* 修改全局文本框内部的input的样式 */
+.el-textarea__inner{
+  width: 100%;
+  height: 35px;
+}
+
+.customer_notes>ul>li>.el-textarea__inner{
+width: 63%;
+}
+
+/* 返回和保存 */
+.return_and_save{
+display: flex;
+justify-content: center;
+height: 60px;
+line-height: 60px;
+}
+
+.el-button{
+  width: 180px;
+  margin-right: 60px;
+}
+
+
+  /* 栅格栏布局自带样式 */
+  .el-row {
+    margin-bottom: 20px;
+
+  }
+
+  .el-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .el-col {
+    border-radius: 4px;
+  }
+
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+
+  .bg-purple {
+    background: #d3dce6;
+  }
+
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+
+
+
+
+
+
+
+
+  /* 内容侧边栏每一项开始---- */
+
+  /* 侧边栏每一项的盒子 */
+  .all_customers li.el-menu-item.is-active {
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #fff;
+
+  }
+
+  /* element组件伪类上标签span 调整文字的 */
+  .all_customers li.el-menu-item>span {
+    margin: 0;
+  }
+
+
+  /* 内容区域的头部为空白 */
+  /* 设置右侧头部盒子的边框阴影 */
+  .blank_head {
+    background-color: #fff;
+    height: 60px !important;
+    box-shadow: #fff 0px 0px 0px 0px;
+    line-height: 60px;
+
+  }
+
+  .blank_head>div>span {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .el-checkbox-group {
+    display: inline;
+
+  }
+
+  /* 内容侧边栏每一项结束---- */
+  /* 内部盒子的内容主体区域 */
+  .inside_box {
+    background-color: #fff;
+    /* line-height: 160px; */
+    text-align: left !important;
+  }
+
+  /* 关键字的样式设置开始 */
+  /* 关键字区域 */
+  .keyword {
+    /* width: 1000px; */
+    height: 60px;
+    font-weight: 700;
+    line-height: 60px;
+    display: flex;
+    justify-content: left;
+  }
+
+  .keyword_content {
+    display: inline;
+    height: 30px;
+    font-size: 14px;
+
+  }
+
+
+
+  .Reset_button>.el-button {
+    margin: 0px 8px;
+    border-radius: 0;
+  }
+
+  .Reset_button>.el-button>span {
+    font-size: 14px;
+  }
+
+  .query_button1>.el-button {
+    border-radius: 0;
+  }
+
+  .query_button1>.el-button>span {
+    font-size: 14px;
+  }
+
+  /* 下拉框样式调整 */
+  .el-select .el-input__inner {
+    width: 104px;
+    height: 35px;
+  }
+
+  /* 这里是影响全局的input样式设置 */
+  .el-input__inner {
+    width: 300px;
+    border-radius: 0px;
+    margin-left: 8px;
+    height: 35px;
+  }
+  .el-select .el-input__inner{
+    width: 300px;
+  }
+
+
+  /* 关键字的样式设置结束 */
+
+
+
+
+
+
+  /* 新增员工工单表格处 */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+  .table_box {
+    margin-bottom: 21px;
+    text-align: left;
+  }
+
+  .table_box>.el-row {
+    margin: 10px 0;
+  }
+
+  .Workorder_button {
+    margin: 0 0;
+  }
+
+  /* 改变加号和文字之间的距离 */
+  .el-icon-plus:before {
+    margin-right: 8px;
+  }
+
+
+  /* 表格数据 居中对齐*/
+  .cell {
+    /* text-align: center; */
+    color: rgb(0, 0, 0, 0.7);
+  }
+
+  /* 分页区域开始---- */
+  /* 分页区域位置放置区域 ----------------*/
+  /* .block {
+      margin: 20px 0px 20px 220px;
+    } */
+
+  /* 分页区域结束----- */
+</style>

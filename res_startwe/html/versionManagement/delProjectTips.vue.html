@@ -1,0 +1,74 @@
+<!-- 无圈子首页回收站提示弹窗 -->
+<template>
+    <div>
+        <div class="oneTips">您确定要删除项目
+            <span></span>吗？</div>
+        <div class="twoTips">删除项目30天内，可在「项目回收站」恢复</div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容 */
+
+    .oneTips {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 50px;
+        font-weight: bold;
+        margin-left: 24px;
+    }
+
+    .twoTips {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        line-height: 22px;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+</style>

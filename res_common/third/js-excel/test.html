@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <input type="file" id="excel-file" />
+
+    <button onclick="export4test();">导出测试</button>
+
+    <!--
+            以下a标签不需要内容
+        -->
+    <a href="" download="这里是下载的文件名.xlsx" id="hf"></a>
+
+
+
+    <script type="text/javascript" src="/res_common/third/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="/res_common/third/js-excel/excel.core.min.js"></script>
+    <script type="text/javascript">
+        var XLSX = OURS_IMPORT_XLS;
+        function s2ab(s) { //字符串转字符流
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+        // 将指定的自然数转换为26进制表示。映射关系：[0-25] -> [A-Z]。
+        function getCharCol(n) {
+            let temCol = '',
+                    s = '',
+                    m = 0;
+            while (n > 0) {
+                m = n % 26 + 1;
+                s = String.fromCharCode(m + 64) + s;
+                n = (n - m) / 26;
+            }
+            return s;
+        }
+
+        function export4test(){
+            var tmpWB = {
+                SheetNames: ['mySheet'], //保存的表标题
+                Sheets: {
+                    'mySheet': XLSX.utils.json_to_sheet(window.testDatas)
+                }
+            };
+            console.log(tmpWB);
+            var type='xls';
+            var tmpDown = new Blob([s2ab(XLSX.write(tmpWB,
+                    {bookType: (type == undefined ? 'xlsx':type),bookSST: true, type: 'binary'}//这里的数据是用来定义导出的格式类型
+            ))], {
+                type: ""
+            }); //创建二进制对象写入转换好的字节流
+            var href = URL.createObjectURL(tmpDown); //创建对象超链接
+            document.getElementById("hf").href = href; //绑定a标签
+            document.getElementById("hf").click(); //模拟点击实现下载
+            setTimeout(function() { //延时释放
+                URL.revokeObjectURL(tmpDown); //用URL.revokeObjectURL()来释放这个object URL
+            }, 100);
+        }
+        $('#excel-file').change(function(e) {
+            var files = e.target.files;
+
+            var fileReader = new FileReader();
+            fileReader.onload = function(ev) {
+                try {
+                    var data = ev.target.result,
+                            workbook = XLSX.read(data, {
+                                type: 'binary'
+                            }), // 以二进制流方式读取得到整份excel表格对象
+                            datas = []; // 存储获取到的数据
+                } catch (e) {
+                    console.log('文件类型不正确');
+                    return;
+                }
+
+                // 表格的表格范围，可用于判断表头是否数量是否正确
+                var fromTo = '';
+                // 遍历每张表读取
+                window.workbook = workbook;
+                for (var sheet in workbook.Sheets) {
+                    if (workbook.Sheets.hasOwnProperty(sheet)) {
+                        fromTo = workbook.Sheets[sheet]['!ref'];
+                        console.log(fromTo);
+                        datas = datas.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet],{header:1}));
+                        // break; // 如果只取第一张表，就取消注释这行
+                    }
+                }
+                window.testDatas = datas;
+                console.log(datas);
+//                console.log(workbook);
+            };
+
+            // 以二进制方式打开文件
+            fileReader.readAsBinaryString(files[0]);
+        });
+    </script>
+</body>
+</html>

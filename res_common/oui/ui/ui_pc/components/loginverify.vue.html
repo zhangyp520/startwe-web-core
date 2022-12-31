@@ -1,0 +1,77 @@
+
+<template >
+    <div class="oui-class-loginverify">
+        <div class="loginverify-box">
+            <el-input @change="verifyChange" :tempStyle="style" :id="id" :name="name" :bindProp="bindProp" :class="cls" v-model="value" @change="_controlOnUpdate" :placeholder="placeholder" class="loginverify-input"></el-input>
+        </div>
+        <div v-if="hasErrorMsg"  class="oui-error-info">{{hasErrorMsg}}</div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                hasErrorMsg:'',
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            verifyChange: function (v) {
+                var currentControl = this.control;
+                if (currentControl.otherAttrs.validate) {
+                    var result = oui.validate4message(v,currentControl.otherAttrs.validate);
+                    if(!result.success && (result.msg)){
+                        this.hasErrorMsg = result.msg;
+                    }else{
+                        this.hasErrorMsg = '';
+                    }
+                }
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .oui-class-loginverify{
+        margin-bottom: 20px;
+    }
+    .loginverify-box{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e6e6e6;
+        background: #fff;
+    }
+    /*.loginverify-icon {*/
+    /*    width: 20px;*/
+    /*    height: 20px;*/
+    /*    margin-left: 10px;*/
+    /*    z-index: 100;*/
+    /*}*/
+    .control-container-abs .loginverify-input input{
+        border: none;
+        border-radius: 4px;
+    }
+    .oui-error-info{
+        position: absolute;
+        color: red;
+        font-size: 14px;
+    }
+</style>

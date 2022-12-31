@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" class="htmlCls">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../../res_common/third/shape/css/shape.css" />
+    <!--虚拟滚动条 -->
+    <link rel="stylesheet" type="text/css" href="../../../res_common/third/jquery-scrollbar-master/jquery.scrollbar.css" />
+    <!-- 树控件样式 -->
+    <link rel="stylesheet" type="text/css" href="../../../res_common/third/jquery.zTreeV3.5/css/zTreeStyle/zTreeStyle.css"/>
+
+    <link rel="stylesheet" type="text/css" href="../../../res_common/oui/ui/ui_pc/css/dialog.css"/>
+    <link rel="stylesheet" type="text/css" href="../../../res_common/oui/ui/ui_pc/controls/tips/css/tips.css"/>
+    <link rel="stylesheet" type="text/css" href="css/oui-tree.css"/>
+    <link rel="stylesheet" type="text/css" href="css/oui-ace.css"/>
+
+    <style type="text/css">
+        html.htmlCls{
+            background: url("images/bg.jpg") no-repeat;
+            background-size: 100% 100%;
+            width: 100%;
+            height: 100%;
+        }
+        body.bodyCls{
+            background: transparent;
+        }
+        .display_none{
+            display: none !important;
+        }
+        /*.scroll-wrapper{*/
+            /*background: rgba(255,255,255,.5);*/
+        /*}*/
+    </style>
+</head>
+<body class="layout bodyCls" oui-controller="oui.myidea.MyIdea">
+<!--<header data-options="region:'north', height: '50'" class="header">-->
+    <!--Header-->
+<!--</header>-->
+<div class="layout" data-options="region:'center'">
+    <div data-options="region:'north', height: '25'">
+        <header class="header-menu">
+            <div><input type="file" id="import-file" oui-e-change="event2loadFactory" class="display_none" />
+                <button oui-e-click="event2createFactory">新建空工程</button>
+                <button oui-e-click="click2selectFile">导入</button>
+                <button oui-e-click="export">导出</button>
+                <button oui-e-click="runCode" oui-e-param="{isPc:true}">运行PC</button>
+                <button oui-e-click="runCode" oui-e-param="{isPc:false}">运行移动</button>
+
+            </div>
+        </header>
+    </div>
+    <div data-options="region:'center'" class="layout-center">
+        <!--中间区域-->
+        <section id="" class="editor-container visible_hidden">
+            <header class="editor-menu">
+                <button oui-e-click="event2ViewSource">页面源代码</button>
+                <button oui-e-click="event2ViewJs">JS</button>
+                <button oui-e-click="event2ViewCss">CSS</button>
+                <button oui-e-click="event2ViewImages">Images</button>
+                <button oui-e-click="event2ViewDesign" >页面预览</button>
+                <!--<button oui-e-click="event2DataDefineDesign" >数据定义设计器</button>-->
+                <!--<button oui-e-click="event2ClientLogicDesign" >前端逻辑设计器</button>-->
+                <!--<button oui-e-click="event2ServerLogicDesign" >后端逻辑设计器</button>-->
+                <!--<button oui-e-click="event2ServerFlowDesign" >后端流程设计器</button>-->
+            </header>
+            <pre id="editor"></pre>
+            <div class="design-container" id="design-container"></div>
+            <footer id="statusbar"></footer>
+        </section>
+    </div>
+    <div data-options="region:'west', width: '15%', min-width: 100, max-width: '250'">
+        <!--左侧树-->
+        <div class="scrollbar-outer">
+            <ul id="orgTree" class="ztree ${OrgSecurity.isOui()? 'addOrgTree':''}"></ul>
+        </div>
+    </div>
+    <div data-options="region:'east', width: '20%', min-width: 100, max-width: '300'"></div>
+</div>
+<footer data-options="region:'south', height: '30'" class="footer">
+
+</footer>
+
+<!--<div class="layout">-->
+   <!-- -->
+<!--</div>-->
+<script type="text/javascript" src="/oui/context.js" charset="utf-8"></script>
+<!--业务资源 结束-->
+
+<script type="text/javascript" src="../../../res_common/third/jquery/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="../../../res_common/third/template/template_debug_3_0_0.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../res_common/oui/core.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/develop-require.js"></script>
+
+</body>
+</html>
+

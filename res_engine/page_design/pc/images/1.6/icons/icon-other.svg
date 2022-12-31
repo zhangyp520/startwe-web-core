@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_other</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="资源管理器" transform="translate(-547.000000, -676.000000)" stroke="#7F7F7F" stroke-width="0.6">
+            <g id="icon_other" transform="translate(548.000000, 677.000000)">
+                <polygon id="矩形" transform="translate(6.000000, 2.113792) rotate(-45.000000) translate(-6.000000, -2.113792) " points="4.50529718 0.619141485 7.49469537 0.619134038 7.49468792 3.60845749 4.50528974 3.60846494"></polygon>
+                <polygon id="矩形" transform="translate(9.886208, 5.999970) rotate(-45.000000) translate(-9.886208, -5.999970) " points="8.39149145 4.50533324 11.3808896 4.5053258 11.3808822 7.49464925 8.39148401 7.49465669"></polygon>
+                <polygon id="矩形" transform="translate(2.113792, 5.999970) rotate(-45.000000) translate(-2.113792, -5.999970) " points="0.619075533 4.50533324 3.60847372 4.5053258 3.60846627 7.49464925 0.619068086 7.49465669"></polygon>
+                <polygon id="矩形" transform="translate(6.000000, 9.886208) rotate(-45.000000) translate(-6.000000, -9.886208) " points="4.50529094 8.39156365 7.49468912 8.3915562 7.49468168 11.3808797 4.50528349 11.3808871"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

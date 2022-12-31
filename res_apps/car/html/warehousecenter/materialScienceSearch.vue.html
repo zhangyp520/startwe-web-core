@@ -1,0 +1,181 @@
+<!-- 仓库中心 /材料入库  搜索 维修材料页面弹框 -->
+<template>
+    <div class="tel_box">
+        <div class="Customer_search">
+            <el-input style="width: 150px" class="Customer_search_input" v-model="materialFormValue.queryParam"
+                placeholder="搜索材料名/编号">
+            </el-input>
+            <el-button size="small" @click='cleanOptions'>重置</el-button>
+            <el-button type="primary" size="small" @click="queryMaterialList">查询</el-button>
+        </div>
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template> 
+                <el-table v-loading="loading" :data="materialList" border  ref="singleTable" highlight-current-row 
+                @current-change="handleSelectionChange"></el-table-column>
+                    <el-table-column type="index" class="newform_bgc" label="编号" width="50"></el-table-column>
+                    <el-table-column prop="materialName" label="物料名称" width="155"></el-table-column>
+                    <el-table-column prop="materialType" label="物料类型" width="155" :formatter="formatType"></el-table-column>
+                    <el-table-column prop="vendorName" label="厂商" width="203"></el-table-column>
+                    <el-table-column prop="materialCode" label="物料编码" width="155"></el-table-column>
+                    <el-table-column prop="materialBrand" label="物料品牌" width="155"></el-table-column>
+                    <el-table-column prop="materialModel" label="物料型号" width="155"></el-table-column>
+                    <el-table-column prop="materialSpec" label="单品规格" width="155"></el-table-column>
+                    <el-table-column prop="materialPrice" label="价格" width="100"></el-table-column>
+                </el-table>
+            </template>
+        </div>
+
+        <!-- 表格区域结束 -->
+
+        <!-- 分页开始 -->
+        <div class="page">
+            <div class="block">
+                <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                    :current-page="currentPage" :page-sizes="[1, 5, 10, 15, 20]" :page-size="pageSize" :total="total"
+                    layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </div>
+        </div>
+        <!-- 分页结束 -->
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                checkbox:true,
+                status:'true',
+                //数据总条数 默认没有数据
+                total: 0,
+                //每页显示数据的条数
+                pageSize: 10,
+                //默认当前页为第一页
+                currentPage: 1,
+                //要展示的工单数据
+                materialList: [],
+                materialFormValue: {
+                    queryParam: ""
+                },
+            }
+        },
+        // 员工列表数据结束
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.queryMaterialList();
+        },
+        methods: {
+            formatType:function(row) {
+                if (row.materialType == 1) {
+                    return "维修材料";
+                }else if (row.materialType == 2) {
+                    return "保养材料";
+                }else if (row.materialType == 3) {
+                    return "其他材料";
+                }else if (row.materialType == 4) {
+                    return "低值易耗品";
+                }
+            },
+            // 重置项目和input框
+            cleanOptions() {
+                this.materialFormValue.queryParam = '';
+                this.queryMaterialList();
+            },
+            queryMaterialList: function () {
+                var me = this;
+                oui.ajaxPost('material/warehouseCenter/queryMaterialList', {
+                    "queryParam": this.materialFormValue.queryParam,
+                    "pager": {
+                        "page": this.currentPage,
+                        "rows": this.pageSize
+                    },
+                }, function (res) {
+                    me.materialList = res.resultObj.materials;
+                    me.total = res.resultObj.total;
+                    me.loading=false;
+                }, function (res) {
+                    me.$message.error(res.message);
+                });
+            },
+            handleCurrentChange: function (val) {
+                this.currentPage = val;
+                this.queryMaterialList();
+            },
+            handleSizeChange: function (val) {
+                this.pageSize = val;
+                this.queryMaterialList();
+            },
+            
+            // 把弹框页面的数据存入为全局变量 再到底层页面取出全局变量
+            // changeSelect: function (row) {
+            //     oui.getTop().oui.setPageParam('xxx', oui.parseString(row));
+            // },
+
+
+            handleSelectionChange : function(val) {
+                console.log(val);
+                var str = oui.getTop().oui.setPageParam('selectData',oui.parseString(val));
+            }
+
+
+
+
+
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        /* width: 430px;
+        height: 240px; */
+        margin: 24px auto;
+        box-sizing: border-box;
+    }
+
+    .Customer_search {
+        width: 400px;
+        margin: 0 20px;
+
+    }
+
+    /* 搜索区 */
+    .Customer_search_input .el-input__icon {
+        color: #1890FF;
+    }
+
+    /* 类表的样式 */
+    /* 表格数据 居中对齐*/
+
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域结束----- */
+</style>

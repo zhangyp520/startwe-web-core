@@ -1,0 +1,173 @@
+<template>
+    <div class="tel_box">
+        <!-- 发送短信验证号码修改电话号码 -->
+        <div class="phone_number"porps=newTel>{{newTel}}</div>
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="10px" class="demo-ruleForm">
+            <!-- 输入新的手机号码 -->
+
+            <el-form-item prop="tel">
+                <el-input v-model="ruleForm.tel" style="width: 368px; height: 32px;" placeholder="请输入新的手机号">
+                </el-input>
+            </el-form-item>
+
+            <!-- 输入最新验证码 -->
+            <el-form-item prop="tel">
+                <el-input v-model="ruleForm.tel" style="width: 258px; height: 32px;" placeholder="验证码"
+                          suffix-icon="el-icon-circle-check">
+                </el-input>
+                <!-- 点击按钮发送短信，获取验证码 -->
+                <el-button class="Verification_Code" style="border: hidden;">获取验证码</el-button>
+            </el-form-item>
+
+        </el-form>
+        <el-button type="primary">确认</el-button>
+    </div>
+</template>
+<script>
+
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                newTel:'10086***11',
+                // 侧边栏数据开始
+
+                // 侧边栏数据结束
+
+                // 主体内容的基本信息名称验证所绑定的数据名开始
+                ruleForm: {
+                    // 绑定名称项
+                    name: '',
+                    // 绑定地址
+                    region: '',
+                    // 绑定负责人
+                    people: "",
+                    // 绑定手机号
+                    tel: "",
+                    // 营业范围
+                    scope: ""
+
+                },
+
+                // 每个对象的验证规则
+                rules: {
+                    // 验证名称
+                    name: [
+                        { required: true, message: '请输入名称', trigger: 'blur' },
+                        { min: 2, max: 40, message: '长度在 3 到 40 个字符', trigger: 'blur' }
+                    ],
+                    // 验证地址
+                    region: [
+                        { required: true, message: '请选择地址', trigger: 'change' },
+                        { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+                    ],
+                    // 验证负责人
+                    people: [
+                        { required: true, message: '请输入负责人', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    // 验证电话号码
+                    tel: [
+                        { required: true, message: '请输入电话号码', trigger: 'blur' },
+                        { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+                    ],
+                    // 验证营业
+                    scope: [
+                        { required: true, message: '请输入营业范围', trigger: 'blur' },
+                        { min: 2, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }
+                    ]
+                },
+                // 主体内容的基本信息名称验证所绑定的数据名结束
+            }
+
+        },
+        created() {
+
+
+            // 自动填充原来的手机号
+            this.originalTel()
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            originalTel() {
+                console.log('11111111');
+
+            }
+
+        }
+
+
+
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        width: 430px;
+        height: 260px;
+        margin: 35px auto;
+        box-sizing: border-box;
+        /* background-color: rgb(156, 175, 166); */
+    }
+
+
+    .tel_box .el-form {
+        margin: auto;
+        padding: 0 10px;
+    }
+
+
+    .tel_box .el-button {
+        width: 368px;
+        height: 40px;
+        display: block;
+        margin: 20px auto;
+        padding: 0;
+    }
+
+    .phone_number {
+        width: 368px;
+        height: 32px;
+        margin: 10px auto;
+        /* background-color: rgb(4, 107, 133); */
+        font-size: 16px;
+        text-align: center;
+        line-height: 32px;
+        border: hidden;
+
+    }
+
+    .Verification_Code {
+        width: 102px !important;
+        height: 40px !important;
+        display: inline-block !important;
+        /* background-color: rgb(22, 139, 143); */
+    }
+</style>
+
+<!-- 判断是否为11位的纯数字
+
+if (Number(cellValue) && String(cellValue).length === 11) {
+
+var mobile = String(cellValue)
+
+var reg = /^(\d{3})\d{4}(\d{4})$/
+
+return mobile.replace(reg, '$1****$2')
+
+} else {
+
+return cellValue
+
+}
+
+让中间号码为***号
+/"15757115753".replace(/^(\d{3})\d{4}(\d{4})$/,'$1****$2') -->

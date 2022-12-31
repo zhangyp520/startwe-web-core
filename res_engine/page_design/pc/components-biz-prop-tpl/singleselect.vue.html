@@ -1,0 +1,102 @@
+
+<template >
+
+    <div>
+        <div class="design-attribute-item" oui-controller="AbsoluteDesign.FullName">
+            <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field "  :curr-control-id="currentControl.id">
+
+                    <div class="fieldname">业务描述</div>
+                    <div class="fieldblock">
+                <textarea
+                          placeholder="业务描述"
+                          v-model="currentControl.otherAttrs.bizDes"
+                         @input="onUpdate"
+                        ></textarea>
+                    </div>
+                    <div class="fielderror" :id="fieldErrorId">
+                        <div v-if="AbsoluteDesign.findCheckMessage('controls[*].otherAttrs.bizDes')" class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.bizDes")}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-set-attribute-tit attribute-tit-active">选项设置<i class="retract-arrow-icon"></i></div>
+        <div class="design-set-area" :oui-controller="AbsoluteDesign.FullName" >
+            <!--此处可以扩展多个配置项-->
+            <div class="design-field "  :curr-control-id="currentControl.id">
+
+                <div class="fieldname">业务描述</div>
+                <div class="fieldblock">
+                <textarea
+                        v-model="currentControl.otherAttrs.bizDes"
+                        placeholder="业务描述"
+
+                        @input="onUpdate"
+
+                        placeholder="业务描述"
+                        ></textarea>
+                </div>
+                <div class="fielderror" :id="fieldErrorId">
+                    <div v-if="AbsoluteDesign.findCheckMessage('controls[*].otherAttrs.bizDes')" class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.bizDes")}}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                currentControl:{
+                    otherAttrs:{
+                        bizDes:''
+                    }
+                },
+                fieldErrorId:'',
+                AbsoluteDesign:{findCheckMessage:function(){}},
+                id:'' //控件id
+            }
+        },
+        computed:{
+            AbsoluteDesign:function(){
+                return  this.getDesigner();
+            }
+        },
+        mounted:function(){
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            this.currentControl = oui.parseJson(oui.parseString(this.getDesigner().data.currentControl));
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.fieldErrorId = 'check_controls_'+this.id+'_otherAttrs_bizDes';
+            console.log('当前的配置Id:'+this.id);
+            console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+            onUpdate:function(v){
+                try{
+                    var otherAttrs = this.currentControl.otherAttrs;
+                    this.getDesigner().data.currentControl.otherAttrs = oui.parseJson(oui.parseString(otherAttrs));
+                }catch(err){
+                    console.error(err);
+                }
+            },
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,57 @@
+<style type="text/css">
+    *{
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    html,body{
+        font-size: 14px;
+    }
+    .excel-util-table{
+        width: 100%;
+        border: 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+    .excel-util-table tr th,
+    .excel-util-table tr td{
+        padding: 0 5px;
+        height: 26px;
+        line-height: 1.6;
+        text-align: left;
+        font-size: 16px;
+    }
+    .excel-util-table tr th{
+        font-size: 18px;
+        text-align: left;
+        padding: 0 10px;
+    }
+</style>
+<table class="excel-util-table">
+    <thead>
+    <tr>
+        <th colspan="{{heads.length}}" style="height: 46px;text-align: center;font-size: 24px;">{{name}}</th>
+    </tr>
+    <tr>
+        {{each heads as item index}}
+        <th>{{item.name}}</th>
+        {{/each}}
+    </tr>
+    </thead>
+    <tbody>
+    {{each data as row rowIndex}}
+    <tr>
+        {{each heads as item index}}
+        <td>{{oui.JsonPathUtil.getJsonByPath(item.key,row)}}</td>
+        {{/each}}
+    </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+
+
+
+

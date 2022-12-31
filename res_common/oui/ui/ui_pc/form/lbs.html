@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        /*地理位置浮动层*/
+        .lbs-float-layer {
+            background: #ffffff;
+            width: 100%;
+            height: 100%;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .lbs-search {
+            background: #efeff4;
+            height: 42px;
+            padding: 0 8px;
+            padding-right: 80px;
+            border-bottom: 1px solid #d6d7dc;
+            font-size: 0;
+            position: relative;
+
+        }
+
+        .lbs-search input {
+            font-family: "microsoft YaHei";
+            background: #ffffff;
+            width: 100%;
+            height: 30px;
+            border: 1px solid #dadbdf;
+            outline: none;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            text-align: left;
+            color: #333333;
+            margin-top: 6px;
+            text-indent: 5px;
+        }
+
+        .lbs-search input:focus {
+            text-align: left;
+            border-color: #5990cf;
+        }
+
+        .lbs-search button {
+            background: #5990cf;
+            width: 60px;
+            height: 30px;
+            color: #ffffff;
+            border: 0;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            position: absolute;
+            right: 10px;
+            top: 6px;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .lbs-search button:active {
+            background: #63a4ed;
+        }
+
+        .lbs-map {
+            width: 100%;
+            height: 300px;
+            background: #333;
+        }
+
+        .lbs-list {
+            position: absolute;
+            top: 342px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .lbs-poi-search {
+            position: absolute;
+            top: 42px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #ffffff;
+            z-index: 1000;
+            display: none;
+        }
+
+        .lbs-poi-search ul, .lbs-list ul {
+            width: 100%;
+            overflow: hidden;
+            font-size: 0;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .lbs-poi-search ul li, .lbs-list ul li {
+            width: 100%;
+            padding-top: 7px;
+            display: inline-block;
+            padding-left: 20px;
+            padding-right: 0;
+            cursor: default;
+        }
+
+        .lbs-poi-search ul li div, .lbs-list ul li div {
+            width: 100%;
+            font-family: "microsoft YaHei";
+            position: relative;
+            padding-right: 30px;
+            padding-bottom: 7px;
+            border-bottom: 1px solid #f2f2f2;
+        }
+
+        .lbs-poi-search ul li div .lbs-b-name, .lbs-list ul li div .lbs-b-name {
+            font-size: 16px;
+            color: #333333;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-bottom: 6px;
+        }
+
+        .lbs-poi-search ul li div .lbs-s-name, .lbs-list ul li div .lbs-s-name {
+            font-size: 12px;
+            color: #b9b9b9;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .lbs-poi-search ul li div i, .lbs-list ul li div i {
+            /*background: url(../images/lbs-selected-ico.png) center no-repeat;*/
+            /*width: .2px;*/
+            /*height: .2px;*/
+            /*position: absolute;*/
+            /*top: 50%;*/
+            /*right: .05px;*/
+            /*margin-top: -.13px;*/
+        }
+
+        .lbs-cancle {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 47px;
+            text-align: center;
+            line-height: 47px;
+            font-size: 16px;
+            color: #ff9e24;
+            border-top: 1px solid #f2f2f2;
+        }
+
+        /*暂无数据*/
+        .lbs-nodata {
+            font-size: 14px;
+            padding-top: 20px;
+            text-align: center;
+            color: #515151;
+        }
+    </style>
+</head>
+<body>
+<div class="lbs-float-layer lbs-float-layer-show">
+    <div class="lbs-search">
+        <input type="text" placeholder="请输入地点"/>
+        <button>搜索</button>
+    </div>
+    <div id="lbs-poi-search" class="lbs-poi-search"></div>
+    <div id="lbs-map" class="lbs-map"></div>
+    <div id="lbs-position-items" class="lbs-list">
+    </div>
+</div>
+<script src="https://webapi.amap.com/maps?v=1.4.4&key=cd8aef9ec3a7fadb2914bb8cbafab70a"></script>
+<script>
+    //TODO
+    var oui_url = {};
+    /**
+     * 获取上下文
+     */
+    function getContextPath() {
+        var pathName = document.location.pathname;
+        var index = pathName.substr(1).indexOf("/");
+        var result = pathName.substr(0, index + 1) + "/";
+        if (result == '/res_common/') {//获取的第一个目录路径与 公共路径相同则根路径为/
+            result = '/';
+        }
+        return result;
+    }
+    var loadConfig = {loadedAll: false, newId: 0};
+    function getNewTagId() {
+        loadConfig.newId++;
+        return loadConfig.newId;
+    }
+    function load4sort(arr, callback) {
+        if (arr.length == 0) {
+            callback();
+            return;
+        }
+        var runArr = [];
+        var next = function () {
+            var idx = this.idx;
+            var len = this.len;
+            runArr[idx + 1].run();
+        }
+        var run = function () {
+            var idx = this.idx;
+            var len = this.len;
+
+            if (idx == len - 1) {
+                loadArr([this.url], function () {
+                    callback();
+                });
+
+            } else {
+                var me = this;
+                loadArr([this.url], function () {
+                    me.next();
+                });
+            }
+        }
+        for (var i = 0, len = arr.length; i < len; i++) {
+            runArr.push({
+                url: arr[i],
+                idx: i,
+                len: len,
+                next: next,
+                run: run
+            });
+        }
+        runArr[0].run();
+    }
+
+    /**
+     * 加载js列表资源
+     */
+    function loadArr(arr, callback) {
+        var idPrefix = 'script_';
+        var contextPath = getContextPath();
+
+        for (var i = 0, len = arr.length; i < len; i++) {
+            var currNewId = idPrefix + getNewTagId();
+            loadConfig[currNewId] = {loaded: false};
+            loadJs(currNewId, contextPath + arr[i], function () {
+                var sid = this.getAttribute('id');
+                loadConfig[sid].loaded = true;
+                var flag = true;
+                if (!callback) {
+                    return;
+                }
+                if (loadConfig.loadedAll) {
+                    return;
+                }
+                for (var k in loadConfig) {
+                    if (k == 'loadedAll' || k == 'newId') {
+                        continue;
+                    }
+                    if (!loadConfig[k].loaded) {
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    loadConfig.loadedAll = true;
+                    callback();
+                }
+            });
+        }
+    }
+    /**
+     * 加载 js资源
+     */
+    function loadJs(sid, jsurl, callback) {
+        loadConfig.loadedAll = false; //没有加载完毕
+        var nodeHead = document.getElementsByTagName('head')[0];
+        var nodeScript = null;
+        if (document.getElementById(sid) == null) {
+            nodeScript = document.createElement('script');
+            nodeScript.setAttribute('type', 'text/javascript');
+            nodeScript.setAttribute('src', jsurl);
+            nodeScript.setAttribute('id', sid);
+            if (callback != null) {
+                nodeScript.onload = nodeScript.onreadystatechange = function () {
+                    if (nodeScript.ready) {
+                        return false;
+                    }
+                    if (!nodeScript.readyState || nodeScript.readyState == "loaded" || nodeScript.readyState == 'complete') {
+                        nodeScript.ready = true;
+                        callback.call(nodeScript);
+                    }
+                };
+            }
+            nodeHead.appendChild(nodeScript);
+        } else {
+            if (callback != null) {
+                callback.call(document.getElementById(sid));
+            }
+        }
+    }
+    ;
+    var console = (typeof window['console'] == 'undefined') ? {
+        log: function () {
+        }
+    } : window.console;
+</script>
+<script>
+    loadArr([
+        'res_common/third/jquery/jquery-2.1.4.min.js',
+        'res_common/third/template/template_debug_3_0_0.js',
+
+    ], function () {
+        load4sort([
+            'res_common/oui/system/oui.js',
+            'res_common/oui/system/oui-common.js',
+            'res_common/oui/ui/base-control.js',
+            'res_common/oui/ui/oui-form-control.js',
+            'res_common/oui/ui/ui_pc/dialog/dialog.js',
+        ], function () {
+            init();
+        });
+    });
+</script>
+<script>
+    (function () {
+        var clickType = "click";
+
+        function locationByH5(successCallback, errorCallback) {
+            navigator.geolocation.getCurrentPosition(function (b) {
+                var c = b.coords, d = [c.longitude, c.latitude];
+                AMap.convertFrom(d, "gps", function (b, c) {
+                    if (c && c.locations) {
+                        var d = c.locations[0];
+                        successCallback([d.lng, d.lat]);
+                    }
+                });
+            }, function (e) {
+                successCallback();
+            }, {enableHighAccuracy: !1, timeout: 30000})
+        }
+
+        var poiItemsTpl = '{{if pois && pois.length > 0}}\
+                        <ul>\
+                            {{each pois as item index}}\
+                            <li location=\'{{=oui.parseString(item.location) }}\'>\
+                                <div>\
+                                    <span class="lbs-b-name">{{=item.name}}</span>\
+                                    <span class="lbs-s-name">{{=(item.pname + item.cityname + item.adname + item.name)}}</span>\
+                                </div>\
+                            </li>\
+                            {{/each}}\
+                        </ul>\
+                        {{else}}\
+                        <div class="lbs-nodata">暂无数据!</div>\
+                        {{/if}}';
+
+        var searchPoiItemsTpl = '{{if tips && tips.length > 0}}\
+                            <ul>\
+                               {{each tips as item index}}\
+                                <li location=\'{{=oui.parseString(item.location) }}\'>\
+                                    <div>\
+                                        <span class="lbs-b-name">{{=item.name}}</span>\
+                                        <span class="lbs-s-name">{{=(item.district)}}</span>\
+                                    </div>\
+                                </li>\
+                                {{/each}}\
+                            </ul>\
+                            {{else}}\
+                            <div class="lbs-nodata">搜索无结果!</div>\
+                            {{/if}}';
+
+        //命名为OMap 防止与 map 冲突
+        var OMap = function () {
+            this.map = null;
+            this.poiRender = null;
+            this.poiView = null;
+            this.pageIndex = 1;
+        };
+
+        OMap.closeMap = function () {
+            this.clearSearch();
+            this.mapView.hide();
+        };
+
+        /**
+         * 初始化地图
+         * @param center
+         */
+        OMap.initMap = function (center) {
+            var self = this;
+            if (!this.map) {
+                this.map = new AMap.Map('lbs-map', {
+                    resizeEnable: true,
+                    dragEnable: true,
+                    keyboardEnable: false,
+                    doubleClickZoom: true,
+                    zoom: 18,
+                    center: center
+                });
+            }
+
+            this.center = this.map.getCenter();
+
+            this.drawCenterMarker();
+
+            this.initSearchService(function(){
+                if (!center && oui.os.mobile) {
+                    locationByH5(function (c) {
+                        if (c) {
+                            self.center = c;
+                        }
+                        self.map.panTo(self.center);
+                        self.map.getCity(function (res) {
+                            self.city = res["cityCode"];
+                            self.searchNearBy("", self.pageIndex || 1);
+                        });
+                    });
+                } else {
+                    self.map.getCity(function (res) {
+                        self.city = res["cityCode"];
+                        self.searchNearBy("", self.pageIndex || 1);
+                    });
+                }
+            });
+        };
+
+        /**
+         * 初始化dom和渲染函数
+         */
+        OMap.initDomAndRender = function () {
+            this.mapView = $(".lbs-float-layer");
+
+            this.poiRender = template.compile(poiItemsTpl);
+            this.searchPoiRender = template.compile(searchPoiItemsTpl);
+
+            this.poiView = $("#lbs-position-items");
+            this.searchView = $(".lbs-search");
+            this.searchInput = this.searchView.find("input[type='text']");
+            this.searchBtn = this.searchView.find("button");
+
+            this.searchPoiView = $("#lbs-poi-search");
+
+            this.cancelBtn = $(".lbs-cancle");
+        };
+
+        /**
+         * 渲染poi
+         * @param poiData
+         */
+        OMap.renderpoi = function (poiData) {
+            var poiHtml = this.poiRender(poiData || {});
+            this.poiView.html(poiHtml);
+        };
+
+        /**
+         *
+         * @param poiData
+         */
+        OMap.renderSearchPoi = function (poiData) {
+            var poiHtml = this.searchPoiRender(poiData || {});
+            this.searchPoiView.html(poiHtml);
+        };
+
+
+        /**
+         * 画中心标记
+         * @param position
+         */
+        OMap.drawCenterMarker = function (position) {
+            if (!position) {
+                position = this.center = this.map.getCenter();
+            }
+            if (this.centerMarker) {
+                this.centerMarker.setPosition(position);
+                return;
+            }
+            this.centerMarker = new AMap.Marker({
+                map: this.map,
+                draggable: false,
+                //icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position: position
+            });
+        };
+
+        /**
+         * 初始化搜索服务
+         */
+        OMap.initSearchService = function (callback) {
+            var self = this;
+            AMap.plugin(['AMap.PlaceSearch', 'AMap.Autocomplete'], function () {
+
+                self.search = new AMap.PlaceSearch({
+                    pageIndex: 1,
+                    pageSize: 15,
+                    extensions: "all",
+                    city: self.city
+                });
+
+                self.AutoC = new AMap.Autocomplete({});
+
+                callback && callback();
+
+            });
+        };
+
+        /**
+         * 搜索附近poi
+         */
+        OMap.searchNearBy = function (keyword, pageIndex) {
+            var self = this;
+            self.search.searchNearBy(keyword || "", self.center, 3000, function (status, searchResult) {
+                self.renderpoi(searchResult.poiList);
+                self.clearSearch();
+            });
+        };
+
+        /**
+         * 根据关键字搜索poi
+         */
+        OMap.searchBy = function (keyword) {
+            var self = this;
+            self.AutoC.search(keyword || "", function (status, autoResult) {
+                self.renderSearchPoi(autoResult);
+            });
+        };
+
+        OMap.clearSearch = function () {
+            var self = this;
+            if (!self.searchPoiView.is(':hidden')) {
+                self.searchInput.val("");
+                self.searchPoiView.html("").hide();
+            }
+        };
+
+        /**
+         * 地图拖动结束事件
+         */
+        OMap.mapMoveEnd = function () {
+            OMap.drawCenterMarker();
+            OMap.searchNearBy();
+        };
+
+        /**
+         * 地图平移事件
+         */
+        OMap.mapMove = function () {
+            OMap.drawCenterMarker();
+        };
+
+        /**
+         * 初始绑定事件
+         */
+        OMap.initEvents = function () {
+            var self = this;
+            this.map.on("moveend", this.mapMoveEnd);
+            this.map.on("mapmove", this.mapMove);
+            this.map.on("zoomend", this.mapMove);
+
+            this.poiView.off(clickType).on(clickType, "li", function () {
+                var selectResult = {
+                    address: $(this).find(".lbs-s-name").html(),
+                    location: oui.parseJson($(this).attr("location"))
+                };
+                self.options.select && self.options.select(selectResult);
+                self.mapView.hide();
+                return false;
+            });
+
+            this.searchPoiView.off(clickType).on(clickType, "li", function () {
+                var l = $(this).attr("location");
+                l = oui.parseJson(l);
+                self.center = new AMap.LngLat(l.lng, l.lat);
+                self.clearSearch();
+                self.map.panTo(self.center);
+                var address = $(this).find(".lbs-s-name").html() + $(this).find(".lbs-b-name").html();
+                var selectResult = {
+                    address: address,
+                    location: l
+                };
+                self.options.select && self.options.select(selectResult);
+                self.mapView.hide();
+
+//                var l = $(this).attr("location");
+//                l = oui.parseJson(l);
+//                self.center = new AMap.LngLat(l.lng, l.lat);
+//                self.clearSearch();
+//                self.map.panTo(self.center);
+//                self.searchNearBy($(this).find(".lbs-b-name").html(), 1);
+                return false;
+            });
+
+            //this.searchInput.off("focus").on("focus", function () {
+            //    self.searchPoiView.show();
+            //});
+
+            this.searchInput.off("input").on("input", function () {
+                if ($(this).val().length > 0) {
+                    self.searchPoiView.show();
+                    self.searchBy($(this).val(), 1);
+                } else {
+                    self.clearSearch();
+                    //self.searchPoiView.hide();
+                }
+            });
+
+            this.searchInput.off("blur").on("blur", function () {
+                if (self.searchPoiView.find("ul").length <= 0) {
+                    self.clearSearch();
+                }
+            });
+
+            this.searchBtn.off(clickType).on(clickType, function () {
+                self.searchBy(self.searchInput.val(), 1);
+                return false;
+            });
+
+            this.cancelBtn.off(clickType).on(clickType, function () {
+                if (!self.searchPoiView.is(":hidden")) {
+                    self.clearSearch();
+                } else {
+                    self.mapView.hide();
+                }
+            });
+        };
+
+        OMap.init = function (options) {
+            if (!options) options = {};
+            this.options = options;
+
+            this.initDomAndRender();
+            this.initMap(this.options.center);
+            this.initEvents();
+        };
+
+        window.OuiMap = OMap;
+    })();
+</script>
+<script>
+    function init() {
+        template.helper("oui", oui);
+        OuiMap.init({
+            select: function (positionObj) {
+                var lbsDialog = window.parent.oui.$.ctrl.dialog.LbsDialog;
+                lbsDialog.attr('updateLbsValue') && lbsDialog.attr('updateLbsValue')(positionObj);
+
+//                console.log(positionObj);
+//                var positionStr = positionObj.address;
+//                $(self.getEl()).find(".lbs-info").html(positionStr);
+//                self.attr("value", positionObj.location);
+//                var data = [];
+//                data.push({display: positionStr, value: positionObj.location});
+//                self.attr("data", oui.parseString(data));
+//                oui.validate($(self.getEl()).find('#' + self.attr('id'))[0]);
+            }
+        });
+    }
+</script>
+</body>
+</html>
+
+
+
+
+

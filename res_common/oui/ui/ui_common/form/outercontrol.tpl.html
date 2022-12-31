@@ -1,0 +1,32 @@
+<button class="outercontrol-btn" {{clickName}}="oui.getByOuiId({{ouiId}}).loadData()">加载数据</button>
+<input id="{{id}}" name="{{name}}" type="text" value="{{value}}" class="oui-form"
+       {{if right&&(right=="design")}}disabled="disabled" {{/if}}
+{{(isReadOnly)?"readonly=readonly":""}}
+placeholder="{{placeholder}}"
+style="{{fieldStyle}}"
+validate="{{validate}}"
+{{=commonEvent}}
+onfocus="oui.getByOuiId({{ouiId}}).focus();"
+onkeyup="oui.getByOuiId({{ouiId}}).keyup();"
+/>
+<i {{clickName}}="oui.getByOuiId({{ouiId}}).clearContent();"
+   id="form_delete_info_btn_{{ouiId}}"
+   class="form-delete-info" style="{{if value}}display:block;{{/if}}" ></i>
+<div class="outercontrol-select-mask" {{clickName}}="oui.getByOuiId({{ouiId}}).hideSelectArea()"></div>
+<!--选择蒙层，点击此蒙层实现关闭下拉，移除oui-class-outercontrol上追加的show-select-->
+<div class="outercontrol-select"><!--选择下拉区域-->
+    <ul>
+        {{if data&&data.length}}
+        {{each data as item index}}
+        <li {{clickName}}="oui.getByOuiId({{ouiId}}).selectOne({{index}},this)" value="{{item.value}}">{{item.display}}</li>
+        {{/each}}
+        {{else}}
+        <li {{clickName}}="oui.getByOuiId({{ouiId}}).selectOne(-1,this)" value="">没有检索到内容</li>
+        {{/if}}
+    </ul>
+</div>
+
+
+
+
+

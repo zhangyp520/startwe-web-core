@@ -1,0 +1,46 @@
+<!--图片组-->
+<template >
+    <el-carousel
+            :tempStyle="style"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :class="cls"
+            :placeholder="placeholder"
+            @change="_controlOnUpdate"
+
+            :interval="5000" arrow="always">
+        <el-carousel-item v-for="(item,index) in data" :key="index">
+            <h3>{{ item.display }}</h3>
+            <img :src="item.url" />
+        </el-carousel-item>
+    </el-carousel>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:[], //图片列表[{value:'',url:'',display:''}]
+                bindProp:'',
+//                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){ //图片组无改变事件
+//                var key = this.bindProp;
+//                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

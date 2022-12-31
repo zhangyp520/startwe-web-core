@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <link rel="stylesheet" type="text/css" href="{{oui_contextPath}}res_common/oui/ui/ui_pc/css/dialog.css{{oui_css_version}}"/>
+    <script charset="utf-8" type="text/javascript" >
+        //oui_contextPath,oui_css_version,oui_js_version,title,css,content,bizScript
+        var oui_context = {
+            debug: true,
+            contextPath: "{{oui_contextPath}}"
+        };
+    </script>
+    <script charset="utf-8" type="text/javascript"  src="{{oui_contextPath}}res_common/third/jquery/jquery-2.1.4.min.js{{oui_js_version}}"></script>
+    <script charset="utf-8" type="text/javascript"  src="{{oui_contextPath}}res_common/third/template/template_debug_3_0_0.js{{oui_js_version}}"></script>
+    <script charset="utf-8" type="text/javascript"  src="{{oui_contextPath}}res_common/third/lazy-load/lazy-load-img.min.js{{oui_js_version}}"></script>
+    <script charset="utf-8" type="text/javascript"  src="{{oui_contextPath}}res_common/oui/core.min.js{{oui_js_version}}"></script>
+    <script charset="utf-8" type="text/javascript"  src="{{oui_contextPath}}res_common/oui/ui/ui_pc/dialog/dialog.js{{oui_js_version}}"></script>
+    <title>
+        {{title}}
+    </title>
+</head>
+<body oui-controller="{{controller}}">
+    <!--css所需业务资源-->
+    {{each extCssPaths as extCssPath index}}
+        <link rel="stylesheet" type="text/css" href="{{oui_contextPath}}{{extCssPath}}{{oui_css_version}}"/>
+    {{/each}}
+    {{if isShowCssText}}
+        <style type="text/css">
+            {{=cssContent}}
+        </style>
+    {{else}}
+        <link rel="stylesheet" type="text/css" href="{{oui_contextPath}}{{cssPath}}{{oui_css_version}}"/>
+    {{/if}}
+    <!--css所需业务资源结束-->
+
+    <!--页面结构代码开始-->
+    <div class="body-content">
+        {{=designContent}}
+    </div>
+    <!--页面结构代码结束-->
+
+
+    <!--业务js资源开始-->
+    {{each extJsPaths as extJsPath index}}
+    <script charset="utf-8" type="text/javascript" 	src="{{oui_contextPath}}{{extJsPath}}{{oui_js_version}}"></script>
+    {{/each}}
+    {{if isShowJSText}}
+        <script type="text/javascript">
+            {{=jsContent}}
+        </script>
+    {{else}}
+        <script charset="utf-8" type="text/javascript" 	src="{{oui_contextPath}}{{jsPath}}{{oui_js_version}}"></script>
+
+    {{/if}}
+    <!--业务js资源结束-->
+    <!--页面参数设置逻辑-->
+    <script charset="utf-8" type="text/javascript">
+        oui.setPageParam({
+            //TODO 当前页面业务参数设置
+        });
+    </script>
+    <!--页面初始化-->
+    <script charset="utf-8" type="text/javascript">
+        oui.ready(function(){
+            //TODO 业务开发可以在此处扩展
+//            {{controller+".init();"}}
+            {{if isShowJSText}}
+                window.initAfter&&window.initAfter();
+            {{/if}}
+        });
+    </script>
+</body>
+</html>
+

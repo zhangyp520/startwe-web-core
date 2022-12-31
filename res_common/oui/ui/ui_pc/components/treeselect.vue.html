@@ -1,0 +1,354 @@
+<!-- 树状选择器 -->
+<template>
+    <div class="oui-class-treeselect">
+        <el-popover
+                ref="popover"
+                placement="bottom-start"
+                trigger="click"
+                @show="onShowPopover"
+                :height="400"
+                @hide="onHidePopover">
+            <el-tree
+                    ref="tree"
+                    class="select-tree"
+                    highlight-current
+                    :multiple="false"
+                    :style="'min-width:'+treeWidth"
+                    :data="data"
+                    :props="props"
+                    :node-key="props.value"
+                    :expand-on-click-node="false"
+                    :current-node-key="value"
+                    :default-checked-keys="[value]"
+                    :filter-node-method="filterNode"
+                    :default-expand-all="false"
+                    @node-click="onClickNode">
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                    <span v-if="showSortNum" class="tree-node-sort-num">{{getNum(data[props.value])}}</span>
+                </span>
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+
+                    <span>{{ data[props.label] }}</span>
+                    <span v-for="(column,index) in columns">
+                        <span>【{{data[column.name]||data[props.label]}}】</span>
+                    </span>
+                    <span v-if="showSortNum" class="tree-node-sort-num">{{getNum(data[props.value])}}</span>
+                </span>
+            </el-tree>
+
+
+
+            <el-input
+                    :size="size"
+                    slot="reference"
+                    ref="input"
+                    v-model="display"
+                    @clear="event2clear"
+                    clearable
+                    :style="{'width':width+'px'}"
+                    :class="{ 'rotate': showStatus }"
+                    suffix-icon="el-icon-arrow-down"
+                    :placeholder="placeholder">
+            </el-input>
+        </el-popover>
+    </div>
+</template>
+<script>
+exports={
+    name: 'Pagination',
+    props: {
+        showSortNum:{
+            type:Boolean,
+            required:false,
+            default:true
+        },
+        size:{
+            type:String,
+            required:false,
+            default:'mini'
+        },
+        // 接收绑定参数
+        value: String,
+        // 输入框宽度
+        width:String,
+        // 选项数据
+        options: {
+            type: Array,
+            required: true,
+        },
+        columns: {
+            type:Array,
+            required:false,
+            default:[]
+        },
+        // 输入框占位符
+        placeholder: {
+            type: String,
+            required: false,
+            default: '请选择',
+        },
+        // 树节点配置选项
+        props: {
+            type: Object,
+            required: false,
+            default: () => ({
+                parent: 'parentId',
+                value: 'id',
+                label: 'display',
+                children: 'children',
+            })
+        }
+    },
+    // 设置绑定参数
+    model: {
+        prop: 'value',
+        event: 'selected'
+    },
+    computed: {
+        // 是否为树状结构数据
+        dataType:function () {
+            const jsonStr = JSON.stringify(this.options);
+            return jsonStr.indexOf(this.props.children) !== -1;
+        },
+        // 若非树状结构，则转化为树状结构数据
+        data:function () {
+            return this.dataType ? this.options : this.switchTree();
+        }
+    },
+    watch: {
+        display:function (val) {
+            if (!val) {
+                this.value = '';
+            }
+            this.$refs.tree.filter(val);
+        },
+        value:function(val) {
+            this.display = this.queryTree(this.data, val);
+        }
+    },
+    data:function() {
+        return {
+            // 树状菜单显示状态
+            showStatus: false,
+            // 菜单宽度
+            treeWidth: 'auto',
+            // 输入框显示值
+            display: '',
+            // 实际请求传值
+            value: '0',
+        };
+    },
+    created:function() {
+        // 检测输入框原有值并显示对应 label
+        if (this.value) {
+            this.selected = this.value;
+            this.$emit('selected', this.value);
+            this.display = this.queryTree(this.data, this.value);
+        }
+    },
+    mounted:function (){
+        var me = this;
+        this.$nextTick(() => {
+            setTimeout(function (){
+                me.treeWidth = `${(me.width || me.$refs.input.$refs.input.clientWidth) - 24}px`;
+            },5);
+            me.$refs.tree.setCheckedKeys([me.value]);
+            console.log(this.treeWidth,'树宽度');
+        });
+
+    },
+    methods: {
+        getData:function (){
+            return {
+                value:this.value,
+                display:this.display
+            };    
+        },
+        // 单击节点
+        onClickNode:function(node) {
+            var lastData = oui.clone(this.getData());
+            this.display = node[this.props.label];
+            this.value = node[this.props.value];
+            this.$refs.tree.setCheckedKeys([this.value]);
+            this.onUpdate&&this.onUpdate(this.bindProp,this.getData(),lastData,{operate:'select'});
+            this.onCloseTree();
+        },
+        event2clear:function (){
+
+            var lastData = oui.clone(this.getData());
+            if(this.value){
+                lastData.display = this.queryTree(this.data, this.value);
+            }
+            this.value ='';
+            this.display='';
+            this.onUpdate&&this.onUpdate(this.bindProp,this.getData(),lastData,{operate:'clear'});
+        },
+        // 偏平数组转化为树状层级结构
+        switchTree:function() {
+            return this.cleanChildren(this.buildTree(this.options, '0'));
+        },
+        // 隐藏树状菜单
+        onCloseTree:function() {
+            this.$refs.popover.showPopper = false;
+        },
+        // 显示时触发
+        onShowPopover:function() {
+            this.showStatus = true;
+            this.$refs.tree.filter(false);
+        },
+        // 隐藏时触发
+        onHidePopover:function() {
+            this.showStatus = false;
+            this.$emit('selected', this.value);
+        },
+        // 树节点过滤方法
+        filterNode:function(query, data) {
+            if (!query) return true;
+            return data[this.props.label].indexOf(query) !== -1;
+        },
+        getNum:function (value){
+            var idx =0;
+            var me = this;
+            oui.findOneFromTreeArrayBy(this.data,function (item){
+               idx++;
+               if(item[me.props.value]==value){
+                   return true;
+               }
+            });
+            return idx;
+        },
+        // 搜索树状数据中的 ID
+        queryTree:function(tree, id) {
+            let stark = [];
+            stark = stark.concat(tree);
+            while (stark.length) {
+                const temp = stark.shift();
+                if (temp[this.props.children]) {
+                    stark = stark.concat(temp[this.props.children]);
+                }
+                if (temp[this.props.value] === id) {
+                    return temp[this.props.label];
+                }
+            }
+            return '';
+        },
+        // 将一维的扁平数组转换为多层级对象
+        buildTree:function(data, id) {
+            id =id ||'0';
+            const fa = (parentId) => {
+                const temp = [];
+                for (let i = 0; i < data.length; i++) {
+                    const n = data[i];
+                    if (n[this.props.parent] === parentId) {
+                        n.children = fa(n[this.props.value]);
+                        temp.push(n);
+                    }
+                }
+                return temp;
+            };
+            return fa(id);
+        },
+        // 清除空 children项
+        cleanChildren:function (data) {
+            const fa = (list) => {
+                list.map((e) => {
+                    if (e.children.length) {
+                        fa(e.children);
+                    } else {
+                        delete e.children;
+                    }
+                    return e;
+                });
+                return list;
+            };
+            return fa(data);
+        }
+    }
+}
+</script>
+
+<style>
+    .oui-class-treeselect {
+
+    }
+    .custom-tree-node {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        padding-right: 8px;
+    }
+    .tree-node-sort-num{
+        color:wheat;
+        text-align: center;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #3d2772;
+        background: #26a2ff;
+        border-radius: 24px;
+    }
+    .custom-tree-node-columns{
+        display: inline-flex;
+    }
+    .custom-tree-node-columns span{
+        padding-left: 2px;
+    }
+    .el-input.el-input--suffix {
+        cursor: pointer;
+        overflow: hidden;
+    }
+    .el-input.el-input--suffix.rotate .el-input__suffix {
+        transform: rotate(180deg);
+    }
+    .select-tree {
+        max-height: 350px;
+        overflow-y: scroll;
+    }
+    /* 菜单滚动条 */
+    .select-tree::-webkit-scrollbar {
+        z-index: 11;
+    }
+    .select-tree::-webkit-scrollbar-track,
+    .select-tree::-webkit-scrollbar-corner {
+        background: #fff;
+    }
+    .select-tree::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background: #b4bccc;
+    }
+    .select-tree::-webkit-scrollbar-track-piece {
+        background: #fff;
+    }
+    .el-popover.el-popper{
+        background: #3A3B3F!important
+    }
+
+    .el-row {
+        margin-bottom: 20px;
+    }
+    .el-row:last-child{
+        margin-bottom: 0;
+    }
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+    .bg-purple {
+        background: #d3dce6;
+    }
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+</style>

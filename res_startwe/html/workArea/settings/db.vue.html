@@ -1,0 +1,250 @@
+<template>
+    <div class="email-setting">
+        <div class="email-content">
+            <el-form>
+                <el-form-item label="默认上传方式" label-width="200px">
+                    <el-radio-group v-model="dbSettingForm.type">
+                        <el-radio label="1">本地（不推荐）</el-radio>
+                        <el-radio label="2">阿里云OSS</el-radio>
+                        <!-- <el-radio label="3">腾讯云COS</el-radio>
+                        <el-radio label="4">七牛云储存</el-radio> -->
+                    </el-form-item>
+                </el-form-item>
+            </el-form>
+            <el-divider></el-divider>
+            <el-form ref="dbSettingForm" :model="dbSettingForm" :rules="rules" label-width="200px">
+                <template v-if="dbSettingForm.type == '2'">
+                    <el-form-item label="Access Key ID" prop="accessKeyId">
+                        <el-input v-model="dbSettingForm.accessKeyId"></el-input>
+                        <div class="warning">Access Key ID是您访问阿里云API的密钥，具有该账户完全的权限，请您妥善保管</div>
+                    </el-form-item>
+                    <el-form-item label="Access Key Secret" prop="accessKeySecret">
+                        <el-input v-model="dbSettingForm.accessKeySecret"></el-input>
+                        <div class="warning">Access Key Sectet是您访问阿里云API的密钥，具有该账户完全的权限，请您妥善保管</div>
+                    </el-form-item>
+                    <el-form-item label="Endpoint选择">
+                        <el-select v-model="dbSettingForm.endpoint">
+                            <el-option label="默认" value="默认">默认</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="Bucket选择">
+                        <el-select v-model="dbSettingForm.bucketName">
+                            <el-option label="默认" value="默认">默认</el-option>
+                        </el-select>
+                    </el-form-item>
+                </template>
+
+                <template v-if="dbSettingForm.type == '3'">
+                    <el-form-item label="APP ID" prop="appId">
+                        <el-input v-model="dbSettingForm.appId"></el-input>
+                        <div class="warning">APP ID是您项目的唯一ID</div>
+                    </el-form-item>
+                    <el-form-item label="Secret ID" prop="secretId">
+                        <el-input v-model="dbSettingForm.secretId"></el-input>
+                        <div class="warning">Secret ID是您访问腾讯云API的密钥，具有该账户完全的权限，请您妥善保管</div>
+                    </el-form-item>
+                    <el-form-item label="Secret KEY" prop="secretKey">
+                        <el-input v-model="dbSettingForm.secretKey"></el-input>
+                        <div class="warning">Secret KEY是您访问腾讯云API的密钥，具有该账户完全的权限，请您妥善保管</div>
+                    </el-form-item>
+                    <el-form-item label="Bucket">
+                        <el-select v-model="dbSettingForm.bucketName"></el-select>
+                        <div class="warning">请保证Bucket可为共同读取的</div>
+                    </el-form-item>
+                    <el-form-item label="Bucket所在区域">
+                        <el-select v-model="dbSettingForm.bucketArea"></el-select>
+                        <div class="warning">请保证Bucket对应的所在区域，如果没有选择无</div>
+                    </el-form-item>
+                </template>
+
+                <!-- <template v-if="dbSettingForm.type == '4'">
+                    <el-form-item label="Access Key" prop="accessKeySecret">
+                        <el-input v-model="dbSettingForm.accessKeySecret"></el-input>
+                        <div class="warning">用于签名的公钥</div>
+                    </el-form-item>
+                    <el-form-item label="Secret ID" prop="secretId">
+                        <el-input v-model="dbSettingForm.secretId"></el-input>
+                        <div class="warning">用于签名的私钥</div>
+                    </el-form-item>
+                    <el-form-item label="Bucket KEY" prop="bucketKey">
+                        <el-input v-model="dbSettingForm.bucketKey"></el-input>
+                        <div class="warning">Bucket KEY是您项目的密钥，具有该账户完全的权限，请您妥善保管</div>
+                    </el-form-item>
+                    <el-form-item label="Bucket">
+                        <el-select v-model="dbSettingForm.bucket"></el-select>
+                            <el-option label="姓名" value="1"></el-option>
+                        <div class="warning">请保证Bucket可为共同读取的</div>
+                    </el-form-item>
+                    <el-form-item label="Bucket所在区域">
+                        <el-select v-model="dbSettingForm.bucketArea"></el-select>
+                        <div class="warning">请保证Bucket对应的所在区域</div>
+                    </el-form-item>
+                </template> -->
+                
+                <el-form-item v-if="dbSettingForm.type != '1'" label="自定义URL" prop="otherUrl">
+                    <el-input v-model="dbSettingForm.otherUrl"></el-input>
+                    <div class="warning">请输入自定义云存储域名 注：url开头一定是http://,结尾不加‘/’</div>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm">保存</el-button>
+                    <el-button>重置</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data:function(){
+            return {
+                saveid:"",
+                dbSettingForm:{
+                    type: "1",
+                    accessKeyId: "",
+                    accessKeySecret: "",
+                    endpoint: "",
+                    bucketName: "",
+                    otherUrl: "",
+                    key:"",
+                    bucket: null,
+                    bucketKey: null,
+                    appId: null,
+                    secretId: null,
+                    secretKey: null,
+                    // bucketArea: "",
+                },
+                rules:{
+                    accessKeyId:[{ required: true, message: '请输入Access Key ID', trigger: 'blur' }],
+                    accessKeySecret:[{ required: true, message: '请输入Access Key', trigger: 'blur' }],
+                    accessKeySecret:[{ required: true, message: '请输入Access Key Secret', trigger: 'blur' }],
+                    endpoint:[{ required: true, message: '请选择Endpoint', trigger: 'blur' }],
+                    bucket:[{ required: true, message: '请选择Bucket', trigger: 'blur' }],
+                    appId:[{ required: true, message: '请输入APP ID', trigger: 'blur' }],
+                    secretId:[{ required: true, message: '请输入Secret id', trigger: 'blur' }],
+                    secretKey:[{ required: true, message: '请输入Secret Key', trigger: 'blur' }],
+                    bucketKey:[{ required: true, message: '请输入Bucket Key', trigger: 'blur' }],
+                    bucketArea:[{ required: true, message: '请选择Bucket Area', trigger: 'blur' }],
+                    currentUrl:[{ required: true, message: '请输入自定义URL', trigger: 'blur' }],
+                }
+            }
+        },
+        methods:{
+            initData: function(data, id){
+                console.log('dbinit', data);
+                this.saveid = id;
+                this.dbSettingForm = {...data};
+            },
+            submitForm:function(formName){
+                try{
+                    let {id, circleId} = com.startwe.models.portal.web.PortalController.data.project;
+                    let submitContentJson = {type:"1"};
+                    
+                    if(this.dbSettingForm.type == "2"){
+                        submitContentJson = {
+                            type: this.dbSettingForm.type,
+                            accessKeyId: this.dbSettingForm.accessKeyId,
+                            accessKeySecret: this.dbSettingForm.accessKeySecret,
+                            endpoint: this.dbSettingForm.endpoint,
+                            bucketName: this.dbSettingForm.bucketName,
+                            otherUrl: this.dbSettingForm.otherUrl,
+                            key:this.dbSettingForm.key,
+                        }
+                    }
+
+                    // if(this.dbSettingForm.type == "3"){
+                    //     submitContentJson = {
+                    //         appId: this.dbSettingForm.appId,
+                    //         secretId: this.dbSettingForm.secretId,
+                    //         accessKeySecret: this.dbSettingForm.accessKeySecret,
+                    //         endpoint: this.dbSettingForm.endpoint,
+                    //         bucketName: this.dbSettingForm.bucketName,
+                    //         otherUrl: this.dbSettingForm.otherUrl,
+                    //         key:this.dbSettingForm.key,
+                    //     }
+                    // }
+                    let that = this;
+                    let  dbConfig = {
+                        id:this.saveid,
+                        circleId,
+                        projectId:id,
+                        type:"3",
+                        name:"存储配置",
+                        contentJson: JSON.stringify(submitContentJson),
+                        description:"存储配置"
+                    }
+
+
+                    this.$refs['dbSettingForm'].validate((valid) => {
+                        if (valid) {
+                            oui.postData(com.startwe.models.project.web.ProjectController4Design.data.saveConfigUrl, dbConfig, function( res ){
+                                that.$message({
+                                    message: res.msg,
+                                    type: 'success'
+                                });
+                            }, function(err){
+                                that.$message({
+                                    message: err,
+                                    type: 'error'
+                                });
+                            })
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                } catch(err) {
+                    console.log("error------->", err)
+                }
+                
+            }
+        },
+        mounted: function(){
+            console.log("存储配置...", window);
+            window.dbConfigInit = this.initData
+        }
+    }
+</script>
+<style>
+    .warning{
+        font-size: 12px;
+        font-weight: 400;
+        color:rgba(0, 0, 0, 0.45);
+    }
+
+    .header{
+        font-size: 20px;
+        font-weight: 500;
+        height:60px;
+        background-color: #fff;
+        padding:16px 32px;
+    }
+
+    .email-setting{
+        font-family: PingFangSC-Medium, PingFang SC;
+    }
+
+    .el-main{
+        padding:0;
+    }
+
+    .email-content{
+        background-color: #fff;
+        padding:24px;
+    }
+
+    .el-form{
+        width:80%;
+        margin: 0 auto;
+    }
+
+    .el-form-item__label{
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .email-content .el-radio {
+        margin-right: 40px;
+    }
+</style>

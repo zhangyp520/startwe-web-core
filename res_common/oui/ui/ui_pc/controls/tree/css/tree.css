@@ -1,0 +1,295 @@
+@charset "UTF-8";
+
+/*通过最外层ol添加.oui-tree-checkbox-show 为tree控件添加复选框：*/
+/*通过class:oui-tree-icon-unfold与oui-tree-icon-fold来控制文件夹的展开或折叠*/
+/*通过a标签class的变化来控制后面的span元素的背景切换*/
+/*给.oui-tree-nodeshow元素添加.oui-tree-nodeshow-selected 表示选中状态*/
+
+
+/************************* oui-class-tree 模板一***************************/
+.oui-class-tree li {
+    list-style: none;
+    line-height: 20px;
+    margin-left: 20px;
+}
+
+.oui-class-tree {
+
+}
+
+.oui-class-tree a.oui-tree-icon-fold {
+    width: 17px;
+    height: 17px;
+    display: inline-block;
+    background: url(../images/arrows.gif) no-repeat;
+    vertical-align: middle;
+}
+
+.oui-class-tree a.oui-tree-icon-unfold {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/arrows.gif) no-repeat -16px 0px;
+    vertical-align: middle;
+}
+
+/*通过class:oui-tree-icon-unfold与oui-tree-icon-fold来控制文件夹的展开或折叠*/
+.oui-class-tree a ~ ol {
+    display: none;
+}
+
+.oui-class-tree a.oui-tree-icon-unfold ~ ol {
+    display: block;
+}
+
+.oui-class-tree a.oui-tree-icon-fold ~ ol {
+    display: none;
+}
+
+.oui-class-tree a.oui-tree-icon-blank {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: transparent;
+    vertical-align: middle;
+}
+
+.oui-class-tree span.oui-tree-icon-file {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/file.gif) no-repeat;
+    vertical-align: middle;
+}
+
+/*通过a标签class的变化来控制后面的span元素的背景切换*/
+.oui-class-tree a.oui-tree-icon-unfold + span span.oui-tree-folder {
+    background-image: url(../images/folder-open.gif);
+}
+
+.oui-class-tree .oui-tree-nodeshow {
+    display: inline-block;
+    vertical-align: middle;
+    height: 20px;
+    padding-left: 2px;
+    padding-right: 3px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-size: 12px;
+    background-repeat: repeat-x;
+}
+
+/*给.oui-tree-nodeshow元素添加.oui-tree-nodeshow-selected 表示选中状态*/
+.oui-class-tree .oui-tree-nodeshow.oui-tree-nodeshow-selected {
+    border: 1px solid #A9ACB5;
+    background-image: url(../images/selected.png);
+}
+
+.oui-class-tree .oui-tree-nodeshow:hover {
+    border: 1px solid #999999;
+    background-image: url(../images/hover.png);
+}
+
+.oui-class-tree .oui-tree-folder {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background-image: url(../images/folder.gif);
+    background-repeat: no-repeat;
+    vertical-align: top;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    margin-top: 1px;
+}
+
+.oui-class-tree .oui-tree-file {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/file.gif) no-repeat 1px;
+    vertical-align: middle;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    margin-top: -8px;
+}
+
+.oui-class-tree .oui-tree-nodetext {
+    height: 18px;
+    line-height: 18px;
+    vertical-align: top;
+    _vertical-align: top;
+    display: inline-block;
+    padding-right: 3px;
+    white-space: nowrap;
+    margin-left: 4px;
+}
+
+.oui-class-tree .oui-tree-checkbox {
+    font-size: 13px;
+    display: none;
+    cursor: pointer;
+    margin-left: 3px;
+    margin-top: 4px;
+}
+
+/*通过最外层添加.checkbox 为tree控件添加复选框：*/
+.oui-class-tree .oui-tree.oui-tree-checkbox-show .oui-tree-checkbox {
+    display: inline-block;
+}
+
+
+
+/************************* oui-class-tree 模板二***************************/
+.oui-class-tree-1 li {
+    list-style: none;
+    line-height: 20px;
+    margin-left: 20px;
+}
+
+.oui-class-tree-1 {
+
+}
+
+.oui-class-tree-1 a.oui-tree-icon-fold {
+    width: 17px;
+    height: 17px;
+    display: inline-block;
+    background: url(../images/arrows.gif) no-repeat;
+    vertical-align: middle;
+}
+
+.oui-class-tree-1 a.oui-tree-icon-unfold {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/arrows.gif) no-repeat -16px 0px;
+    vertical-align: middle;
+}
+
+/*通过class:oui-tree-icon-unfold与oui-tree-icon-fold来控制文件夹的展开或折叠*/
+.oui-class-tree-1 a ~ ol {
+    display: none;
+}
+
+.oui-class-tree-1 a.oui-tree-icon-unfold ~ ol {
+    display: block;
+}
+
+.oui-class-tree-1 a.oui-tree-icon-fold ~ ol {
+    display: none;
+}
+
+.oui-class-tree-1 a.oui-tree-icon-blank {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: transparent;
+    vertical-align: middle;
+}
+
+.oui-class-tree-1 span.oui-tree-icon-file {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/file.gif) no-repeat;
+    vertical-align: middle;
+}
+
+/*通过a标签class的变化来控制后面的span元素的背景切换*/
+.oui-class-tree-1 a.oui-tree-icon-unfold + span span.oui-tree-folder {
+    background-image: url(../images/folder-open.gif);
+}
+
+.oui-class-tree-1 .oui-tree-nodeshow {
+    display: inline-block;
+    vertical-align: middle;
+    height: 20px;
+    padding-left: 2px;
+    padding-right: 3px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-size: 12px;
+    background-repeat: repeat-x;
+}
+
+/*给.oui-tree-nodeshow元素添加.oui-tree-nodeshow-selected 表示选中状态*/
+.oui-class-tree-1 .oui-tree-nodeshow.oui-tree-nodeshow-selected {
+    border: 1px solid #A9ACB5;
+    background-image: url(../images/selected.png);
+}
+
+.oui-class-tree-1 .oui-tree-nodeshow:hover {
+    border: 1px solid #999999;
+    background-image: url(../images/hover.png);
+}
+
+.oui-class-tree-1 .oui-tree-folder {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background-image: url(../images/folder.gif);
+    background-repeat: no-repeat;
+    vertical-align: top;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    margin-top: 1px;
+}
+
+.oui-class-tree-1 .oui-tree-file {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(../images/file.gif) no-repeat 1px;
+    vertical-align: middle;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    margin-top: -8px;
+}
+
+.oui-class-tree-1 .oui-tree-nodetext {
+    height: 18px;
+    line-height: 18px;
+    vertical-align: top;
+    _vertical-align: top;
+    display: inline-block;
+    padding-right: 3px;
+    white-space: nowrap;
+    margin-left: 4px;
+}
+
+.oui-class-tree-1 .oui-tree-checkbox {
+    font-size: 13px;
+    display: none;
+    cursor: pointer;
+    margin-left: 3px;
+    margin-top: 4px;
+}
+
+/*通过最外层添加.checkbox 为tree控件添加复选框：*/
+.oui-class-tree-1 .oui-tree.oui-tree-checkbox-show .oui-tree-checkbox {
+    display: inline-block;
+}
+
+
+
+
+
+
+
+
+
+
+
+

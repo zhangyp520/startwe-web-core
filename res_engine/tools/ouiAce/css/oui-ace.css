@@ -1,0 +1,321 @@
+@charset "utf-8";
+*{
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/*由于ace的代码字体不能被其他字体覆盖所以在这里统一处理，解决光标错位问题，具体什么原因，底层ace核心代码才能得知 TODO*/
+.ace_editor *{
+    font-family: normal ,"Monaco", "Menlo", "Ubuntu Mono", "Consolas", "source-code-pro", monospace !important;
+}
+#editor,.design-container {
+    font-size: 16px;
+    margin: 0;
+    /*position: relative;*/
+    top: 0;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    height: 100%;
+    overflow:auto;
+    width: 100%;
+    text-align: left;
+}
+/** 图片查看器****/
+.img-item{
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 6px 6px 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+}
+.small-img-area{
+    width: 80px;
+    height: 80px;
+}
+.mid-img-area{
+    width: 120px;
+    height: 120px;
+}
+.larg-img-area{
+    width: 180px;
+    height: 180px;
+}
+.img-item .img-area{
+    display: inline-block;
+    vertical-align: top;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+}
+.img-area img{
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.img-item input[type="checkbox"]{
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: none;
+}
+.img-item .img-del-btn,
+.img-item .img-source-btn,
+.img-item .img-copyUrl-btn{
+    background: rgba(0,0,0,.5);
+    width: auto;
+    padding: 3px 5px;
+    font-size: 12px;
+    color: #ffffff;
+    border: 0;
+    position: absolute;
+    z-index: 10;
+    display: none;
+}
+.img-item .img-del-btn{
+    right: 0;
+    top: 0;
+}
+.img-item .img-source-btn{
+    right: 0;
+    bottom: 29px;
+}
+.img-item .img-copyUrl-btn{
+    left: 0;
+    bottom: 29px;
+}
+.img-item:hover input[type="checkbox"],
+.img-item.img-item-selected input[type="checkbox"],
+.img-item:hover .img-del-btn,
+.img-item.img-item-selected .img-del-btn,
+.img-item:hover .img-source-btn,
+.img-item.img-item-selected .img-source-btn,
+.img-item:hover .img-copyUrl-btn,
+.img-item.img-item-selected .img-copyUrl-btn{
+    display: block;
+}
+.img-item:hover .img-area:after,
+.img-item.img-item-selected .img-area:after{
+    content: "";
+    background: rgba(0,0,0,.4);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.img-item .img-text{
+    display: block;
+    position: relative;
+    font-size: 0;
+    text-align: center;
+    margin-top: 5px;
+}
+.img-text .img-name-input{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    max-width: 50px;
+    width: auto;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.img-text .img-name-edit{
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    text-overflow: clip;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #e6e6e6;
+}
+.small-img-area + .img-text .img-name-input{
+    max-width: 50px;
+}
+.mid-img-area + .img-text .img-name-input{
+    max-width: 90px;
+}
+.larg-img-area + .img-text .img-name-input{
+    max-width: 150px;
+}
+.img-text span{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 14px;
+    text-align: left;
+}
+.imgs-select-all{
+    width: 16px;
+    height: 16px;
+    user-select: none;
+}
+.imgs-select-all-label{
+    cursor: pointer;user-select: none;
+}
+
+#statusBar {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    background-color: rgb(245, 245, 245);
+    color: gray;
+}
+.ace_status-indicator {
+    color: gray;
+    position: absolute;
+    right: 0;
+    /*border-left: 1px solid;*/
+}
+/** 布局设置：***/
+.layout, header.header, footer.footer  {
+    border: solid 1px #888;
+    text-align: center;
+}
+.layout-center{
+    height: 100%;
+}
+.editor-container{
+    height: 100%;
+    position: relative;
+}
+.ace_content{
+    text-align: left;
+}
+
+
+.ztree li span.button {
+    background-image: url(../images/left_menuForOutLook.png);
+}
+.ztree li a.curSelectedNode{
+    background-color: #3875d6;
+}
+/**设计区容器 ****/
+.design-container{
+
+}
+/** 鼠标移入状态*****/
+.oui-active{
+}
+/**元素选中状态 ***/
+.oui-selected{
+}
+
+/** 选中区域样式****/
+.select-div-border{
+    border-color: #5990cf;
+    border-style: solid;
+    position: absolute;
+    border-width: 0;
+    z-index: 1024;
+}
+.select-div-border-hover{
+    border-color: #FB8C00;
+    z-index: 1022;
+}
+.select-div-border-hover.select-div-left{
+    z-index: 1023;
+}
+.select-div-border-hover.select-div-right{
+    z-index: 1023;
+}
+.visible_hidden{
+    visibility: hidden;
+}
+/*.select-div-left, .select-div-top, .select-div-right, .select-div-bottom {*/
+    /*border-color: #5990cf;*/
+    /*border-style: solid;*/
+    /*position: absolute;*/
+    /*border-width: 0;*/
+    /*z-index: 10;*/
+/*}*/
+
+.select-div-left {
+    border-left-width: 2px;
+    width: 2px;
+    z-index: 1025;
+}
+.select-div-top {
+    border-top-width: 2px;
+    height: 2px;
+}
+
+.select-div-right {
+    border-right-width: 2px;
+    width: 2px;
+    z-index: 1025;
+}
+
+.select-div-bottom {
+    border-bottom-width: 2px;
+    height: 2px;
+}
+
+.select-div-left:before,
+.select-div-right:after {
+    content: " ";
+    background: #FFFFFF;
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    border: 1px solid #5990cf;
+    position: absolute;
+    z-index: 1025;
+}
+
+.select-div-left:before {
+    top: -4px;
+    left: -7px;
+}
+
+.select-div-right:after {
+    bottom: -4px;
+    right: -7px;
+}
+/*循环体*/
+.myidea-each{
+    position: relative;
+    border:1px dashed red;
+}
+.myidea-each>*{
+    position: relative;
+}
+.myidea-each-expr{
+    top:-50%
+}
+

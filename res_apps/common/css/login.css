@@ -1,0 +1,187 @@
+html,body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+em, i {
+    font-style: normal;
+}
+body {
+    background: url("../image/bg-login.png") center no-repeat #bfe3f6;
+    background-size: cover;
+}
+/************ 登录框 ************/
+.pg-log-box {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.pg-log-content {
+    width: 320px;
+    background: #fff;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+.pg-log-wrap {
+    padding: 15px 20px;
+}
+
+.pg-log-box .log-header {
+    padding: 10px 0 8px;
+    border-bottom: 1px solid #e4e4e4;
+    margin-bottom: 30px;
+}
+
+.pg-log-box .log-header h2 {
+    font-size: 16px;
+    color: #4a4a4a;
+    margin: 0;
+    font-weight: bolder;
+}
+
+.pg-log-box .log-header a {
+    color: #6067ff;
+    text-decoration: none;
+}
+
+.pg-log-box .log-input-box {
+    position: relative;
+    padding: 8px 5px;
+    margin-bottom: 20px;
+}
+
+.pg-log-box .log-input-box em {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: no-repeat center;
+    vertical-align: middle;
+    position: relative;
+    z-index: 3;
+}
+
+.pg-log-box .log-input-box input {
+    display: inline-block;
+    width: 220px;
+    height: 24px;
+    line-height: 24px;
+    padding-left: 8px;
+    border: none;
+    outline: none;
+    vertical-align: middle;
+    background: none;
+    position: relative;
+    z-index: 3;
+}
+
+.pg-log-box .log-input-box label {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+.pg-log-box .log-input-box label.error {
+    border-color: #f35;
+}
+
+.pg-log-box .log-input-user em {
+    background-image: url("../image/icon-user.png");
+}
+
+.pg-log-box .log-input-pwd em {
+    background-image: url("../image/icon-pwd.png");
+}
+
+.pg-log-box .log-btn-box {
+    margin: 25px 0 5px;
+}
+.pg-log-box .log-btn-box a {
+    text-decoration: none;
+}
+.pg-log-box .log-btn-box .log-btn {
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    background: #6067ff;
+    box-shadow: 0 2px 4px 0 rgba(96, 103, 255, .25);
+    border-radius: 20px;
+}
+.pg-log-box .log-btn-box .log-btn:hover {
+    background: #7076f3;
+}
+
+.pg-log-box .log-btn-box .log-tip {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #4a4a4a;
+}
+.pg-log-box .log-btn-box .log-tip.color-purple {
+    color: #6067ff;
+}
+
+.pg-log-box .log-third {
+    padding: 10px 0 20px;
+    background: #f4f6fc;
+}
+
+.pg-log-box .log-third > h3 {
+    text-align: center;
+    font-size: 14px;
+    color: #4a4a4a;
+}
+
+.pg-log-box .log-third .third-opt {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pg-log-box .log-third .third-opt li {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #6067ff;
+    border-radius: 50%;
+    vertical-align: middle;
+    background: no-repeat center;
+}
+
+.pg-log-box .log-third .third-opt li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.pg-log-box .log-third .third-opt li:hover {
+    text-decoration: none;
+}
+
+.pg-log-box .log-third .third-opt li.left {
+    background-image: url("../image/icon-qq.png");
+}
+
+.pg-log-box .log-third .third-opt li.center {
+    margin: 0 30px;
+    background-image: url("../image/icon-wx.png");
+}
+
+.pg-log-box .log-third .third-opt li.right {
+    background-image: url("../image/icon-wb.png");
+}

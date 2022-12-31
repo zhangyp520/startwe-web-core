@@ -1,0 +1,726 @@
+@charset "UTF-8";
+/**
+ * 弹窗类
+ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, div, h3, h4, button {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    line-height: 1.5;
+    /*-webkit-user-select: none;*/
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    outline: 0;
+}
+
+h3, h4 {
+    font-size: 100%;
+    font-weight: normal;
+}
+.oui-body-bar-hidden{
+    overflow: hidden;
+}
+.oui-border-b {
+    border-bottom: 1px solid #e0e0e0;
+}
+.oui-dialog {
+    /*display: table;*/
+    background: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-align: center;
+    position: fixed;
+    z-index: 400;
+    top: 0;
+    left: 0
+}
+.ours-class-dialog-8 .ours-dialog-cnt{
+    width: 99%;
+    height: 98%;
+    border-radius: 0;
+}
+.ours-class-dialog-8 .ours-dialog-bd{
+    padding-top: 10px;
+}
+.ours-class-dialog-8 .ours-dialog-ft{
+    position: absolute;
+    bottom: 0;
+}
+
+.oui-dialog:after{
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 0;
+    vertical-align: middle;
+}
+.oui-dialog-box {
+    vertical-align: middle;
+    display: inline-block;
+    text-align: center;
+}
+
+.oui-dialog-area, .oui-dialog-cnt {
+    width: 500px;
+    background: #ffffff;
+    vertical-align: middle;
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    -webkit-transition: all .25s ease-in-out;
+    -moz-transition: all .25s ease-in-out;
+    -ms-transition: all .25s ease-in-out;
+    -o-transition: all .25s ease-in-out;
+    transition: all .25s ease-in-out
+}
+.show-close-btn{
+    background: url("../images/show-close-btn.png") rgba(0,0,0,.5) center no-repeat;
+    background-position: 13px 7px;
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+    border-bottom-left-radius: 60px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.oui-dialog-hd, .oui-dialog-hd-1 {
+    line-height: 40px;
+    height: 40px;
+    padding:0 36px 0 20px;
+    font-size: 14px;
+    position: relative;
+    text-align: left;
+}
+
+.oui-dialog-hd {
+    /* background: #06bf69; */
+}
+
+.oui-dialog-hd-1 {
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.oui-dialog-hd h3, .oui-dialog-hd-1 h3 {
+    font-size: 14px;
+    font-weight: normal;
+    padding-right: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #515151;
+    display: inline;
+    /*overflow: hidden*//*为了给title后面加问号故注释掉*/
+}
+
+.oui-dialog-close {
+    background: url(../images/list-newform-close.png) no-repeat;
+    background-size: 12px 12px;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    margin-top: -6px;
+    cursor: pointer;
+}
+.fullScreen-close{
+    background-image: url("../images/dialog-commonclose-icon.png");
+    background-size: 18px 18px;
+    background-color: rgba(0, 0, 0, .5);
+    background-repeat: no-repeat;
+    background-position: 12px 6px;
+    width: 36px;
+    height: 36px;
+    border-bottom-left-radius: 50px;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+.oui-dialog-bd {
+    background: #ffffff;
+    padding: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.oui-dialog-bd img {
+    display: -webkit-box;
+    display: -moz-box;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 15px;
+}
+
+.oui-dialog-ft, .oui-dialog-ft-1 {
+    background: #ffffff;
+    width: 100%;
+    padding: 20px 0;
+    display: block;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+}
+
+.oui-dialog-cnt .oui-dialog-ft {
+    position: static;
+}
+.oui-dialog-ft-1 {
+    border-top: 1px solid #eaeaea;
+}
+
+.oui-dialog-ft-1 .oui-dialog-ok, .oui-dialog-ft-1 .oui-dialog-cancel {
+    margin: 0 20px;
+}
+.oui-dialog-ft:after{
+    content: "";
+    width: 0;
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.oui-dialog-ok,
+.oui-dialog-cancel,
+.oui-dialog-button-l,
+.oui-dialog-button-c,
+.oui-dialog-button-r,
+.oui-dialog-more-option {
+    min-width: 90px;
+    height: 34px;
+    padding: 0 20px;
+    margin: 0 25px;
+    line-height: 34px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    border: 0;
+    outline: none;
+}
+
+.oui-dialog-button-l {
+    float: left;
+}
+
+.oui-dialog-button-r {
+    float: right;
+}
+
+.oui-dialog-ok {
+    background: #2C82FC;
+    color: #ffffff;
+}
+
+.oui-dialog-ok:hover {
+    background: #63a4ed;
+    color: #ffffff;
+}
+.oui-dialog-ok.disable,
+.oui-dialog-ok:hover.disable{
+    background: #b4b4b4;
+    color: #ffffff;
+}
+.oui-dialog-cancel{
+    background: #e6e6e6;
+    color: #515151;
+}
+.oui-dialog-cancel:hover {
+    background: #e1e1e1;
+}
+.oui-dialog-more-option{
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+}
+.oui-dialog-more-option:hover{
+    background: #2C82FC;
+    border: 1px solid #2C82FC;
+    color: #ffffff;
+}
+.oui-dialog-ok, .oui-dialog-cancel, .oui-dialog-more-option{
+    min-width: 90px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    padding: 0 20px;
+    display: inline-block;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+/*输入框通用*/
+.oui-dialog-item {
+    width: 100%;
+    float: left;
+    margin-bottom: 16px;
+}
+
+.oui-dialog-item-words {
+    width: 100px;
+    float: left;
+    line-height: 34px;
+    color: #444444;
+    font-size: 14px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.oui-dialog-item-button {
+    background: #2C82FC;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    display: inline-block;
+    cursor: pointer;
+
+}
+
+.oui-dialog-item .text, .oui-dialog-item .text-code {
+    width: 55%;
+    font-size: 14px;
+    color: rgb(153, 153, 153);
+    overflow: hidden;
+    padding: 8px 25px 8px 5px;
+    border: 1px solid rgb(204, 204, 204);
+    outline: none;
+    line-height: 14px;
+    float: left;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+.oui-dialog-item .text-code {
+    width: 30%;
+}
+
+.oui-dialog-item .text:focus, .thickbox-form .text:focus, .oui-dialog-item .text-code:focus {
+    border: 1px solid rgb(44, 130, 252);
+}
+
+/*图片上传预览*/
+.oui-dialog-imgproview {
+    padding-left: 110px;
+    margin-top: 20px;
+}
+
+.oui-dialog-imgproview span {
+    width: 100px;
+    height: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.oui-dialog-imgproview span img {
+    width: 100%;
+    height: 100%;
+}
+
+.oui-dialog-imgproview-delete {
+    background: #ffffff;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    color: #FF0000;
+    font-style: normal;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 16px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.proview-info {
+    background: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    position: absolute;
+    top: 0%;
+    left: 0;
+    display: none;
+    color: #ffffff;
+    font-size: 14px;
+    z-index: 3;
+    padding-top: 30%;
+}
+
+.oui-dialog-imgproview:hover .proview-info {
+    display: block;
+    cursor: pointer;
+}
+
+/********上传组件 公共样式 start********/
+/**
+     * 上传区域表格样式
+     */
+#thumbnails table {
+    width: 100%;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+#thumbnails table td {
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 10px 0;
+}
+
+#thumbnails {
+    margin-top: 5px;
+}
+
+#thumbnails table {
+    width: 100%;
+}
+
+#content form {
+    margin-top: 10px;
+}
+
+.oui-dialog-upload-button {
+    display: inline;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    background-color: #2C82FC;
+    padding: 8px;
+}
+
+#thumbnails table tr td:nth-child(1) {
+    width: 100px;
+    text-align: center;
+}
+
+#thumbnails table tr td:nth-child(2) {
+    width: 300px;
+    text-align: left;
+    font-size: 12px;
+}
+
+#thumbnails table tr td:nth-child(3) {
+    width: 100px;
+    text-align: center;
+}
+
+#thumbnails table tr td:nth-child(4) {
+    width: 40px;
+    text-align: center;
+}
+
+#thumbnails table tr:nth-child(2n) {
+    background: #ebf1f7;
+}
+
+/**
+ * 上传队列区域
+ */
+.oui-dialog-upload-area {
+    max-height: 300px;
+    margin-top: 10px;
+    overflow-y: auto;
+}
+
+/********上传组件 公共样式 end********/
+
+/*dialog-iframe弹窗样式*/
+.oui-class-dialog-11 {
+
+}
+.oui-dialog-area {
+    width: 96%;
+    height: 94%;
+}
+
+.oui-dialog-iframe {
+    width: 100%;
+    height: 100%;
+    float: left;
+    overflow-y: auto;
+}
+
+.oui-dialog-content {
+    height: 100%;
+    background-color: #ffffff;
+    color: #515151;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.oui-dialog-iframe-content {
+    width: 100%;
+    position: absolute;
+    top: 40px;
+    bottom: 71px;
+    background-color: #ffffff;
+    float: left;
+    overflow-y: auto;
+}
+
+.oui-dialog-iframe iframe, .oui-dialog-iframe-content iframe {
+    width: 100%;
+    height: 100%;
+    float: left;
+    border: 0;
+    position: absolute;
+    left: 0;
+}
+
+/**
+ * 公共控件进度条 开始
+ */
+.oui-class-dialog-9 .oui-dialog {
+    background: rgba(0, 0, 0, 0);
+}
+
+.oui-class-dialog-9 .oui-dialog .oui-dialog-cnt {
+	    width: auto;
+    min-width: 130px;
+    max-width: 90%;
+    display: inline-block;
+    padding: 55px 35px;
+    background: rgba(0, 0, 0, .5);
+    border-radius: 5px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+
+}
+
+/** 公共控件进度条 结束*/
+@-webkit-keyframes box-fade-up {
+    0% {
+        -webkit-transform: translate(0, 20px);
+        -moz-transform: translate(0, 20px);
+        -ms-transform: translate(0, 20px);
+        transform: translate(0, 20px);
+    }
+    100% {
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes box-fade-up {
+    0% {
+        -webkit-transform: translate(0, 20px);
+        -moz-transform: translate(0, 20px);
+        -ms-transform: translate(0, 20px);
+        transform: translate(0, 20px);
+    }
+    100% {
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+}
+
+.oui-zoomIn {
+    -webkit-animation: box-fade-up .25s ease-out;
+    -moz-animation: box-fade-up .25s ease-out;
+    -o-animation: box-fade-up .25s ease-out;
+    animation: box-fade-up .25s ease-out;
+}
+
+@-webkit-keyframes box-share-up {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes box-share-up {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.nicEdit-main {
+    padding: 11px 15px;
+}
+input.input-dialog-text,textarea.input-dialog-text{
+    display: block;
+    width: 100%;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+textarea.input-dialog-text{
+    height: 120px;
+}
+input:read-only.input-dialog-text,
+textarea:read-only.input-dialog-text{
+    border-color: transparent;
+}
+.dialog-input{
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+}
+.dialog-input label{
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #515151;
+    text-align: left;
+}
+.dialog-input:last-child{
+    margin-bottom: 0;
+}
+input.input-dialog-text {
+    min-height: 36px;
+}
+/*textarea.input-dialog-text{
+    min-height: 120px;
+
+}*/
+.dialog-textarea{
+    background: #ffffff;
+    width: 85%;
+    height: 80px;
+    border: 1px solid #c9c9c9;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 8px;
+    margin: 0 auto;
+    margin-top: 18px;
+    font-size: 14px;
+}
+.oui-dialog-width-1{
+    width: 640px !important;
+}
+.oui-dialog-width-2{
+    width: 65% !important;
+}
+.oui-dialog-width-3{
+    width: 85% !important;
+}
+/*点击查看图片*/
+.oui-dialog-viewImage{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: table;
+}
+.oui-dialog-viewImage .view-image-bg{
+    background: rgba(0,0,0,.5);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+}
+.oui-dialog-viewImage .view-image-content{
+    vertical-align: middle;
+    display: table-cell;
+    text-align: center;
+    _position: absolute;
+    _top: 50%;
+    _left: 50%;
+}
+.view-image-content .view-image-box{
+    background: #ffffff;
+    max-width: 66%;
+    padding: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+    _position: relative;
+    _top: -50%;
+    _left: -50%;
+    z-index: 10;
+}
+.view-image-box .images-area-info{
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+}
+.view-image-box img{
+    max-width: 100%;
+    max-height: 520px;
+    vertical-align: top;
+}
+.image-box-close{
+    background:url("../images/dialog-commonclose-icon.png") rgba(0,0,0,.5) no-repeat;
+    background-size: 16px 16px;
+    background-position: 14px 6px;
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+    border-bottom-left-radius: 60px;
+    cursor: pointer;
+}
+/*dialog 头部高度 */
+.oui-dialog-cnt header h3{
+    line-height: 40px;
+}
+
+
+
+

@@ -1,0 +1,662 @@
+
+<template >
+    <div>
+        <div class="design-set-area" >
+
+            <div class="design-field "  >
+                <div class="fieldname">行选择类型</div>
+                <div class="fieldblock">
+                    <el-radio-group v-model="config.otherAttrs.selectType"
+                                    @change="_controlOnUpdate('otherAttrs.selectType',config,true)"
+                            >
+                        <el-radio label="" >不显示选择</el-radio>
+                        <el-radio label="multiple" >多选</el-radio>
+                        <el-radio label="single" >单选</el-radio>
+                    </el-radio-group>
+                </div>
+            </div>
+
+            <div class="design-field "  >
+                <div class="fieldname">显示Toolbar</div>
+                <div class="fieldblock">
+                    <el-switch
+                            on-text ="是"
+                            off-text = "否"
+                            on-color="#5B7BFA"
+                            off-color="#dadde5"
+                            v-model="config.otherAttrs.showToolbar"
+                            @change="_controlOnUpdate('otherAttrs.showToolbar',config,true)"
+                            ></el-switch>
+                </div>
+            </div>
+            <div class="design-field "  >
+                <div class="fieldname">显示分页</div>
+                <div class="fieldblock">
+                    <el-switch
+                            on-text ="是"
+                            off-text = "否"
+                            on-color="#5B7BFA"
+                            off-color="#dadde5"
+                            v-model="config.otherAttrs.showPagination"
+                            @change="_controlOnUpdate('otherAttrs.showPagination',config,true)"
+                            ></el-switch>
+                </div>
+            </div>
+            <div class="design-field "  >
+                <div class="fieldname">选择页面模型</div>
+                <div class="fieldblock">
+                    <el-input type="text" readOnly="readOnly" @focus="event2showForms" :value="config.otherAttrs.selectForm.name">
+                        <el-button slot="append" type="primary"  @click="event2showForms" >选择</el-button>
+                    </el-input>
+                </div>
+            </div>
+            <div class="design-field "  >
+                <div class="fieldname">选择字段</div>
+                <div class="fieldblock">
+                    <el-input type="text" readOnly="readOnly" @focus="event2showFields" :value="findDisplay4fields()">
+                        <el-button slot="append" type="primary"  @click="event2showFields" >选择</el-button>
+                    </el-input>
+                </div>
+            </div>
+            <div>
+                <div class="design-field">
+                    <div class="fieldname">
+                        数据源类型
+                    </div>
+                    <div class="fieldblock">
+                        <el-radio-group v-model="config.otherAttrs.dataSourceType"
+                                        @change="_controlOnUpdate('otherAttrs.dataSourceType',config,true)"
+                                >
+                            <el-radio label="innerEncodeUrl" >内部加密逻辑</el-radio>
+                            <el-radio label="innerUrl" >内部明文逻辑</el-radio>
+                            <el-radio label="url" >第三方明文逻辑</el-radio>
+                            <el-radio label="none" >不绑定数据源</el-radio>
+
+                        </el-radio-group>
+                    </div>
+                </div>
+            </div>
+            <div class="design-field " v-if="config.otherAttrs.dataSourceType!='none'" >
+                <div class="fieldname">绑定数据源</div>
+                <div class="fieldblock">
+                    <el-input type="textarea"  v-model="config.otherAttrs.dataUrl" @change="_controlOnUpdate('otherAttrs.dataUrl',config,true)" >
+                    </el-input>
+                </div>
+            </div>
+            <div class="design-field" v-if="config.otherAttrs.dataSourceType!='none'"  >
+                <div class="fieldname">数据Key</div>
+                <div class="fieldblock">
+                    <el-input type="textfield"  v-model="config.otherAttrs.dataKey" @change="_controlOnUpdate('otherAttrs.dataKey',config,true)">
+                    </el-input>
+                </div>
+            </div>
+            <div class="design-field" v-if="config.otherAttrs.dataSourceType!='none'"  >
+                <div class="fieldname">总数Key</div>
+                <div class="fieldblock">
+                    <el-input type="textfield"  v-model="config.otherAttrs.totalKey" @change="_controlOnUpdate('otherAttrs.totalKey',config,true)">
+                    </el-input>
+                </div>
+            </div>
+
+            <div class="design-field" v-if="config.otherAttrs.dataSourceType!='none'"  >
+                <div class="fieldname">构造请求参数</div>
+                <div class="fieldblock">
+                    <el-button type="primary" @click="event2BuildReqParams">构造请求参数</el-button>
+                </div>
+            </div>
+            <div class="design-field" v-if="config.otherAttrs.dataSourceType!='none'"  >
+                <div class="fieldname">请求回调参数</div>
+                <div class="fieldblock">
+                    <el-button type="primary" @click="event2BuildResponseParams">请求回调参数</el-button>
+                </div>
+            </div>
+            <div class="design-field" v-if="config.otherAttrs.dataSourceType!='none'"  >
+                <div class="fieldname">数据加载事件</div>
+                <div class="fieldblock">
+                    <el-button type="primary" @click="event2loadDataScript">数据加载事件</el-button>
+                </div>
+            </div>
+            <div class="design-field"  >
+                <div class="fieldname">行点击事件</div>
+                <div class="fieldblock">
+                    <el-button type="primary" @click="event2setRowClickScript">设置行点击事件</el-button>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                config:{
+                    id:'',
+                    bizId:'',
+                    otherAttrs:{
+                        selectType:'',
+                        selectForm:{value:'',name:''}, //目标页面模型
+                        selectFormFields:[],
+                        dataSourceType:'none', //innerEncodeUrl,innerUrl,url,none
+                        dataUrl:'',//dataUrl
+                        dataKey:'', //数据key
+                        totalKey:'total'
+                    },
+                    events:{}
+                }
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if(currentControl&&currentControl.id&&currentControl.controlType){
+
+                if(!currentControl.otherAttrs){
+                    currentControl.otherAttrs = {
+                        bizDes:'',
+                        selectType:'',
+                        selectForm:{value:'',name:''},
+                        selectFormFields:[],
+                        dataSourceType:'none', //内部加密url
+                        dataUrl:'',//dataUrl
+                        dataKey:'', //数据key
+                        totalKey:'total'
+
+                    };
+                }
+                if(!currentControl.events){
+                    currentControl.events = {};
+                }
+                if(!currentControl.otherAttrs.bizDes){
+                    currentControl.otherAttrs.bizDes ='';
+                }
+                if(!currentControl.otherAttrs.selectForm){
+                    currentControl.otherAttrs.selectForm = {value:'',name:''};
+                }
+                if(!currentControl.otherAttrs.selectFormFields){
+                    currentControl.otherAttrs.selectFormFields=[];
+                }
+
+                if(!currentControl.otherAttrs.selectType){
+                    currentControl.otherAttrs.selectType = '';
+                }
+
+                /*
+                 dataSourceType:'innerEncodeUrl', //内部加密url
+                 dataUrl:'',//dataUrl
+                 dataKey:'' //数据key
+                 */
+                if(!currentControl.otherAttrs.dataSourceType){
+                    currentControl.otherAttrs.dataSourceType = 'none';
+                }
+                if(!currentControl.otherAttrs.dataUrl){
+                    currentControl.otherAttrs.dataUrl ='';
+                }
+                if(!currentControl.otherAttrs.dataKey){
+                    currentControl.otherAttrs.dataKey = '';
+                }
+                if(!currentControl.otherAttrs.totalKey){
+                    currentControl.otherAttrs.totalKey ='total';
+                }
+                this.config.bizId = currentControl.bizId;
+                this.config.id = currentControl.id;
+                this.config.otherAttrs = oui.parseJson(oui.parseString(currentControl.otherAttrs));
+                this.config.events = oui.parseJson(oui.parseString(currentControl.events));
+                this.targetFormId = this.config.otherAttrs.selectForm.value;
+            }
+            this.initRemoteTargetForms(); //初始化表单下拉
+            this.initRemoteTargetFields(); //初始化表单字段下拉
+
+        },
+        methods:{
+            findDisplay4fields:function(){
+                var me = this;
+                var selectFormFields = me.config.otherAttrs.selectFormFields||[];
+                var arr = [];
+                var idx = 0;
+                oui.eachArray(selectFormFields,function(item){
+                    if(idx>5){
+                        return false;
+                    }
+                    idx++;
+                    arr.push(item.display);
+                });
+                return arr.join(',');
+            },
+            event2showForms:function(){
+                var me = this;
+                var selectForm = this.config.otherAttrs.selectForm;
+                var selects = [];
+                var value = '';
+                if(selectForm&& selectForm.value){
+                    selects.push(selectForm);
+                    value = selectForm.value;
+                }
+                oui.showOptionsDialog({
+                    isMulti:false,
+                    isShowSearch:true,
+                    selects:selects,
+                    value:value,
+                    data:me.targetForms,
+                    confirm:function(value,selects,obj){
+                        me.config.otherAttrs.selectForm = selects[0];
+                        me.targetFormId = value;
+                        me._controlOnUpdate('otherAttrs.selectForm',me.config,false);
+                        me.initRemoteTargetFields();
+                    }
+                });
+            },
+            event2showFields:function(){
+                var me = this;
+                var selectFormFields = me.config.otherAttrs.selectFormFields||[];
+                var allFields = me.targetFields ||[];
+                var values4old = [];
+                oui.eachArray(selectFormFields,function(item){
+                    values4old.push(item.value);
+                });
+                var values = [];
+                var selects = [];
+                var value ='';
+                oui.eachArray(allFields,function(item){
+                    if(values4old.indexOf(item.value)>-1){
+                        values.push(item.value);
+                        selects.push(item);
+                    }
+                });
+                value = values.join(',');
+                oui.showOptionsDialog({
+                    isMulti:true,
+                    isShowSearch:true,
+                    selects:selects,
+                    value:value,
+                    data:allFields,
+                    confirm:function(value,selects,obj){
+                        me.config.otherAttrs.selectFormFields = selects;
+                        me._controlOnUpdate('otherAttrs.selectFormFields',me.config,true);
+                    }
+                });
+            },
+            event2BuildReqParams:function(){
+                //构造请求参数自定义脚本
+
+                var me = this;
+                var title = '请求参数自定义脚本'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符"
+                 oui-e-click="event2showCodeDialog"
+                 */
+
+                var errorMsgMax = '请求参数自定义脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '请求参数自定义脚本编译失败';//脚本编译错误
+                var eventType = 'script4buildReqParams';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.buildReqParams||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="";
+
+                var defaultParams = {"params":[],"startCode":"var param={};//参数定义\n","bodyCode":"var pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\nvar dataSourceType = this.dataSourceType;// 数据源类型 根据不同的数据源类型 处理不同的参数结构\nif(dataSourceType=='innerUrl' || dataSourceType =='innerEncodeUrl'){ //内部明文url，或者内部加密url , 考虑回调\n   param.param = { //第一次ajax请求的参数 \n         //处理加密参数相关\n         \n   };\n   param.param4callback = { //回调ajax请求参数\n         //处理数据提交相关\n                        \n   };\n}else{\n    //自定义扩展 参数\n    //param.xxx='';\n \n}\n\n","endCode":"return param;//返回参数\n","returnType":"object"};
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.buildReqParams = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+
+
+            },
+            event2BuildResponseParams:function(){
+                //构造响应参数自定义脚本
+
+                var me = this;
+                var title = '响应参数自定义脚本'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符"
+                 oui-e-click="event2showCodeDialog"
+                 */
+
+                var errorMsgMax = '响应参数自定义脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '请求参数自定义脚本编译失败';//脚本编译错误
+                var eventType = 'script4buildResponseParams';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.buildResponseParams||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="res,success";
+
+                var defaultParams = {"params":["res","success"],"startCode":"var param=res;//默认返回响应参数\n","bodyCode":"var pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\nvar dataSourceType = this.dataSourceType;// 数据源类型 根据不同的数据源类型 处理不同的参数结构\n//this.totalKey 统计计数key\n//this.dataKey 数据key\n//param[dataKey] 目标响应数据 \n//param[totalKey] 目标响应数据统计数\n\n\n\n","endCode":"return param;//返回参数\n","returnType":"object"};
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.buildResponseParams = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+
+            },
+            event2loadDataScript:function(){
+                //构造加载后自定义脚本
+                var me = this;
+                var title = '加载后自定义脚本'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符"
+                 oui-e-click="event2showCodeDialog"
+                 */
+
+                var errorMsgMax = '加载后自定义脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '加载后自定义脚本编译失败';//脚本编译错误
+                var eventType = 'script4loadData';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.loadData||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="";
+
+                var defaultParams = {"params":[],"startCode":"","bodyCode":"var pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\nvar dataSourceType = this.dataSourceType;// 数据源类型 根据不同的数据源类型 处理不同的参数结构\n//this.tableData=[];//表格数据\n","endCode":"","returnType":"object"};
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.loadData = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+            },
+            //设置值改变事件脚本
+            event2setRowClickScript:function(){
+                var me = this;
+                var title = '行点击事件'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符"
+                 oui-e-click="event2showCodeDialog"
+                */
+
+                var errorMsgMax = '行点击事件脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '行点击事件脚本编译失败';//脚本编译错误
+                var eventType = 'script4rowClick';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.rowClick||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="row,event,column,selects";
+                var defaultParams = {"params":["row","event","column","selects"],"startCode":"","bodyCode":"//row 行对象\n//event 行事件对象\n//column 列对象\n//selects 对于 行选择类型 为 single或者 multiple 时，才有选择列表\nvar pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\n","endCode":"","returnType":"string"};
+
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.rowClick = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+            },
+            
+            initRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                var me = this;
+                if(!com.oui.absolute.AbsoluteDesign.forms){
+                    query = query ||'';
+                    var url = com.oui.absolute.AbsoluteDesign.paramCfg.params.queryPageModelsUrl;//查询页面资源列表url
+                    oui.postData(url,{//ajax获取数据
+                        name:query
+                    },function(res){
+                        var pages =res.pages ||[];
+                        me.targetFormsJson =oui.parseString(pages);
+                        me.targetForms = pages;
+                        com.oui.absolute.AbsoluteDesign.forms = oui.parseJson(me.targetFormsJson);
+                    },function(res){},'加载中...');
+                }else{
+
+                    me.targetFormsJson = oui.parseString(com.oui.absolute.AbsoluteDesign.forms);
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+
+                }
+
+            },
+            initRemoteTargetFields:function(){
+                var me = this;
+                if(this.targetFormId){
+                    if(com.oui.absolute.AbsoluteDesign.tempFields &&(com.oui.absolute.AbsoluteDesign.tempFields.formId ==this.targetFormId)){
+                        me.targetFieldsJson =oui.parseString(com.oui.absolute.AbsoluteDesign.tempFields.fields);
+                        me.targetFields = oui.parseJson(me.targetFieldsJson);
+                    }else{
+                        var url = com.oui.absolute.AbsoluteDesign.paramCfg.params.queryPageFieldsUrl;//查询页面资源列表url
+                        oui.postData(url,{//ajax获取数据,根据目标表单查询字段,如果有名字过滤，则进行过滤
+                            formId:this.targetFormId
+                        },function(res){
+                            var fields =res.fields ||[];
+                            me.targetFieldsJson =oui.parseString(fields);
+                            me.targetFields = fields;
+                            com.oui.absolute.AbsoluteDesign.tempFields = {
+                                formId:me.targetFormId,
+                                fields:oui.parseJson(me.targetFieldsJson)
+                            };
+                        },function(res){},'加载中...');
+                    }
+                }
+
+            },
+            clear4loadRemoteTargetForms:function(){
+                var me = this;
+                var temp = oui.parseJson(me.targetFormsJson);
+                me.targetForms = temp;
+            },
+            clear4loadRemoteTargetFields:function(){
+                var me = this;
+                var temp = oui.parseJson(me.targetFieldsJson);
+                me.targetFields = temp;
+            },
+            loadRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                query = query ||'';
+                var me = this;
+                //根据输入参数模糊匹配
+                if(query){
+                    var temp = oui.parseJson(me.targetFormsJson);
+                    var arr = oui.findManyFromArrayBy(temp,function(item){
+                        if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                            return true;
+                        }
+                    });
+                    me.targetForms = arr;
+                }else{
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+                }
+            },
+            loadRemoteTargetFields:function(query){
+                //根据表单加载字段列表
+                query = query ||'';
+                var me = this;
+                if(me.targetFormId){
+                    //根据输入参数模糊匹配
+                    if(query){
+                        var temp = oui.parseJson(me.targetFieldsJson);
+                        var arr = oui.findManyFromArrayBy(temp,function(item){
+                            if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                                return true;
+                            }
+                        });
+                        me.targetFields = arr;
+                    }else{
+                        me.targetFields = oui.parseJson(me.targetFieldsJson);
+                    }
+                }else{
+                    me.targetFields =[];
+                }
+
+            },
+            loadRemoteTargetDisplayFields:function(query){
+                //根据表单加载字段列表
+                this.loadRemoteTargetFields(query);
+            },
+            _controlOnUpdate:function(bindProp,config,isUpdateCenter){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                }
+                if(isUpdateCenter){
+                    //值改变后立即渲染设计区
+                    com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                    });
+                }
+//                this.$nextTick(function(){
+//
+//                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

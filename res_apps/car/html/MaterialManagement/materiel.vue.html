@@ -1,0 +1,571 @@
+<template>
+    <div class="product">
+                <!-- 面包屑头部盒子 -->
+                <div class="crumbs">
+                    <el-breadcrumb separator="/">
+                        <!-- <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item> -->
+                        <el-breadcrumb-item> <a  href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a></el-breadcrumb-item>
+                        <el-breadcrumb-item>系统设置 </el-breadcrumb-item>
+                        <el-breadcrumb-item>物料管理</el-breadcrumb-item>
+                    </el-breadcrumb>
+                </div>
+                <!-- 主体内容区域 -->
+                <el-main>
+                    <!-- 放置路由占位符，渲染组件部分 -->
+                    <!-- <router-link ></router-link> -->
+                    <!-- 主体内容区域 -->
+                    <!-- 车辆查询区域 -->
+                    <div class="vehicle">
+                        <div class="vehicle_content">
+                            <div>在库物资量共:<span>{{countMaterial}}</span>种;</div>
+                            <div>维修材料:<span>{{countRepair}}</span>种;</div>
+                            <div>保养材料:<span>{{countMaintenance}}</span>种;</div>
+                            <div>低值易耗品:<span>{{countTool}}</span>种;</div>
+                            <div>其他材料:<span>{{countOther}}</span>种;</div>
+                        </div>
+                    </div>
+                    <!-- 车辆查询区域结束 -->
+
+                    <!-- 工单表格区域 -->
+                    <div class="table_box">
+                        <el-row>
+                            <el-button type="primary" class="el-icon-plus Workorder_button" @click="toAddMaterialsPage">添加新的物资</el-button>
+                        </el-row>
+                        <!-- 我的工单区域开始 -->
+
+
+                        <!-- 我的工单区域结束 -->
+                        <div class="Table_head">
+                            <!-- 表格头部 -->
+                            <template>
+                                <el-table :data="materialList" v-loading="loading">
+                                    <el-table-column prop="materialType" :formatter="formatType" label="类型" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="materialName" label="材料名称" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="createTime" label="创建时间" width="180%" align="center"></el-table-column>
+                                    <el-table-column prop="materialPrice" label="销售价格(元)" align="center"></el-table-column>
+                                    <el-table-column prop="materialSpec" label="规格" align="center"></el-table-column>
+                                    <el-table-column prop="materialCost" label="入库价" align="center"></el-table-column>
+                                    <el-table-column prop="profit" label="利润" align="center"></el-table-column>
+                                    <el-table-column prop="status" label="状态" :formatter="formatStatus" align="center"></el-table-column>
+                                    <el-table-column prop="vendorName" label="厂家" width="200%" align="center"></el-table-column>
+                                    <el-table-column prop="creatorName" label="创建人" align="center"></el-table-column>
+                                    <el-table-column label="操作" width="150%" align="center">
+                                        <template slot-scope="scope">
+                                            <el-button type="text" @click="toUpdateMaterialsPage(scope.row)">编辑</el-button>
+                                            <el-switch v-model="scope.row.state" active-color="#1890FF" active-text="启用" inactive-text="禁用"
+                                             inactive-color="#eee" class="switch_box"
+                                                       :active-value=1 :inactive-value=2 @change="changeMaterialState(scope.row)">
+                                            </el-switch>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <!-- 分页 -->
+                        <div class="page">
+                                <div class="block">
+                                    <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                                                   :current-page="currentPage"
+                                                   :page-sizes="[1, 5, 10, 15, 20]" :page-size="pageSize"
+                                                   :total="total" layout="total, sizes, prev, pager, next, jumper">
+                                    </el-pagination>
+                                </div>
+                        </div>
+                    </div>
+                </el-main>
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                queryParam: "",
+                countMaterial:0,
+                countMaintenance:0,
+                countRepair:0,
+                countTool:0,
+                countOther:0,
+                //数据总条数 默认没有数据
+                total : 0,
+                //每页显示数据的条数
+                pageSize : 10,
+                //默认当前页为第一页
+                currentPage : 1,
+                //要展示的材料数据
+                materialList : [],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            this.countMaterials();
+            this.queryMaterialList();
+        },
+        methods: {
+            countMaterials:function() {
+                var me = this;
+                const loginUser = window.localStorage.getItem("loginUser");
+                let currentUserId = JSON.parse(loginUser).id;
+                let currentUserName = JSON.parse(loginUser).empName;
+                oui.ajaxPost('material/warehouseCenter/countMaterials', {
+                    "currentUserId":currentUserId,
+                    "currentUserName":currentUserName
+                }, function (res) {
+                    console.log(res);
+                    for (k in res.resultObj) {
+                        if (res.resultObj[k].materialType == 1) {
+                            me.countRepair = res.resultObj[k].materialNumber;
+                        }else if (res.resultObj[k].materialType == 2) {
+                            me.countMaintenance = res.resultObj[k].materialNumber;
+                        }else if (res.resultObj[k].materialType == 3) {
+                            me.countOther = res.resultObj[k].materialNumber;
+                        }else if (res.resultObj[k].materialType == 4) {
+                            me.countTool = res.resultObj[k].materialNumber;
+                        }
+                        me.countMaterial += res.resultObj[k].materialNumber;
+                    }
+                },function (res) {
+                    me.$message.error(res.message)
+                });
+            },
+            queryMaterialList:function() {
+                var me = this;
+                oui.ajaxPost('material/warehouseCenter/queryMaterialList', {
+                    "queryParam": this.queryParam,
+                    "pager":{
+                        "page": this.currentPage,
+                        "rows": this.pageSize
+                    },
+                }, function (res) {
+                    me.materialList = res.resultObj.materials;
+                    me.total = res.resultObj.total;
+                    me.loading=false;
+                },function (res) {
+                    me.$message.error(res.message);
+                });
+            },
+            handleCurrentChange : function(val) {
+                this.currentPage = val;
+                this.queryMaterialList();
+            },
+            handleSizeChange : function (val) {
+                this.pageSize = val;
+                this.queryMaterialList();
+            },
+            formatType:function(row) {
+                if (row.materialType == 1) {
+                    return "维修材料";
+                }else if (row.materialType == 2) {
+                    return "保养材料";
+                }else if (row.materialType == 3) {
+                    return "其他材料";
+                }else if (row.materialType == 4) {
+                    return "低值易耗品";
+                }
+            },
+            formatStatus:function(row) {
+                if (row.state == 1) {
+                    return "启用";
+                }else if (row.state == 2) {
+                    return "禁用";
+                }
+            },
+            changeMaterialState:function(row) {
+                var me = this;
+                oui.ajaxPost('material/warehouseCenter/changeMaterialState', {
+                    "id": row.materialId
+                }, function (res) {
+                    if (row.state == 1) {
+                        me.$message({
+                            message: '材料启用成功',
+                            type: 'success'
+                        });
+                    } else {
+                        me.$message({
+                            message: '材料禁用成功',
+                            type: 'success'
+                        });
+                    }
+
+                },function (res) {
+                    me.$message.error(res.message);
+                });
+            },
+            toAddMaterialsPage:function() {
+                oui.router.push("/res_apps/car/html/MaterialManagement/addmaterials.vue.html");
+            },
+            toUpdateMaterialsPage:function(row) {
+                oui.router.push("/res_apps/car/html/MaterialManagement/addmaterials.vue.html",{
+                    materialId: row.materialId,
+                    materialType :row.materialType,
+                    materialName :row.materialName,
+                    materialCode :row.materialCode,
+                    materialBrand :row.materialBrand,
+                    materialUnitCode :row.materialUnitCode,
+                    materialSpec :row.materialSpec,
+                    vendorName :row.vendorName,
+                    materialPrice :row.materialPrice,
+                    materialCost :row.materialCost,
+                    materialModel :row.materialModel,
+                    profit :row.profit,
+                    state :row.state
+                });
+            }
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 在厂车辆数量情况 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+    .vehicle_content {
+        width: 100%;
+        height: 30px;
+        padding-top: 20px;
+
+    }
+
+    .vehicle_content>div {
+        display: inline;
+        margin-right: 16px;
+        line-height: 30px;
+    }
+
+    .vehicle_content>div>span {
+        color: #1890FF;
+        margin: 0 5px;
+    }
+
+    .Dropdown {
+        margin: 20px 0px;
+    }
+/* 改变全局的input样式 */
+    .el-input__inner {
+        /* width: 160px; */
+        height: 32px;
+        margin: 0 3px;
+    }
+
+    /* 关键字区域 */
+    .keyword {
+        width: 1000px;
+        height: 46px;
+        font-weight: 700;
+        line-height: 46px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+
+    }
+
+    /* 调整关键字下边的input框------------- */
+    /* .keyword_input .el-input__inn {
+        width: 380px;
+        background-color: rgb(197, 16, 16);
+
+    } */
+
+    .keyword_inpu.el-input__inner
+    .keyword_content {
+        width: 380px !important; 
+        background-color: rgb(197, 16, 16);
+
+    }
+
+    .Reset_button>.el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+
+    .Reset_button>.el-button>span {
+        font-size: 14px;
+    }
+
+    .query_button1>.el-button {
+        border-radius: 0;
+    }
+
+    .query_button1>.el-button>span {
+        font-size: 14px;
+    }
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+    /* 表单单独的按钮 */ 
+    .Workorder_button {
+        margin-bottom: 15px;
+
+    }
+
+/* 改变加号和文字之间的距离 */
+.el-icon-plus:before{
+        margin-right: 8px;
+    }
+
+    /* 工单表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+/* 操作表格里面的按钮 */
+.switch_box{
+    margin-left: 20px;
+}
+.switch_box .el-switch__label {
+        position: absolute;
+        display: none;
+        color: #fff;
+    }
+
+    /*打开时文字位置设置*/
+
+    .switch_box .el-switch__label--right {
+        z-index: 1;
+        right: 5px;
+    }
+
+    /*关闭时文字位置设置*/
+
+    .switch_box .el-switch__label--left {
+        z-index: 1;
+        left:5px;
+    }
+
+    /*显示文字*/
+
+    .switch_box .el-switch__label.is-active {
+        display: block;
+    }
+
+    .switch_box.el-switch .el-switch__core,
+    .el-switch .el-switch__label {
+        width: 55px !important;
+        /*开关按钮的宽度大小*/
+    }
+
+
+    /* 我的工单区域结束 */
+
+
+
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

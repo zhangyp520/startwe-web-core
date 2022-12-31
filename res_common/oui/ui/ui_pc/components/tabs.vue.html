@@ -1,0 +1,243 @@
+<!--多页签控件-->
+<template >
+    <div>
+        <el-tabs v-model="value"  :type="tabsType" @tab-click="handleClick">
+            <el-tab-pane v-for="(item,index) in data" :key="index" :label="item.display" :name="item.value">
+                <div v-if="currTab&&currTab.contentType!='none'">
+                    <oui-include v-if="currTab.contentType=='pageUrl'" type="module" :ref="'tab_'+currTab.value" :url="findUrl(item)" :data="findTabData(item)" ></oui-include>
+                </div>
+                <div v-if="currTab&&currTab.contentType!='none'" >
+                    <iframe v-if="currTab && currTab.contentType=='page' && currTab==item"  :src="iframeUrl" :ref="currTab.value" frameborder="0" scrolling="no" width="100%"  :id="currTab.value" ></iframe>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        watch:{
+            'data':{
+                handler: function(newVal,oldVal) {
+                    this.refreshCurrTab();
+
+                },
+                deep: true,
+                immediate: true
+            }
+        },
+        data: function () {
+            return {
+                refreshState:false,
+                cache:{},
+                iframeUrl:'',
+                tabData:{},
+                currTab:{},
+                bindProp:'',
+                showType:0,
+                tabsType:'',
+                value:'-1',
+                data:[]
+            }
+        },
+        mounted:function(){
+            console.log('tabData....', this.tabData);
+            /*
+             var htmlUrl =oui.getContextPath() + 'index.html' ;
+             htmlUrl = oui.setParam(htmlUrl,"loadMenusUrl",url);
+
+             <oui-include v-if="currTab" type="module" :ref="currTab.value" :url="findUrl(item)" :data="tabData" ></oui-include>
+             */
+            var me = this;
+            var showTypeMap = {
+                '0':'',
+                '1':'card',
+                '2':'border-card'
+            };
+            console.log('currshowType:'+this.showType);
+            var showType = this.showType;
+            if(!showType){
+                this.showType = 0;
+            }
+            if(!this.data.length){
+                if(this.otherAttrs&&this.otherAttrs.data){
+                    this.data = this.otherAttrs.data;
+                }
+            }
+            this.tabsType = showTypeMap[this.showType]||'';
+            this.updateCurrentTab();
+
+
+
+        },
+        methods:{
+            updateCurrentTab:function(){
+
+                var me = this;
+                me.refreshState=false;
+                var currTab = oui.findOneFromArrayBy(this.data,function(temp){
+                    if((temp.value+'') == (me.value+'')){
+                        return true;
+                    }
+                });
+                var tempV = '';
+                if(currTab){
+                    tempV= currTab.value;
+
+                    me.currTab = currTab;
+                }else if(me.data.length){
+                    me.currTab = me.data[0];
+                }
+                if(me.currTab && me.data.length){
+                    me.tabData = me.currTab;
+                    me.value = tempV || me.data[0].value;
+                    var contentType = me.currTab.contentType;
+                    if( contentType =='pageUrl'){
+                        this.tabData = me.currTab;
+                    }else if(contentType=='page' ||contentType =='pageList'){
+                        //loadPageDesign
+
+                        //获取 表单的定义
+                        this.tabData = me.currTab;
+
+                        var htmlUrl =oui.getContextPath() + 'index.html' ;
+                        htmlUrl = oui.setParam(htmlUrl,"loadMenusUrl",this.currTab.pageMenuUrl);
+                        htmlUrl = oui.setParam(htmlUrl,'iframeId',this.currTab.value);
+                        this.iframeUrl =htmlUrl;
+                    }
+                    me.refreshState=true;
+                    this.$nextTick(function(){
+                        var oIframe = document.getElementById(me.currTab.value);
+                        me.setIframeHeight(oIframe);
+                    });
+                }
+            },
+            findTabData:function(item){
+                if(!this.cache){
+                    this.cache = {};
+                }
+                if(!this.cache[item.value]){
+                    this.cache[item.value] = oui.parseJson(oui.parseString(item));
+                    this.cache[item.value].ref= 'tab_'+item.value;
+                }
+                return this.cache[item.value];
+            },
+            refreshCurrTab:function(){
+                var me = this;
+                me.updateCurrentTab();
+                //同步到指定ref中
+                if(me.currTab && me.data.length){
+                    var refs = me.$refs['tab_'+me.currTab.value] ||[];
+                    if(refs.length){
+                        oui.eachArray(refs,function(item){
+                            item.comp&&item.comp.onUpdate&&item.comp.onUpdate();
+                        })
+                    }
+                }
+            },
+            setIframeHeight:function (iframe) {
+                if(!this.currTab){
+                    return;
+                }
+
+                if(!iframe){
+                    iframe = document.getElementById(this.currTab.value);
+                }
+                if (iframe) {
+                    oui.bindIframeReady(iframe,function(doc,contentWindow,parentWindow,iframe){
+                        iframe.height = doc.body.scrollHeight;
+                        parentWindow.onResize = function(){
+                            iframe.height = contentWindow.document.body.scrollHeight;
+                        }
+                    });
+                }
+            },
+            isCurrTab:function(item){
+                console.log('isCurrTab:'+this.findUrl(item));
+                console.log(this.currTab&&(this.currTab.value==item.value));
+                return this.currTab&&(this.currTab.value==item.value);
+            },
+            findUrl:function(item){
+                //vue组件内嵌，还是 iframe内嵌 ，根据配置来
+                //先考虑include vue组件
+                //再考虑include 自定义列表页面
+                //TODO 这里需要封装 运行态表单加载，列表加载，内嵌情况
+                var url ='';
+                //获取url
+                if(item.contentType =='page'){
+                    //获取表单加载页面
+//                    url = oui.getContextPath()+'res_common/oui/ui/ui_pc/art-components/page.art.html';
+//                    url = oui.addParam(url,'pageId',item.pageId);
+
+                }else if(item.contentType=='pageList'){
+                    //获取列表查询页面
+
+                }else if(item.contentType=='pageUrl'){
+                    //vue组件页面地址
+                    url = item.url;
+
+                }
+                return url;
+
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                if(!v){
+                    this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:null, display:null }); //外部构造的方法调用
+                    return ;
+                }
+                var tab = oui.findOneFromArrayBy(this.data,function(item){
+                    if((item.value+'')== (v+'')) {
+                        return true;
+                    }
+                });
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:tab, display:tab.display }); //外部构造的方法调用
+            },
+            handleClick:function(tab,event){
+                var ov = this.value||"";
+                this.value = tab.name;
+                var me = this;
+                this.currTab = oui.findOneFromArrayBy(this.data,function(item){
+                    if(item.value == me.value){
+                        return true;
+                    }
+                });
+                //加载表单 或者 列表
+                var contentType = this.currTab.contentType;
+                this.tabData = {};
+                if( contentType =='pageUrl'){
+                    this.tabData = this.currTab;
+                }else if(contentType=='page' ||contentType =='pageList'){
+                    //loadPageDesign
+
+                    //获取 表单的定义
+                    this.tabData =  this.currTab;
+                    var htmlUrl =oui.getContextPath() + 'index.html' ;
+
+                    htmlUrl = oui.setParam(htmlUrl,"loadMenusUrl",this.currTab.pageMenuUrl);
+                    htmlUrl = oui.setParam(htmlUrl,'iframeId',this.currTab.value);
+                    this.iframeUrl =htmlUrl;
+                }
+                this._controlOnUpdate(this.value,ov);
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-tabs__nav-scroll{
+        padding-left: 25px;
+    }
+    .el-tabs__item{
+        height: 50px;
+        line-height: 50px;
+    }
+    .el-tabs__item.is-active,.el-tabs__item:hover{
+        color: #FF7D82;
+    }
+    .el-tabs__active-bar{
+        background-color: #FF7D82;
+    }
+
+</style>

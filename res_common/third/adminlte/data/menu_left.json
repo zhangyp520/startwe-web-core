@@ -1,0 +1,46 @@
+{
+  "data": [
+    {
+      "pId": "2",
+      "menuName": "基础说明",
+      "menuUrl": "/",
+      "children": [
+        {
+          "menuName": "index",
+          "menuUrl": "/"
+        },
+        {
+          "menuName": "page",
+          "menuUrl": "https://www.jd.com/"
+        }
+      ]
+    },
+    {
+      "pId": "2",
+      "menuName": "3级菜单-1",
+      "menuUrl": "/",
+      "children": [
+        {
+          "menuName": "3级菜单-2",
+          "menuUrl": "",
+          "children": [
+            {
+              "menuName": "3级菜单-3-1",
+              "menuUrl": "https://www.taobao.com/"
+            },
+            {
+              "menuName": "3级菜单-3-2",
+              "menuUrl": "https://www.aliyun.com/"
+            },
+            {
+              "menuName": "3级菜单-3-3",
+              "menuUrl": "https://www.tmall.com/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "code": 0,
+  "msg": "请求成功"
+}

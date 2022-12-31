@@ -1,0 +1,228 @@
+
+<template >
+
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">业务id</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                               bindPropAfter="onUpdate" placeholder="自定义业务id"
+                               bindProp="currentControl.bizId"
+                               value="{{currentControl.bizId}}"/>
+                    </div>
+                </div>
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">业务id</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                               bindPropAfter="onUpdate" placeholder="自定义业务id"
+                               bindProp="currentControl.bizId"
+                               value="{{currentControl.bizId}}"/>
+                    </div>
+                </div>
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">业务描述</div>
+                    <div class="fieldblock">
+                <textarea
+                        bindPropAfter="onUpdate" placeholder="业务描述"
+                        bindProp="currentControl.otherAttrs.bizDes"
+                        placeholder="业务描述"
+                        value="{{currentControl.otherAttrs.bizDes}}">{{currentControl.otherAttrs.bizDes}}</textarea>
+                    </div>
+                    <div class="fielderror" id="{{fieldErrorId}}">
+                        {{if AbsoluteDesign.findCheckMessage('controls[*].otherAttrs.bizDes') }}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.bizDes")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">采集元素<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+                    <button class="design-des-btn design-btn-text"
+                            title="获取被集成页面的元素"
+                            oui-e-click="event2pickDom"
+                            invoke-id="{{currentControl.id}}">拾取元素</button>
+                </div>
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">Xpath</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                        bindPropAfter="onUpdate" placeholder="Xpath"
+                        bindProp="currentControl.otherAttrs.selector.xpath"
+                        value="{{currentControl.otherAttrs.selector.xpath}}"/>
+                    </div>
+                </div>
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">ClassName</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                                bindPropAfter="onUpdate" placeholder="ClassName"
+                                bindProp="currentControl.otherAttrs.selector.domClassName"
+                                value="{{currentControl.otherAttrs.selector.domClassName}}"/>
+                    </div>
+                </div>
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">Selector</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                                bindPropAfter="onUpdate" placeholder="Selector"
+                                bindProp="currentControl.otherAttrs.selector.domSelector"
+                                value="{{currentControl.otherAttrs.selector.domSelector}}"/>
+                    </div>
+                </div>
+                <div class="design-field "  curr-control-id="{{currentControl.id}}">
+
+                    <div class="fieldname">元素Id</div>
+                    <div class="fieldblock">
+                        <input type="text"
+                                bindPropAfter="onUpdate" placeholder="元素id"
+                                bindProp="currentControl.otherAttrs.selector.domId"
+                                value="{{currentControl.otherAttrs.selector.domId}}" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+//        useVDom:true,//art 使用虚拟Dom,默认值为true
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                currentControl:{
+                    bizId:'',
+                    otherAttrs:{
+                        bizDes:'',
+                        selector:{ //选择器配置
+                            domClassName: '',
+                            domContent: '',
+                            domId: '',
+                            domSelector: '',
+                            domTagInfo:'',
+                            domTagName: '',
+                            xpath: '',
+                            xpath4all:''
+                        }
+                    }
+                },
+                fieldErrorId:'',
+                AbsoluteDesign:{findCheckMessage:function(){}},
+                id:'' //控件id
+            }
+        },
+
+        mounted:function(){
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.currentControl =designer.data.currentControl;
+            var keys ='bizDes'.split(','); //配置当前的key列表
+            if(!this.currentControl.otherAttrs){
+                this.currentControl.otherAttrs ={};
+            }
+            if(!this.currentControl.otherAttrs.selector){
+                this.currentControl.otherAttrs.selector  = {};
+            }
+            for(var i= 0,len=keys.length;i<len;i++){
+                var key = keys[i];
+                if(typeof this.currentControl.otherAttrs[key] =='undefined'){
+                    this.currentControl.otherAttrs[key]='';
+                }
+            }
+            var keys4selector = 'domClassName,domContent,domId,domSelector,domTagInfo,domTagName,xpath,xpath4all'.split(',');
+            for(var i= 0,len=keys4selector.length;i<len;i++){
+                var key = keys4selector[i];
+                if(typeof this.currentControl.otherAttrs.selector[key] =='undefined'){
+                    this.currentControl.otherAttrs.selector[key]='';
+                }
+            }
+
+            this.fieldErrorId = 'check_controls_'+this.id+'_otherAttrs_bizDes';
+            this.refresh(); //手动刷新
+
+            console.log('当前的配置Id:'+this.id);
+            console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+            //拾取页面元素
+            event2pickDom:function(cfg){
+                console.log(cfg);
+
+                window.parent.postMessage({
+                    cmd:'cmd4go2pickSelector',//前去触发 dom拾取
+                    param:{
+                        controlId:cfg.el.getAttribute('invoke-id')
+                    }
+                },'*');//跨域处理
+            },
+            onUpdate:function(cfg){
+                var designer = this.getDesigner();
+                var key = $(cfg.el).attr('bindProp');
+                var v = oui.JsonPathUtil.getJsonByPath(key,this);
+                designer.bizPropsUpdate&&designer.bizPropsUpdate(key,v); //属性值变更无需强制刷新，用户体验更好
+
+                console.log(cfg);
+                console.log(designer);
+                //TODO 这里是值改变事件
+
+            },
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+    /*富文本按钮样式*/
+    .design-des-btn {
+        background-size: 16px auto;
+        min-width: 24px;
+        height: 24px;
+        line-height: 24px;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 0;
+        outline: none;
+        border-radius: 3px;
+        border: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .design-des-btn:hover {
+        background-color: #63a4ed;
+    }
+    .design-des-btn.design-btn-text{
+        background: #2C82FC;
+        min-width: 24px;
+        padding: 0 7px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+</style>
+
+
+

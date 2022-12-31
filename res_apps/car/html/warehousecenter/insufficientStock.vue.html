@@ -1,0 +1,467 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item> <a  href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a></el-breadcrumb-item>
+                <el-breadcrumb-item>综合查询</a></el-breadcrumb-item>
+                <el-breadcrumb-item>库存不足</a></el-breadcrumb-item>
+            </el-breadcrumb>
+                <!-- 库存不足页面 -->
+
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <!-- 放置路由占位符，渲染组件部分 -->
+            <!-- <router-link ></router-link> -->
+            <!-- 主体内容区域 -->
+            <!-- 项目信息区域开始 -->
+            <div class="vehicle">
+                <div class="Project_information">
+                    <div>你当前库存的物料：</div><span v-for='(item,index) in queryInfo.tableData'>{{item.materialName}}</span>库存不足
+                </div>
+
+            </div>
+            <!-- 项目信息区域结束 -->
+            <!-- 工单表格区域 -->
+            <div class="table_box">
+                <!-- 待出库物料详情区域结束 -->
+                <div class="Table_head">
+                    <!-- 表格头部 -->
+                    <template>
+                        <el-table :data="queryInfo.tableData" style="width: 100%" v-loading="loading">
+                            <el-table-column type="index" label="序号">
+                            </el-table-column>
+<!--                            <el-table-column prop="materialId" label="所属项目" width="100">-->
+<!--                            </el-table-column>-->
+                            <el-table-column prop="materialType" align="center" label="物料类别" :formatter="formatType"></el-table-column>
+                            <el-table-column prop="materialName" align="center" label="物料名称"></el-table-column>
+                            <el-table-column prop="materialCode" align="center" label="物料编号"></el-table-column>
+                            <!-- <el-table-column prop="onHandQty" align="center" label="当前库存"></el-table-column> -->
+                            <el-table-column prop="onHandQty" label="库存量" align="center">
+                                    <template slot-scope="scope">
+                                        <span class=" on-hand-qty  on-hand-qty-danger">
+                                            {{scope.row.onHandQty}}
+                                        </span>
+                                    </template>
+                                </el-table-column>
+                            <el-table-column prop="materialBrand" align="center" label="物资品牌"></el-table-column>
+                            <el-table-column prop="materialUnitCode" align="center" label="计量单位"></el-table-column>
+                            <el-table-column prop="vendorName" align="center" label="厂商" width="100"></el-table-column>
+                            <el-table-column prop="materialPrice" align="center" label="销售单价"></el-table-column>
+                            <el-table-column prop="materialCost" align="center" label="成本单价"></el-table-column>
+                            <el-table-column prop="profit" align="center" label="利润"></el-table-column>
+                        </el-table>
+                    </template> 
+                </div>
+                <!-- 分页 -->
+                <div class="page">
+                    <div class="block">
+                            <el-pagination @size-change="handleSizeChange" @current-change='handleCurrentChange' :current-page="queryInfo.currentPage"
+                            :page-sizes="[10, 20, 30, 50]" :page-size="queryInfo.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                            :total="queryInfo.total">
+                        </el-pagination>
+                    </div>
+
+                </div>
+                <!-- 确认按钮和返回按钮 -->
+                <div class="storage_button">
+                    <el-button @click='handleClick' style="width: 180px; height: 32px;">返回</el-button>
+                </div>
+            </div>
+        </el-main>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return { 
+                loading:true,
+                queryInfo: {
+                    tableData: [],
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1
+                }
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            
+            this.getMaterielData()
+        },
+        methods: {
+            formatType:function(row) {
+                if (row.materialType == 1) {
+                    return "维修材料";
+                }else if (row.materialType == 2) {
+                    return "保养材料";
+                }else if (row.materialType == 3) {
+                    return "其他材料";
+                }else if (row.materialType == 4) {
+                    return "低值易耗品";
+                }
+            },
+            getMaterielData: function () {
+                var me = this;
+                // debugger
+                oui.ajaxPost('material/warehouseCenter/queryLackMaterial', {
+                    "pager": {
+                        // 第几页
+                        "page": me.queryInfo.currentPage,
+                        // 每页显示多少行
+                        "rows": me.queryInfo.pageSize
+                    },
+                },
+                    function (res) {
+                        // console.log(res);
+                        
+                        me.queryInfo.total = res.resultObj.total;
+                        me.queryInfo.tableData = res.resultObj.stockMaterials || [];
+                        me.loading=false;
+
+                        
+                    },
+                    function (res) {
+
+                    }
+                )
+            },
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.queryInfo.currentPage = val;
+                this.getMaterielData();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.queryInfo.pageSize = val;
+                this.getMaterielData();
+            },
+            // 点击按钮跳转地砖
+            handleClick: function (u) {
+                // this.$router.push(url,param||{});
+                oui.router.push("res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html")
+
+            }
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+        font-size: 14px;
+    }
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    .on-hand-qty.on-hand-qty-danger {
+        width: 50px;
+        height: 24px;
+        padding: 0;
+        background: rgba(245, 34, 45, 0.05);
+        border: 1px solid rgba(245, 34, 45, 0.30);
+        text-align: center;
+        border-radius: 2px;
+        line-height: 24px;
+        display: block;
+        margin: auto;
+        /* width: 80px;
+        height: 40px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 40px;
+
+        border: 1px solid red;
+        color: red; */
+    }
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+     /* 面包屑区域开始 -------*/
+     .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 项目信息区域开始 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+
+    .Dropdown {
+        margin: 20px 0px;
+    }
+
+
+    /* 项目信息行的外部盒子 */
+    .Project_information {
+        height: 80px;
+        font-weight: 700;
+        line-height: 80px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+    }
+
+
+
+    /* 项目信息行的样式 */
+    .Project_information>div {
+        display: inline-block;
+
+    }
+
+    .Project_information>span {
+        font-weight: 500;
+        margin: 0 10px;
+        color: #FF7878;
+    }
+
+    /* 待出库状态的样式 */
+    .material_status {
+        display: inline-block;
+        font-weight: 700;
+    }
+
+
+    .Reset_button>.el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+
+    .Reset_button>.el-button>span {
+        font-size: 14px;
+    }
+
+    .query_button1>.el-button {
+        border-radius: 0;
+    }
+
+    .query_button1>.el-button>span {
+        font-size: 14px;
+    }
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+    /* 表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+
+    /* 我的工单区域结束 */
+
+    /* 入库按钮 */
+    .storage_button {
+        display: flex;
+        justify-content: center;
+        margin: 42px 0;
+    }
+
+    .storage_button>.el-button {
+
+        margin-right: 36px;
+        padding: 0;
+    }
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        width: 100%;
+        height: 35px;
+        margin: 20px 0;
+    }
+
+    .block {
+        float: right;
+    }
+
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

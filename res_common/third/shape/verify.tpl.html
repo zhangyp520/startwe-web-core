@@ -1,0 +1,180 @@
+<!--验证码模板-->
+<script type="text/html" id="tpl-verify">
+    <div class="oui-verifyCode-area">
+        <div class="oui-verifyCode-shade"></div>
+        <div class="oui-verifyCode-fixed">
+            <div class="oui-verifyCode-content">
+                {{if imgUrl}}
+                <div class="oui-verifyCode-img">
+                    <img src="{{imgUrl}}"/>
+                    <div class="verifyCode-rect-end"></div>
+                    <div class="verifyCode-rect-start"></div>
+                </div>
+                {{/if imgUrl}}
+                <div class="oui-verifyCode-slider">
+                    <style type="text/css">
+                        .oui-verifyCode-area{
+                            width: 100%;
+                            height: 100%;
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            z-index: 9999;
+                        }
+                        .oui-verifyCode-area .oui-verifyCode-shade{
+                            background: rgba(0,0,0,.5);
+                            width: 100%;
+                            height: 100%;
+                            position: fixed;
+                            z-index: 1;
+                        }
+                        .oui-verifyCode-fixed{
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            -webkit-transform: translate(-50%,-50%);
+                            -moz-transform: translate(-50%,-50%);
+                            -ms-transform: translate(-50%,-50%);
+                            -o-transform: translate(-50%,-50%);
+                            transform: translate(-50%,-50%);
+                            z-index: 2;
+                        }
+                        /*验证码*/
+                        .oui-verifyCode-content{
+                            background: #ffffff;
+                            width: 276px;
+                            text-align: center;
+                            -webkit-border-radius: 3px;
+                            -moz-border-radius: 3px;
+                            border-radius: 3px;
+                        }
+                        .verifyCode-icon{
+                            background-image: url("{{oui.getContextPath()}}res_common/oui/ui/ui_common/controls/verifycode/images/oui-verifyCode-icon.png");
+                            background-repeat: no-repeat;
+                        }
+                        .oui-verifyCode-content .oui-verifyCode-img{
+                            width: 260px;
+                            padding: 8px 0;
+                            margin: 0 auto;
+                            position: relative;
+                        }
+                        .oui-verifyCode-img img{
+                            width: 100%;
+                        }
+                        .oui-verifyCode-img .verifyCode-rect-end,
+                        .oui-verifyCode-img .verifyCode-rect-start{
+                            width: 57px;
+                            height: 57px;
+                            display: inline-block;
+                        }
+                        .oui-verifyCode-img .verifyCode-rect-end{
+                            background: rgba(0,0,0,.5);
+                            position: absolute;
+                            left: 120px;
+                            top: 40px;
+                            -webkit-box-shadow:0 0 10px #000 inset;
+                            -moz-box-shadow:0 0 10px #000 inset;
+                            box-shadow:0 0 10px #000 inset;
+                        }
+                        .oui-verifyCode-img .verifyCode-rect-start{
+                            background: rgba(255,255,255,.8);
+                            position: absolute;
+                            left: 0;
+                            top: 40px;
+                        }
+                        .oui-verifyCode-content .oui-verifyCode-slider{
+                            display: block;
+                            padding: 8px 8px 16px;
+                        }
+                        .oui-verifyCode-slider .verifyCode-slider-info{
+                            width: 100%;
+                            position: relative;
+                        }
+                        .verifyCode-slider-info .verifyCode-slider-area{
+                            background: #dfe1e2;
+                            width: 100%;
+                            height: 40px;
+                            margin: 0 auto;
+                            position: relative;
+                            border-radius: 25px;
+                            text-align: center;
+                            overflow: hidden;
+                            user-select: none;
+                            -moz-user-select: none;
+                            -webkit-user-select: none;
+                            -webkit-box-shadow:3px 0 10px rgba(0,0,0,.4) inset;
+                            -moz-box-shadow:3px 0 10px rgba(0,0,0,.4) inset;
+                            box-shadow:3px 0 10px rgba(0,0,0,.4) inset;
+                        }
+
+                        .verifyCode-slider-area .slider-bg {
+                            background-color: #7AC23C;
+                            border-radius: 25px;
+                            position: absolute;
+                            left:0 ;
+                            top: 0;
+                            height: 100%;
+                            z-index: 1;
+                        }
+
+                        .verifyCode-slider-info .slider-warp {
+                            background-position: -5px -47px;
+                            width: 57px;
+                            height: 57px;
+                            position: absolute;
+                            left: 0;
+                            top: 50%;
+                            margin-top: -29px;
+                            z-index: 3;
+                            cursor: move;
+                            font-size: 16px;
+                            font-weight: 900;
+                        }
+                        .verifyCode-slider-info .slider-warp:active{
+                            background-position: -5px -119px;
+                        }
+
+                        .labelTip {
+                            position: absolute;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            font-size: 13px;
+                            color: #787878;
+                            line-height: 38px;
+                            text-align: center;
+                            z-index: 2;
+                        }
+                        .labelTip.successTip{
+                            background: #66d102;
+                            color: #ffffff;
+                            border-radius: 25px;
+                        }
+                        .labelTip.errorTip{
+                            background: #E07365;
+                            color: #ffffff;
+                            border-radius: 25px;
+                        }
+                    </style>
+                    <div class="verifyCode-slider-info">
+                        <div  class="verifyCode-slider-area">
+                            <div class="slider-bg"></div>
+                            <span  class="labelTip">拖动滑块验证</span>
+                        </div>
+                        <span class="verifyCode-icon slider-warp"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+
+
+
+
+
+

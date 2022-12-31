@@ -1,0 +1,635 @@
+<template>
+    <div class="product">
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>系统设置</el-breadcrumb-item>
+                <el-breadcrumb-item>项目设置</el-breadcrumb-item>
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <!-- 放置路由占位符，渲染组件部分 -->
+            <!-- <router-link ></router-link> -->
+            <!-- 主体内容区域 -->
+            <!-- 车辆查询区域 -->
+            <div class="vehicle">
+                <div class="vehicle_content">
+                    <div>已有项目共:<span>{{MaintainItemsTotal}}</span>种;</div>
+                    <div>维修项目:<span >{{repairMaintainItemNumber}}</span>种;</div>
+                    <div>保养项目:<span>{{maintenanceMaintainItemNumber}}</span>种;</div>
+                    <div>其他项目:<span>{{otherMaintainItemNumber}}</span>种;</div>
+                </div>
+                <!-- 下拉选项 -->
+                <div class="Dropdown">
+                    <template>
+                        <el-select v-model="maintainItemFormValue.itemType" clearable placeholder="请选择项目类型"
+                                   style="width: 160px;">
+                            <el-option v-for="item in itemType" :key="item.value" :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </template>
+
+                    <template>
+                        <el-select v-model="maintainItemFormValue.status" clearable placeholder="请选择状态"
+                                   style="width: 130px;">
+                            <el-option v-for="item in status" :key="item.value" :label="item.label" :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </div>
+                <!-- 关键区域 -->
+                <div class="keyword">
+
+                    <div class="keyword_content">关键字:</div>
+
+                    <el-input placeholder="请输入关键字，例如“钣金”" v-model="maintainItemFormValue.itemName"
+                              style="width: 314px; margin-left:8px">
+                    </el-input>
+                    <el-row class="Reset_button">
+                        <el-button size="small" @click='cleanOptions'>重置</el-button>
+                    </el-row>
+                    <el-row class="query_button1">
+                        <el-button type="primary" size="small" round @click="queryMaintainItemList">查询</el-button>
+                    </el-row>
+                </div>
+            </div>
+            <!-- 关键字区域结束-------------- -->
+            <!-- 车辆查询区域结束 -->
+
+            <!-- 工单表格区域 -->
+            <div class="table_box">
+                <el-row>
+                    <el-button type="primary" class="el-icon-plus Workorder_button" @click='addBusiness'>添加新的业务
+                    </el-button>
+                </el-row>
+                <!-- 我的工单区域开始 -->
+
+
+                <!-- 我的工单区域结束 -->
+                <div class="Table_head">
+                    <!-- 表格头部 -->
+                    <template>
+                        <el-table :data="maintainItemList" style="width: 100%" v-loading="loading">
+                            <el-table-column prop="itemType" :formatter="formatType" label="类型" align="center">
+                            </el-table-column>
+                            <el-table-column prop="itemName" label="项目名称" align="center">
+                            </el-table-column>
+                            <el-table-column prop="createTime" label="创建时间" align="center"></el-table-column>
+                            <el-table-column prop="itemFrequency" label="频次" align="center"></el-table-column>
+                            <el-table-column prop="status" label="状态" :formatter="formatStatus" align="center">
+                            </el-table-column>
+                            <el-table-column label="操作" prop="status" align="center">
+                                <template slot-scope='scope'>
+                                    <el-button type="text" @click="toUpdateMaintainItemPage(scope.row)">编辑</el-button>
+                                    <el-switch  v-model="scope.row.status" :active-value="Y" :inactive-value="N"
+                                    active-text="启用" inactive-text="禁用"
+                                               active-color="#1890FF" class="switch_box" inactive-color="#eee"
+                                               @change="changeMaintainItemStatus(scope.row)">
+                                    </el-switch>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </div>
+                <!-- 分页 -->
+                <div class="page">
+                    <div class="block">
+                        <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                                       :current-page="maintainItemFormValue.currentPage" :page-sizes="[1, 3, 5, 10, 20]"
+                                       :page-size="maintainItemFormValue.pageSize" :total="maintainItemFormValue.total"
+                                       layout="total, sizes, prev, pager, next, jumper">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </el-main>
+        </el-container>
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                Y: "Y",
+                N: "N",
+                repairMaintainItemNumber:0,
+                maintenanceMaintainItemNumber:0,
+                otherMaintainItemNumber:0,
+                MaintainItemsTotal:0,
+                // 项目展示列表数据
+                maintainItemList: [],
+                maintainItemNumber: [],
+                maintainItemFormValue: {
+                    //input框输入的项目名称
+                    itemName: '',
+                    itemType: "",
+                    // 关键字区域项目状态
+                    status: '',
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                },
+                // 内容区
+                // 项目类型下拉选项的数据
+
+                // 项目类型
+                itemType: [{
+                    value: 1,
+                    label: '维修项目'
+                }, {
+                    value: 2,
+                    label: '保养项目'
+                }, {
+                    value: 3,
+                    label: '其他项目'
+                }],
+
+                // 列表状态栏
+                status: [{
+                    value: 'Y',
+                    label: '启用'
+                }, {
+                    value: 'N',
+                    label: '禁用'
+                }],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.queryMaintainItemList();
+            this.countMaintainItemNumber();
+        },
+        methods: {
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.maintainItemFormValue.currentPage = val;
+                this.queryMaintainItemList();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.maintainItemFormValue.pageSize = val;
+                this.queryMaintainItemList();
+            },
+            // 获取项目列表数据
+            queryMaintainItemList: function () {
+                var that = this;
+                oui.ajaxPost('company/maintainItem/queryMaintainItem', {
+                        "itemName": that.maintainItemFormValue.itemName,
+                        "itemType": that.maintainItemFormValue.itemType,
+                        "pager": {
+                            "page": that.maintainItemFormValue.currentPage,
+                            "rows": that.maintainItemFormValue.pageSize
+                        },
+                        "status": that.maintainItemFormValue.status
+                    },
+                    function (res) {
+                        that.maintainItemList = res.resultObj.maintainItems;
+                        that.maintainItemFormValue.total = res.resultObj.total;
+                        that.loading=false;
+                    },
+                    function (res) {
+                        that.$message.error(res.message);
+                    });
+            },
+            // 重置项目和input框
+            cleanOptions() {
+                this.maintainItemFormValue.itemName = '';
+                this.maintainItemFormValue.status = '';
+                this.maintainItemFormValue.itemType = '';
+                this.queryMaintainItemList();
+            },
+            // 编辑跳转到更新项目信息页面
+            toUpdateMaintainItemPage: function (row) {
+                oui.router.push('res_apps/car/html/PermissionSsetting/projectEdit.vue.html', {
+                    id: row.id,
+                    delFlag: row.delFlag,
+                    itemCost: row.itemCost,
+                    itemFrequency: row.itemFrequency,
+                    itemName: row.itemName,
+                    itemPrice: row.itemPrice,
+                    itemType: row.itemType,
+                    itemWorkHours: row.itemWorkHours,
+                    requirePeopleNo: row.requirePeopleNo,
+                    status: row.status
+                })
+            },
+            formatType(row) {
+                if (row.itemType == 1) {
+                    return "维修项目"
+                } else if (row.itemType == 2) {
+                    return "保养项目"
+                } else if (row.itemType == 3) {
+                    return "其他项目"
+                }
+            },
+            formatStatus(row) {
+                if (row.status == "Y") {
+                    return "启用"
+                } else if (row.status == "N") {
+                    return "禁用"
+                }
+            },
+            //跳转到新增项目页面
+            addBusiness: function () {
+                oui.router.push('res_apps/car/html/PermissionSsetting/addnewbusiness.vue.html')
+            },
+            //改变项目状态
+            changeMaintainItemStatus: function (row) {
+                var that = this;
+                oui.ajaxPost('company/maintainItem/changeMaintainItemState', {
+                        "id": row.id
+                    },
+                    function (res) {
+                        if (row.status == "Y") {
+                            that.$message({
+                                message: '项目启用成功',
+                                type: 'success'
+                            });
+                        } else {
+                            that.$message({
+                                message: '项目禁用成功',
+                                type: 'success'
+                            });
+                        }
+                    },
+                    function (res) {
+                        that.$message.error(res.message)
+                    });
+            },
+            //项目数量统计
+            countMaintainItemNumber:function() {
+                var that = this;
+                oui.ajaxPost('company/maintainItem/countNumberOfMaintainItem', {},
+                    function (res) {
+                        for(k in res.resultObj){
+                            if (res.resultObj[k].itemType == 1) {
+                                that.repairMaintainItemNumber = res.resultObj[k].maintainItemsNumber;
+                            }else if (res.resultObj[k].itemType == 2) {
+                                that.maintenanceMaintainItemNumber = res.resultObj[k].maintainItemsNumber;
+                            }else if (res.resultObj[k].itemType == 3) {
+                                that.otherMaintainItemNumber = res.resultObj[k].maintainItemsNumber;
+                            }
+                            that.MaintainItemsTotal += res.resultObj[k].maintainItemsNumber;
+                        }
+
+                    },
+                    function (res) {
+                        that.$message({
+                            message: '项目数量统计出错，请刷新页面',
+                            type: 'warning'
+                        })
+                    });
+            }
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+
+    /* 文字盒子span */
+    .el-icon-menu > span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item > img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item > span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar > img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 在厂车辆数量情况 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+    .vehicle_content {
+        width: 100%;
+        height: 30px;
+        padding-top: 20px;
+    }
+
+    .vehicle_content > div {
+        display: inline;
+        margin-right: 16px;
+        line-height: 30px;
+    }
+
+    .vehicle_content > div > span {
+        color: #1890FF;
+        margin: 0 5px;
+    }
+
+    .Dropdown {
+        margin: 20px 0px;
+    }
+
+    /* 改变全局的input样式 */
+    .el-input__inner {
+        /* width: 160px; */
+        height: 32px;
+        margin: 0 3px;
+    }
+
+    /* 关键字区域 */
+    .keyword {
+        width: 1000px;
+        height: 46px;
+        font-weight: 700;
+        line-height: 46px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+
+    }
+
+    /* 调整关键字下边的input框------------- */
+    /* .keyword_input .el-input__inn {
+        width: 380px;
+        background-color: rgb(197, 16, 16);
+
+    } */
+
+    .keyword_inpu.el-input__inner .keyword_content {
+        width: 380px !important;
+        background-color: rgb(197, 16, 16);
+
+    }
+
+    .Reset_button > .el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+
+    .Reset_button > .el-button > span {
+        font-size: 14px;
+    }
+
+    .query_button1 > .el-button {
+        border-radius: 0;
+    }
+
+    .query_button1 > .el-button > span {
+        font-size: 14px;
+    }
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+    /* 表单单独的按钮 */
+    .Workorder_button {
+        margin-bottom: 15px;
+
+    }
+
+    /* 改变加号和文字之间的距离 */
+    .el-icon-plus:before {
+        margin-right: 8px;
+    }
+
+
+    /* 工单表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+    /* 操作表格里面的按钮 */
+    .switch_box {
+        margin-left: 20px;
+    }
+    .switch_box .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+/*打开时文字位置设置*/
+.switch_box .el-switch__label--right {
+  z-index: 1;
+  right: 5px;
+}
+/*关闭时文字位置设置*/
+.switch_box .el-switch__label--left {
+  z-index: 1;
+  left: 5px;
+}
+/*显示文字*/
+.switch_box .el-switch__label.is-active {
+  display: block;
+}
+.switch_box.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 55px !important;    /*开关按钮的宽度大小*/
+}
+
+
+    /* 我的工单区域结束 */
+
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

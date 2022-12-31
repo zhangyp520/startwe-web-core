@@ -1,0 +1,67 @@
+<!--toolbar 组件 -->
+<template>
+    <div class="toolbar-outer">
+        <!-- toolbar -->
+        <div class="pg-toolbar">
+            <el-row>
+                <el-col :span="16">
+                    <el-button-group>
+                        <el-button type="success" size="small">新增</el-button>
+                        <el-button type="primary" size="small">编辑</el-button>
+                        <el-button type="danger" size="small">删除</el-button>
+                    </el-button-group>
+                </el-col>
+                <el-col :span="8">
+                    <el-input size="small" placeholder="请输入内容" class="input-with-select" style="width: 350px;">
+                        <el-select slot="prepend" placeholder="请选择" v-model="searchSelect">
+                            <el-option label="姓名" value="1"></el-option>
+                            <el-option label="年龄" value="2"></el-option>
+                            <el-option label="性别" value="3"></el-option>
+                            <el-option label="电话" value="4"></el-option>
+                        </el-select>
+                        <el-button slot="append" type="primary">搜索</el-button>
+                    </el-input>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                searchSelect: ''
+            }
+        },
+        mounted: function()
+        {
+
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            },
+
+            /****** 左右布局 *******/
+            handleTabChange: function(tab, event)
+            {
+                console.log(tab, event);
+            }
+        }
+    }
+</script>
+
+<style>
+    .toolbar-outer {
+        padding: 15px;
+    }
+
+    .pg-toolbar {
+        margin-bottom: 20px;
+    }
+</style>

@@ -1,0 +1,23 @@
+{
+  "msg": [
+    {
+      "id": "-1",
+      "name": "未分组联系人",
+      "state": 1,
+      "typeFlag": "team"
+    },
+    {
+      "id": "4781186873180715242",
+      "name": "开发一组",
+      "parentId": "",
+      "state": 1,
+      "typeFlag": "team"
+    }
+  ],
+  "success": true
+}
+
+
+
+
+

@@ -1,0 +1,2104 @@
+{
+  "id": "com.primeton.eos.studio_test",
+  "ids": [
+    "startActivity",
+    "finishActivity",
+    "manualActivity",
+    "manualActivity1",
+    "manualActivity2",
+    "manualActivity3",
+    "manualActivity4",
+    "manualActivity5",
+    "routeActivity",
+    "autoActivity",
+    "manualActivity6",
+    "manualActivity7",
+    "subActivity",
+    "node1"
+  ],
+  "lineIds": [
+    "startActivity_manualActivity",
+    "manualActivity_manualActivity1",
+    "manualActivity_routeActivity",
+    "manualActivity1_manualActivity2",
+    "manualActivity2_manualActivity4",
+    "manualActivity2_manualActivity3",
+    "manualActivity3_manualActivity5",
+    "manualActivity4_manualActivity5",
+    "manualActivity5_manualActivity6",
+    "routeActivity_finishActivity",
+    "autoActivity_routeActivity",
+    "manualActivity6_manualActivity7",
+    "manualActivity7_subActivity",
+    "subActivity_autoActivity",
+    "node1_manualActivity6",
+    "subActivity_node1"
+  ],
+  "lineMap": {
+    "startActivity_manualActivity": {
+      "fromId": "startActivity",
+      "id": "startActivity_manualActivity",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity"
+    },
+    "manualActivity_manualActivity1": {
+      "fromId": "manualActivity",
+      "id": "manualActivity_manualActivity1",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity1"
+    },
+    "manualActivity_routeActivity": {
+      "fromId": "manualActivity",
+      "id": "manualActivity_routeActivity",
+      "lineType": "simpleCondition",
+      "name": "a=='ok'",
+      "otherAttrs": {
+        "isDefault": false,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "a",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "ok",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "routeActivity"
+    },
+    "manualActivity1_manualActivity2": {
+      "fromId": "manualActivity1",
+      "id": "manualActivity1_manualActivity2",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity2"
+    },
+    "manualActivity2_manualActivity4": {
+      "fromId": "manualActivity2",
+      "id": "manualActivity2_manualActivity4",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity4"
+    },
+    "manualActivity2_manualActivity3": {
+      "fromId": "manualActivity2",
+      "id": "manualActivity2_manualActivity3",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity3"
+    },
+    "manualActivity3_manualActivity5": {
+      "fromId": "manualActivity3",
+      "id": "manualActivity3_manualActivity5",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity5"
+    },
+    "manualActivity4_manualActivity5": {
+      "fromId": "manualActivity4",
+      "id": "manualActivity4_manualActivity5",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity5"
+    },
+    "manualActivity5_manualActivity6": {
+      "fromId": "manualActivity5",
+      "id": "manualActivity5_manualActivity6",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity6"
+    },
+    "routeActivity_finishActivity": {
+      "fromId": "routeActivity",
+      "id": "routeActivity_finishActivity",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "finishActivity"
+    },
+    "autoActivity_routeActivity": {
+      "fromId": "autoActivity",
+      "id": "autoActivity_routeActivity",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "routeActivity"
+    },
+    "manualActivity6_manualActivity7": {
+      "fromId": "manualActivity6",
+      "id": "manualActivity6_manualActivity7",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "manualActivity7"
+    },
+    "manualActivity7_subActivity": {
+      "fromId": "manualActivity7",
+      "id": "manualActivity7_subActivity",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "subActivity"
+    },
+    "subActivity_autoActivity": {
+      "fromId": "subActivity",
+      "id": "subActivity_autoActivity",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "parameters": [],
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": "business-catalog"
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "autoActivity"
+    },
+    "node1_manualActivity6": {
+      "fromId": "node1",
+      "id": "node1_manualActivity6",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": []
+      },
+      "toId": "manualActivity6"
+    },
+    "subActivity_node1": {
+      "fromId": "subActivity",
+      "id": "subActivity_node1",
+      "lineType": "simpleCondition",
+      "name": "",
+      "otherAttrs": {
+        "isDefault": true,
+        "priority": "60",
+        "bendPoints": [],
+        "simpleCondition": {
+          "compType": "EQ",
+          "leftBizVariable": {
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": ""
+          },
+          "leftValue": "",
+          "leftValueType": "variable",
+          "rightBizVariable": {
+            "resourceID": "",
+            "resourceName": "",
+            "resourceType": ""
+          },
+          "rightValue": "",
+          "rightValueType": "constant"
+        }
+      },
+      "toId": "node1"
+    }
+  },
+  "map": {
+    "startActivity": {
+      "description": "",
+      "h": "32",
+      "id": "startActivity",
+      "isStartActivity": true,
+      "joinType": "XOR",
+      "lineIds": [
+        "startActivity_manualActivity"
+      ],
+      "name": "开始",
+      "nodeType": "start",
+      "otherAttrs": {
+        "implementation": {
+          "startActivity": {
+            "formFields": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "32",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "32",
+          "x": "60",
+          "y": "66"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning"
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "32",
+      "x": "60",
+      "y": "66"
+    },
+    "finishActivity": {
+      "description": "",
+      "h": "32",
+      "id": "finishActivity",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [],
+      "name": "结束",
+      "nodeType": "finish",
+      "otherAttrs": {
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "32",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "32",
+          "x": "169",
+          "y": "360"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning"
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "32",
+      "x": "169",
+      "y": "360"
+    },
+    "manualActivity": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity_manualActivity1",
+        "manualActivity_routeActivity"
+      ],
+      "name": "人工活动",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [
+            ],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "152",
+          "y": "60"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "152",
+      "y": "60"
+    },
+    "manualActivity1": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity1",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity1_manualActivity2"
+      ],
+      "name": "触发事件",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [
+              {
+                "accessType": "read",
+                "dataType": "textInput",
+                "defaultValue": "",
+                "description": "",
+                "fieldAttribute": "",
+                "fieldType": "business-variable",
+                "name": "姓名",
+                "path": "",
+                "required": false,
+                "variableName": {
+                  "parameters": [],
+                  "resourceID": "PROCESS:d3dc989982414ffab9533165ad3b6d3d",
+                  "resourceName": "姓名",
+                  "resourceType": "business-variable"
+                }
+              },
+              {
+                "accessType": "read",
+                "dataType": "textInput",
+                "defaultValue": "",
+                "description": "",
+                "fieldAttribute": "",
+                "fieldType": "business-variable",
+                "name": "年龄",
+                "path": "",
+                "required": false,
+                "variableName": {
+                  "parameters": [],
+                  "resourceID": "PROCESS:1e07550780be4b1496d6661d4eeda724",
+                  "resourceName": "年龄",
+                  "resourceType": "business-variable"
+                }
+              }
+            ],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "organization": {
+                "allowAppointParticipants": false,
+                "participants": [
+                  {
+                    "id": "tiger",
+                    "name": "Tiger",
+                    "type": "person"
+                  }
+                ]
+              },
+              "participantType": "organization-list",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": [
+              {
+                "applicationInfo": {
+                  "actionType": "pojo",
+                  "application": {
+                    "actionType": "pojo",
+                    "applicationUri": "java.lang.System.gc",
+                    "exceptionStrategy": "rollback",
+                    "invokePattern": "synchronous",
+                    "parameters": [],
+                    "transactionType": "join"
+                  },
+                  "assignments": [],
+                  "suppressJoinFailure": "suppress"
+                },
+                "description": "",
+                "eventType": "before-start-act"
+              }
+            ]
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "276",
+          "y": "60"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "276",
+      "y": "60"
+    },
+    "manualActivity2": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity2",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity2_manualActivity4",
+        "manualActivity2_manualActivity3"
+      ],
+      "name": "多路分支+自定义url",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": true,
+              "urlInfo": "http://www.baidu.com",
+              "urlType": "other"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "406",
+          "y": "60"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "OR",
+      "w": "64",
+      "x": "406",
+      "y": "60"
+    },
+    "manualActivity3": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity3",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity3_manualActivity5"
+      ],
+      "name": "分支2",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinActivityList",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {},
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "555",
+          "y": "22"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning"
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "555",
+      "y": "22"
+    },
+    "manualActivity4": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity4",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity4_manualActivity5"
+      ],
+      "name": "分支1",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinActivityList",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {},
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "555",
+          "y": "106"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning"
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "555",
+      "y": "106"
+    },
+    "manualActivity5": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity5",
+      "isStartActivity": false,
+      "joinType": "OR",
+      "lineIds": [
+        "manualActivity5_manualActivity6"
+      ],
+      "name": "全部聚合",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "675",
+          "y": "60"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "675",
+      "y": "60"
+    },
+    "routeActivity": {
+      "description": "",
+      "h": "32",
+      "id": "routeActivity",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "routeActivity_finishActivity"
+      ],
+      "name": "路由活动",
+      "nodeType": "route",
+      "otherAttrs": {
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "32",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "32",
+          "x": "168",
+          "y": "254"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning"
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "32",
+      "x": "168",
+      "y": "254"
+    },
+    "autoActivity": {
+      "description": "",
+      "h": "45",
+      "id": "autoActivity",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "autoActivity_routeActivity"
+      ],
+      "name": "自动活动",
+      "nodeType": "toolapp",
+      "otherAttrs": {
+        "implementation": {
+          "autoActivity": {
+            "autoActivityType": "common",
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "taskApplication": {
+              "applicationInfo": {
+                "actionType": "assignment",
+                "application": {
+                  "actionType": "assignment",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "terminateType": "auto",
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "276",
+          "y": "247"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        }
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "276",
+      "y": "247"
+    },
+    "manualActivity6": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity6",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity6_manualActivity7"
+      ],
+      "name": "自由流",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": true,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 0,
+              "finishRule": "all",
+              "mulWIValid": false,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "participantType": "process-starter",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "false"
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "675",
+          "y": "247"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "675",
+      "y": "247"
+    },
+    "manualActivity7": {
+      "description": "",
+      "h": "45",
+      "id": "manualActivity7",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "manualActivity7_subActivity"
+      ],
+      "name": "多工作项+时间限制",
+      "nodeType": "manual",
+      "icon": "el-icon-user",
+      "otherAttrs": {
+        "implementation": {
+          "manualActivity": {
+            "allowAgent": true,
+            "customURL": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "formFields": [],
+            "freeFlowRule": {
+              "freeActivity": false,
+              "freeRangeStrategy": "freeWithinProcess",
+              "onlyLimitedManualActivity": false
+            },
+            "multiWorkItem": {
+              "autoCancel": false,
+              "finishRequiredPercent": "0",
+              "finishRquiredNum": 1,
+              "finishRule": "specifyNum",
+              "mulWIValid": true,
+              "sequentialExecute": false,
+              "workitemNumStrategy": "participant-number"
+            },
+            "notification": {
+              "actionURL": {
+                "isSpecifyURL": "false",
+                "urlType": "presentation-logic"
+              },
+              "expandParticipant": false,
+              "notificationImplType": "workItem",
+              "participants": {
+                "participantType": "process-starter",
+                "specialActivityID": "",
+                "specialPath": ""
+              },
+              "sendNotification": false,
+              "timeLimit": {
+                "calendarSet": {
+                  "calendarInfo": {
+                    "parameters": [],
+                    "resourceID": "default",
+                    "resourceName": "默认日历",
+                    "resourceType": "business-calendar"
+                  },
+                  "initType": "appoint"
+                },
+                "isTimeLimitSet": "false"
+              }
+            },
+            "participants": {
+              "organization": {
+                "allowAppointParticipants": false,
+                "participants": [
+                  {
+                    "id": "tiger",
+                    "name": "Tiger",
+                    "type": "person"
+                  },
+                  {
+                    "id": "micky",
+                    "name": "Micky",
+                    "type": "person"
+                  }
+                ]
+              },
+              "participantType": "organization-list",
+              "specialActivityID": "",
+              "specialPath": ""
+            },
+            "resetParticipant": "originalParticipant",
+            "resetUrl": {
+              "specifyURL": false,
+              "urlType": "presentation-logic"
+            },
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "timeLimit": {
+              "calendarSet": {
+                "calendarInfo": {
+                  "parameters": [],
+                  "resourceID": "default",
+                  "resourceName": "默认日历",
+                  "resourceType": "business-calendar"
+                },
+                "initType": "appoint"
+              },
+              "isTimeLimitSet": "true",
+              "remindInfo": {
+                "day1": 0,
+                "hour1": 1,
+                "minute1": 0,
+                "remindRelevantData": "",
+                "remindStrategy": "remind_strategy_designate",
+                "remindType": "email",
+                "sendMessageForRemind": false
+              },
+              "timeLimitInfo": {
+                "day": 0,
+                "hour": 3,
+                "minute": 0,
+                "relevantData": "",
+                "remindType": "email",
+                "sendMessageForOvertime": false,
+                "timeLimitStrategy": "limit_strategy_designate"
+              }
+            },
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "539",
+          "y": "247"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "539",
+      "y": "247"
+    },
+    "subActivity": {
+      "description": "",
+      "h": "45",
+      "id": "subActivity",
+      "isStartActivity": false,
+      "joinType": "XOR",
+      "lineIds": [
+        "subActivity_autoActivity",
+        "subActivity_node1"
+      ],
+      "name": "子流程活动",
+      "nodeType": "subflow",
+      "otherAttrs": {
+        "implementation": {
+          "subActivity": {
+            "iterationRelevantData": "",
+            "iterationVariableName": "iteration",
+            "multiSubProcess": false,
+            "parameters": [],
+            "rollBack": {
+              "applicationInfo": {
+                "actionType": "service-component",
+                "application": {
+                  "actionType": "service-component",
+                  "applicationUri": "",
+                  "exceptionStrategy": "rollback",
+                  "invokePattern": "synchronous",
+                  "parameters": [],
+                  "transactionType": "join"
+                },
+                "assignments": [],
+                "suppressJoinFailure": "suppress"
+              }
+            },
+            "subProcess": "com.primeton.eos.zlc",
+            "syncType": "synchronous",
+            "triggerEvents": []
+          }
+        },
+        "nodeGraphInfo": {
+          "color": "16777215",
+          "fontName": "System",
+          "fontSize": "12",
+          "fontWidth": "550",
+          "foreColor": "0",
+          "height": "45",
+          "isItalic": "0",
+          "isUnderline": "0",
+          "lookAndFeel": "classic",
+          "textHeight": "60",
+          "width": "64",
+          "x": "408",
+          "y": "247"
+        },
+        "activateRule": {
+          "activateRuleType": "directRunning",
+          "applicationInfo": {
+            "actionType": "service-component",
+            "application": {
+              "actionType": "service-component",
+              "applicationUri": "",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          }
+        },
+        "extendNodes": []
+      },
+      "priority": "60",
+      "splitTransaction": "false",
+      "splitType": "XOR",
+      "w": "64",
+      "x": "408",
+      "y": "247"
+    },
+    "node1": {
+      "description": "双点击可编辑内容",
+      "h": "100",
+      "id": "node1",
+      "isStartActivity": false,
+      "lineIds": [
+        "node1_manualActivity6"
+      ],
+      "name": "注释",
+      "nodeType": "note",
+      "otherAttrs": {
+        "title": "admin\t20-8-16 下午7:57"
+      },
+      "w": "149",
+      "x": "469",
+      "y": "465"
+    }
+  },
+  "name": "studio_test",
+  "otherAttrs": {
+    "processHeader": {
+      "bizEntityInfo": {},
+      "calendarInfo": {
+        "parameters": [],
+        "resourceID": "default",
+        "resourceName": "默认日历",
+        "resourceType": "business-calendar"
+      },
+      "dataFields": [
+        {
+          "dataType": {
+            "typeClass": "primitive",
+            "typeValue": "String"
+          },
+          "description": "",
+          "initialValue": "",
+          "isArray": "false",
+          "name": "a"
+        }
+      ],
+      "extendNodes": [
+        {
+          "desc": "",
+          "key": "IsForWardBiz",
+          "value": "false"
+        },
+        {
+          "desc": "",
+          "key": "openLog",
+          "value": "false"
+        }
+      ],
+      "longProcess": "true",
+      "parameters": [],
+      "procStarterLists": {
+        "processStarterType": "all"
+      },
+      "processBasicInfo": {
+        "author": "admin",
+        "department": "admin",
+        "description": "",
+        "priority": "60",
+        "processId": "com.primeton.eos.studio_test",
+        "processName": "studio_test"
+      },
+      "splitTransaction": "false",
+      "timeLimit": {
+        "calendarSet": {
+          "calendarInfo": {
+            "parameters": [],
+            "resourceID": "default",
+            "resourceName": "默认日历",
+            "resourceType": "business-calendar"
+          },
+          "initType": "appoint"
+        },
+        "isTimeLimitSet": "false"
+      },
+      "triggerEvents": [
+        {
+          "applicationInfo": {
+            "actionType": "pojo",
+            "application": {
+              "actionType": "pojo",
+              "applicationUri": "java.util.Date.setDate",
+              "exceptionStrategy": "rollback",
+              "invokePattern": "synchronous",
+              "parameters": [
+                {
+                  "dataType": {
+                    "typeClass": "primitive",
+                    "typeValue": "int"
+                  },
+                  "description": "",
+                  "fillBack": "false",
+                  "isArray": "false",
+                  "mode": "parameter",
+                  "name": "arg0",
+                  "value": "2020",
+                  "valueType": "constant"
+                }
+              ],
+              "transactionType": "join"
+            },
+            "assignments": [],
+            "suppressJoinFailure": "suppress"
+          },
+          "description": "",
+          "eventType": "before-start-proc"
+        }
+      ]
+    },
+    "resource": {
+      "businessVariables": [
+        {
+          "description": "",
+          "variableName": "姓名",
+          "variableUUID": "PROCESS:d3dc989982414ffab9533165ad3b6d3d",
+          "xpath": "username"
+        },
+        {
+          "description": "",
+          "variableName": "年龄",
+          "variableUUID": "PROCESS:1e07550780be4b1496d6661d4eeda724",
+          "xpath": "age"
+        }
+      ]
+    },
+    "productVersion": "6.1",
+    "schemaVersion": "6.0"
+  },
+  "rootIds": [
+    "startActivity"
+  ]
+}
+

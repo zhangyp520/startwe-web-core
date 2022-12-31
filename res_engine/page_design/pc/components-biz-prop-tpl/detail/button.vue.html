@@ -1,0 +1,765 @@
+<template>
+    <div>
+      <div class="detail-tabs"> 
+        <div class="detail-tabs-item"
+          v-for="(item,index) in DataList"
+          :key="index"
+          :label="item.label"
+          :name="item.name"
+          @click="changeTabs(index)"
+          
+        >
+           {{item.label}}
+        </div> 
+        <div class="active-bar" :style="{ transform: 'translateX('+(76 * tabActiveIndex)+'px)'}" ></div> 
+     </div>
+      <div class="design-attribute-item" v-show='tabActive=="first"'>
+        <oui-include :data="getData4BaseProps()" type="module" ref="basePropsRef"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="style"'>
+  
+        <oui-include :data="getData4StyleProps()" type="module" ref="stylePropsRef"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="advanced"'>
+  
+        <oui-include :data="getData4AdvancedProps()" type="module" ref="advancedPropsRef"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+
+    </div>
+  </template>
+  
+  <script>
+    exports = {
+      data: function () {
+        return {
+          logicValTab: 'input',
+          Design:com.oui.absolute.AbsoluteDesign,
+          getData4BaseProps: this.getData4BaseProps,
+          getData4StyleProps: this.getData4StyleProps,
+          getData4AdvancedProps: this.getData4AdvancedProps,
+          basePropsRef: "",
+          stylePropsRef: "",
+          advancedPropsRef: "",
+          cache4vue: {},
+          cache4vueReg: {},
+          cache4vueAnimate: {}, 
+          propertyAnimation: [ ],
+          tabActiveIndex:0,
+          projects: ["999"], 
+          tabActive: "first",
+          activeName: "first",
+          DataList: [{
+            label: "属性",
+            name: "first",
+            content: "first",
+          },
+          {
+            label: "样式",
+            name: "style",
+            content: "style",
+          },
+          {
+            label: "高级",
+            name: "advanced",
+            content: "advanced",
+          }  
+          ],
+          property: [{
+              type: "string",
+              name: "id",
+              zhName: "控件id",
+              group: "基础设置",
+              required: false,
+              disabled:true,
+              placeholder: "控件id",
+              default: oui.util.componentRandomGenKeyId('button'),
+              suffix: "",
+              max: 30,
+              prepend: "",
+            },
+            {
+              type: "string",
+              name: "bizId",
+              zhName: "业务id",
+              group: "基础设置",
+              required: false,
+              disabled: false,
+              placeholder: "业务id",
+              default: "",
+              suffix: "",
+              max: 30,
+              prepend: "",
+            },
+            
+            {
+              type: "inputandcheckbox",
+              name:  "name" ,
+              checkboxname:  "otherAttrs.titleShow" ,
+              zhName: "标题名称",
+              group: "基础设置",
+              required: false,
+              placeholder: "请输入标题名称",
+              default: "按钮",
+              checkboxdefault: true,
+              suffix: "",
+              checkboxtitle: "显示标题",
+              max: 20,
+              prepend: "",
+            },
+
+            {
+              type: "array",
+              name: "otherAttrs.buttonShowType" ,
+              zhName: "按钮类型",
+              group: "基础设置",
+              required: false,
+              placeholder: "",
+              default: "primary",
+              data:[
+                  {"value":"primary","display":"主要按钮"},
+                  {"value":"success","display":"成功按钮"},
+                  {"value":"info","display":"信息按钮"},
+                  {"value":"warning","display":"警告按钮"},
+                  {"value":"danger","display":"危险按钮"}]
+            }
+            
+          ],
+          propertyStyle:[
+          {
+              type: "radiogroupselect",
+              name: "otherAttrs.buttonAlign",
+              zhName: "按钮位置",
+              group: "样式设置",
+              required: false, 
+              default: "left",
+              data:[{"value":"left","display":"左"},{"value":"center","display":"中"},{"value":"right","display":"右"}],
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.inputWidth",
+              zhName: "布局宽度%",
+              group: "样式设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: "100",
+              data:[{
+                  value:'25',
+                  display:'25'
+              },{
+                  value:'50',
+                  display:'50'
+              },{
+                  value:'75',
+                  display:'75'
+              },{
+                  value:'100',
+                  display:'100'
+              } ],
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.fontColor",
+              zhName: "文字颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#000000",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.borderColor",
+              zhName: "边框颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#EDEDED",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.bgColor",
+              zhName: "填充颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#FFFFFF",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "slider",
+              name: "otherAttrs.id",
+              zhName: "圆角",
+              group: "样式设置", 
+              required: false,
+              placeholder: "我是占位符",
+              default: 0,
+              dangwei:"px",
+              suffix: "",
+              max: 0,
+              num:0,
+              prepend: "",
+            },   
+          ],
+          propertyAdvanced: [ 
+              {
+                type: "switch",
+                name: "otherAttrs.disabled",
+                zhName: "是否禁用",
+                group: "基础设置", 
+                default: false,
+                // 其他属性
+              },
+              {
+                type: "switch",
+                name: "otherAttrs.hidden",
+                zhName: "是否隐藏",
+                group: "基础设置",
+                radio: false, 
+                default: false,
+                // 其他属性
+              }, 
+              {
+                type: "radiogroupselect",
+                name: "otherAttrs.bjkd",
+                zhName: "显示设备",
+                group: "基础设置",
+                required: false,
+                placeholder: "我是占位符",
+                default: "pc",
+                  data:[
+                      {value:'pc',display:'电脑'},
+                      {value:'mobile',display:'手机'},
+                  ],
+                  labelsicon: ["el-icon-s-platform","el-icon-mobile"],
+                max: 10,
+                prepend: "",
+              },
+              {
+                type: "radiogroupselect",
+                name: "otherAttrs.bjkd",
+                zhName: "数据体检",
+                group: "基础设置",
+                required: false,
+                placeholder: "我是占位符",
+                default: "commit4onlyShow",
+                data:[{
+                    value:'commit4onlyShow',display:'仅显示时提交'
+                },{
+                    value:'commit4ever',display:'始终提交'
+                }],
+                max: 10,
+                prepend: "",
+              }, 
+              {
+                type: "button",
+                name: "otherAttrs.action",
+                zhName: "动作设置",
+                btnText: "新建动作",
+                group: "基础设置",
+                size: "small",
+                btnType:"primary",
+                isBlock:true,
+                default: "",
+                actionSetting: com.oui.absolute.AbsoluteDesign.data.currentControl.events,
+                actionFun:this.showBindAct,
+                
+              }
+          ], 
+          triggerTypeData: [{
+              value: 'singleClick',
+              label: '单击'
+            },
+            // {
+            //   value: 'dbclick',
+            //   label: '双击'
+            // },
+            // {
+            //   value: 'clickBefore',
+            //   label: '单击前'
+            // },
+            // {
+            //   value: 'clickAfter',
+            //   label: '单击后'
+            // },
+            // {
+            //   value: 'dbClickBefore',
+            //   label: '双击前'
+            // },
+            // {
+            //   value: 'dbClickAfter',
+            //   label: '双击后'
+            // },
+            // {
+            //   value: 'mouseover',
+            //   label: '鼠标移入'
+            // },
+            // {
+            //   value: 'mouseout',
+            //   label: '鼠标移出'
+            // },
+            // {
+            //   value: 'mouseup',
+            //   label: '鼠标按下'
+            // },
+
+
+          ],
+          actionNameData: [
+            {
+              value: 'pageTurn',
+              label: '页面转向'
+            },
+            {
+              value: 'backEndLogic',
+              label: '后端逻辑'
+            },
+            // {
+            //   value: 'openwindow',
+            //   label: '弹窗'
+            // },
+            // {
+            //   value: 'tips',
+            //   label: 'Tips'
+            // },
+            // {
+            //   value: 'updatelist',
+            //   label: '更新组件列表'
+            // },
+            // {
+            //   value: 'commonapi',
+            //   label: '公共api'
+            // },
+            // {
+            //   value: 'componentapi',
+            //   label: '组件api'
+            // }
+          ],
+          actionNameValue: '',
+          completedData: [{
+              value: 'executeFinish',
+              label: '执行完毕'
+            },
+            {
+              value: 'executeCallback',
+              label: '执行回调'
+            }
+          ],
+          systemMethodValue: '',
+          completedValue: '',
+          triggerTypeValue: '',
+          optionData: {},
+          showLoadIcon: "1",
+          logicInputParams: [],
+          logicOutputParams: [],
+          centerDialogVisible: false,
+          bindingLogicValVisible: false,
+          //打开位置数据
+          pageLocationData:[{
+              value: 'newTab',
+              label: '新页签'
+            },
+            {
+              value: 'newPage',
+              label: '新页面'
+            },
+            {
+              value: 'currentPage',
+              label: '当前页'
+            },
+            
+          ],
+          pageLocation:"newTab",
+          //执行路径
+          executePath:'externalLink',
+          linkAddress:'',
+          executePathData:[{
+              value: 'externalLink',
+              label: '外部链接'
+            },
+            {
+              value: 'pageModel',
+              label: '页面模型'
+            } 
+            
+          ],
+          renderPage:'', 
+          renderOptionData: {},
+          renderMethodData: null,
+          renderMethodValue: '',
+        };
+      },
+      mounted: function () {
+        this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+       if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrc
+        ) {
+          this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+        }
+  
+        if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrcs
+        ) {
+          this.webPageSrcs = this.currentControl.otherAttrs.webPageSrcs;
+        }
+        //更新复制删除工具条标题
+
+      },
+      methods: {
+        //加载执行路径- 页面模型
+        changeExecute(e){
+          if(this.executePath=='pageModel'){
+            console.info(e)
+            this.loadPageViewData()
+          } 
+        },
+        //加载页面模型
+        loadPageViewData(){
+          var param = oui.getParam()
+          var url = this.Design.findPageViewUrl
+
+          var me = this
+ 
+          oui.postData(url, { 
+              projectId: param.projectId
+            },
+            function (res) {
+ 
+             
+              me.renderMethodData = res.projectDesign[0] 
+
+            },
+            function (res) {
+
+            }, '加载中...');
+        },
+
+        showBindAct(){ 
+
+          //显示 事件配置
+          PubSub.publish("com.startwe.loadingevent.msg.show", { componentName:"按钮" })
+          // this.centerDialogVisible = true
+          // this.loadLogicDataTree();
+        },
+         //设置逻辑变量
+        showBindLogic(data) { 
+          this.bindingLogicValVisible = true
+ 
+          
+          oui.postData(this.Design.getLogicByIdUrl, {
+            logicId:  data
+          }, (res) => {
+
+            if(res.success){ 
+              var inputParamsJson = oui.parseJson(res.logicComponentBean.inputParamsJson)
+              var outputParamsJson = oui.parseJson(res.logicComponentBean.outputParamsJson)
+  
+              this.logicInputParams = inputParamsJson
+              this.logicOutputParams = outputParamsJson
+            }
+
+            console.info(this.logicInputParams,'this.logicInputParams')
+
+
+          }, function (res) {
+            console.log(res);
+          }, '加载中...');
+
+
+  
+        },
+        handleNodeClick(data) {
+          this.systemMethodValue = data.name
+          this.$emit('input', data['id'])
+          this.optionData.id = data['id']
+          this.optionData.name = data['name']
+          this.$refs.select.visible = false 
+        },
+        handleBindLogicValClose() {
+          this.bindingLogicValVisible = false
+        },
+        visibleChange(e) {
+          if (e) {
+            let selectDom = document.querySelector('.is-current')
+            setTimeout(() => {
+              this.$refs.select.scrollToOption({
+                $el: selectDom
+              })
+            }, 0)
+          }
+        },
+        renderVisibleChange(e) {
+          if (e) {
+            let selectDom = document.querySelector('.is-current')
+            setTimeout(() => {
+              this.$refs.select.scrollToOption({
+                $el: selectDom
+              })
+            }, 0)
+          }
+        },
+        clear() {
+          this.$emit('input', '')
+          console.info('clear')
+        },
+        saveActionSetting(){
+
+          let trigMethod = 'click'
+          //选择的触发方式
+          if(this.triggerTypeValue  ){
+            trigMethod = this.triggerTypeValue
+          }
+
+             
+          let postData =   {
+              "interaction":[{
+                "trigMethod" : trigMethod,
+                "executeAction" : this.actionNameValue,
+                "systemMethod" : "logicId",
+                "pageLocation":"",
+                "executePath" : "",
+                "linkAddress":"",
+                "renderPage":"",
+                "afterExecuteFinish" : this.completedValue,
+                "id" : oui.getUUIDLong(),
+                "logicId": this.optionData.id,
+                "inputParams":this.logicInputParams,
+                "outputParams":this.logicOutputParams,
+                "superId" : ""
+              }, 
+          ]}
+
+          let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+          let x = oui.JsonPathUtil.setObjByPath('events', currentControl, postData, true);
+ 
+          var d= oui.getTop().oui.alert('保存成功');
+                setTimeout(function(){
+                    d.hide();
+          },800); 
+
+        },
+        changeTabs(index){
+          this.tabActive = this.DataList[index].name;
+          this.tabActiveIndex = index; 
+        },
+        getData4BaseProps: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vue);
+          var bindKey = "basePropsRef";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "basePropsRef",
+              name: "basePropsRef",
+              bindProp: "basePropsRef",
+              value: {
+                name: "1",
+              },
+              property: this.property,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        getCacheReg: function (v) {
+          if (!v) {
+            v = {};
+            v = v;
+          }
+          return v;
+        },
+  
+        getData4StyleProps: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueReg);
+          var bindKey = "stylePropsRef";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "stylePropsRef",
+              name: "stylePropsRef",
+              bindProp: "stylePropsRef",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyStyle,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            // me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+  
+          return cache4vue[bindKey];
+        },
+        getData4AdvancedProps: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueAnimate);
+          var bindKey = "advancedPropsRef";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "advancedPropsRef",
+              name: "advancedPropsRef",
+              bindProp: "advancedPropsRef",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyAdvanced,
+              webPageSrc: this.webPageSrc,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        onUpdate: function (key, v) {
+          var me = this;
+          if (key == "basePropsRef") {
+            me.basePropsRef = v;
+            if (v) {
+              var one = oui.findOneFromArrayBy(me.projects, function (temp) {
+                if (temp.value == v) {
+                  return true;
+                }
+              });
+              if (one) {
+                me.queryPageFieldsByFormIdUrl = one.queryPageFieldsByFormIdUrl;
+              }
+  
+              oui.getData(
+                me.queryPagesByProjectIdUrl, {
+                  projectId: v,
+                },
+                function (res) {
+                  var pages = res.pages || [];
+                  //组织模型所属项目变更后，更新控件数据项
+                  oui.eachArray(me.options || [], function (item) {
+                    var data4tableModels = me.findData4tableModels(item);
+  
+                    data4tableModels.queryParams = {
+                      projectId: v,
+                    };
+                    var refKey = "tableModelId_" + item.id;
+                    if (me.$refs[refKey]) {
+                      me.$refs[refKey][0].comp.value = "";
+                      me.$refs[refKey][0].comp.data = oui.parseJson(
+                        oui.parseString(pages)
+                      );
+                      me.$refs[refKey][0].comp.queryParams.projectId = v;
+                    }
+                    //idKey
+                    var refKey4bindId = "tableModelId_id_" + item.id;
+                    if (me.$refs[refKey4bindId]) {
+                      me.$refs[refKey4bindId][0].comp.value = "";
+                      me.$refs[refKey4bindId][0].comp.data = [];
+                    }
+  
+                    //nameKey
+                    var refKey4bindNameId = "tableModelId_name_" + item.id;
+                    if (me.$refs[refKey4bindNameId]) {
+                      me.$refs[refKey4bindNameId][0].comp.value = "";
+                      me.$refs[refKey4bindNameId][0].comp.data = [];
+                    }
+                  });
+                }
+              );
+            } else {
+              me.queryPageFieldsByFormIdUrl = "";
+            }
+          }
+          this.$set(this, key, v);
+        },
+        handleClose() {
+          this.centerDialogVisible = false
+        },
+        handleTabsChange(tab, event) {
+          this.tabActive = tab.name;
+          if (tab.name === "frist") {
+            this.property = this.property
+          } else if (tab.name === "reg") {
+            this.property = this.propertyReg
+  
+          } else if (tab.name === "event") {
+            this.property = this.propertyAnimation
+          }
+  
+        },
+        handleWebPageSrcChange: function (val) {
+          this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc =
+            this.currentControl.otherAttrs.webPageSrc;
+        },
+        handleWebPageSrcChangeText: function (val) {
+          this.currentControl.otherAttrs.webPageSrcs = this.webPageSrcs;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrcs =
+            this.currentControl.otherAttrs.webPageSrcs;
+  
+          com.oui.absolute.AbsoluteDesign.changed4props(
+            this.currentControl,
+            function () {}
+          );
+        },
+        _controlOnUpdate: function (bindProp, config) {
+          console.log(config.id);
+          var me = this;
+          if (!config.id) {
+            return;
+          }
+          //获取当前配置变更的对象
+          var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(
+            config.id
+          );
+  
+          if (
+            bindProp &&
+            config &&
+            currentControl &&
+            currentControl.id === config.id
+          ) {
+            //根据当前配置的值改变 更新当前控件的值
+            oui.JsonPathUtil.setObjByPath(
+              bindProp,
+              currentControl,
+              oui.JsonPathUtil.getJsonByPath(bindProp, config),
+              true
+            );
+            //清除关系连线
+            me._controlOnUpdate4clearRelation(bindProp, config, currentControl);
+          }
+        },
+      },
+    };
+  </script>
+  

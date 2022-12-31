@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>工作流-设计</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport"
+		  content="user-scalable=yes, width=980，initial-scale=1">
+	<meta name="format-detection" content="telephone=no"/>
+      
+</head>
+<body oui-controller="oui.test.FlowBiz">
+	
+	<div id="ouiflow"></div>
+	<script type="text/javascript">
+		
+		var flowDefine= {	
+			flowData: [ //工作流节点数据 
+				{id:1,name:'发起者'}, //发起者节点
+				{
+					id:2, // 节点id
+					name:'张元平', //节点名称
+					pid:1,//父节点id
+					displayName:'张元平',//节点显示名称,默认与节点名称相同
+					type:'person', //节点类型
+					typeId:'person-id'//节点类型对应的id，如type为person则为人员id；如为部门则为部门id
+				},// 节点对象 
+				{id:3,name:'林银锋',pid:2},
+				{id:4,name:'杨海',pid:2},
+				{id:5,name:'吴有智',pid:2},
+				{id:6,name:'康艳',pid:2}
+			]
+		}
+	</script>
+</body>
+    
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,518 @@
+<link type="text/css" rel="stylesheet" href="../../res_engine/graph-common/css/orgchart.css" />
+<link type="text/css" rel="stylesheet" href="../../res_engine/graph-common/css/font-awesome.min.css" />
+
+<oui-view id="project-design" data="com.oui.models.project.web.ProjectController4Design.getData()" class="oui-class-ouiview"
+    style="height: 100%">
+</oui-view>
+<script id="project-design-tpl" type="text/html" charset="utf-8">
+    <div class="pg-block" oui-controller="com.startwe.models.project.web.ProjectController4Design" style="height: 100%">
+        <style>
+            .pg-block-cont{
+                margin-left:190px;
+                background:#f2f2f2;
+            }
+            .pg-container{
+                height: calc(100% - 64px);
+            }
+            .oui-dialog-cnt{
+                width:550px;
+            }
+            .pg-body{
+                height: 100%;
+            }
+            .orgchart > table > tbody > tr:first-child td .node{
+                min-width:100px;
+                width:auto;
+            }
+            .orgchart > table > tbody > tr:first-child td .node .title{
+                font-size:16px;
+                
+            }
+            .orgchart .node{
+                width:140px;    
+            }
+            .node.current-node{
+                border-radius: 10px;
+                background: #f3b1b1;
+                box-shadow: 0px 0px 10px #f56c6c;
+            }
+            /* .orgchart .node .title{
+                background:#fff;
+                border:1px solid #D8D8D8;
+                color:#000;
+                font-size:14px;
+            } */
+            .orgchart .node:hover .title {
+                background-color:#fff;
+            }
+            .orgchart .node .title,.orgchart .node .project{
+                border: 1px solid #D8D8D8;
+                color:#999;
+            }
+            .orgchart .node .module,.orgchart .node .module{
+                border: 1px solid #FF6F6F;
+                color:#FF6F6F;
+                font-size:14px;
+            }
+            .orgchart .node .app,.orgchart .node .app{
+                border: 1px solid #DEA535;
+                color:#DEA535;
+                font-size:14px;
+            }
+           
+            .orgchart .node .page,.orgchart .node .page{
+                border: 1px solid #72B54F;
+                color:#72B54F;
+                font-size:14px;
+            }
+            
+            .orgchart .node .logic,.orgchart .node .logic{
+                border: 1px solid #258DF6;
+                color:#258DF6;
+                font-size:14px;
+            }
+            .orgchart td.left{
+                border-left:1px solid #C0C0C0;
+            }
+            .orgchart td.top{
+                border-top:2px solid #C0C0C0;
+            }
+            .orgchart td.right{
+                border-right:1px solid #C0C0C0;
+            }
+            .orgchart td > .down{
+                background-color:#C0C0C0;
+            }
+            .orgchart td .left{
+                border-left:1px solid #C0C0C0;
+            }
+            .orgchart td .right{
+                border-right:1px solid #C0C0C0;
+            }
+            .orgchart td .top{
+                border-top:2px solid #C0C0C0;
+            }
+            .icon{
+                margin-top:-2px;
+                width: 16px;
+                height: 16px;
+            }
+            .oui-dialog-bd img{
+                margin-bottom:0;
+            }
+            .group-buttons{
+                display:flex;
+                margin-left:10px;
+            }
+            .group-buttons>div{
+                padding:0 10px;
+            }
+            .node-group-buttons .menu-cancel{
+                display:none;
+            }
+            .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+                color: #f56c6c;
+                background: #fef0f0;
+                border-right:2px solid #fbc4c4;
+            }
+            .save-treeMap{
+                width:190px;
+                display:block;
+                text-align:center;
+                background-color:#f56c6c;
+                
+            }
+            .pg-block-header{
+                height: 64px;
+                background: #FFFFFF;
+                box-shadow: 0px 1px 4px 0px rgba(0, 21, 41, 0.12);
+                position: relative;
+                z-index: 99;
+            }
+
+            .group-line{
+                border-bottom:1px solid #ccc;
+            }
+            .tips{
+                display: block;
+                font-size:12px;
+                color:#ccc;
+            }
+
+            .disabled{
+                color:#ccc !important;
+            }
+
+            .pg-block-header a{
+                color:#fff;
+                font-size:14px;
+            }
+            .pg-block-header a:hover{
+                color:#fff;
+            }
+            .group-buttons{
+                display:flex;
+                align-items:center;
+            }
+            .group-buttons>div{
+                border-style:solid;
+                border-width:1px;
+                border-color:#999;
+                margin-right:10px;
+                height: 34px;
+                line-height: 34px;
+                border-radius: 3px;
+                color:#999;
+            }
+            .group-buttons>.menu-text:hover{
+                background:#fef0f0;
+                border-color:#f56c6c;
+                color:#f56c6c;
+            }
+            .groupButton{
+                background:#fef0f0;
+                color:#f56c6c;
+                border-color:#f56c6c;
+            }
+        </style>
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'project-design'})}}
+        </div>
+        {{include 'node-group-buttons-tpl' ({ProjectController4Design:ProjectController4Design})}}
+         
+        <!-- 侧边栏 -->
+        <oui-include type="module" url="res_startwe/html/project/publicMenuNav.vue.html"></oui-include>
+        
+        <div class="pg-block-cont project-design-graph" style="overflow: hidden;height: 100%;background:#f2f2f2;">
+            <div class="orgchart">  
+                {{include 'design-table-tpl' ({treeMap:ProjectController4Design.treeMap,nodeId:ProjectController4Design.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="node-group-buttons-tpl">
+    <div class="pg-block-header node-group-buttons" style="display:none;padding:0;">
+    </div>
+</script>
+<script type="text/html" id="design-table-tpl">
+    <table table-node-id="{{nodeId}}">
+        <tbody>
+        <tr>
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="node {{treeMap.currentNodeId&&treeMap.currentNodeId==nodeId?'current-node':''}}" draggable="true" node-id="{{nodeId}}" oui-e-{{treeMap.clickName}}="event2showMenu" oui-e-dblclick="event2editNodeName">
+                    <div style="{{ProjectController4Design.findNodeStyle(nodeId)}}" class="title {{treeMap.findSourceNode(nodeId).nodeType}}" title="{{treeMap.findNodeName(nodeId)}}" >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        <!-- <img  node-id="{{nodeId}}" class="icon" src="res_startwe/assets/1_2.png" oui-e-{{treeMap.clickName}}="iconClick" alt=""> -->
+                        <img  node-id="{{nodeId}}" class="icon" src="{{ProjectController4Design.findNodeIcon(nodeId)}}" oui-e-{{treeMap.clickName}}="iconsClick" alt="">
+                        {{treeMap.findNodeName(nodeId)}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.hasChildren(nodeId) && treeMap.isExpand(nodeId)}}
+        <tr class="lines {{treeMap.findSourceNode(nodeId).nodeType}}">
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down {{treeMap.findSourceNode(nodeId).nodeType}}"></div>
+            </td>
+        </tr>
+        <tr class="lines {{treeMap.findSourceNode(nodeId).nodeType}}">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" class="">
+                {{include 'design-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+</script>
+<script type="text/html" id="node-icon-tpl">
+    <div class="second-menu node-icon-seting">
+        <!-- 图标框 -->
+        <oui-include type="module" ref="iconTable" url="res_startwe/html/project/homeEditingModule.vue.html">
+        </oui-include>
+    </div>
+</script>
+<script type="text/html" id="node-menu-button-tpl">
+    {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.project.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addModule" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-plus"></i> 添加模块
+        </div>
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-menu"></i> 导入模块
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit"></i> 编辑项目名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-download"></i> 导入项目
+        </div>
+        <div class="menu-text  " node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-upload2"></i> 导出项目
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designPortal" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-monitor"></i> 门户设计
+        </div> -->
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="menuDesign" oui-e-{{treeMap.clickName}}="event2menuAction">
+            菜单设计
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPhoneApp" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出PhoneAPP
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="powerDesign" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-eleme"></i> 模块权限设计
+        </div> -->
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editProjectConfig" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-setting"></i> 项目配置
+        </div> -->
+    {{/if}}
+    {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.module.name}}
+
+
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="unExpandBrothers" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-remove-outline"></i> 折叠兄弟节点
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addApp" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-plus"></i> 添加应用
+        </div>
+
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="addAppByGuide" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-plus"></i> 添加预制应用
+            <span class="tips">自动创建应用交互、页面、逻辑</span>
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit"></i> 编辑模块名称
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-download"></i> 导入模块
+        </div> -->
+        <div class="menu-text  group-line" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-upload2"></i> 导出模块
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designRelations" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-share"></i> 业务关系设计
+        </div>
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="designFlow" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-connection"></i> 业务流程设计
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-delete"></i> 删除模块
+        </div>
+ 
+
+        {{/if}}
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.app.name}}
+
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="unExpandBrothers" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-remove-outline"></i> 折叠兄弟节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-plus"></i> 添加呈现页面
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加逻辑
+        </div> -->
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="interactionDesign" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-sort"></i> 交互设计<span class="tips">前后端流转交互设计</span>
+        </div> -->
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-download"></i> 导入应用
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-upload2"></i> 导出应用
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit"></i> 编辑应用名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-delete"></i> 删除应用
+        </div>
+        {{/if}}
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.page.name}}
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="designPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit-outline"></i> 设计呈现页面
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="listdesignPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            列表设计
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="viewDesignPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            呈现和逻辑设计
+        </div> -->
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="createLogicsAndInteractionsByPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            为页面创建逻辑(含交互设计)
+        </div> -->
+        <div class="menu-text disabled" node-id="{{nodeId}}" menu-action-id="copyPkg">
+            <i class="el-icon-document-copy"></i> 复制呈现页面
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-upload2"></i> 导出呈现页面
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-download"></i> 导入呈现页面
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="showListPageUrl" oui-e-{{treeMap.clickName}}="event2menuAction">
+            获取列表访问地址
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="showEditPageUrl" oui-e-{{treeMap.clickName}}="event2menuAction">
+            获取表单访问地址
+        </div> -->
+
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit"></i>  编辑呈现页面名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-delete"></i> 删除呈现页面
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="pagePower" oui-e-{{treeMap.clickName}}="event2menuAction">
+            页面权限
+        </div> -->
+        {{/if}}
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.logic.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designLogic" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit-outline"></i> 设计逻辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-download"></i> 导入逻辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-upload2"></i> 导出逻辑
+        </div>
+        <div class="menu-text group-line" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-edit"></i>   编辑逻辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="el-icon-delete"></i> 删除逻辑
+        </div>
+        {{/if}}
+
+        <!-- <div class="menu-text menu-cancel" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div> -->
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-tpl">
+    <div class="second-menu">
+        {{include 'node-menu-button-tpl' ({nodeId:nodeId,treeMap:treeMap,ProjectController4Design:ProjectController4Design})}} 
+    </div>
+</script>
+
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        <!--swapSort,swap,addParentByTarget,addBrotherByTarget,addChildByTarget,hideMenu4DragEnd -->
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" style="display: none" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swap" oui-e-{{treeMap.clickName}}="event2menuAction">
+            交换位置
+        </div>
+        {{if !treeMap.isChild(nodeId,targetNodeId)}}
+        {{if !treeMap.hasParents(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="addChildByTarget" oui-e-{{treeMap.clickName}}="event2menuAction">
+            变更为目标节点的子节点
+        </div>
+        {{/if}}
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<!--编辑节点名称模板-->
+<script type="text/html" id="node-name-edit-tpl">
+    <input type="text" node-id="{{nodeId}}" style="height: 36px; width:100%;font-size:14px;padding-left:5px" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+</script>
+
+<!--查询逻辑资源绑定-->
+<script type="text/html" id="bindLogic-temp-tpl">
+    {{if bindLogic&&bindLogic.name}}
+    <div class="pg-pb-header title-left">
+        <span class="desp-text">
+        输入参数
+        </span>
+    </div>
+    <div class="pg-pb-item">
+        {{each bindLogic.inputParams as propDefine index}}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">变量名称</label>
+                        <div class="col-sm-9">
+                            {{propDefine.name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">变量值</label>
+                        <div class="col-sm-9">
+                            <oui-form id="varValue-inputParams-{{index}}" type="{{ProjectController4Design.findControlType4param(propDefine)}}"
+                                name="bindLogic.paramMap.{{propDefine.name}}"
+                                showType="{{ProjectController4Design.findShowType4param(propDefine)}}"
+                                validate="{{ProjectController4Design.findValidate4param(propDefine)}}"
+                                value="{{bindLogic.paramMap[propDefine.name]}}" placeholder="请输入变量值"></oui-form>
+                        </div>
+                    </div>
+                </div>
+                <div id="varFieldType-inputParams-{{index}}-error"></div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+</script>
+<!--逻辑调用-->
+<script type="text/html" id="node-edit-bindLogic">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title title-left">
+                <span>绑定页面逻辑入口</span>
+            </h3>
+        </div>
+
+        <div class="panel-body" style="padding-bottom: 0">
+            <div class="pg-pb-header title-left">
+                <span class="desp-text">
+                    选择逻辑
+                </span>
+            </div>
+            <div class="pg-pb-item">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <oui-form type="outercontrol" onAfterUpdate="com.startwe.models.project.web.ProjectController4Design.onUpdate4logic"
+                                  value="{{bindLogic&&bindLogic.name}}"
+                                  name="bindLogic.name" url="{{queryLogicsUrl}}"
+                                  isReadOnly="false"
+                                  dataType="array"
+                                  id="logics-select"
+                                  doScriptMethod="com.startwe.models.project.web.ProjectController4Design.logicSelectCallback"></oui-form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <oui-view oui-controller="com.startwe.models.project.web.ProjectController4Design" id="bindLogic-temp" class="panel-body" data="getCurrNodeData('{{nodeId}}')"></oui-view>
+    </div>
+</script>

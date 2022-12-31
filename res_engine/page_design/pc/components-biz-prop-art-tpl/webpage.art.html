@@ -1,0 +1,80 @@
+
+<template >
+
+    <div>
+        <oui-include url="res_engine/page_design/pc/components-biz-prop-tpl/common/config.vue.html"
+                     type="module"></oui-include>
+        <oui-include url="res_engine/page_design/pc/components-biz-prop-tpl/webpage.vue.html"
+            type="module"
+        ></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+//        useVDom:true,//art 使用虚拟Dom,默认值为true
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                currentControl:{
+                    otherAttrs:{
+                        bizDes:''
+                    }
+                },
+                fieldErrorId:'',
+                AbsoluteDesign:{findCheckMessage:function(){}},
+                id:'' //控件id
+            }
+        },
+
+        mounted:function(){
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.currentControl =designer.data.currentControl;
+            var keys ='bizDes'.split(','); //配置当前的key列表
+            if(!this.currentControl.otherAttrs){
+                this.currentControl.otherAttrs ={};
+            }
+
+            for(var i= 0,len=keys.length;i<len;i++){
+                var key = keys[i];
+                if(typeof this.currentControl.otherAttrs[key] =='undefined'){
+                    this.currentControl.otherAttrs[key]='';
+                }
+            }
+            this.fieldErrorId = 'check_controls_'+this.id+'_otherAttrs_bizDes';
+            this.refresh(); //手动刷新
+
+            console.log('当前的配置Id:'+this.id);
+            console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+            onUpdate:function(cfg){
+                var designer = this.getDesigner();
+                var key = $(cfg.el).attr('bindProp');
+                var v = oui.JsonPathUtil.getJsonByPath(key,this);
+                designer.bizPropsUpdate&&designer.bizPropsUpdate(key,v); //属性值变更无需强制刷新，用户体验更好
+
+                console.log(cfg);
+                console.log(designer);
+                //TODO 这里是值改变事件
+
+            },
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>
+
+
+

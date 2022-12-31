@@ -1,0 +1,107 @@
+<!-- 结算金额的弹框 -->
+
+
+<template>
+    <div class="tel_box">
+        <div style="margin:10px auto; font-size: 20px; font-weight: 700; text-align: center;">结算金额</div>
+        <el-form :model="paymentFormValue" :rules="rules" ref="paymentFormValue" label-width="151px" class="demo-ruleForm">
+            <!-- 结算金额 -->
+            <el-form-item label="请输入结算金额:" prop="payAmount">
+                <el-input @change="payAmountChange" v-model="paymentFormValue.payAmount" style="width: 224px; height: 32px; margin-right: 6px;" placeholder="请输入结算金额">
+                </el-input>元
+            </el-form-item>
+            <span class="submitRemind">*请注意，您输入的金额会同步记录，避免财产损失，请清点到账金额！！！</span>
+        </el-form>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+                // 主体内容的基本信息名称验证所绑定的数据名开始
+                paymentFormValue: {
+                    // 结算金额
+                    workOrderId: '',
+                    // 确认新号码
+                    payAmount: ''
+                },
+
+                // 每个对象的验证规则
+                rules: {
+                    // 验证名称
+                    payAmount: [
+                        {required: true, message: '请输入收款金额', trigger: 'blur'},
+                        { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确的格式,可保留两位小数' }
+                    ]
+                },
+                // 主体内容的基本信息名称验证所绑定的数据名结束
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.paymentFormValue.workOrderId = this.$router.query.workOrderId;
+            this.paymentFormValue.payAmount = this.$router.query.workOrderPrice;
+            this.payAmountChange();
+        },
+        methods: {
+            payAmountChange: function () {
+                oui.getTop().oui.setPageParam("payAmount",{
+                    workOrderId: this.paymentFormValue.workOrderId,
+                    payAmount: this.paymentFormValue.payAmount
+                });
+            }
+        }
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        width: 430px;
+        height: 240px;
+        margin: 35px auto;
+        padding: 30px 0;
+        box-sizing: border-box;
+        content: '';
+        height: 0;
+        display: block;
+        clear: both;
+
+    }
+
+
+    .tel_box .el-form {
+        margin: auto;
+        padding: 0 10px;
+    }
+    .tel_box .submitRemind{
+        font-size: 12px;
+        color: red;
+    }
+
+
+    .tel_box .el-button {
+        width: 100px;
+        height: 40px;
+        display: block;
+        /* margin: 50px auto; */
+        padding: 0;
+        float: left;
+        margin: 30px 5px;
+
+
+    }
+</style>

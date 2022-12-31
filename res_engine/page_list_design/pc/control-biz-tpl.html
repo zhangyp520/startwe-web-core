@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>字段业务属性自定义扩展</title>
+</head>
+<body>
+<div class="design-attribute-item" oui-controller="{{AbsoluteDesign.FullName}}">
+    <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+    <div class="design-set-area" >
+        <!--此处可以扩展多个配置项-->
+        <div class="design-field "  curr-control-id="{{currentControl&&currentControl.id}}">
+
+            <div class="fieldname">业务描述</div>
+            <div class="fieldblock">
+                <textarea bindPropAfter="changed4props" placeholder="业务描述"
+                          bindProp="currentControl.otherAttrs.bizDes"
+                          value="{{currentControl.otherAttrs.bizDes}}">{{currentControl.otherAttrs.bizDes}}</textarea>
+            </div>
+            <div class="fielderror" id="check_controls_{{currentControl.id}}_otherAttrs_bizDes">
+                {{if AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.bizDes")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.bizDes")}}</div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <!--在这里扩展自定义业务配置项-->
+    {{if currentControl && currentControl.id &&(currentControl.htmlType!='tableLine') }}
+    <oui-include url="res_engine/page_design/pc/components-biz-prop-tpl/{{currentControl.controlType}}.vue.html" ref="current_prop" type="module" data="__data().data"></oui-include>
+    {{/if}}
+</div>
+</body>
+</html>
+

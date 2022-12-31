@@ -1,0 +1,307 @@
+<template>
+    <div>
+        <!-- 标题 -->
+        <div class="sort-title">选择分类</div>
+        <!-- 分类内容 -->
+        <div class="sort-content">
+            <el-tree :data="projectPortalCategory" accordion :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+        </div>
+        <div>
+            <div class="sort-title">选择使用范围</div>
+            <div class="publicModule" @change="permissionSelected">
+                <el-radio v-model="pptTemplate.permission" label="1">私有模板</el-radio>
+                <el-radio v-model="pptTemplate.permission" label="2">公共模板</el-radio>
+            </div>
+        </div>
+        <div>
+            <div class="sort-title">模板名称</div>
+            <div class="moduleName">
+                <el-input v-model="pptTemplate.name" placeholder="请输入内容" @change="templateNameChange"></el-input>
+            </div>
+        </div>
+        <!-- 标签 -->
+        <div>
+            <div class="sort-title">选择标签</div>
+            <ul class="module-label-box">
+                <li class="module-label">
+                    <!-- 预制标签 -->
+                    <div v-for="item in labels" :key="item">
+                        <div>
+                            <div style="cursor: pointer;">{{item}}</div>
+                        </div>
+                    </div>
+                    <!-- 添加 -->
+                    <div style="cursor: pointer;">
+                        <img src="/res_startwe/assets/add_blue.png" alt="">
+                    </div>
+                    <!-- 自定义标签 -->
+                    <div v-for="item in labelData" :key="item">
+                        <div>
+                            <div style="cursor: pointer;">{{item}}</div>
+                        </div>
+                    </div>
+                </li>
+                <!-- 自定义标签内容 -->
+                <li class="add-template-label">
+                    <el-input v-model="templateLabel" placeholder="请输入内容"></el-input>
+                    <el-button type="primary">确认</el-button>
+                </li>
+            </ul>
+        </div>
+        <!-- <div class="btn-footer">
+            <el-button class="cancel-btn">取消</el-button>
+            <el-button class="save-btn">保存</el-button>
+        </div> -->
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                templateLabel:'',
+                labels: ['A', 'B', 'C', 'D'],
+                labelData: [],
+                pptTemplate: {
+                    permission: '1',
+                    name: '',
+                    templateCategoryId: "",
+                    labels: [],
+                },
+                projectPortalCategory: [],
+                publicLabels: [],
+                privateLabels: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'categoryName'
+                }
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.queryProjectPortalCategory();
+            this.queryPublicLabels();
+        },
+        methods: {
+            // 分类树
+            handleNodeClick: function (e) {
+                this.pptTemplate.templateCategoryId = e.id;
+                oui.getTop().oui.setPageParam('pptTemplate', oui.parseString(this.pptTemplate));
+            },
+            //模板名称改变事件
+            templateNameChange: function () {
+                oui.getTop().oui.setPageParam('pptTemplate', oui.parseString(this.pptTemplate));
+            },
+            //公有私有分类选择改变事件
+            permissionSelected: function () {
+                oui.getTop().oui.setPageParam('pptTemplate', oui.parseString(this.pptTemplate));
+            },
+            //查询门户模板分类
+            queryProjectPortalCategory: function () {
+                let me = this;
+                oui.postData(oui.getContextPath() + "com.startwe.models.project.web.ProjectPortalDesignController.queryProjectPortalCategory.biz", {}, function (res) {
+                    me.projectPortalCategory = res.projectPortalCategory || [];
+                }, function (res) {
+                    //TODO 模板分类查询失败提示
+                }, '加载中...');
+            },
+            //查询公共标签
+            queryPublicLabels: function () {
+                let me = this;
+                oui.postData(oui.getContextPath() + "com.startwe.models.project.web.LabelController.queryPublicLabels.biz", {}, function (res) {
+                    me.publicLabels = res.publicLabels || [];
+                }, function (res) {
+                    //TODO 模板分类查询失败提示
+                }, '加载中...');
+            },
+            //查询个人私有标签
+            queryPublicLabels: function () {
+                let me = this;
+                oui.postData(oui.getContextPath() + "com.startwe.models.project.web.LabelController.queryPrivateLabels.biz", {}, function (res) {
+                    me.privateLabels = res.privateLabels || [];
+                }, function (res) {
+                    //TODO 模板分类查询失败提示
+                }, '加载中...');
+            }
+        }
+    }
+
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    html,
+    body,
+    ul,
+    li {
+        height: 100%;
+        width: 100%;
+        list-style: none;
+    }
+
+    .el-radio__input.is-checked .el-radio__inner {
+        border-color: #FF7D82;
+        background: #FF7D82;
+    }
+
+    .el-radio__input.is-checked+.el-radio__label {
+        color: #FF7D82;
+    }
+
+    .save-btn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        border-color: #524D62;
+        color: #fff;
+    }
+
+    .save-btn:hover,
+    .save-btn:focus {
+        background: #524D62;
+        border-radius: 2px;
+        border-color: #524D62;
+        color: #fff;
+    }
+
+    .cancel-btn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        border-color: #524D62;
+        color: #524D62;
+        margin-right: 20px;
+    }
+
+    .cancel-btn:hover,
+    .cancel-btn:focus {
+        background: #fff;
+        border-radius: 2px;
+        border-color: #524D62;
+        color: #524D62;
+    }
+
+    .active {
+        font-size: 14px;
+        color: #FF7D82;
+        line-height: 22px;
+        font-weight: 400;
+        background: #F1F1F1;
+    }
+
+    .sort-content {
+        background: #F7F7F7;
+        margin: 0 30px;
+        position: relative;
+    }
+
+    .sort-content>ul {
+        /* width:150px;  */
+        /* position: relative; */
+        /* margin: 0 30px; */
+    }
+
+    .sort-content>ul>li {
+        /* position: relative; */
+    }
+
+    .sort-title {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 22px;
+        font-weight: 400;
+        margin: 10px 0 10px 30px;
+    }
+
+    .publicModule {
+        margin-left: 30px;
+    }
+
+    .moduleName {
+        margin: 0 30px;
+    }
+
+    .inner-sort-title {
+        display: flex;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 22px;
+        font-weight: 400;
+        width: 140px;
+        /* width: 100%; */
+    }
+
+    .inner-sort-title>div:first-child {
+        padding: 10px;
+        width: 100%;
+    }
+
+
+    .inner-sort {
+        display: flex;
+        background: #F1F1F1;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 22px;
+        font-weight: 400;
+        position: absolute;
+        top: 0;
+        left: 139px;
+        padding: 5px 10px;
+        width: 484px;
+
+    }
+
+    .inner-sort>div {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .inner-sort>div>span {
+        /* width: 30%; */
+        /* display: block; */
+        margin-right: 20px;
+        line-height: 30px;
+    }
+
+    .btn-footer {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .module-label-box {
+        margin: 0 30px;
+        width: 90%;
+    }
+
+    .module-label {
+        display: flex;
+    }
+
+    .module-label>div {
+        margin-right: 20px;
+    }
+    .add-template-label{
+        display: flex;
+        margin-top: 20px;
+    }
+    .add-template-label .el-input{
+        width: 40%;
+        margin-right: 20px;
+    }
+</style>

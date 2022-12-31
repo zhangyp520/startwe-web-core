@@ -1,0 +1,148 @@
+
+<oui-view id="menu-design"
+          data="com.oui.models.menu.web.MenuController4Design.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script id="menu-design-tpl" type="text/html" charset="utf-8">
+
+    <div class="pg-block" oui-controller="com.oui.models.menu.web.MenuController4Design" >
+        <link type="text/css" rel="stylesheet" href="{{oui.getContextPath()}}res_engine/graph-common/css/orgchart.css" />
+        <link type="text/css" rel="stylesheet" href="{{oui.getContextPath()}}res_engine/graph-common/css/font-awesome.min.css" />
+        <link href="{{oui.getContextPath()}}res_engine/page_design/pc/css/page-common-runtime.css" />
+        <link rel="stylesheet" href="{{oui.getContextPath()}}res_common/third/element-ui/lib/theme-chalk/index.css">
+        <div class="pg-block-header">
+            <a class="button" href="#" oui-e-{{MenuController4Design.treeMap.clickName}}="event2exportGraph">导出图片</a>
+            <a class="button" href="#" oui-e-{{MenuController4Design.treeMap.clickName}}="event2exportSys">导出系统</a>
+
+            <a style="visibility: hidden" href="#" class="download"></a>
+            <!--<a href="#" oui-e-{{MenuController4Design.treeMap.clickName}}="event2saveDesign" >保存设计 </a>-->
+        </div>
+        <div class="pg-block-cont menu-design-graph" style="overflow: hidden">
+            <div class="orgchart">
+                {{include 'menu-table-tpl' ({treeMap:MenuController4Design.treeMap,nodeId:MenuController4Design.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+</script> 
+<script type="text/html" id="menu-table-tpl">
+    <table table-node-id="{{nodeId}}">
+        <tbody>
+        <tr>
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="node" draggable="true"  node-id="{{nodeId}}" oui-e-{{treeMap.clickName}}="event2showMenu"  >
+                    <div class="title" title="{{treeMap.findNodeName(nodeId)}}({{treeMap.findNodeEnName(nodeId)}})" >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        {{treeMap.findNodeName(nodeId)}}
+                        ({{treeMap.findNodeEnName(nodeId)}})
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.hasChildren(nodeId) && treeMap.isExpand(nodeId)}}
+        <tr class="lines" >
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down"></div>
+            </td>
+        </tr>
+        <tr class="lines">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" class="">
+                {{include 'menu-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-tpl">
+    <div class="second-menu">
+        {{if treeMap.findSourceNode(nodeId).nodeType==MenuController4Design.nodeTypeEnum.root.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加子菜单
+        </div>
+        <!--<div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">-->
+            <!--编辑-->
+        <!--</div>-->
+        {{/if}}
+
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==MenuController4Design.nodeTypeEnum.menu.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加子菜单
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editEnName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑英文名
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            设计页面
+        </div>
+
+        <!--<div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">-->
+            <!--编辑基本信息-->
+        <!--</div>-->
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除当前菜单
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除所有
+        </div>
+
+        {{/if}}
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        <!--swapSort,swap,addParentByTarget,addBrotherByTarget,addChildByTarget,hideMenu4DragEnd -->
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" style="display: none" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swap" oui-e-{{treeMap.clickName}}="event2menuAction">
+            交换位置
+        </div>
+        {{if !treeMap.isChild(nodeId,targetNodeId)}}
+        {{if !treeMap.hasParents(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="addChildByTarget" oui-e-{{treeMap.clickName}}="event2menuAction">
+            变更为目标节点的子节点
+        </div>
+        {{/if}}
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<!--编辑节点名称模板-->
+<script type="text/html" id="node-edit-tpl">
+    <input type="text" node-id="{{nodeId}}" style="position: absolute;left:0;top:0;height: 40px;color:#000000" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+</script>
+
+
+
+
+
+

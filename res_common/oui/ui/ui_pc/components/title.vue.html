@@ -1,0 +1,63 @@
+
+<template >
+    <div :style="{fontSize:fontSize + 'px', color:fontColor , fontWeight: fontWeight?'bold':''}" >
+        <i :class="icon" v-if="icon"></i> {{value}}
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '标题名称',
+                style:'',
+                icon:'',
+                cls:'',  
+                fontSize:'14',
+                fontColor:'#000000',
+                fontWeight:false
+            }
+        },
+        mounted() {
+
+
+            this.value = this.control.name;
+            if(this.otherAttrs.icon){
+                this.icon = this.otherAttrs.icon;
+            }
+            if(this.otherAttrs.fontSize){  
+                this.fontSize = this.otherAttrs.fontSize;
+            }
+          
+            if(  this.otherAttrs.fontColor){  
+                this.fontColor = this.otherAttrs.fontColor;
+            }
+            if(  this.otherAttrs.fontWeight){  
+                this.fontWeight = this.otherAttrs.fontWeight;
+             }
+
+
+
+
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

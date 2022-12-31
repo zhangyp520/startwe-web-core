@@ -1,0 +1,522 @@
+<template>
+    <el-container>
+        <el-aside :style="style" width="200px" style="background-color: #fff;border-right:solid 1px #e6e6e6" >
+            <!-- 侧边栏开始区域 -->
+            <!-- <el-scrollbar class="page_scroll"> -->
+                <el-menu>
+                    <!-- 侧边栏开始 -->
+                    <div class="logImage" @click="logoToHome" style=" cursor: pointer;">
+                            <img :src="showLogo" />
+                        
+                    </div>
+                    <div v-for="(item,index) in sidebarList" :key="index">
+                        <el-menu-item-group>
+                            <!-- 功能和系统一级平铺内容 -->
+                            <template slot="title">{{item.title}}</template>
+                            <!-- 图标和文字 -->
+                            <el-row class="tac" :class="itemson.cls" v-for="(itemson,sonindex) in item.list" :key="sonindex">
+                                <el-menu-item @click="handleClick(itemson)">
+                                    <span>
+                                        <img :src=itemson.icon alt="">
+                                    </span>
+                                    <span slot="title">{{itemson.name}}</span>
+                                </el-menu-item>
+                            </el-row>
+                        </el-menu-item-group>
+
+                        <!-- </el-submenu> -->
+                    </div>
+
+                    <!-- 侧边栏结束 -->
+
+                </el-menu>
+            <!-- </el-scrollbar> -->
+        </el-aside>
+
+        <el-container>
+
+            <el-header style="text-align: right; font-size: 12px">
+                <!-- 头部区域开始 -->
+                <div class="navbar">
+                    <div>
+                        <img src="/res_apps/car/image/erweima.png" alt="" @mouseenter="enter" @mouseleave="leave">
+                        <div class="onMouseOver" v-if="seen">
+                            <img src="/res_apps/car/image/1.png" alt="">
+                            <div style="width: 150px;height: 150px; background: #999; position: relative;top: -190px;
+right: -13px;">
+                                <img :src="qrCodeImageUrl" style="width: 150px;height: 150px;">
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- <img src="/res_apps/car/image/erweima.png" alt=""> -->
+                    <button @click="exitClick">退出</button>
+                    <!-- <img src="/res_apps/car/image/Help documentation_1.png" alt="">
+                    <img src="/res_apps/car/image/khgl.png" alt="">
+                    <img src="/res_apps/car/image/news_1.png" alt=""> -->
+                </div>
+
+                <!-- 右侧头部区域结束 -->
+                <!-- 头部区域结束 -->
+            </el-header>
+
+            <el-main class="conter_box">
+                <!-- 主体内容区域开始 -->
+
+
+                <iframe style="min-height: 955px" id='main_iframe' scrolling="no" src="/index4vue.html#res_apps/car/html/compnents/home.vue.html"
+                    frameborder="no"></iframe>
+
+                <!-- <iframe id='main_iframe' src="/index4vue.html#res_apps\car\project\html\home.vue.html"></iframe> -->
+
+                <!-- 主体内容区域结束 -->
+            </el-main>
+        </el-container>
+    </el-container>
+
+
+
+
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                seen: false,
+                qrCodePath: "",
+                logoPath: "",
+                showLogo: "",
+                qrCodeImageUrl: "",
+                style: '',
+                iframeStyle: '',
+                iframeHeight: 100,
+                // 侧边栏数据开始----
+                url: "",
+                includeUrl: '',
+                iframeUrl: '/index4vue.html#res_apps/car/html/compnents/home.vue.html',
+                sidebarList: [
+                    {
+                        title: '产品功能',
+                        list: [
+
+                        ]
+                    },
+                    {
+                        title: '系统设置',
+                        list: [
+                        ]
+                    }
+                ]
+
+            }
+        },
+        created() {
+        },
+        watch: {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return ;
+            }
+            this.isLoading = true;
+            this.loadIframe();
+            this.loadSideBar();
+            this.queryCompanyInfo();
+        },
+        methods: {
+            queryCompanyInfo: function () {
+                let me = this;
+                oui.ajaxPost('company/companyInfo/queryCompanyInfo', {},
+                    function (res) {
+                        me.qrCodePath = res.resultObj.qrCodePath;
+                        if (res.resultObj.logoPath == null || res.resultObj.logoPath == "") {
+                            me.showLogo = "/res_apps/car/image/log.png"
+                        } else {
+                            var logoUrl = oui.baseUrl + 'company/companyInfo/readImage/' + res.resultObj.logoPath;
+                            me.showLogo = logoUrl;
+                        }
+                    }, function (res) {
+                        me.$message.error(res.message)
+                    });
+            },
+            enter: function () {
+                var qrCodeUrl = oui.baseUrl + 'company/companyInfo/readImage/' + this.qrCodePath;
+                this.qrCodeImageUrl = qrCodeUrl;
+                this.seen = true;
+            },
+            leave: function () {
+                this.seen = false;
+            },
+            loadSideBar: function () {
+                let loginUser = window.localStorage.getItem("loginUser");
+                let loginUserInfo = oui.parseJson(loginUser);
+                let me = this;
+                oui.eachArray(loginUserInfo.functionCode.sort(), function (item) {
+                    if (item == 1) {
+                        me.sidebarList[1].list.push({
+                            name: '基础信息',
+                            cls: '',
+                            icon: '/res_apps/car/image/Basic information_1.png',
+                            url: '/res_apps/car/html/BasicInformation/BasicInformation.vue.html'
+                        })
+                    } else if (item == 2) {
+                        me.sidebarList[1].list.push({
+                            name: '部门管理',
+                            cls: '',
+                            icon: '/res_apps/car/image/bmgl.png',
+                            url: '/res_apps/car/html/departmentmanagement/department.vue.html'
+                        })
+                    } else if (item == 3) {
+                        me.sidebarList[1].list.push({
+                            name: '员工管理',
+                            cls: '',
+                            icon: '/res_apps/car/image/staff Administration_1.png',
+                            url: '/res_apps/car/html/staffmanagement/staff.vue.html'
+                        })
+                    } else if (item == 4) {
+                        me.sidebarList[1].list.push({
+                            name: '权限设置',
+                            cls: '',
+                            icon: '/res_apps/car/image/Permission setting_1.png',
+                            url: '/res_apps/car/html/jurisdiction/jurisdiction.vue.html'
+                        })
+                    } else if (item == 5) {
+                        me.sidebarList[1].list.push({
+                            name: '项目设置',
+                            cls: '',
+                            icon: '/res_apps/car/image/Business settings_1.png',
+                            url: 'res_apps/car/html/PermissionSsetting/projectsettings.vue.html'
+                        })
+                    } else if (item == 6) {
+                        me.sidebarList[1].list.push({
+                            name: '套餐设置',
+                            cls: '',
+                            icon: '/res_apps/car/image/tcsz.png',
+                            url: 'res_apps/car/html/PackageSettings/packagesettings.vue.html'
+                        })
+                    } else if (item == 7) {
+                        me.sidebarList[1].list.push({
+                            name: '物料管理',
+                            cls: '',
+                            icon: '/res_apps/car/image/wlgl.png',
+                            url: '/res_apps/car/html/MaterialManagement/materiel.vue.html'
+                        })
+                    } else if (item == 8) {
+                        me.sidebarList[1].list.push({
+                            name: '车辆管理',
+                            cls: '',
+                            icon: '/res_apps/car/image/car.png',
+                            url: '/res_apps/car/html/VehicleManagement/vehiclemanagement.vue.html'
+                        })
+                    } else if (item == 9) {
+                        me.sidebarList[0].list.push({
+                            name: '仓库中心',
+                            cls: '',
+                            icon: '/res_apps/car/image/Warehouse Center_1.png',
+                            url: '/res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html'
+                        },
+                            {
+                                name: '待出库物料',
+                                cls: '',
+                                // icon: '/res_apps/car/image/Warehouse Center_1.png',
+                                url: '/res_apps/car/html/warehousecenter/outboundmaterials.vue.html'
+                            },
+                            {
+                                name: '物料入库',
+                                cls: '',
+                                // icon: '/res_apps/car/image/Warehouse Center_1.png',
+                                url: '/res_apps/car/html/warehousecenter/materialwarehousing.vue.html'
+                            },
+                            {
+                                name: '物料出库',
+                                cls: '',
+                                // icon: '/res_apps/car/image/Warehouse Center_1.png',
+                                url: '/res_apps/car/html/warehousecenter/materialdelivery.vue.html'
+                            },
+                            {
+                                name: '综合查询',
+                                cls: '',
+                                // icon: '/res_apps/car/image/Warehouse Center_1.png',
+                                url: '/res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html'
+                            })
+                    } else if (item == 10) {
+                        me.sidebarList[0].list.push({
+                            name: '客户中心',
+                            cls: '',
+                            icon: '/res_apps/car/image/Customer Center_1.png',
+                            url: '/res_apps/car/html/customer/customer.vue.html'
+
+                        })
+                    } else if (item == 11) {
+                        me.sidebarList[0].list.push({
+                            name: '项目工单',
+                            cls: '',
+                            icon: '/res_apps/car/image/project management_1.png',
+                            url: '/res_apps/car/html/product/product.vue.html'
+                        })
+                    } else {
+
+                    }
+                });
+            },
+            loadIframe: function () {
+                var me = this;
+                setInterval(function () {
+                    try {
+                        let iframe = document.getElementById('main_iframe');
+                        if (iframe && iframe.contentDocument.body.clientHeight && parseInt(iframe.contentDocument.body.clientHeight) > 955) {
+                            iframe.style.height = iframe.contentDocument.body.clientHeight + 'px'
+                        } else if (iframe && parseInt(iframe.contentDocument.body.clientHeight) < 955 && parseInt(iframe.style.height) > 955) {
+                            iframe.style.height = '955px'
+                        }
+                        if (iframe.contentWindow.oui.router.path.indexOf("res_apps/car/html/compnents/home.vue.html") >= 0) {
+                            if (me.currentActiveItem) {
+                                me.currentActiveItem.cls = '';
+
+                            }
+                        }
+
+                    } catch (err) {
+
+                    }
+                }, 200)
+            },
+
+            // 点击按钮跳转地砖
+            handleClick: function (item) {
+                this.url = oui.getContextPath() + "index4vue.html#" + item.url
+                if (this.currentActiveItem) {
+                    this.currentActiveItem.cls = '';
+                }
+                item.cls = 'active-menu';
+                this.currentActiveItem = item;
+                this.includeUrl = item.url;
+
+                $('#main_iframe')[0].src = this.url;
+
+            },
+            exitClick: function () {
+                window.localStorage.removeItem("token");
+                window.localStorage.removeItem("loginUser");
+                window.localStorage.removeItem("cookie_userName");
+                window.localStorage.removeItem("cookie_userPwd");
+                oui.router.push('/res_apps/car/html/compnents/login.vue.html', {})
+            },
+            logoToHome: function () {
+
+                $('#main_iframe')[0].src = oui.getContextPath() + "index4vue.html#" + 'res_apps/car/html/compnents/home.vue.html';
+
+            }
+
+        }
+
+    }
+
+</script>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    html {
+        padding: 0;
+        margin: 0;
+        font-size: 0;
+        height: 100%;
+        background-color: rgb(98, 170, 91);
+    }
+
+    /* 布局容器自带样式 */
+
+    .active-menu {
+        color: #1890FF;
+        background-color: #ecf5ff;
+        border-right: 2px solid #1890FF;
+        font-weight: bold;
+    }
+
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    /* 自己设置样式开始 */
+
+    .el-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 侧边栏log图片 */
+    .logImage {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .logImage>img{
+        width: 180px;
+    }
+
+    /* 侧边栏阴影调整 */
+
+    .el-menu {
+        box-shadow: 2 0 6 0 #eee;
+        border: none;
+    }
+
+    /* 隐藏侧边栏的滚动轴 */
+
+    /* .el-aside{
+    overflow: hidden;
+} */
+
+    /* 美化侧边栏的滚动轴开始 */
+
+    .page_scroll {
+        height: 100%;
+    }
+
+    .page_scroll .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    /* 侧边栏高度及背景色 */
+
+    .el-scrollbar__wrap {
+        overflow: scroll;
+        height: 100%;
+        background-color: #fff !important;
+    }
+
+    /* 美化侧边栏的滚动轴结束 */
+
+    /* 隐藏侧边栏的滚动轴 */
+
+    /* 调整侧边栏功能区下边的文字居中显示 */
+
+    .el-menu-item {
+        text-align: center;
+    }
+
+    /* 功能行的文字颜色 */
+
+    .el-menu-item-group__title {
+        padding: 7px 0;
+        margin: 8px 0;
+        line-height: normal;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1890FF;
+    }
+
+    /* 调整图标和文字的距离 */
+
+    .el-menu-item>img {
+        width: 14px;
+        height: 14px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 右侧 头部区域个人信息区域 */
+
+    /* 头部区域el-header标签 */
+
+    .el-header {
+        height: 48px !important;
+        background-color: #fff;
+        box-shadow: 0 2 6 0 rgb(0, 0, 0, 0.5);
+    }
+
+    /* 头部三个头像的盒子 */
+
+    .navbar {
+        height: 48px;
+        /* float: right; */
+        display: flex;
+        justify-content: flex-end;
+        background-color: #fff;
+        /* position: relative; */
+    }
+
+    .navbar>button {
+        /* position: absolute;
+        top: 11px;
+        left: -50px; */
+        width: 40px;
+        height: 30px;
+        background-color: #1890FF;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        margin: auto 24px;
+    }
+
+    /* .navbar img {
+        width: 20px;
+        height: 20px;
+        margin: 14px 24px 14px 0;
+        line-height: 60px;
+    } */
+
+    .onMouseOver {
+        position: relative;
+        right: -77px;
+        top: -27px;
+    }
+
+
+
+
+
+
+
+    /* 内容主体区域 */
+
+    .el-container {
+        background-color: #eee;
+        height: 100% !important;
+    }
+
+    /* 主体内容区域 */
+
+    .conter_box {
+        /* padding: 15px; */
+        background-color: #eee;
+        /* height: 100% !important; */
+    }
+
+    /* iframe标签控制的视图窗口大小 */
+
+    /* 这个标签决定了组件页面显示的大小 */
+
+    #main_iframe {
+        width: 100%;
+        /* height: 100%; */
+        /* height: 1000px !important; */
+        /* height: auto; */
+        border: 0px;
+
+    }
+
+    /* 主体内容溢出了不显示，让内部滚动条来控制 */
+
+    .el-main {
+        overflow: hidden;
+        padding: 0;
+    }
+</style>

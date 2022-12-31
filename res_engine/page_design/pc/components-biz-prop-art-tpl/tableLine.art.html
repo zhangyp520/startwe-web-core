@@ -1,0 +1,159 @@
+<!-- 表格布局-->
+<template >
+
+    <div>
+        <oui-include url="res_engine/page_design/pc/components-biz-prop-tpl/common/config.vue.html"
+                     type="module"></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+//        useVDom:true,//art 使用虚拟Dom,默认值为true
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                currentControl:{
+                    otherAttrs:{
+                        bizDes:''
+                    }
+                },
+                fieldErrorId:'',
+                AbsoluteDesign:{findCheckMessage:function(){}},
+                id:'' //控件id
+            }
+        },
+
+        mounted:function(){
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.currentControl =designer.data.currentControl;
+            var keys ='bizDes'.split(','); //配置当前的key列表
+            if(!this.currentControl.otherAttrs){
+                this.currentControl.otherAttrs ={};
+            }
+            for(var i= 0,len=keys.length;i<len;i++){
+                var key = keys[i];
+                if(typeof this.currentControl.otherAttrs[key] =='undefined'){
+                    this.currentControl.otherAttrs[key]='';
+                }
+            }
+            this.fieldErrorId = 'check_controls_'+this.id+'_otherAttrs_bizDes';
+            this.refresh(); //手动刷新
+
+            console.log('当前的配置Id:'+this.id);
+            console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+
+            /** 显示 脚本dialog **/
+            event2showCodeDialog:function event2showCodeDialog(cfg){
+                var _self = this;
+                var isCheck = this.AbsoluteDesign.checkControl(this.currentControl,true);
+                if(!isCheck){
+                    return ;
+                }
+
+                var title = $(cfg.el).attr('title'); //扫码结果处理脚本
+                var errorMsgMax = $(cfg.el).attr('error-msg-max'); //'输入扫码脚本长度不能超过error-msg-max个字符'
+                var codeMaxLength = $(cfg.el).attr('code-max-length');//脚本最大长度，默认code-max-length
+                var compileErrorMsg = $(cfg.el).attr('error-msg-compile');//脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                if(codeMaxLength){
+                    codeMaxLength = parseInt(codeMaxLength);
+                }
+                codeMaxLength = codeMaxLength || 2000;
+
+                var prop = $(cfg.el).attr('invoke-prop');
+                var eventType = $(cfg.el).attr('eventType');
+
+                prop = prop.replace('currentControl.','');
+
+                var scriptJson = oui.JsonPathUtil.getJsonByPath(prop,this.currentControl);
+                if(!scriptJson){
+                    scriptJson ={};
+                }
+                var defaultParams = {"params":[],
+                    "startCode":"",
+                    "bodyCode":"var pageData = this.getPageData();\nvar mainData = pageData.mainData;\nalert(oui.parseString(mainData));\n//提交数据 oui.postData(oui.getContextPath()+'res_engine/page_design/pc/page-design.html',mainData,function(res){},function(err){});//提交数据 例子\n",
+                    "endCode":"",
+                    "returnType":"string"
+                };
+
+                scriptJson.eventType=eventType;
+                var json = $.extend({},defaultParams,scriptJson,true);
+                var currentControl = this.currentControl;
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    console.log(jsonResult);
+                    console.log(oui.parseString(jsonResult));
+                    scriptJson.eventType = eventType;
+                    oui.JsonPathUtil.setObjByPath(prop,currentControl,jsonResult,true);
+                },{
+                    title:title,
+                    contentStyle:''//dialog样式相关
+                });
+            },
+            onUpdate:function(cfg){
+                var designer = this.getDesigner();
+                var key = $(cfg.el).attr('bindProp');
+                var v = oui.JsonPathUtil.getJsonByPath(key,this);
+                designer.bizPropsUpdate&&designer.bizPropsUpdate(key,v); //属性值变更无需强制刷新，用户体验更好
+
+            },
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+
+    /*富文本按钮样式*/
+    .design-des-btn {
+        background-size: 16px auto;
+        min-width: 24px;
+        height: 24px;
+        line-height: 24px;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 0;
+        outline: none;
+        border-radius: 3px;
+        border: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .design-des-btn:hover {
+        background-color: #63a4ed;
+    }
+    .design-des-btn.design-btn-text{
+        background: #2C82FC;
+        min-width: 24px;
+        padding: 0 7px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+</style>
+
+
+

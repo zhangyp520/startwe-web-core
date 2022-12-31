@@ -1,0 +1,225 @@
+
+<template >
+    <div>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                页签唯一标识
+            </el-col>
+            <el-col :span="18"   >
+                <el-input v-model="config.value" disabled="true"/>
+            </el-col>
+        </el-row>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                标题
+            </el-col>
+            <el-col :span="18"   >
+                <el-input v-model="config.display" @change="_controlOnUpdate('display',config)"/>
+            </el-col>
+        </el-row>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                页签内容类型
+            </el-col>
+            <el-col :span="18"   >
+                <el-radio-group v-model="config.contentType" @change="_controlOnUpdate('contentType',config)">
+                    <el-radio label="page">页面</el-radio>
+                    <el-radio label="pageList">列表页面</el-radio>
+                    <el-radio label="pageUrl">自定义页面Url</el-radio>
+                    <el-radio label="none">不绑定内容页</el-radio>
+
+                </el-radio-group>
+            </el-col>
+
+        </el-row>
+        <el-row  class="item"  v-if="config.contentType=='page' || config.contentType=='pageList'">
+            <el-col :span="6" class="col-right" >
+                <div v-if="config.contentType=='page'">选择表单页面 </div>
+                <div v-if="config.contentType=='pageList'">选择列表页面</div>
+            </el-col>
+
+            <el-col :span="18">
+
+                <el-select
+                        v-model="config.pageId"
+                        @change="_controlOnUpdate('pageId',config)"
+                        filterable
+                        clearable
+                        remote
+                        reserve-keyword
+                        placeholder="请输入关键词"
+                        @clear="clear4loadRemoteTargetForms"
+                        :remote-method="loadRemoteTargetForms"
+                        :loading="loading4targetForms">
+                    <el-option
+                            v-for="item in targetForms"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <el-row  class="item"  v-if="config.contentType=='page' || config.contentType=='pageList' ">
+            <el-col :span="6" >
+                页面菜单url
+            </el-col>
+            <el-col :span="18">
+                <el-input type="textarea" v-model="config.pageMenuUrl" disabled="disabled"></el-input>
+            </el-col>
+        </el-row>
+        <el-row  class="item"  v-if="config.contentType=='pageUrl'">
+            <el-col :span="6" >
+                自定义页面url
+            </el-col>
+
+            <el-col :span="18">
+                <el-input type="textarea" v-model="config.url" @change="_controlOnUpdate('url',config)"></el-input>
+            </el-col>
+        </el-row>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                loading4targetForms:false,
+                targetForms:[],
+                config:{
+                    value:'',
+                    display:'',
+                    contentType:'none',//page,pageList,pageUrl,none //默认不绑定
+                    pageId:'',
+                    url:''
+                }
+            }
+        },
+        mounted:function(){
+            var me = this;
+            var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+            AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var temp  = AbsoluteDesign.dialog4container.attr('config');
+            var  config = oui.parseJson(oui.parseString(temp));
+            for(var k in config){
+                this.config[k] = config[k];
+            }
+            me.initRemoteTargetForms();//查询可选的表单列表
+        },
+        methods:{
+            confirm:function(){
+                //回填
+                //contentType
+                //url
+
+            },
+            cancel:function(){
+
+            },
+            _controlOnUpdate4targetForm:function(bindProp,config){
+
+            },
+
+            initRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                var me = this;
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                if(!AbsoluteDesign.forms){
+                    query = query ||'';
+                    var url = AbsoluteDesign.paramCfg.params.queryPageModelsUrl;//查询页面资源列表url
+                    oui.postData(url,{//ajax获取数据
+                        excludeFormIds:AbsoluteDesign.data.id,
+                        name:query
+                    },function(res){
+                        var pages =res.pages ||[];
+                        me.targetFormsJson =oui.parseString(pages);
+                        me.targetForms = pages;
+                        AbsoluteDesign.forms = oui.parseJson(me.targetFormsJson);
+                    },function(res){},'加载中...');
+                }else{
+
+                    me.targetFormsJson = oui.parseString(AbsoluteDesign.forms);
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+
+                }
+
+            },
+            clear4loadRemoteTargetForms:function(){
+                var me = this;
+                var temp = oui.parseJson(me.targetFormsJson);
+                me.targetForms = temp;
+            },
+            loadRemoteTargetForms:function(query){
+                query = query ||'';
+                var me = this;
+                //根据输入参数模糊匹配
+                if(query){
+                    var temp = oui.parseJson(me.targetFormsJson);
+                    var arr = oui.findManyFromArrayBy(temp,function(item){
+                        if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                            return true;
+                        }
+                    });
+                    me.targetForms = arr;
+                }else{
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+                }
+            },
+            _controlOnUpdate:function(bindProp,config){
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                var temp = AbsoluteDesign.dialog4container.attr('config');
+                oui.JsonPathUtil.setObjByPath(bindProp,temp,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                if(bindProp =='pageId'){
+                    if(config.pageId){
+                        //更新
+                        var currPage = oui.findOneFromArrayBy(this.targetForms,function(item){
+                            if(item.id == config.pageId){
+                                return true;
+                            }
+                        });
+                        if(currPage){
+
+                            config.pageMenuUrl =currPage.pageMenuUrl;
+                        }else{
+                            config.pageMenuUrl = '';
+                        }
+                    }else{
+                        config.pageMenuUrl = '';
+                    }
+                    temp.pageMenuUrl = config.pageMenuUrl;
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:10px ;
+        padding-bottom:10px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+    .content-bottom{
+        position: fixed;
+        bottom: -10px;
+    }
+</style>

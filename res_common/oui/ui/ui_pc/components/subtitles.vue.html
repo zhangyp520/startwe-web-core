@@ -1,0 +1,202 @@
+
+<template >
+    <div class="oui-class-subtitles curr">
+        <span :style="style" :class='type'>{{text}}</span>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                text: "请设置滚动字幕内容！",
+                type:'right',
+                item:"",
+                speed:'5s',
+                rowSpacing:'',
+                textPadding:'',
+                bold:'',
+                italic:'',
+                underline:'',
+                linethrough:"",
+                textstyle:'',
+            }
+        },
+        mounted:function(){
+            this.time()
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.textContent) {
+                this.text = this.control.otherAttrs.textContent
+            }
+            if(this.control.otherAttrs.rowSpacing) {
+                this.rowSpacing = this.control.otherAttrs.rowSpacing + 'px !important'
+            }
+            if(this.control.otherAttrs.textPadding) {
+                this.textPadding = this.control.otherAttrs.textPadding + 'px !important'
+            }
+            if(this.control.otherAttrs.rollingWay) {
+                if(this.control.otherAttrs.rollingWay == 1) {
+                    this.type = 'right'
+                    this.item = this.time() + ' wordsLoop linear infinite normal'
+                    console.log(this.item)
+                }else if(this.control.otherAttrs.rollingWay == 2) {
+                    this.type = 'left'
+                    this.item = this.time() + ' leftshow linear infinite normal'
+                }else if(this.control.otherAttrs.rollingWay == 3) {
+                    this.type = 'top'
+                    this.item = this.time() + ' topshow linear infinite normal'
+                }else{
+                    this.type = 'bottom'
+                    this.item = this.time() + ' bottomshow linear infinite normal'
+                }
+            }
+            if(this.control.otherAttrs.bold) {
+                this.bold = 'font-weight: bold !important;'
+            }else{
+                this.bold = ''
+            }
+            if(this.control.otherAttrs.italic) {
+                this.italic = 'font-style:oblique !important;'
+            }else{
+                this.italic = ''
+            }
+            if(this.control.otherAttrs.underline) {
+                this.underline = 'text-decoration:underline !important;'
+            }else{
+                this.underline = ''
+            }
+            if(this.control.otherAttrs.linethrough) {
+                this.linethrough = 'text-decoration:line-through !important;'
+            }else{
+                this.linethrough = ''
+            }
+            if(this.control.otherAttrs.textstyle == 1) {
+                this.textstyle = 'text-align:left;'
+            }else if(this.control.otherAttrs.textstyle == 2) {
+                this.textstyle = 'text-align:center;'
+            }else{
+                this.textstyle = 'text-align:right;'
+            }
+        },
+        methods:{
+            time() {
+                let time = ''
+                let showtime = this.control.otherAttrs.rollingSpeed
+                if(!showtime || showtime == 1) {
+                    time = '5s'
+                }else if(showtime == 2) {
+                    time = '2.5s'
+                }else{
+                    time = '1s'
+                }
+                this.item = time + ' wordsLoop linear infinite normal'
+                return time
+            },
+            
+        }
+    }
+</script>
+
+<style>
+    .oui-class-subtitles{
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    .oui-class-subtitles.curr{
+        height: 100%;
+    }
+    .oui-class-subtitles.curr span{
+        display: inline-block;
+        white-space: nowrap;
+        height: 100%;
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+
+        line-height: {{rowSpacing}};
+        letter-spacing:{{textPadding}};
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{textstyle}}
+        {{linethrough}}
+        /* animation: 3s wordsLoop linear infinite normal; */
+    }
+    /*从右往左*/
+    .right{
+        animation: {{item}};
+    }
+    @keyframes wordsLoop {
+        0% {
+            left: 0;
+            transform: translateX(100%);
+            -webkit-transform: translateX(100%);
+        }
+        100% {
+            right: 0;
+            transform: translateX(-100%);
+            -webkit-transform: translateX(-100%);
+        }
+    }
+ 
+
+    /*从左往右*/
+    .left{
+        animation: {{item}};
+    }
+    @keyframes leftshow {
+        0% {
+            left: 0;
+            transform: translateX(-100%);
+            -webkit-transform: translateX(-100%);
+        }
+        100% {
+            right: 0;
+            transform: translateX(100%);
+            -webkit-transform: translateX(100%);
+        }
+    }
+    
+     /*从上往下*/
+     .top{
+        animation: {{item}};
+    }
+    @keyframes topshow {
+        0% {
+            left: 0;
+            transform: translateY(-100%);
+            -webkit-transform: translateY(-100%);
+        }
+        100% {
+            right: 0;
+            transform: translateY(100%);
+            -webkit-transform: translateY(100%);
+        }
+    }
+
+     /*从下往上*/
+     .bottom{
+        animation: {{item}};
+    }
+    @keyframes bottomshow {
+        0% {
+            left: 0;
+            transform: translateY(-100%);
+            -webkit-transform: translateY(100%);
+        }
+        100% {
+            right: 0;
+            transform: translateY(100%);
+            -webkit-transform: translateY(-100%);
+        }
+    }
+
+
+</style>

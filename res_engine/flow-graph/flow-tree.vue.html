@@ -1,0 +1,785 @@
+<template>
+    <div id="drawDiv" style="height: 100%; display: flex; justify-content: flex-end">
+        <div class="left-content" style="width: 100%"  >
+            <div class="left-content-parent" ref="leftContent">
+                <el-input
+                        placeholder="输入关键字进行过滤"
+                        v-model="filterText">
+                </el-input>
+                <el-tree
+                        style="background: #eee; margin-top: 14px; overflow-y: auto"
+                        class="filter-tree"
+                        :data="modelData"
+                        default-expand-all
+                        :expand-on-click-node="false"
+                        :filter-node-method="filterNode"
+                        node-key="id"
+                        :props="defaultProps"
+                        ref="tree">
+                         <span :class="setCustomClass(node, data)" slot-scope="{ node, data }" :id="data.id">
+                             <span @click="() => loadFlow(node,data)" >{{ data.name||"流程名称不能为空" }}</span>
+                            <span v-if="data.nodeType=='module'" >
+                                <i @click="() => addNode(node,data)" class="el-icon-plus"></i><!--增加节点-->
+                            </span>
+                             <span v-if="data.nodeType=='flow' " :class="setCustomClass(node, data)" >
+                                <i @click="() => removeFlow(node,data)" class="el-icon-delete"></i><!--增加节点-->
+                            </span>
+                        </span>
+                </el-tree>
+                <div v-show="isDragging" class="show-div" ref="controlNode">{{showName}}</div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                graphData:{},
+                optionChoose: false,
+                jsPlumbReady: false,
+                filterText: '',
+                paramCfg: null,
+                lineAttr: {},
+                overlay: null,
+                newElements: null,
+                newNodeEvent: null,
+                isDragging: false,
+                instance: {},
+                isMoving: false,
+                zoom: 1,
+                currentPosition: {x: 0, y: 0},
+                lastPosition: {x: 0, y: 0},
+                lastMove: {x: 0, y: 0},
+                showName: '',
+                tableForm: null,
+                currentItem: 0,
+                currentConn: null,
+                editVisible: false,
+                dialogVisible: false,
+                // 左侧菜单
+                modelData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
+                // 假数据
+                data: {}
+            }
+        },
+
+        mounted: function () {
+            let param = oui.getParam();
+            let paramCfg = {};
+            var me = this;
+            if (param.ouiInWindowDialog && ((param.ouiInWindowDialog + '') == 'true')) {//openWindow
+                var windowId = param.windowId;
+                if ((!window.opener) || (!window.opener._openMap) || (!window.opener._openMap[windowId])) {
+                    //父窗体不存在，则关闭当前窗体
+                    oui.getTop().oui.alert('调用页面设计器入口页面已经刷新或者关闭，请尝试关闭当前页面后，重新打开');
+                    //window.close();
+                    return;
+                }
+                if (window.opener._openMap[windowId].params) {
+                    paramCfg = oui.parseJson(window.opener._openMap[windowId].params);
+                }
+                paramCfg.viewType = 'openWindow';
+            } else if (param.ouiInDialog && ((param.ouiInDialog + '') == 'true')) {//urlDialog
+                var dialog = oui.getCurrUrlDialog();
+                paramCfg = oui.parseJson(dialog.attr('params'));
+                paramCfg.viewType = 'urlDialog';
+            }
+            this.paramCfg = paramCfg;
+            if (this.paramCfg.modules) {
+                this.modelData = this.paramCfg.modules;
+            }
+            if (param.moduleId) {
+                    this.ajax4loadRelations(param.moduleId, function () {
+                        jsPlumb.ready(() => {
+                            me.jsPlumbReady = true;
+                    });
+                });
+            }
+            document.onmousewheel = (e) => {
+                if (e.target.id === 'points-parent' || e.target.id === 'points') {
+                    this.setZoom(e);
+                }
+            }
+            window.addEventListener("message", function (event) {
+                let data = event.data
+                if (data.cmd && data.cmd === 'cmd4update_oui_process_config_json' ) {
+                    let json = oui.parseJson(data.json);
+                    let name = oui.JsonPathUtil.getJsonByPath('otherAttrs.processHeader.processBasicInfo.processName',json);
+                    let id = oui.JsonPathUtil.getJsonByPath('otherAttrs.processHeader.processBasicInfo.processId',json);
+                    for (let i = 0; i < me.modelData.length; i++) {
+                        for (let j = 0; j < me.modelData[i].children.length; j++) {
+                            if (me.modelData[i].children[j].id === id) {
+                                me.$set(me.modelData[i].children[j], 'name', name)
+                                break;
+                            }
+                        }
+                    }
+                }
+            })
+        },
+
+        methods: {
+            setCustomClass:function(node, data) {
+                if (data.id === this.paramCfg.currModuleId) {
+                    return   node.childNodes.length === 0 ? 'left-sub-title special' : 'special'
+                }
+                if(data.id == this.paramCfg.flowId){
+                    return node.childNodes.length === 0 ? 'left-sub-title special':'special'
+                }
+                return node.childNodes.length === 0 ? 'left-sub-title' : null
+            },
+            ajax4loadRelations: function(moduleId, success, error) {
+                let vm = this;
+
+            },
+            updateWindowParams:function(){
+                let param = oui.getParam();
+                var paramCfg = this.paramCfg;
+                paramCfg.modules = this.modelData;
+                if (param.ouiInWindowDialog && ((param.ouiInWindowDialog + '') == 'true')) {//openWindow
+                    var windowId = param.windowId;
+                    if ((!window.opener) || (!window.opener._openMap) || (!window.opener._openMap[windowId])) {
+                        //父窗体不存在，则关闭当前窗体
+                        oui.getTop().oui.alert('调用页面设计器入口页面已经刷新或者关闭，请尝试关闭当前页面后，重新打开');
+                        //window.close();
+                        return;
+                    }
+                    if (window.opener._openMap[windowId].params) {
+                        window.opener._openMap[windowId].params = oui.parseString(paramCfg);
+                    }
+                } else if (param.ouiInDialog && ((param.ouiInDialog + '') == 'true')) {//urlDialog
+                    var dialog = oui.getCurrUrlDialog();
+                    dialog.attr('params',oui.parseString(paramCfg));
+                }
+            },
+            //添加节点
+            addNode:function(node,data){
+                var me= this;
+                var children = data.children ||[];
+                var len = children.length;
+                var newName = data.name+'-流程-'+len;
+                if(data.nodeType =='module'){
+                    var url = data.createFlowUrl;
+                    oui.postData(url,{
+                        flow:{
+                            moduleId:data.id,
+                            projectId:oui.getParamByUrl(url,'projectId'),
+                            name:newName
+                        }
+                    },function(res){
+                        var flow = res.flow;
+                        flow.parentId = data.id;
+                        flow.nodeType='flow';
+                        data.children.push(flow);
+
+                        me.paramCfg.currModuleId = flow.moduleId;
+                        me.paramCfg.flowId = flow.id
+                        me.paramCfg.loadFlowUrl =flow.extraAttrs.loadUrl;
+                        var url = location.href;
+                        url = oui.setParam(url,'moduleId',flow.moduleId);
+                        url = oui.setParam(url,'flowId',flow.id);
+                        me.updateWindowParams();
+                        oui.go4replace(url);
+                    });
+                }
+
+
+            },
+            removeFlow:function(node,data){
+                var me = this;
+                oui.confirmDialog('删除流程模板',function(){
+                    var url = data.extraAttrs.removeUrl;
+                    oui.postData(url,{},function(res){
+                        var id = data.id;
+                        var moduleId =data.moduleId;
+                        oui.findOneFromArrayBy(me.modelData,function(item){
+                            if(item.id == moduleId){
+                                var idx = item.children.indexOf(data);
+                                item.children.splice(idx,1);
+                                if(me.paramCfg.flowId == data.id){
+                                    if(item.children.length){
+                                        me.paramCfg.currModuleId = item.moduleId;
+                                        me.paramCfg.flowId = item.children[0].id
+                                        me.paramCfg.loadFlowUrl =item.children[0].extraAttrs.loadUrl;
+                                        var url = location.href;
+                                        url = oui.setParam(url,'moduleId',item.moduleId);
+                                        url = oui.setParam(url,'flowId',item.children[0].id);
+                                        me.updateWindowParams();
+                                        oui.go4replace(url);
+                                    }else{
+                                        me.paramCfg.currModuleId = item.moduleId;
+                                        me.paramCfg.flowId = '';
+                                        me.paramCfg.loadFlowUrl = '';
+                                        var url = location.href;
+                                        url = oui.setParam(url,'moduleId',item.moduleId);
+                                        url = oui.setParam(url,'flowId','');
+                                        me.updateWindowParams();
+                                        com.startwe.models.flow.web.FlowDesignController.data.id = '';
+                                        oui.getById('view-flow').render();
+                                    }
+                                }else{
+                                    me.updateWindowParams();
+                                }
+                                return true;
+                            };
+                        });
+                    },null,'删除中');
+                });
+
+            },
+            loadFlow:function(node,data){
+                var me = this;
+                me.paramCfg.currModuleId = data.moduleId;
+                me.paramCfg.flowId = data.id
+                me.paramCfg.loadFlowUrl =data.extraAttrs.loadUrl;
+
+                var url = location.href;
+                url = oui.setParam(url,'moduleId',data.moduleId);
+                url = oui.setParam(url,'flowId',data.id);
+                me.updateWindowParams();
+                oui.go4replace(url);
+
+            },
+            saveChange:function(){
+              //保存流程图
+            },
+            cancelChange:function(){
+              //取消保存
+            },
+            filterNode:function(value, data) {
+                if (!value) return true;
+                return data.name.indexOf(value) !== -1;
+            }
+        }
+    }
+</script>
+<style>
+
+
+    /** FB **/
+    #like {
+        position: fixed;
+        width: 77px;
+        height: 70px;
+        border: 0;
+        right: 11px;
+        bottom: -40px;
+    }
+
+    .el-tree-node__content {
+        height: 36px;
+    }
+
+    #retweet_button {
+        position: fixed;
+        bottom: 30px;
+        right: -7px;
+    }
+
+    body {
+        padding: 0;
+        margin: 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: whitesmoke;
+    }
+
+    #headerWrapper {
+        width: 100%;
+        background-color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100001;
+        height: 44px;
+        padding: 0;
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+        box-shadow: 0px 1px #eee;
+    }
+
+    #header {
+        margin-top: 0;
+
+        height: 44px;
+        font-size: 13px;
+        margin-left: auto;
+        margin-right: auto;
+
+        line-height: 44px;
+        max-width: 1000px;
+        width: 80%;
+    }
+
+    @media screen and (max-width: 1000px) {
+        #header {
+            width: 100%;
+        }
+    }
+
+    @media screen and (max-width: 800px) {
+        #header select {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 700px) {
+        .library-links {
+            right: 330px;
+        }
+    }
+
+    @media screen and (max-width: 640px) {
+        .logo {
+            display: none;
+        }
+
+        #header {
+            text-align: center;
+            overflow: hidden;
+        }
+    }
+
+    .explanation i {
+        float: right;
+        margin-right: 25px;
+        margin-top: 13px;
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .explanation i:hover {
+        color: orange;
+    }
+
+    .words {
+        text-align: left;
+        padding: 50px;
+        background-color: white;
+    }
+
+    .code {
+        border: 1px solid #456;
+    }
+
+    .logo {
+        font-size: 30px;
+        color: #1f1f1f;
+        text-shadow: 1px 1px #ccc;
+        float: left;
+        width: 154px;
+        height: 44px;
+        background-position: 0px 5px;
+    }
+
+    #main {
+        margin-top: 106px;
+        font-size: 80%;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        height: 600px;
+        text-align: center;
+        position: relative;
+        max-width: 1200px;
+        max-height: 1000px;
+    }
+
+    .demo {
+        width: 100%;
+        overflow: auto;
+        height: 100%;
+        position: absolute;
+        background: #fff;
+    }
+
+    .explanation {
+        text-align: center;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        width: 100%;
+        z-index: 10000;
+        overflow: hidden;
+        font-size: 13px;
+    }
+
+
+    .commands {
+        margin-bottom: 10px;
+    }
+
+    .commands:hover {
+        z-index: 10000;
+    }
+
+    /* demo elements */
+
+    a, a:visited {
+        text-decoration: none;
+        color: black;
+        border-radius: 0.2em;
+        -webkit-transition: color 0.15s ease-in;
+        -moz-transition: color 0.15s ease-in;
+        -o-transition: color 0.15s ease-in;
+        transition: color 0.15s ease-in;
+    }
+
+    a:hover {
+        color: #7AB02C;
+    }
+
+    a:active {
+        color: #FF2300;
+    }
+
+    .menu, #render, #explanation {
+        background-color: #fff;
+    }
+
+    .menu {
+        float: right;
+        font-size: 12px;
+    }
+
+    .menu a {
+        margin-right: 19px;
+    }
+
+    .otherLibraries {
+        display: inline;
+    }
+
+    #render a {
+        margin-right: 10px;
+    }
+
+    .selected {
+        color: orange !important;
+    }
+
+    .cmd {
+        color: white;
+        margin-right: 25px;
+    }
+
+    .cmd:hover {
+        color: #FF2300;
+        text-decoration: underline;
+    }
+
+    .cmd:active {
+        color: #FF2300;
+    }
+
+    .label {
+        font-size: 13px;
+        padding: 8px;
+        padding: 8px;
+    }
+
+    .component {
+        border: 1px solid #346789;
+        border-radius: 0.5em;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        background-color: white;
+        color: black;
+        padding: 0.5em;
+        font-size: 0.8em;
+    }
+
+    .component:hover {
+        border: 1px solid #123456;
+        box-shadow: 2px 2px 19px #444;
+        -o-box-shadow: 2px 2px 19px #444;
+        -webkit-box-shadow: 2px 2px 19px #444;
+        -moz-box-shadow: 2px 2px 19px #fff;
+        opacity: 0.9;
+        filter: alpha(opacity=90);
+    }
+
+
+    .demo-links, .library-links {
+        position: fixed;
+        right: 0;
+        top: 44px;
+        font-size: 11px;
+        background-color: white;
+        opacity: 0.8;
+        padding-right: 10px;
+        padding-left: 5px;
+        text-transform: uppercase;
+        z-index: 100001;
+    }
+
+    .demo-links div, .library-links a {
+        display: inline;
+        margin-right: 7px;
+        margin-left: 7px;
+    }
+
+    .demo-links i, .library-links i {
+        padding: 4px;
+    }
+
+    .library-links {
+        right: 515px;
+        height: 19px;
+        line-height: 19px;
+    }
+
+    .current-library {
+        color: #7AB02C !important;
+    }
+
+    .aLabel {
+        background-color: white;
+        padding: 0.4em;
+        font: 12px sans-serif;
+        color: #444;
+        z-index: 21;
+        border: 1px dotted gray;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        cursor: pointer;
+    }
+    /* ---------------------- bootstrap dropdowns ------------------------- */
+    .clearfix {
+        *zoom: 1;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+        display: table;
+        line-height: 0;
+        content: "";
+    }
+
+    .clearfix:after {
+        clear: both;
+    }
+
+    .hide-text {
+        font: 0/0 a;
+        color: transparent;
+        text-shadow: none;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .input-block-level {
+        display: block;
+        width: 100%;
+        min-height: 30px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+    /* load test */
+
+
+    #iframe {
+        width: 98%;
+        height: 1000px;
+        position: absolute;
+        top: 8px;
+        left: 1%;
+        border: 0;
+    }
+
+    #render {
+        height: 20px;
+    }
+
+    #links {
+        width: 143px;
+        font-size: 14px;
+        padding-left: 0px;
+        position: fixed;
+        left: 9px;
+        top: 52px;
+        z-index: 20;
+        background-color: white;
+    }
+
+    ul {
+        padding: 0;
+    }
+
+    li {
+        list-style-type: none;
+    }
+
+    .current-tests {
+        color: orange !important;
+    }
+
+    #qunit-tests li.pass, #qunit-tests li.fail {
+        background-color: transparent;
+    }
+
+    .loadtest #main, #main.test {
+        max-width: none;
+        margin-top: 52px;
+        background-color: white;
+
+        margin-left: 162px;
+    }
+
+
+    .loadtest .jspLoad {
+        z-index: 4;
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        cursor: pointer;
+    }
+
+    .loadtest #header {
+        height: 11em;
+        border: 2px solid #824563;
+    }
+
+    .special {
+        color: #409EFF;
+    }
+
+    .loadtest #setup {
+        float: left;
+    }
+
+    .loadtest #demo {
+        margin-top: 10em;
+        position: relative;
+    }
+
+    .loadtest #setup, .loadtest #output {
+        font-size: 12px;
+    }
+
+    .workflow_image {
+        /* for IE10+ touch devices */
+        touch-action: none;
+    }
+
+    /** ELEMENTS **/
+    .points .point {
+        width: 12em;
+        line-height: 2em;
+    }
+
+    .el-dialog__body {
+        padding: 0px 20px !important;
+    }
+
+    .point-parent {
+        position: relative;
+        width: 86%;
+        overflow: hidden;
+        background: #e0e0e0;
+    }
+
+    .bottom-menu {
+        justify-content: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-top: 1px solid #eee;
+        box-shadow: 2px 2px 19px #aaa;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding: 6px 12px;
+        z-index: 500;
+    }
+
+    .show-div {
+        height: 40px;
+        min-width: 180px;
+        position: absolute;
+        z-index: 1000;
+    }
+
+    .left-content-parent {
+        position: relative;
+        padding: 5px 6px;
+    }
+
+    .left-sub-title {
+        font-weight: normal;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        /*z-index: 1000;*/
+        cursor: pointer;
+    }
+
+    .ivu-icon:before,
+    .ivu-icon:after {
+        font-family: Ionicons !important;
+    }
+
+    .point {
+        background-color: white;
+        border: 1px solid #409EFF;
+        text-align: center;
+        box-shadow: 2px 2px 19px #aaa;
+        -o-box-shadow: 2px 2px 19px #aaa;
+        -webkit-box-shadow: 2px 2px 19px #aaa;
+        -moz-box-shadow: 2px 2px 19px #aaa;
+        position: absolute;
+        color: white;
+        width: 80px;
+        z-index: 900;
+        -webkit-transition: -webkit-box-shadow 0.15s ease-in;
+        -moz-transition: -moz-box-shadow 0.15s ease-in;
+        -o-transition: -o-box-shadow 0.15s ease-in;
+        transition: box-shadow 0.15s ease-in;
+    }
+
+    .left-content {
+        width: 14%;
+        border-right: #eee 1px solid;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-width: 180px;
+    }
+
+    .param-name {
+        text-align: left;
+    }
+
+    .no-draggable {
+        color: #a0a0a0;
+        cursor: not-allowed;
+    }
+
+    .point:hover {
+        border: 1px solid #409EFF;
+        box-shadow: 2px 2px 19px #444;
+        -o-box-shadow: 2px 2px 19px #444;
+        -webkit-box-shadow: 2px 2px 19px #444;
+        -moz-box-shadow: 2px 2px 19px #fff;
+        opacity: 0.9;
+        filter: alpha(opacity=90);
+    }
+
+    path, ._jsPlumb_endpoint {
+        cursor: pointer;
+    }
+    .sLabel{
+        color: #444;
+        font-size: 14px;
+    }
+
+</style>

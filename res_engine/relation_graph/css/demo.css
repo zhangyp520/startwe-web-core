@@ -1,0 +1,110 @@
+.workflow_image {
+    /* for IE10+ touch devices */
+    touch-action:none;
+}
+
+/** ELEMENTS **/
+.points .point {
+	width:12em;
+	line-height:2em;
+}
+.el-dialog__body {
+    padding: 0px 20px !important;
+}
+.point-parent {
+    position: relative;
+    width:86%;
+    overflow: hidden;
+    background: #e0e0e0;
+}
+.bottom-menu {
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #eee;
+    box-shadow: 2px 2px 19px #aaa;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    z-index: 500;
+}
+.show-div {
+    height: 40px;
+    min-width: 180px;
+    position: absolute;
+    z-index: 1000;
+}
+.left-content-parent {
+    position: relative;
+    padding-left: 6%;
+}
+.left-sub-title {
+    font-weight: normal;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    z-index: 1000;
+    cursor: pointer;
+}
+.ivu-icon:before,
+.ivu-icon:after {
+  font-family: Ionicons !important;
+}
+
+/** HOVER EFFECTS **/
+.points .point:hover, .points .point._jsPlumb_source_hover, .points .point._jsPlumb_target_hover {
+    border:1px solid #409EFF;
+    color: white;
+}
+.jtk-endpoint-anchor {
+}
+.click-point {
+ cursor: pointer;
+}
+.delete-show {
+  cursor: pointer;
+}
+.point {
+    background-color:white;
+    border:1px solid #409EFF;
+    text-align:center;
+    box-shadow: 2px 2px 19px #aaa;
+    -o-box-shadow: 2px 2px 19px #aaa;
+    -webkit-box-shadow: 2px 2px 19px #aaa;
+    -moz-box-shadow: 2px 2px 19px #aaa;
+    position:absolute;
+    color:white;
+    width:80px;
+    z-index: 900;
+    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
+    -moz-transition: -moz-box-shadow 0.15s ease-in;
+    -o-transition: -o-box-shadow 0.15s ease-in;
+    transition: box-shadow 0.15s ease-in;
+}
+.left-content {
+    width: 14%;
+    border-right: #eee 1px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 180px;
+}
+.param-name {
+  text-align: left;
+}
+
+.point:hover {
+    border:1px solid #409EFF;
+    box-shadow: 2px 2px 19px #444;
+    -o-box-shadow: 2px 2px 19px #444;
+    -webkit-box-shadow: 2px 2px 19px #444;
+    -moz-box-shadow: 2px 2px 19px #fff;
+    opacity:0.9;
+    filter:alpha(opacity=90);
+}
+
+path, ._jsPlumb_endpoint { cursor:pointer; }

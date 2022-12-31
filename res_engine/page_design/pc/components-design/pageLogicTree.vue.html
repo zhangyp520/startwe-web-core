@@ -1,0 +1,498 @@
+<template>
+  <div class="leftTree oui-page-logic-tree">
+    <el-tree :data="treeData" :props="defaultProps" :expand-on-click-node="false" @node-click="treeHandleNodeClick"
+      node-key="id" icon-class="s-icon-arrow-right" :highlight-current="true" ref="pageTree"
+      :default-expanded-keys="defaultExpandedIds" :default-checked-keys="[defaultCheckedId]"
+ 
+      >
+ 
+      <span 
+          class="s-tree-node" 
+          :class="data.class" 
+          slot-scope="{ node, data }"
+          >
+        <span class="text-ellipsis" :title="node.label"> <i :class="data.icon"></i> {{ node.label }}</span>
+
+        <span class="s-tree-leaf">
+          <i v-if="data.isLeaf && data.level!=1" @click.stop="() => rename(node,data)" class="s-icon s-icon-14 s-icon-rename"></i>
+          <i v-if="!data.isLeaf && data.typeCode!=0 && data.level!=1 " @click.stop="() => append(node,data)" class="s-icon s-icon-14 s-icon-copy2"></i>
+          <!-- 根节点不需要删除和重命名 -->
+          <i v-if="data.isLeaf && data.level!=1 " @click="() => deletes(node,data)" class="s-icon s-icon-14 s-icon-delete3"></i>
+
+        </span>
+      </span>
+
+
+    </el-tree>
+ 
+
+    <el-dialog 
+      title="新增逻辑" 
+      :visible.sync="appendPage"
+      width="400px"
+      custom-class="s-dialog-box"
+      top="35vh"
+      >
+      <div class="module_box">
+        <div class="list_center_input"> 
+          <el-input size='small' placeholder="请输入名称" v-model="logicName" type="text" />
+        </div>
+      </div> 
+      <div slot="footer" class="s-dialog-footer">
+        <el-button  @click="appendPage = false" size="small" >取 消</el-button>
+        <el-button type="primary" size="small" @click="addLogic" >确认</el-button>
+      </div> 
+    </el-dialog>
+
+
+
+    <el-dialog
+      title="删除提示"
+      :visible.sync="delPage"
+      width="400px"
+      custom-class="s-dialog-box"
+      top="35vh"
+      >
+      <span>是否删除逻辑 {{currentData?.label}} </span> 
+      <span slot="footer" class="s-dialog-foote">
+        <el-button @click="delPage = false"  size="small">取 消</el-button>
+        <el-button type="primary" @click="delModulePage"  size="small">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
+
+  </div>
+</template>
+
+<script>
+  exports = {
+    templateType: "vue",
+    data() {
+      return {
+        userinfo: null,
+        defaultCheckedId: null,  //默认选中id
+        defaultExpandedId: [0,1], //默认展开节点
+        isShowLeaf: true,
+        appendPage: false,
+        delPage:false,
+        moduleType: null,
+        logicName:'',
+        selectModeTypeid:0,
+        currentAddPid:'', //添加页面
+        currentDelPid:'',
+        currentData:null,//当前选中数据
+        defaultExpandedIds:[],
+        //
+        treeData: [
+          
+        ],
+        defaultProps: {
+          children: "children",
+          label: "label",
+        },
+        createPageViewListUrl:'', //新增列表模板接口
+        createPageViewEditUrl:'', //新增编辑接口
+        createPageViewDetailUrl:'', //新增详情模板接口
+        circleId:'',
+        projectId:'',
+        pageId:'', 
+        paramCfg:com.oui.absolute.AbsoluteDesign.paramCfg,
+        saveDesignUrl:''
+      };
+    },
+    mounted: function () {
+      let userinfo = oui.parseJson(oui.storage.get('startwe_user_info')||{});
+      this.userinfo = userinfo;
+            
+      this.saveDesignUrl = this.paramCfg.saveDesignUrl //保存结构
+
+      this.loadtreeData();//加载树
+     
+      
+
+      // oui.require([
+      //   oui.getContextPath()+'res_engine/logic-graph/js/logic-graph.js'
+      //   ],function(){
+          
+      //       var me = com.startwe.models.project.web.LogicDesignController;
+      //       me.init({
+      //           isFlow:true
+      //       });
+      //       oui.require([    oui.getContextPath()+'res_common/third/html2canvas/dist/html2canvas.min.js'],function(){},true);
+      //   });
+
+      // console.info(com.startwe.models.project.web,'com.startwe.models.project.web')
+         
+
+    },
+    methods: {
+
+      addLogic() {
+          if(!this.logicName) {
+              return this.$message.error('请输入逻辑名称');
+          }
+          let me = this
+          let paramObj = {}
+          let obj = com.oui.absolute.AbsoluteDesign.data;
+          let url = this.paramCfg.apiMap.addLogic //新增逻辑apiurl
+          let pageId = obj.pageId;
+
+           
+           
+          var newNode = {
+                id: oui.getUUIDLong(),
+                parentId:pageId,
+                name:this.logicName,
+                nodeType:'logic',
+                logicType:this.currentData.logicType,
+                projectId:obj.projectId,
+                circleId:obj.circleId,
+                appId:obj.appId,
+                moduleId:obj.moduleId
+              }; 
+              
+          let addData = {
+              pageId:pageId,
+              logic:newNode
+          };
+ 
+          oui.postData(url, addData, (res) => {
+              me.$message.success('添加成功');
+              me.logicName = ''
+              me.appendPage = false
+              this.$refs.pageTree.setCheckedKeys([res.id]);
+              me.loadtreeData(function (){
+                me.defaultCheckedId =  res.id
+                me.defaultExpandedId =me.currentAddPid;
+                //处理 跳转和渲染
+                me.reloadLogicById(res.id);
+              });
+
+          }, function (res) {
+              me.$message.error('添加失败');
+          }, '加载中...');
+      },
+
+      //logicType
+      reLogicType(name){
+
+          let  arr = {'新增':1,'更新':2,'查询':3,'删除':4,'加载':5,'关联查询':6,'逻辑编排':7} 
+          return arr[name];
+      },
+      saveDesignData(treeMap){
+          this.saveDesignUrl = '';
+          let obj = com.oui.absolute.AbsoluteDesign.data 
+
+          oui.postData(logicDataUrl, {//模板数据
+                projectId:obj.projectId,
+                circleId:obj.circleId,
+                treeMap:treeMap
+          },  (res)=> {
+              
+
+          });
+      },
+      //处理树的数据
+      loadtreeData:function (callback) {
+          var me = this;
+          var param = oui.getParam();
+          this.projectId = param.projectId;
+          this.circleId =  param.circleId;
+          this.pageId =  param.pageId;
+          var Design = com.oui.absolute.AbsoluteDesign;
+          Design.loadedBaseData.then((data)=>{
+            if(data == 'success'){
+              let appid = com.oui.absolute.AbsoluteDesign.data.appId
+              //逻辑树 数据接口
+              let logicDataUrl = com.oui.absolute.AbsoluteDesign.paramCfg.params.loadLogicMenuUrl
+              //读取远程树
+              oui.postData(logicDataUrl, {//模板数据
+                appId:appid,
+                pageId:me.pageId,
+                templateType:Number(param.type),
+                projectId:param.projectId
+              },  (res)=> {
+                  me.createPageViewListUrl = res.createPageViewListUrl
+                  me.createPageViewEditUrl = res.createPageViewEditUrl
+                  me.createPageViewDetailUrl = res.createPageViewDetailUrl
+
+                  let nodeTreeData =res.resources;
+                  let tree = [];
+                  nodeTreeData.map((item, index) => {
+                    let children = [];
+                    let temp = {
+                      label: item.name,
+                      id: index,
+                      level:1,
+                      class: "levelsOne",
+                      isLeaf: false,
+                      showBtn:false,
+                      typeCode:item.typeCode,
+                      icon: "s-icon-folder-open",
+                      children: [],
+                    };
+
+                    if (item.hasOwnProperty('children') && item.children.length > 0) {
+
+
+                      item.children.map((v,k)=>{
+
+                        let children2 = [];
+                        if(v.hasOwnProperty('children') && v.children.length > 0){
+
+                          v.children.map((vv,kk)=>{
+                            children2.push(
+                                    {
+                                      label: vv.name,
+                                      id: vv.id,
+                                      class: "levelsThree",
+                                      icon: "s-icon-page",
+                                      isLeaf: true,
+                                      showBtn:false,
+                                      pid:index + '-' + k
+                                    }
+                            )
+                          })
+                        }
+
+                        children.push({
+                          label: v.name,
+                          id: index + '-' + k,
+                          pid:temp.id,
+                          class: "levelsTwo",
+                          icon: "s-icon-page",
+                          isLeaf: false,
+                          showBtn:false,
+                          logicType:this.reLogicType(v.name),
+                          children:children2
+
+                        });
+
+                      })
+                    }
+                    temp.children = children;
+                    tree.push(temp);
+                  });
+                  var arr = oui.findManyFromTreeArrayBy(tree,function (item){
+                    if(!item.isLeaf){
+                      me.defaultExpandedIds.push(item.id);
+                    }
+                    return !item.isLeaf;
+                  });
+
+                  this.treeData = tree;
+                  callback&&callback();
+
+              }, function (res) {
+                console.log(res);
+              }, '加载中...');
+            }
+          });
+      },
+      //点击节点触发
+      treeHandleNodeClick(data, node, dom) {
+        if(!data.isLeaf){
+          return;
+        }
+        var me = this;
+        me.defaultCheckedId =  data.id;
+        me.defaultExpandedId =  data.pid;
+        me.$refs.pageTree.setCheckedKeys([data.id]);
+        this.reloadLogicById(data.id);
+
+      },
+      /***
+       * 根据逻辑Id重新加载逻辑设计器
+       * @param logicId
+       */
+      reloadLogicById:function (logicId){
+        let id = logicId;
+        //写入全局变量
+        top.oui.setPageParam('logicId',id);
+        //设置当前id 状态
+        let scripts = [
+          oui.getContextPath()+'res_engine/logic-graph/js/logic-design-require-1.6.js?_t='+(new Date().getTime())
+        ];
+        oui.clearScriptTag([
+          oui.getContextPath()+'res_engine/logic-graph/js/logic-design-require-1.6.js',
+          oui.getContextPath()+'res_engine/logic-graph/js/logic-graph-1.6.js'
+        ]);
+        oui.Tool.creating['com.startwe.models.project.web.LogicDesignController']= false;//避免重复初始化提示
+        document.querySelector('.pg-body').innerHTML = '';
+        oui.replaceByTplConfig({
+          url:"res_engine/logic-graph/logic-design-1.6.tpl.html",
+          scripts:scripts||[],
+          container:'.pg-body',
+          callback:function(data){
+
+          },
+          params:undefined
+        });
+      },
+
+      // 树节点鼠标移入移出 
+      treeMouseenter(node, data){ 
+        this.$set(data, 'showBtn', true)
+         
+      },
+       // 树节点鼠标移出
+      treeMouseleave(node, data) {
+        
+         this.$set(data, 'showBtn', false)
+      },
+      //重命名
+      rename:function (node, data) {
+        var me= this;
+        oui.getTop().oui.showInputDialog('修改逻辑名称',function(v){
+          let rename_url = me.paramCfg.apiMap.updateNodeName //修改名称逻辑
+          let renameData = {"nodeId":data.id,"nodeType":"logic","oldName":data.label,"newName":v}
+          me.$set(data,'label',v);
+
+          oui.postData(rename_url, renameData, (res) => {
+            if(res.success){
+              me.$message({
+                type: 'success',
+                message: '修改成功, 新的名称:' + v
+              });
+            }else{
+              me.$message.error('添加失败');
+            }
+          }, function (res) {
+            me.$message.error('添加失败');
+          },
+          '加载中...');
+        },[{type:"text",value:data.label}]);
+
+      },
+      deletes(node, data) { 
+
+        this.delPage = true
+        this.currentData = data
+        this.currentDelPid = data.pid
+ 
+      },
+      delModulePage(node, data){
+
+        var me = this;
+        let remove_url = this.paramCfg.apiMap.removeAllNode
+        var param = oui.getParam()
+        let removeData = {"projectId":param.projectId,"circleId":param.circleId,"nodeId":this.currentData.id,"nodeType":"logic"}
+
+        var nextId ='';
+        var nextOne = null;
+        var parent= oui.findOneFromTreeArrayBy(this.treeData,function (item){
+          if(item.id == me.currentDelPid){
+            return true;
+          }
+        });
+        //存在当前分类下可跳转的页面
+        if(parent&&parent.children&&parent.children.length>1){
+          var idx  = -1;
+          oui.findOneFromArrayBy(parent.children,function (item,index){
+            if(item.id==me.currentData.id){
+              idx =index;
+              return true;
+            }
+          });
+          var nextIdx = idx+1;
+          var maxIdx = parent.children.length-1;
+          if(nextIdx>maxIdx){
+            nextIdx = nextIdx-2;//获取前一个作为跳转目标
+          }
+          nextOne = parent.children[nextIdx];
+          if(nextOne){
+            nextId = nextOne.id;
+          }
+        }else{//寻找下一个可跳转的逻辑
+          if(parent&&parent.id ){
+            var idx=-1;
+            var delIdx =-1;
+            var arr = oui.findManyFromTreeArrayBy(this.treeData,function (item){
+              if(item.isLeaf){
+                idx++;
+              }
+              if(me.currentData.id == item.id){
+                delIdx = idx;
+              }
+              return item.isLeaf;
+            });
+            var maxIdx = arr.length-1;
+            var nextIdx = idx+1;
+            if(nextIdx>maxIdx){
+              nextIdx=nextIdx-2;
+            }
+            nextOne = arr[nextIdx];
+            if(nextOne){
+              nextId = nextOne.id;
+            }
+          }
+        }
+        if(!nextId){
+          //需要处理清空页面的清空
+          $('.logic-content .pg-body').html('');//逻辑设计内容页清空
+        }
+
+        oui.postData(remove_url, removeData ,  (res)=> {
+              if(res.success){
+                this.$message({
+                  type: 'success',
+                  message: res.msg
+                });
+
+                me.loadtreeData(function (){
+                  //处理 跳转和渲染
+                  if(nextId){
+                    me.defaultCheckedId =  nextId;
+                    me.defaultExpandedId =  nextOne.pid;
+                    me.$refs.pageTree.setCheckedKeys([nextId]);
+                    me.reloadLogicById(nextId);
+                  }else{
+                    me.defaultCheckedId =  null;
+                    me.defaultExpandedId =  null;
+                    me.$refs.pageTree.setCheckedKeys([]);
+
+                  }
+                });
+
+
+
+              }else{
+                this.$message({
+                  type: 'error',
+                  message: res.msg
+                });
+              } 
+              this.delPage = false 
+        })
+        
+      },
+      //添加页面
+      append(node, data) {
+ 
+        this.appendPage = true;
+     
+        this.currentData = data
+
+        this.currentAddPid = data.id
+ 
+      },
+    },
+  };
+</script>
+<style>
+  .oui-page-logic-tree .text-ellipsis{
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     width: 120px;
+     overflow: hidden;
+  }
+ 
+  .oui-page-logic-tree .s-tree-node .s-tree-leaf{
+    display: none;
+  }
+ 
+  .oui-page-logic-tree .s-tree-node:hover .s-tree-leaf{
+    display: unset;
+  }
+ </style>

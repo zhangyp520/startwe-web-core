@@ -1,0 +1,210 @@
+<!--
+    容器组件 具备声明 oui-container
+    子组件占位符 必须声明 oui-container-flag
+-->
+<template>
+    <div class="oui-container">
+
+        <!-- header -->
+        <!-- <div class="oui-container-header oui-container-flag">
+            <div v-html="header.html" class="oui-container-placeholder">Header 容器 请拖拽组件到这里</div>
+        </div> -->
+
+        <!-- <div style="height: 100%;display: flex;"> -->
+        <!-- aside -->
+        <!-- <div class="oui-container-aside oui-container-flag"  :style="{width: aside.width+'px',height: 'calc(100% - 60px)'}" v-if="aside.show">
+                <div v-html="aside.html" class="oui-container-placeholder">Aside容器 请拖拽组件到这里</div>
+            </div> -->
+
+        <!-- <div style="width:calc(100% - 200px);"> -->
+        <!-- main -->
+        <!-- <div class="oui-container-main oui-container-flag"  :style="{width: '100%',height: 'calc(100% - 120px)'}" v-if="main.show">
+                    <div v-html="main.html" class="oui-container-placeholder">Container容器 请拖拽组件到这里</div>
+                </div> -->
+
+        <!-- footer -->
+        <!-- <div class="oui-container-footer oui-container-flag"  :style="{width: '100%',height: '60px'}" v-if="footer.show">
+                    <div v-html="footer.html" class="oui-container-placeholder">Footer容器 请拖拽组件到这里</div>
+                </div> -->
+        <!-- </div> -->
+
+        <!-- </div> -->
+
+        <!--------------------------------------->
+
+        <div class="straight_line_1">1</div>
+        <div class="straight_line_2">2</div>
+        <div class="straight_line_3">3</div>
+        <div class="straight_line_4">4</div>
+        <div class="straight_line_5">5</div>
+        <div class="straight_line_6">6</div>
+        <div class="straight_line_7">7</div>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                // id: '',
+                // name: '',
+                // bindProp: '',
+                // header: {
+                //     show: true,
+                //     height: 60,
+                //     html: 'Header 容器 请拖拽组件到这里'
+                // },
+                // aside: {
+                //     show: true,
+                //     width: 200,
+                //     html: 'Aside 容器 请拖拽组件到这里'
+                // },
+                // main: {
+                //     show: true,
+                //     html: 'Main 容器 请拖拽组件到这里'
+                // },
+                // footer: {
+                //     show: true,
+                //     html: 'Footer 容器 请拖拽组件到这里'
+                // },
+                // otherAttrs: {}
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                console.log(this.bindProp)
+                this.onUpdate && this.onUpdate(key, v, ov, {
+                    value: v,
+                    data4DB: v,
+                    display: v
+                }); //外部构造的方法调用
+            }
+        },
+        mounted: function () {
+            var self = this;
+        }
+    }
+</script>
+
+<style>
+    /* .control-abs-xxxx （xxxx：是组件的文件名） */
+    .control-abs-layoutPortal_2 .control-inner-abs .control-container-abs,
+    .oui-container {
+        height: 100%;
+
+    }
+
+    .oui-container .el-container {
+        height: 100%;
+    }
+
+    .straight_line_1 {
+        position: absolute;
+        width: 800px;
+        border-top: 1px solid #e6e6e6;
+        height: 1px;
+        left: 0px;
+        top: 0px;
+    }
+
+    .straight_line_2 {
+        position: absolute;
+        width: 800px;
+        border-top: 1px solid #e6e6e6;
+        height: 1px;
+        left: 0px;
+        top: 60px;
+    }
+
+    .straight_line_3 {
+        position: absolute;
+        width: 1px;
+        border-right: 1px solid #e6e6e6;
+        height: 500px;
+        left: 0px;
+        top: 0px;
+    }
+
+    .straight_line_4 {
+        position: absolute;
+        width: 1px;
+        border-right: 1px solid #e6e6e6;
+        height: 440px;
+        left: 240px;
+        top: 60px;
+    }
+
+    .straight_line_5 {
+        position: absolute;
+        width: 560px;
+        border-top: 1px solid #e6e6e6;
+        height: 1px;
+        left: 240px;
+        top: 440px;
+    }
+
+    .straight_line_6 {
+        position: absolute;
+        width: 800px;
+        border-top: 1px solid #e6e6e6;
+        height: 1px;
+        left: 0px;
+        top: 500px;
+    }
+
+    .straight_line_7 {
+        position: absolute;
+        width: 1px;
+        border-left: 1px solid #e6e6e6;
+        height: 800px;
+        left: 800px;
+        top: 0px;
+    }
+
+    /* .oui-container-header,
+    .oui-container-aside,
+    .oui-container-main,
+    .oui-container-footer {
+        display: flex;
+        background-color: #e6e6e6;
+        border: 1px solid #ffffff;
+    } */
+
+    /* .oui-container-placeholder {
+        min-height: 60px;
+        height: 100%;
+        width: 100%;
+        background-color: #f0f0f0;
+        border: 1px dotted;
+        color: #a7b1bd;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        font-size: 14px;
+    } */
+
+    /**
+    *重写样式
+    */
+    /* .el-header,
+    .el-footer,
+    .el-main {
+        padding: 0;
+    } */
+</style>

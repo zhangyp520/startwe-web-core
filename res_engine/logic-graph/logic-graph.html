@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/logicchart.css" />
+    <link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/toolbar.css" />
+    <link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/font-awesome.min.css" />
+    <title>逻辑执行图</title>
+</head>
+<body oui-controller="com.startwe.models.project.web.LogicDesignController">
+    <oui-view id="view-logic"   data="com.startwe.models.project.web.LogicDesignController.getData()">
+    
+    </oui-view>
+    <script type="text/html" id="view-logic-tpl">
+        <div class="manager-toolbar">
+            <button oui-e-{{LogicGraph.treeMap.clickName}}="event2direction">横向/纵向</button>
+            <button oui-e-{{LogicGraph.treeMap.clickName}}="event2exportGraph">导出图片</button>
+            <div class="manager-toolbar-right fr">
+                <button oui-e-click="event2small" type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-narrow"></button>
+                <button oui-e-click="event2big"  type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-enlarge"></button>
+                <button oui-e-click="event2ToggleExpand" class="toolbar-group-item toolbar-group-icon {{if LogicGraph.isRootChildrenUnExpand}}toolbar-group-icon-open{{else}}toolbar-group-icon-close{{/if}}"></button>
+            </div>
+        </div>
+
+        <a style="visibility: hidden" href="#" class="download"></a>
+        <div class="logicchart {{LogicGraph.treeMap.direction}}">
+            {{include 'logic-table-tpl' ({treeMap:LogicGraph.treeMap,nodeId:LogicGraph.treeMap.findRootId()})}}
+        </div>
+    </script>
+    <script type="text/html" id="logic-table-split-tpl">
+        <table  height="1" width="1" style="display: inline-table" >
+            <tbody>
+            {{if treeMap.findChildren(nodeId).length}}
+            <tr class="lines" >
+                <td colspan="{{treeMap.findColspan(nodeId)}}">
+                    <div class="down"></div>
+                </td>
+            </tr>
+            <tr class="lines">
+                {{each treeMap.findLineClsArray(nodeId) as cls}}
+                <td class="{{cls}}">&nbsp;</td>
+                {{/each}}
+            </tr>
+            <tr class="nodes">
+                {{each treeMap.findChildren(nodeId) as childNode}}
+                <td colspan="2" class="" style="overflow: hidden" width="1">
+                    {{include 'logic-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+                    {{if treeMap.findChildren(nodeId).length}}
+                    <div class="down" style="height: 100%;margin: 0 auto;"></div>
+                    {{/if}}
+                </td>
+                {{/each}}
+            </tr>
+            {{/if}}
+            {{if treeMap.findNode(nodeId).childIds.length>1 }}
+            <tr class="lines">
+                {{each treeMap.findLineCls4BottomArray(nodeId) as cls}}
+                <td class="{{cls}}">&nbsp;</td>
+                {{/each}}
+            </tr>
+            {{/if}}
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/html" id="logic-table-tpl">
+        <table table-node-id="{{nodeId}}"  height="1" width="1" >
+            <tbody>
+            <tr>
+                <td colspan="1">
+                    {{if treeMap.isJoin(nodeId)}}
+                        {{if treeMap.findSplitChildrenLength(nodeId)>1}}
+                            <div class="down"></div>
+                        {{/if}}
+                        {{if treeMap.findSplitChildrenLength(nodeId)<=1}}
+                            <div class="down down-join-line-height"></div>
+                        {{/if}}
+
+                    {{/if}}
+                    <div class="node {{treeMap.isJoin(nodeId)?'join-node':''}}" draggable="true"  node-id="{{nodeId}}"  oui-e-dblclick="event2editNodeName"
+                         oui-e-{{treeMap.clickName}}="event2showMenu"
+                            >
+                        <div class="title"  >
+                            {{if treeMap.hasChildren(nodeId)}}
+                                {{if !treeMap.isExpand(nodeId)}}
+                                    <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                                {{else}}
+                                    <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                                {{/if}}
+                            {{/if}}
+                            <i class="fa fa-th-large symbol"></i>
+                            {{treeMap.findNodeName(nodeId)}}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            {{if (treeMap.hasChildren(nodeId)||treeMap.findJoinId(nodeId)) && treeMap.isExpand(nodeId)}}
+
+
+
+            {{if treeMap.findChildren(nodeId).length}}
+            <tr class="nodes">
+                <td colspan="1">
+                    {{include 'logic-table-split-tpl' ({treeMap:LogicGraph.treeMap,nodeId:nodeId})}}
+                </td>
+            </tr>
+            {{/if}}
+            {{if treeMap.findJoinId(nodeId)}}
+            <tr class="nodes" >
+                <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                    <div style="display: inline-table;">
+                        {{include 'logic-table-tpl' ({treeMap:LogicGraph.treeMap,nodeId:LogicGraph.treeMap.findJoinId(nodeId)})}}
+                    </div>
+                </td>
+            </tr>
+            {{/if}}
+            {{if treeMap.isRoot(nodeId)}}
+            <tr class="nodes" >
+                <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                    <div style="display: inline-table;">
+                        end
+                    </div>
+                </td>
+            </tr>
+            {{/if}}
+
+            {{/if}}
+            </tbody>
+        </table>
+    </script>
+    <!--join节点菜单-->
+    <script type="text/html" id="node-menu4join-tpl">
+        <div class="second-menu">
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+                添加子节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+                清空后续节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+                删除当前节点和后续节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+                取消
+            </div>
+        </div>
+    </script>
+    <!--鼠标点击的菜单功能-->
+    <script type="text/html" id="node-menu-tpl">
+        <div class="second-menu">
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add" oui-e-{{treeMap.clickName}}="event2menuAction">
+                添加子节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addGrandson" oui-e-{{treeMap.clickName}}="event2menuAction">
+                添加孙子节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addParent" oui-e-{{treeMap.clickName}}="event2menuAction">
+                添加父节点
+            </div>
+
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addBrother" oui-e-{{treeMap.clickName}}="event2menuAction">
+                添加兄弟节点
+            </div>
+
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove" oui-e-{{treeMap.clickName}}="event2menuAction">
+                删除当前节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll" oui-e-{{treeMap.clickName}}="event2menuAction">
+                删除当前节点和所有子节点
+            </div>
+            <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+                取消
+            </div>
+        </div>
+    </script>
+    <!--拖拽结束的菜单功能-->
+    <script type="text/html" id="node-menu-dragend-tpl">
+        <div class="second-menu second-menu-dragend">
+            <!--swapSort,swap,addParentByTarget,addBrotherByTarget,addChildByTarget,hideMenu4DragEnd -->
+            {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+            <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+                顺序调整
+            </div>
+            {{/if}}
+            <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swap" oui-e-{{treeMap.clickName}}="event2menuAction">
+                交换位置
+            </div>
+            {{if !treeMap.isChild(nodeId,targetNodeId)}}
+                {{if !treeMap.hasParents(nodeId,targetNodeId)}}
+                <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="addChildByTarget" oui-e-{{treeMap.clickName}}="event2menuAction">
+                    变更为目标节点的子节点
+                </div>
+                {{/if}}
+            {{/if}}
+            <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+                取消
+            </div>
+        </div>
+    </script>
+
+    <!--编辑节点名称模板-->
+    <script type="text/html" id="node-name-edit-tpl">
+        <input type="text" node-id="{{nodeId}}" style="position: absolute;left:0;top:0;height: 40px;color:#000000" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+    </script>
+
+    <script type="text/javascript" charset="">
+
+        oui_context = {
+            js_version:'?v=1.0',
+            contextPath:'/'
+        };
+        var oui = {};
+        oui.getContextPath = function () {
+            if (oui_context && oui_context.contextPath) {
+                return oui_context.contextPath;
+            }
+            var pathName = document.location.pathname;
+            var index = pathName.substr(1).indexOf("/");
+            var result = pathName.substr(0, index + 1) + "/";
+            if (!oui_context) {
+                oui_context = {};
+
+            }
+            oui_context.contextPath = result;
+            return result;
+        };
+    </script>
+    <script type="text/javascript" charset="utf-8" src="/res_common/third/jquery/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="/res_engine/logic-graph/js/logic-graph-require.js"></script>
+</body>
+</html>
+

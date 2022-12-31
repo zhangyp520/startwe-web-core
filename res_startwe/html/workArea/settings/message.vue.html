@@ -1,0 +1,142 @@
+<template>
+    <div class="email-setting">
+        <div class="email-content">
+            <el-form ref="messageSettingForm" :model="messageSettingForm" :rules="rules" label-width="140px">
+                
+                <el-form-item label="是否启用">
+                    <el-switch 
+                    v-model="messageSettingForm.open"></el-switch>
+                </el-form-item>
+                <el-form-item label="融云账号" prop="accountsId">
+                    <el-input v-model="messageSettingForm.accountsId"></el-input>
+                </el-form-item>
+                <el-form-item label="Token" prop="accountToken">
+                    <el-input v-model="messageSettingForm.accountToken"></el-input>
+                </el-form-item>
+                <el-form-item label="Appid" prop="appId">
+                    <el-input v-model="messageSettingForm.appId"></el-input>
+                </el-form-item>
+                <el-form-item label="请求地址" prop="serverIp">
+                    <el-input v-model="messageSettingForm.serverIp"></el-input>
+                </el-form-item>
+                <el-form-item label="发信端口" prop="serverPort">
+                    <el-input v-model="messageSettingForm.serverPort"></el-input>
+                </el-form-item>
+                
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm">保存</el-button>
+                    <el-button>重置</el-button>
+                  </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data:function(){
+            return {
+                messageSettingForm:{
+                    open:false,
+                    accountsId:"",
+                    accountToken:"",
+                    appId:"",
+                    serverIp:"",
+                    serverPort:""
+                },
+                rules:{
+                    accountsId:[{ required: true, message: '请输入融云账号', trigger: 'blur' }],
+                    accountToken:[{ required: true, message: '请输入Token', trigger: 'blur' }],
+                    appId:[{ required: true, message: '请输入Appid', trigger: 'blur' }],
+                    serverIp:[{ required: true, message: '请输入请求地址', trigger: 'blur' }],
+                    serverPort:[{ required: true, message: '请输入发信端口', trigger: 'blur' }],
+                }
+            }
+        },
+        methods:{
+            initData:function(data, id = ""){
+                this.messageSettingForm = {...data};
+                this.saveid = id;
+            },
+            submitForm:function(formName){
+                try{
+                    let {id, circleId} = com.startwe.models.portal.web.PortalController.data.project;
+                    let  messageConfig = {
+                        id:this.saveid,
+                        circleId,
+                        projectId:id,
+                        type:"1",
+                        name:"短信配置",
+                        contentJson: JSON.stringify(this.messageSettingForm),
+                        description:"短信配置"
+                    }
+                    let that = this;
+                    this.$refs['messageSettingForm'].validate((valid) => {
+                        if (valid) {
+                            oui.postData(com.startwe.models.project.web.ProjectController4Design.data.saveConfigUrl, messageConfig, function( res ){
+                                that.$message({
+                                    message: res.msg,
+                                    type: 'success'
+                                });
+                            }, function(err){
+                                that.$message({
+                                    message: err,
+                                    type: 'error'
+                                });
+                            })
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                } catch(err) {
+                    console.log("error------->", err)
+                }
+                
+            },
+        },
+        mounted:function(){
+            console.log("短信配置...");
+            window.messageConfigInit = this.initData;
+        }
+    }
+</script>
+<style>
+    .warning{
+        font-size: 12px;
+        font-weight: 400;
+        color:rgba(0, 0, 0, 0.45);
+    }
+
+    .header{
+        font-size: 20px;
+        font-weight: 500;
+        height:60px;
+        background-color: #fff;
+        padding:16px 32px;
+    }
+
+    .email-setting{
+        font-family: PingFangSC-Medium, PingFang SC;
+    }
+
+    .el-main{
+        padding:0;
+    }
+
+    .email-content{
+        background-color: #fff;
+        padding:24px;
+    }
+
+    .el-form{
+        width:500px;
+        margin: 0 auto;
+    }
+
+    .el-form-item__label{
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+    }
+</style>

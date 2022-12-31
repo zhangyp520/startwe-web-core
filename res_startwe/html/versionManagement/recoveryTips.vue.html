@@ -1,0 +1,83 @@
+<!-- 无圈子首页回收站提示弹窗 -->
+<template>
+    <div>
+        <div class="oneTips">您确定要恢复项目
+            <span></span>吗？</div>
+        <div class="twoTips">请确认是否有空余项目位置？</div>
+        <div class="threeTips">默认为3个项目，若已满，请删除点其他项目后恢复。</div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容 */
+
+    .oneTips {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height:50px;
+        font-weight: bold;
+        margin-left: 24px;
+    }
+
+    .twoTips {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+
+    .threeTips {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.45);
+        text-align: left;
+        line-height: 50px;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+</style>

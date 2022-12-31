@@ -1,0 +1,616 @@
+<template>
+    <!-- 组件最大容器 -->
+    <div id="customer">
+        <!-- element组件的布局容器开始 -->
+        <div class="product">
+            <!-- 面包屑头部盒子 -->
+            <div class="crumbs">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                    </el-breadcrumb-item>
+                    <el-breadcrumb-item>产品功能</el-breadcrumb-item>
+                    <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/staffmanagement/staff.vue.html">员工管理</a>
+                    </el-breadcrumb-item>
+                    <el-breadcrumb-item>查看员工</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <!-- 主体内容区域 -->
+            <el-main>
+                <div class="addemployee_box">
+                    <div class=" information_box">
+                        <!-- 放置路由占位符，渲染组件部分 -->
+                        <!-- <router-link ></router-link> -->
+                        <!-- 主体内容区域 -->
+                        <!-- 基础信息区域开始 -->
+                        <div class="name_box">
+                            <el-form :model="updateEmployeeFormValue" :rules="rules" ref="updateEmployeeFormValue"
+                                     label-width="100px"
+                                     class="demo-ruleForm">
+                                <!-- 员工姓名 -->
+                                <el-form-item label="员工姓名:" prop="empName">
+                                    <el-input v-model="updateEmployeeFormValue.empName"></el-input>
+                                </el-form-item>
+                                <!-- 联系电话 -->
+                                <el-form-item label="联系电话:" prop="empPhoneNo">
+                                    <el-input v-model="updateEmployeeFormValue.empPhoneNo"></el-input>
+                                </el-form-item>
+                                <!-- 登录密码 -->
+                                <el-form-item label="登录密码:" prop="empPassword">
+                                    <el-input type="password" maxlength="20" :show-password="true"
+                                              v-model="updateEmployeeFormValue.empPassword"></el-input>
+                                </el-form-item>
+                                <!-- 确认密码 -->
+                                <el-form-item label="确认密码:" prop="confirmPassword">
+                                    <el-input type="password" maxlength="20" :show-password="true"
+                                              v-model="updateEmployeeFormValue.confirmPassword"></el-input>
+                                </el-form-item>
+                                <!-- 所属部门 -->
+                                <el-form-item label="所属部门:" prop="deptId">
+                                    <el-select v-model="updateEmployeeFormValue.deptId" placeholder="请选择部门"
+                                               style="width: 140px;">
+                                        <el-option v-for="(item, index) in formLabel.departmentList" :key="item.id"
+                                                   :label="item.deptName" :value="item.id"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <!-- 权限角色 -->
+                                <el-form-item label="权限角色:" prop="roleId">
+                                    <el-select v-model="updateEmployeeFormValue.roleId" placeholder="请选择角色"
+                                               style="width: 140px;">
+                                        <el-option v-for="(item, index) in formLabel.roleList"
+                                                   :key="item.id" :label="item.roleName" :value="item.id"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <!-- log区域 -->
+                        <div class="Gender">
+                            <span>性别：</span>
+                            <span>
+                                <el-radio-group v-model='updateEmployeeFormValue.empSex' prop="empSex">
+                                    <el-radio class="radio" :label='1'>男</el-radio>
+                                    <el-radio class="radio" :label='2'>女</el-radio>
+                                </el-radio-group>
+                            </span>
+                        </div>
+                        <!-- 状态 -->
+                        <div class="state">
+                            <span>状态：</span>
+                            <span>
+                                <el-switch class="tableScopeSwitch" v-model="updateEmployeeFormValue.state" :active-value=1 :inactive-value=2
+                                           active-color="#1890FF" inactive-color="#eee" active-text="启用" inactive-text="禁用">
+                                </el-switch>
+                            </span>
+                        </div>
+                        <div class="basics_button">
+                            <el-row>
+                                <el-button @click="backToEmployeeInfoListPage">返回</el-button>
+                                <el-button type="primary" style="margin-left: 60px;" @click="updateEmployeeInfo">保存
+                                </el-button>
+                            </el-row>
+                        </div>
+                    </div>
+                    <!-- 基础信息区域结束 -->
+                </div>
+            </el-main>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'))
+                } else if (value !== this.updateEmployeeFormValue.empPassword) {
+                    callback(new Error('两次输入密码不一致!'))
+                } else {
+                    callback()
+                }
+            };
+            return {
+                empId:"",
+                creator:"",
+                //  控制input前面的文字位于的位置默认是右上方
+                formLabel: {
+                    // 权限角色
+                    roleList: [],
+                    // 所属部门 id
+                    departmentList: []
+                },
+                // 主体内容的基本信息名称验证所绑定的数据名开始
+                updateEmployeeFormValue: {
+                    id : "",
+                    // 状态的开关
+                    state: 1,
+                    // 角色id
+                    roleId: '',
+                    // 确认密码
+                    confirmPassword: "",
+                    // 部门id
+                    deptId: "",
+                    // 员工姓名
+                    empName: '',
+                    // 登录密码
+                    empPassword: "",
+                    // 联系电话
+                    empPhoneNo: '',
+                    // 单选框控制性别为男还是女
+                    empSex: 1
+                },
+                // 每个对象的验证规则
+                rules: {
+                    empName: [
+                        {required: true, message: '请输入员工名称', trigger: 'blur'},
+                        {min: 2, max: 20, message: '长度在 3 到 40 个字符', trigger: 'blur'}
+                    ],
+                    empPhoneNo: [
+                        {required: true, message: '请输入手机号码', trigger: 'blur'},
+                        {
+                            validator: function (rule, value, callback) {
+                                if (/^1[345789]\d{9}$/.test(value) == false) {
+                                    callback(new Error("请输入正确的手机号"));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur'
+                        }
+                    ],
+                    empPassword: [
+                        {required: true, message: '请输入员工密码', trigger: 'blur'},
+                        // { pattern: /^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_]+$)(?![a-z0-9]+$)(?![a-z\W_]+$)(?![0-9\W_]+$)[a-zA-Z0-9\W_]{8,30}$/, message: '密码为数字，小写字母，大写字母，特殊符号 至少包含三种，长度为 8 - 30位，密码不能包含 用户名，公司名称(lidian), 公司域名(rekoon) （判断的时候不区分大小写)' }
+                        // { pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/, message: '密码须包含数字、字母两种元素，且密码位数为6-16位' }
+                        {pattern: /^[0-9]{6,18}$/, message: '密码必须是6~18位之间的数字'}
+                    ],
+                    // 验证电话号码
+                    confirmPassword: [
+                        {required: true, validator: validatePass2, trigger: 'blur'},
+                        {min: 2, max: 20, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                    ],
+                    deptId: [
+                        {required: true, message: '请选择部门', trigger: 'blur'},
+                    ],
+                    roleId: [
+                        {required: true, message: '请选择角色', trigger: 'blur'},
+                    ],
+                    empSex: [
+                        {required: true, message: '请选择性别', trigger: 'blur'},
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            let loginUser = window.localStorage.getItem("loginUser");
+            let loginUserInfo = oui.parseJson(loginUser);
+            this.empId = loginUserInfo.id;
+            this.creator = loginUserInfo.empName;
+            // 获取员工信息
+            this.queryEmployeeInfoById();
+            // 获取角色
+            this.queryRoleInfoList();
+            //获取部门
+            this.queryDepartmentInfoList();
+        },
+        methods: {
+            // 获取部门id数据
+            queryDepartmentInfoList() {
+                var that = this;
+                oui.ajaxPost('company/deptInfo/queryAllOfDepartmentInfo', {},
+                    function (res) {
+                        that.formLabel.departmentList = res.resultObj;
+                    })
+            },
+            // 获取角色id数据
+            queryRoleInfoList() {
+                var that = this;
+                oui.ajaxPost('company/role/queryAllOfRoles', {},
+                    function (res) {
+                        that.formLabel.roleList = res.resultObj;
+                    })
+            },
+            // 获取部门id数据 获取员工ID
+            queryEmployeeInfoById: function () {
+                let param = this.$router.query;
+                this.updateEmployeeFormValue.id = param.empId;
+                this.updateEmployeeFormValue.confirmPassword = param.confirmPassword;
+                this.updateEmployeeFormValue.deptId = param.deptId;
+                this.updateEmployeeFormValue.empName = param.empName;
+                this.updateEmployeeFormValue.empPassword = param.empPassword;
+                this.updateEmployeeFormValue.empPhoneNo = param.empPhoneNo;
+                if (!param.empSex) {
+                    param.empSex = 1;
+                }
+                this.updateEmployeeFormValue.empSex = parseInt(param.empSex + '');
+                this.updateEmployeeFormValue.roleId = param.roleId;
+                if (!param.state) {
+                    param.state = 1;
+                }
+                this.updateEmployeeFormValue.state = parseInt(param.state + '')
+            },
+            updateEmployeeInfo: function () {
+                var that = this;
+                this.$refs["updateEmployeeFormValue"].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost('company/employeeInfo/updateEmployeeInfo', {
+                                "creatorId": this.empId,
+                                "creatorName": this.creator,
+                                "confirmPassword": this.updateEmployeeFormValue.confirmPassword,
+                                "deptId": this.updateEmployeeFormValue.deptId,
+                                "empName": this.updateEmployeeFormValue.empName,
+                                "id": this.updateEmployeeFormValue.id,
+                                "empPassword": this.updateEmployeeFormValue.empPassword,
+                                "empPhoneNo": this.updateEmployeeFormValue.empPhoneNo,
+                                "empSex": this.updateEmployeeFormValue.empSex,
+                                "roleId": this.updateEmployeeFormValue.roleId,
+                                "state": this.updateEmployeeFormValue.state
+                            },
+                            function (res) {
+                                that.$message.success('员工信息修改成功');
+                                oui.router.push('res_apps/car/html/staffmanagement/staff.vue.html')
+                            },
+                            function (res) {
+                                that.$message.error('员工信息修改失败')
+                            }
+                        )
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            // 点击返回，返回到员工管理
+            backToEmployeeInfoListPage() {
+                oui.router.push('res_apps/car/html/staffmanagement/staff.vue.html')
+            },
+            // 点击对应的按钮跳出弹框
+            ChangePassword: function () {
+                oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+                    oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+                        //  弹框
+                        var dialog = oui.getTop().oui.showUrlDialog({
+                            // 调用弹框方法           + 对应弹框组件的相对路径
+                            // url:oui.getContextPath()+'index4vue.html#/res_apps/car/html/compnents/components.vue.html',
+                            url: oui.getContextPath() + 'index4vue.html#/res_apps/car/html/staffmanagement/setnewpassword.vue.html',
+                            // 调整弹窗页面大小
+                            contentStyle: 'width:500px;height:280px',
+                            // 是否隐藏底部
+                            isHideFooter: true,
+                            // 配置按钮的方法，需要传递一个actions数组对象
+                            actions: [{
+                                // 调用确认按钮的方法
+                                text: '确定',
+                                cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    dialog.hide();
+                                }
+                            }, {
+                                // 调用取消按钮的方法
+                                text: '取消',
+                                cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    dialog.hide();
+                                }
+                            }],
+                            title: '设置新密码'
+                        });
+                    });
+                });
+            }
+        }
+    }
+</script>
+<style>
+    /* 自定义input按钮 */
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    .my-autocomplete > li {
+        line-height: normal;
+        padding: 7px;
+    }
+
+    .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .addr {
+        font-size: 12px;
+        color: #b4b4b4;
+    }
+
+    .highlighted .addr {
+        color: #ddd;
+    }
+
+
+    /* 结束 */
+
+
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    /* element组件自带样式设置开始------- */
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        height: 900px;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    /* element组件自带样式设置开始------- */
+
+    /* 自己的样式 */
+    /* 侧边栏开始-------- */
+    /* 侧边栏log图片 */
+            /* 开关按钮文字提示 */
+.tableScopeSwitch .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+/*打开时文字位置设置*/
+.tableScopeSwitch .el-switch__label--right {
+  z-index: 1;
+  right: -5px;
+}
+/*关闭时文字位置设置*/
+.tableScopeSwitch .el-switch__label--left {
+  z-index: 1;
+  left: 20px;
+}
+/*显示文字*/
+.tableScopeSwitch .el-switch__label.is-active {
+  display: block;
+}
+.tableScopeSwitch.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 55px !important;    /*开关按钮的宽度大小*/
+}
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+    /* 文字盒子span */
+    .el-icon-menu > span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item > img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item > span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束------ */
+
+    /* 右侧头部区域个人信息区域开始------ */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar > img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 右侧头部区域个人信息区域结束------ */
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 面包屑区域结束------ */
+
+    /* 主体区域最外边的容器 */
+    .el-main {
+        line-height: normal;
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .addemployee_box {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* 基础信息最外边的容器 */
+    .information_box {
+        padding: 0 30px;
+        background-color: #fff;
+        margin: 24px 0px;
+        /* width: 1184px;
+        height: 741px; */
+        /* 临时用 */
+        width: 600px;
+        height: 600px;
+
+    }
+
+    .name_box {
+        margin-top: 24px;
+    }
+
+    /* 二维码 LOGO 区域---------------*/
+    .picture_box {
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .picture_box > span {
+        margin: 0 20px 0 30px;
+        font-size: 14px;
+    }
+
+    /* 修改密码 */
+    .change_password {
+        margin-left: 20px;
+    }
+
+    /* 修改密码的弹框头部背景 */
+    .oui-dialog-hd {
+        background-color: #1890FF;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    /* 弹框头部栏的字体大小 */
+
+
+    /* 性别栏开始 */
+    .Gender > span {
+        margin-left: 50px;
+    }
+
+    /* 状态 */
+    .state {
+
+        margin: 20px 0 20px 50px;
+
+    }
+
+    /* 性别栏结束 */
+
+    /* 按钮区域返回和保存 */
+    .basics_button {
+        text-align: center;
+        margin-top: 58px;
+    }
+
+    .basics_button > .el-row > .el-button {
+        width: 180px;
+        height: 32px;
+        line-height: 0;
+
+    }
+
+
+    /* 表单基础信息结束------- */
+
+    /* 待出库列表区域开始----- */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        margin-bottom: 21px;
+        background-color: #fff;
+        padding: 24px 24px;
+    }
+
+
+    .Tobedelivered_box {
+        margin: 20px 0;
+        height: 30px;
+        line-height: 30px;
+        font-weight: 700;
+    }
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+        margin: 20px 0px 20px 500px;
+    } */
+
+    /* 分页区域结束----- */
+    /* 待出库列表区域结束------ */
+</style>

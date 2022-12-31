@@ -1,0 +1,56 @@
+<oui-view id="query-page-condition-config"
+          data="com.oui.absolute.AbsoluteDesign.dialog4condition.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script type="text/html" id="query-page-condition-config-tpl">
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css"/>
+    <style type="text/css">
+        .group-condition-add,.group-condition-del{
+            display: none !important;
+        }
+        .simple-condition-selected{
+            pointer-events: none !important;
+        }
+        .condition-operation-area{
+            display: none !important;
+        }
+        .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area{
+            width: 280px !important;
+        }
+
+    </style>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <oui-condition id="edit4settingFields" showType="3" type="condition"
+                           align="center"
+                           useOrRule="false"
+                           settingBtnText="排序字段类型设置"
+                           title="排序字段类型设置"
+                           confirmName="确认"
+                           maxConditionLenth="20"
+                           useSysVar4fiedValue="false"
+                           maxLimitMsgTitle="变量条件"
+                           maxLimitMsgTitle4all="变量条件总数"
+                           isFilterSettingFields="true"
+                           noEnumValueDisplay="该字段已经被删除"
+                           showConditionInfoAfter="com.oui.absolute.AbsoluteDesign.dialog4condition.showConditionInfoAfter"
+                           findSysVars="com.oui.absolute.AbsoluteDesign.dialog4condition.filterField4SysVar"
+
+                    >
+                {{each fields as field}}
+                <oui-field
+
+                        title="{{field.display}}"
+                        showtype="3"
+                        datatype="{{field.dataType}}"
+                        opt="{{field.opt}}"
+                        data="{{oui.parseString(sortTypesEnumData)}}"
+                        controltype="singleselect"
+                        name="{{field.value}}"
+                        ></oui-field>
+                {{/each}}
+            </oui-condition>
+        </div>
+    </div>
+</script>
+

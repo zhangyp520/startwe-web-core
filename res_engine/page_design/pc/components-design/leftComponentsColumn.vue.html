@@ -1,0 +1,146 @@
+<template>
+    <div class="leftTree">
+        <el-tree 
+            :data="data" 
+            :load="loadNode" 
+            :node-key="name" 
+            :props="props"
+            ref="tree"
+            lazy
+            @node-expand="handleNodeExpand"
+            :default-expanded-keys="expandedKeys"
+            default-expand-all	
+            > 
+            <span 
+            class="s-tree-node design-item components-children-item"
+            :class="data.class"
+            :control-abs-name="data.name"
+            :control-abs-htmltype="data.htmlType"
+            :control-abs-controltype="data.controlType"
+            :control-abs-formfield="data.formField"
+            :control-abs-style="oui.parseString(data.style)"
+            :control-abs-innerstyle="oui.parseString(data.innerStyle)"
+            :control-abs-otherattrs="oui.parseString(data.otherAttrs)"
+            :control-abs-events="oui.parseString(data.events)"
+            :control-abs-bizid="data.bizId"
+
+            drag-status="" :control-abs-description="data.description"
+
+            slot-scope="{ node, data }"
+            >
+                <span> <i :class="data.icon"></i> {{ node.label }}</span>
+            </span>
+            
+        </el-tree>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                Design: com.oui.absolute.AbsoluteDesign,
+                data: [],
+                subscribelist:[],
+                props: {
+                    label: 'name',
+                    children: 'zones',
+                    isLeaf: 'leaf'
+                },
+                expandedKeys: [1]
+            };
+        },
+
+
+        mounted() {
+
+
+            let that = this;
+
+            this.subscribelist.push(PubSub.subscribe("com.startwe.saveForm.msg.show", function (token, data) {
+
+
+
+                switch (token) {
+                    case "com.startwe.saveForm.msg.show": {
+
+                        //加载好数据后，再显示
+                        that.$nextTick(function (){
+                            that.reloadTree();
+                        });
+                        break;
+                    }
+                }
+            }));
+
+
+
+        },
+        destoryed() {
+            console.log("已订阅消息列表", this.subscribelist)
+            this.subscribelist.forEach(sub => {
+                PubSub.unsubscribe(sub)
+            });
+        },
+        methods: {
+            handleNodeExpand(data,data2,data3) {
+                console.log(data,data2,data3);
+            },
+            loadTreeData(id,node,resolve){ 
+ 
+                
+                var param = oui.getParam()
+                if(!id){
+                    id = param.pageId
+                } 
+
+                if(node.data.hasRelation){
+                    id = node.data.pageId
+                } 
+                else{
+                    if(node.level != 0){
+                        return resolve([]);
+                    } 
+                }
+
+                this.Design.loadedBaseData.then((data) => {
+                   
+                    if (data == 'success') {
+                        //TODO
+
+                        var pageId = this.Design.formPageComponent.id;
+                        var pageName = this.Design.formPageComponent.name;
+                        var tempdata = [];
+                        oui.eachArray(this.Design.formBizControls||[],function (item){
+                            // if(item.style.height){
+                            //     item.style.height = parseInt(item.style.height);
+                            // }
+                            // if(item.style.width){
+                            //     item.style.width = parseInt(item.style.width);
+                            // }
+                            tempdata.push(item);
+                        })
+                        return resolve(tempdata);
+                    }
+                })
+
+
+
+            },
+
+            loadNode(node, resolve) {
+            
+                
+                this.loadTreeData('',node,resolve)
+
+            },
+            reloadTree:function (){
+                const tree = this.$refs.tree.root; // root在this.$refs.tree中找到
+                var tempdata = [];
+                oui.eachArray(this.Design.formBizControls||[],function (item){
+                    tempdata.push(item);
+                })
+                tree.setData(tempdata);
+            }
+        }
+    };
+</script>

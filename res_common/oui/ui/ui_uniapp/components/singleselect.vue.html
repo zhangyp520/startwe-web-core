@@ -1,0 +1,162 @@
+
+<template >
+
+    <div class="el-select-outer">
+        <el-select :tempStyle="style"
+                   :suffix-icon="suffixIcon"
+                   :id="id"
+                   :name="name"
+                   :bindProp="bindProp"
+                   :class="cls"
+                   :placeholder="placeholder"
+                   :url="url"
+                   v-model="value"
+                   :remote-method="loadRemoteData"
+                   filterable
+                   @visible-change="event2showItems"
+                   :clearable="clearable"
+                   remote
+                   reserve-keyword
+                   @clear="clear4loadRemoteData"
+                   @change="_controlOnUpdate" >
+            <el-option
+                    v-for="item in data"
+                    :key="item.value"
+                    :label="item.display"
+                    :value="item.value"
+                    :disabled="item.disabled">
+            </el-option>
+        </el-select>
+        <!--<el-button type="text" icon="el-icon-arrow-down"></el-button>-->
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                suffixIcon:'iconfont icon-selectInput-singleselect',
+                clearable:true,
+                id:'',
+                name:'',
+                data:[],
+                url:'',
+                dataKey:'',
+                queryKey:'',
+                valueKey:'',
+                displayKey:'',
+                queryParams:'',
+                otherAttrs:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        mounted:function(){
+            var me = this;
+            if(!this.data.length){
+                if(this.otherAttrs&&this.otherAttrs.data){
+                    this.data = this.otherAttrs.data;
+                }
+            }
+            this.url = this.url || oui.JsonPathUtil.getJsonByPath('otherAttrs.url',this)||"";
+            if(this.url){
+                var dataKey = this.dataKey||oui.JsonPathUtil.getJsonByPath('otherAttrs.dataKey',this) ||'data';
+                var queryKey = this.queryKey ||oui.JsonPathUtil.getJsonByPath('otherAttrs.queryKey',this) ||'queryFilter';
+                var valueKey = this.valueKey||oui.JsonPathUtil.getJsonByPath('otherAttrs.valueKey',this) ||'value';
+                var displayKey = this.displayKey || oui.JsonPathUtil.getJsonByPath('otherAttrs.displayKey',this)||'display';
+                this.queryParams = this.queryParams || oui.JsonPathUtil.getJsonByPath('otherAttrs.queryParam',this)||{};
+                this.dataKey = dataKey;
+                this.queryKey = queryKey;
+                this.valueKey = valueKey;
+                this.displayKey = displayKey;
+            }
+            if(!this.data.length){ //默认没有数据才加载数据
+                this.loadRemoteData();
+            }
+        },
+
+        methods:{
+//            filterMethod:function(){
+//
+//            },
+            event2showItems:function(){
+                this.onShowItems&&this.onShowItems();
+            },
+            loadRemoteData:function(query){
+                //加载远程地址
+                query = query ||'';
+                var me = this;
+
+                me.loading = true;
+                //根据输入参数模糊匹配
+                //查询所有
+                var url = this.url;
+                if(url){
+
+                    var queryParams = oui.parseJson(oui.parseString(this.queryParams));
+                    queryParams[this.queryKey] = query;
+                    oui.postData(url,queryParams,function(res){
+                        if(res.success){
+                            me.loadBack(res);
+                        }
+                        me.loading = false;
+                    },function(res){
+
+                        me.loading = false;
+                    },'加载中...');
+                }
+            },
+            loadBack:function(res){
+                var me = this;
+                var tempData = res[this.dataKey] ||[];
+                var valueKey = this.valueKey||'value';
+                var displayKey = this.displayKey||'display';
+                var data=[];
+                oui.eachArray(tempData,function(item){
+                    data.push({
+                        value:item[valueKey]||"",
+                        display:item[displayKey]||""
+                    });
+                });
+                me.data = data;
+                me.$set(this,'data',data);
+
+            },
+            clear4loadRemoteData:function(){
+                //清除时
+                this.loadRemoteData();
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                var data4db = {};
+                if(v){
+                    var one = oui.findOneFromArrayBy(this.data,function(item){
+                        if((item.value+'') == (v+'')){
+                            return true;
+                        }
+                    });
+                    data4db = one;
+                }
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:data4db, display:data4db.display }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-select-outer{
+        width: 100%;
+        display: inline-flex;
+    }
+    .el-select-outer .el-select{
+        display: inline;
+        width: 100%;
+    }
+    .el-select .el-input input{
+        padding-right: 33px;
+    }
+</style>

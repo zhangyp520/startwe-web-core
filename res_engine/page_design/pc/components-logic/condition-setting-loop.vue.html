@@ -1,0 +1,530 @@
+<template>
+    <div>
+        <el-drawer 
+            title="设置循环单元" 
+            size="1200px" 
+            :wrapperClosable="false" 
+            :destroy-on-close="true" 
+            :visible.sync="drawer" 
+            custom-class="logic-drawer" 
+            ref="logic_drawer"
+            :before-close="handleClose"  
+            >
+            <div class="api-setting conditon-setting scrollbar">  
+
+                <header>
+                    <div class="title">设置循环</div>
+                </header> 
+ 
+                <div  class="s-setting-item">
+                    <div class="title">循环方式</div>
+                    <div>
+                      <el-radio-group v-model="loopConfig.loopType" @change="changeLoopType">
+                        <el-radio :label="1">遍历集合</el-radio>
+                        <el-radio :label="2">按次数循环</el-radio>
+                        <el-radio :label="3">按条件循环</el-radio>
+                      </el-radio-group>
+                    </div>  
+                </div>
+ 
+                <div class="loop-setting" v-if="loopConfig.loopType==1" :key="new Date().getTime()">
+                    <div class="s-setting-item"  >
+                        <div class="title">循环处理的集合变量</div>
+                        
+                        <div>
+                            <oui-include type="module" :data="getData4selectCollectionVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+
+                        </div>
+
+                    </div>
+                    <div class="s-setting-item"  >
+                        <div class="title">循环迭代变量</div>
+                        <div>
+                            <oui-include type="module" :data="getData4selectLoopVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="loop-setting" v-if="loopConfig.loopType==2" :key="new Date().getTime()">
+
+
+
+                    <div class="s-setting-item" >
+                        <div class="title">循环处理的集合变量</div>
+                        <div>
+                            <oui-include type="module" :data="getData4selectCollectionVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                        </div>
+                    </div>
+                    <div class="s-setting-item" >
+                        <div class="title">集合总数</div>
+                        <div>
+                            <oui-include type="module" :data="getData4selectCollectionSizeVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                        </div>
+                    </div>
+
+                    <div class="s-setting-item">
+                        <div class="title">循环迭代变量</div>
+                        <div>
+                            <oui-include type="module" :data="getData4selectLoopVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+
+                        </div>
+                    </div>
+                    <div class="s-setting-item">
+                        <div class="title">循环迭代索引</div>
+                        <div>
+                            <oui-include type="module" :data="getData4selectLoopIndexVar()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="loop-setting" v-if="loopConfig.loopType==3" :key="new Date().getTime()">
+                    <div class="condition-area-outer">
+                        <oui-include :data="getData4LoopConditionRule()" type="module" url="res_engine/page_design/pc/components-logic/condition-rule-div.vue.html"></oui-include>
+                    </div>
+                </div>
+ 
+            </div>
+ 
+            <div class="footer-btn">
+                
+                <el-button size="medium"  @click="$refs.logic_drawer.closeDrawer()"  >取消</el-button>
+                <el-button  type="primary" size="medium" @click="saveLoopSettings">确认</el-button>
+            </div>
+    
+        </el-drawer> 
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                associationRuntimeQueryUrl:com.startwe.models.project.web.LogicDesignController.data.associationRuntimeQueryUrl,
+                fields:oui.clone(com.startwe.models.project.web.LogicDesignController.findFields4Conditions()),
+                loopConfig:{
+                    loopType:3,//循环类型
+                    loopVar:'',//循环迭代变量,来源于变量定义
+                    loopSizeVar:'', //集合总数变量
+                    loopIndexVar:'',//迭代索引变量
+                    loopCollectionVar:'',//循环被迭代变量
+                    loopConditionJson:'',//循环条件
+                    loopClass:''//迭代变量类型 DataTypeEnum的值 （init类型）
+                },
+                drawer: false
+            }
+        },
+        computed: {
+            
+        },
+        mounted: function () { 
+            this.drawer = true;
+            var me = this;
+            var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+            var currentNodeData = LogicDesign.getCurrentNodeData();
+            var keys = 'loopType,loopVar,loopCollectionVar,loopSizeVar,loopIndexVar,loopConditionJson,loopClass'.split(',');
+            oui.eachArray(keys,function (key){
+                me.loopConfig[key] =currentNodeData[key]||me.loopConfig[key];
+            });
+            if(typeof me.loopConfig.loopType =='string'){
+                if(me.loopConfig.loopType){
+                    me.loopConfig.loopType= parseInt(me.loopConfig.loopType);
+                }
+            }
+        },
+        methods: {
+            getCache:oui.getCache4include,
+            //关闭事件
+            handleClose(done) {
+                done();
+
+            },
+            //根据字段id 或namePath找
+            findFieldBy:function (fieldIdOrNamePath){
+                if(fieldIdOrNamePath){
+                    var one = oui.findOneFromTreeArrayBy(this.fields,function (item){
+                        if(item.id == fieldIdOrNamePath || (item.namePath == fieldIdOrNamePath) || (item.idPath == fieldIdOrNamePath) ){
+                            return true
+                        }
+                    });
+                    return one ;
+                }
+                return null;
+            },
+            /**
+             * 根据namePath找字段id
+             * @param namePath
+             * @returns {string}
+             */
+            findFieldIdByNamePath:function (namePath){
+                var value ='';
+                if(namePath){
+                    var one = this.findFieldBy(namePath);
+                    if(one){
+                        value = one.id;
+                    }
+                }
+                return value;
+            },
+            /** 存储集合的总数的变量 */
+            getData4selectCollectionSizeVar:function (){
+                var me = this;
+                var key ='loopSizeVar';
+                var currNamePath = this.loopConfig.loopSizeVar;
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:150,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        if(temp.fieldType==oui.fieldTypeEnum.int_type.name && (!temp.array)){
+                            return true;
+                        }
+                        return false;
+                    },
+                    disabledRow:function (temp){
+                        if(temp.fieldType==oui.fieldTypeEnum.int_type.name && (!temp.array)){
+                            return false;
+                        }
+                        return true;
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.loopConfig.loopSizeVar = namePath;
+                        me.loopConfig.loopIndexVar='';
+                        curr.value = v.value;
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+                return cache;
+            },getData4selectLoopIndexVar:function (){
+                var me = this;
+                var key ='loopIndexVar';
+                var currNamePath = this.loopConfig.loopIndexVar;
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:150,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        var currLoopSizeVar = me.loopConfig.loopSizeVar;
+                        if(!currLoopSizeVar){
+                            return false;
+                        }
+                        var field4LoopSizeVar = me.findFieldBy(currLoopSizeVar);
+                        if(!field4LoopSizeVar){
+                            return false;
+                        }
+                        if(temp.namePath == field4LoopSizeVar.namePath){
+                            return false;
+                        }
+
+                        if(temp.fieldType==oui.fieldTypeEnum.int_type.name && (!temp.array)){
+                            return true;
+                        }
+                        return false;
+                    },
+                    disabledRow:function (temp){
+                        if(temp.fieldType==oui.fieldTypeEnum.int_type.name && (!temp.array)){
+                            return false;
+                        }
+                        return true;
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.loopConfig.loopIndexVar=namePath;
+                        curr.value = v.value;
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+                return cache;
+            },
+            /**获取迭代变量选择器列表，变量来源于变量定义 **/
+            getData4selectLoopVar:function (){
+                var me = this;
+                var key ='loopVar';
+                var currNamePath = this.loopConfig.loopVar;
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:150,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'array',type:'boolean',title:'是否是列表',width:80},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        var currCollectionVar = me.loopConfig.loopCollectionVar;
+                        if(!currCollectionVar){
+                            return false;
+                        }
+                        var field4collectionVar = me.findFieldBy(currCollectionVar);
+                        if(!field4collectionVar){
+                            return false;
+                        }
+                        if(temp.namePath == currCollectionVar){
+                            return false;
+                        }
+                        if(field4collectionVar.array){
+                            if((field4collectionVar.fieldType == temp.fieldType) &&(!temp.array)){
+                                return true;
+                            }
+                        }else if(field4collectionVar.fieldType== oui.fieldTypeEnum.tableData_type.name){
+                            //二维列表的情况
+                            if(field4collectionVar.array){
+                                if(temp.fieldType== oui.fieldTypeEnum.tableData_type.name){
+                                    return  true;
+                                }
+                            }
+                            // 一维列表的情况 对象的情况
+                            if( temp.fieldType==oui.fieldTypeEnum.table_type.name ||
+                                temp.fieldType == oui.fieldTypeEnum.object_type.name ||
+                                temp.fieldType ==oui.fieldTypeEnum.tree_node_type.name){
+                                if(!temp.array){
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    },
+                    disabledRow:function (temp){
+                        var currCollectionVar = me.loopConfig.loopCollectionVar;
+                        if(!currCollectionVar){
+                            return true;
+                        }
+                        var field4collectionVar = me.findFieldBy(currCollectionVar);
+                        if(!field4collectionVar){
+                            return true;
+                        }
+                        if(temp.namePath == currCollectionVar){
+                            return true;
+                        }
+                        if(field4collectionVar.array){
+                            if(field4collectionVar.fieldType == temp.fieldType ){
+                                return false;
+                            }
+                        }else if(field4collectionVar.fieldType== oui.fieldTypeEnum.tableData_type.name){
+                            if( temp.fieldType==oui.fieldTypeEnum.table_type.name ||
+                                temp.fieldType == oui.fieldTypeEnum.object_type.name ||
+                                temp.fieldType ==oui.fieldTypeEnum.tree_node_type.name){
+                                return false;
+                            }
+                        }
+                        return true;
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.loopConfig.loopVar = namePath;
+                        curr.value = v.value;
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+
+                return cache;
+            },
+            /** 获取集合变量选择器列表 */
+            getData4selectCollectionVar:function (){
+
+                var me = this;
+                var key ='collectionVar';
+                var currNamePath = this.loopConfig.loopCollectionVar;
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:150,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'array',type:'boolean',title:'是否是列表',width:80},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        if(temp.array || (temp.fieldType ==oui.fieldTypeEnum.tableData_type.name)){
+                            return true;
+                        }
+                    },
+                    filterUpdate:function (temp){
+                        if(!(temp.array || (temp.fieldType ==oui.fieldTypeEnum.tableData_type.name))){
+                            temp.disabled = true;//需要禁用
+                        }
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.loopConfig.loopCollectionVar = namePath;
+                        me.loopConfig.loopClass =me.findDataTypeValue(field);
+                        me.loopConfig.loopVar='';
+                        me.loopConfig.loopIndexVar='';
+                        me.loopConfig.loopSizeVar='';
+                        curr.value = v.value;
+                        /*
+                         clearAll,clearChildren,del
+                         */
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+
+                return cache;
+            },
+            /**条件组件，根据条件循环 **/
+            getData4LoopConditionRule:function (){
+                var me = this;
+                var data =this.loopConfig.loopConditionJson||[];
+                data = oui.parseJson(data);
+                return this.getCache('loopConditionRule',{
+                    associationRuntimeQueryUrl:this.associationRuntimeQueryUrl,
+                    isShowPreview:true,
+                    conditionData:data,conditionId:'',parentConditionId:'',fields:this.fields,rootConditionData:data,
+                    onUpdate:function (k,v,ov,option){
+                        try{
+                            me.loopConfig.loopConditionJson = oui.parseString(v.rootConditionData);
+                            // oui.destroyVueControllers();
+                        }catch (err){
+                            console.log(err);
+                        }
+                    }
+
+                });
+            },
+            findDataTypeValue:function (field){
+
+                if(!field){
+                    return oui.dataTypeEnum.STRING.value;
+                }
+                if(field.array){
+                    var dataType = field.dataType;
+                    var dataTypeEnum = oui.dataTypeEnum[dataType];
+
+                    if(!dataTypeEnum){
+                        return oui.dataTypeEnum.STRING.value;
+                    }
+                    return dataTypeEnum.value;
+                }else{
+                    return oui.dataTypeEnum.OBJECT.value;
+                }
+
+            },
+            triggerUpdate:function (){
+                var config = oui.clone(this.loopConfig);
+                this.onUpdate&&this.onUpdate(this.bindProp,config,config,{operate:'trigger'});
+            },
+            onCancel(){
+                this.drawer = false
+            }, 
+            changeLoopType(val){
+
+            },
+            saveLoopSettings(){
+                var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                var currentNodeData = LogicDesign.getCurrentNodeData();
+                var loopConfig = this.loopConfig ||{};
+                for(var k in loopConfig){
+                     currentNodeData[k] = loopConfig[k];
+                }
+                if(!currentNodeData.loopType){
+                    if(currentNodeData.loopType+''=='null'){
+                       currentNodeData.loopType=0;
+                    }
+                }
+                var me = this;
+                LogicDesign.saveCurrentNodeData(currentNodeData,function (){
+                    me.$message({
+                        message: '逻辑节点设置成功！',
+                        type: 'success'
+                    });
+                    me.drawer = false;
+                    var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                    LogicDesign.destroyLogicEditNodeDrawControllers();
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+  .s-setting-item{
+      display: flex;
+      margin: 10px 0;
+      align-items: center;
+      margin-left: 30px;
+  }
+  .s-setting-item .title{
+      width: 100px;
+  }
+</style>

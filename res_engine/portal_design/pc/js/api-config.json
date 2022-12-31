@@ -1,0 +1,26 @@
+{
+  "webAddress":"http://192.168.223.108:8085",//web服务器地址
+  "serviceAddress":"http://192.168.223.108:8085",//后台服务地址
+  "storage":{ //本地存储相关的属性key
+    "sysIdKey":"webrobot.plugin.sysId",
+    "sysNameKey":"webrobot.plugin.sysName"
+  },
+  "useLocalDB":true, //true:使用本地数据库api,false:使用远程api调用 ;如果配置了使用本地数据库，则需要配置数据库配置文件路径
+  "dbConfigPath":oui.getContextPath()+"res_engine/page_design/pc/js/db-config.json",//数据库配置文件路径
+  "api4LocalDB":{
+
+    "//":"表单相关api",
+    "loadPageDesign":"oui.biz.db.o_page_design.selectOne",
+    "removePageDesign":"oui.biz.db.o_page_design.removeOne",
+    "savePageDesign":"oui.biz.db.o_page_design.saveOrUpdate"
+
+  },
+  "api":{//数据交互，前后端api处理，开发前期第一件事情，罗列api输入输出，并且将api路径配置到此处
+
+    "//":"表单相关api",
+    "loadPageDesign":"",
+    "removePageDesign":"",
+    "savePageDesign":""
+
+  }
+}

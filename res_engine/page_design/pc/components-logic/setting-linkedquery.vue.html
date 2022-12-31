@@ -1,0 +1,772 @@
+<template>
+    <div> 
+        <el-dialog 
+        :visible.sync="centerDialogVisible"
+        custom-class="s-dialog-box" 
+        width="960px"
+        :before-close="handleClose"
+        center>
+        <div slot="title" style="text-align: left;">请选择</div>
+ 
+    
+        <el-tabs v-model="topTab" @tab-click="topTabHandle">
+            <el-tab-pane label="查询关系" name="first"> 
+                
+                <div class="pg-body-conditon"> 
+                    <iframe :src="queryUrl" frameborder="0" width="100%" height="400" scrolling="no" style="background-color: #2E2F33"></iframe>
+                </div>
+
+            </el-tab-pane>
+            <el-tab-pane label="业务配置" name="second"> 
+                <div class="s-steps">
+
+                    <div class="s-step-item" :class="['s-step-item',stepActive==1 && 'is-active']">
+                        <div class="s-step__line" style="margin-right: 0px;">
+                            <i class="s-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
+                        </div>
+                        <div class="s-step__icon is-text">
+                            <!-- <i class="el-step__icon-inner is-status el-icon-check"></i> -->
+                            <div class="s-step__icon-inner">1</div>
+                        </div>
+                        <div class="s-step-main">
+                            <div slot="title" class="title"  >视图设置</div>
+                            <div slot="description" class="description"  >配置可显示的字段以及别名</div>
+                        </div>
+                    </div>
+
+                    <div   :class="['s-step-item',stepActive==2 && 'is-active']" >
+                        <div class="s-step__line" style="margin-right: 0px;">
+                            <i class="s-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
+                        </div>
+                        <div class="s-step__icon is-text">
+                            <!-- <i class="el-step__icon-inner is-status el-icon-check"></i> -->
+                            <div class="s-step__icon-inner">2</div>
+                        </div>
+                        <div class="s-step-main">
+                            <div slot="title"  class="title">字段设置</div>
+                            <div slot="description" class="description" >设置字段显示顺序以及默认排序</div>
+                        </div>
+                    </div>
+                    <div :class="['s-step-item',stepActive==3 && 'is-active']" >
+                        <div class="s-step__line" style="margin-right: 0px;">
+                            <i class="s-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
+                        </div>
+                        <div class="s-step__icon is-text">
+                            <!-- <i class="el-step__icon-inner is-status el-icon-check"></i> -->
+                            <div class="s-step__icon-inner">3</div>
+                        </div>
+                        <div class="s-step-main">
+                            <div slot="title"  class="title">条件设置</div>
+                            <div slot="description" class="description" >后端根据参数生成QueryWhere</div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div class="content" v-if="stepActive==1">
+                    <el-table
+                    :data="tableData"
+                    style="width: 100%;margin-bottom: 20px;"
+                    row-key="id"
+                    height="350"
+                    border
+                    default-expand-all
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                    <el-table-column
+                      prop="defaultName"
+                      label="默认名称"
+                      sortable
+                      width="180">
+                    </el-table-column>
+                    <el-table-column
+                      prop="name"
+                      label="显示名称"
+                      sortable
+                      width="280">
+                      <template  slot-scope="scope">
+                            <el-input v-model="scope.row.name"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="valname"
+                      label="变量名称">
+                      <template  slot-scope="scope">
+                        <el-input v-model="scope.row.valname"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="show"
+                      label="页面显示"
+                      width="80"
+                      align="center"
+                      >
+                      <template slot-scope="scope" > 
+                            <el-checkbox v-if="!scope.row.children" v-model="scope.row.show"></el-checkbox>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+
+
+                <div class="content" v-if="stepActive==2">
+                    <div class="settingTable">
+                        <el-table
+                        :data="tableData2"
+                        style="width: 100%;margin-bottom: 20px;"
+                        row-key="id"
+                        height="350" 
+                        border
+                        default-expand-all
+                        :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                        <el-table-column
+                        prop="defaultName"
+                        label="默认名称"
+                        sortable
+                        width="180">
+                        </el-table-column>
+                        <el-table-column
+                        prop="name"
+                        label="显示名称"
+                        sortable
+                        width="280">
+                        <template  slot-scope="scope">
+                            {{scope.row.name}}
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                        prop="valname"
+                        label="变量名称">
+                        <template  slot-scope="scope">
+                            {{scope.row.valname}}
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                        prop="orderStr"
+                        label="字段排序"
+                        width="150"
+                        align="center"
+                        >
+                        <template slot-scope="scope" >
+                            <el-radio-group v-model="tabOrderStr[scope.$index]" size="mini"  >
+                                <el-radio-button label="none">无</el-radio-button>
+                                <el-radio-button label="desc">升序</el-radio-button>
+                                <el-radio-button label="asc">降序</el-radio-button> 
+                            </el-radio-group>
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                        prop="show"
+                        label="页面顺序"
+                        width="80"
+                        align="center"
+                        >
+                        <template slot-scope="scope" >
+                            <span class="s-icon s-icon-move move s-icon-16 s-icon-sort"></span>
+                        </template>
+                        </el-table-column>
+                    </el-table>
+                    </div>
+                </div>
+
+
+                <div class="content" v-if="stepActive==3">
+
+                    <div class="api-setting conditon-setting "  style="padding: 0;" >
+                        <header>
+                            <div class="title">判断条件设置</div> 
+                        </header>
+ 
+        
+                        <div class="condition-select">
+        
+                            <div class="tab-relation">
+                                <el-radio-group v-model="tabRelation" size="mini"  >
+                                    <el-radio-button label="and">并关系(and)</el-radio-button>
+                                    <el-radio-button label="or">或关系(or)</el-radio-button>
+                                </el-radio-group>
+                            </div>
+        
+                            <div class="toolbtns">
+                                <el-button size="mini" @click="addConditon()" >添加条件</el-button>
+                            
+                            </div>
+        
+                        </div>
+
+
+
+
+                        <div class="scrollbar"  style="height: 300px; overflow-y: auto; padding: 10px;"> 
+                            <div class="condition-and condition-warp   " v-for="(item,index) in conditionAndData"  > 
+                                <div> 
+                                    <div class="title">
+                                        并关系(and)
+                                    </div> 
+                                    <el-select 
+                                        v-model="condition_and_field"
+                                        placeholder="请选择"
+                                        size="mini"
+                                        style="width:150px" 
+                                    >
+                                        <el-option
+                                            v-for="item in valParams"
+                                            :key="item.name"
+                                            :label="item.name"
+                                            :value="item.name" >
+                                        </el-option>
+                                    </el-select> 
+                                    <el-select 
+                                        v-model="condition_and_operator[index]"
+                                        placeholder="请选择"
+                                        size="mini"
+                                        style="width:120px" 
+                                    >
+                                        <el-option
+                                            v-for="item in condition_operator_options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value" >
+                                        </el-option>
+                                    </el-select> 
+                                    <el-select 
+                                        v-model="condition_and_value"
+                                        placeholder="请选择"
+                                        size="mini"
+                                        style="width:150px"
+                                    >
+                                        <el-option
+                                            v-for="item in valParams"
+                                            :key="item.name"
+                                            :label="item.name"
+                                            :value="item.name" >
+                                        </el-option>
+                                    </el-select>
+            
+                                </div> 
+            
+                                <div class="delete">
+                                    <span class="s-icon s-icon-btn s-icon-16 s-icon-delete"  @click="deleteConditonAnd(index)"  ></span>
+                                </div>
+            
+                            </div>
+                        </div>
+                        
+                    </div>
+ 
+                </div> 
+ 
+            </el-tab-pane> 
+
+            
+            </el-tabs>
+
+ 
+
+            <span slot="footer" class="dialog-footer" v-if="topTab == 'first'"> 
+                <el-button @click="onCancel"  >取 消</el-button>
+                <el-button type="primary"   @click="saveQueryLogicData">保存</el-button> 
+            </span>
+  
+            <span slot="footer" class="dialog-footer" v-if="topTab == 'second'"> 
+                <el-button @click="onCancel" v-show="stepActive==1">取 消</el-button>
+                <el-button @click="prevstep" v-show="stepActive>1">上一步</el-button>
+                <el-button type="primary" @click="stepActive++" v-show="stepActive>0 && stepActive<3 ">下一步</el-button>
+                <el-button type="primary" v-show="stepActive==3" @click="saveQueryLogicData">保存</el-button> 
+            </span>
+
+       
+        </el-dialog>
+
+ 
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return { 
+                logicData:com.startwe.models.project.web.LogicDesignController.data, 
+                drawer: false, 
+                centerDialogVisible: false,
+                topTab:'first',
+                stepActive:1,
+                tabOrderStr:[],
+                tabRelation:'and',
+                queryUrl:'',
+                config:{
+
+                    formId:'',
+                    minPagerSize:10,//默认10条
+                    relationTablesTree:{},
+                    queryConditionShowType:1, //查询条件的呈现方式
+                    queryListShowType:1,//
+                    toolbarButtons:[], //toolbar所有功能列表
+                    toolbarValues:[], //可用的toolbar的按钮功能值列表
+                    dynamicConditionFields:[],//动态条件字段列表
+                    filterConditions:[],//固定过滤条件
+                    filterConditionsInfo:'',//固定过滤条件的文本显示
+                    queryFields:[],//查询列表的字段
+                    fields4sort:[],//排序字段
+                    fields4sortType:[]//排序类型设置
+
+                },
+                queryFields:[],
+                condition_and_field:'',
+                condition_and_operator:[],
+                condition_and_value:'',
+                condition_and_field_options:[
+                    {
+                        value: '1',
+                        label: '变量1'
+                    }, {
+                        value: '2',
+                        label: '变量2'
+                    }, {
+                        value: '3',
+                        label: '变量3'
+                    } 
+                ],
+                condition_operator_options:[
+                    {
+                        value: '1',
+                        label: '等于(==)'
+                    },
+                    {
+                        value: '2',
+                        label: '全等于(===)'
+                    },
+                    {
+                        value: '3',
+                        label: '不等于'
+                    },
+                    {
+                        value: '4',
+                        label: '大于等于'
+                    },
+                    {
+                        value: '5',
+                        label: '小于等于'
+                    },
+                    {
+                        value: '6',
+                        label: '为空'
+                    },
+                    {
+                        value: '7',
+                        label: '不为空'
+                    },
+                    {
+                        value: '8',
+                        label: '为Null'
+                    },
+                    {
+                        value: '9',
+                        label: '不为Null'
+                    },
+                    {
+                        value: '10',
+                        label: '包含'
+                    },
+                    {
+                        value: '11',
+                        label: '不包含'
+                    }
+                ],
+                condition_and_value_options:[
+                    {
+                        value: '1',
+                        label: '变量1'
+                    }, {
+                        value: '2',
+                        label: '变量2'
+                    }, {
+                        value: '3',
+                        label: '变量3'
+                    } 
+                ],
+                conditionAndData:[ {} ],
+                tableData: [
+                    
+                ],
+                tableData2: [
+                    
+                ],
+                valParams:[],
+            }
+        },
+        computed: {
+            
+        },
+        watch:{
+            stepActive (val) {
+                if(val == 2){ 
+                    this.initSort();
+                    //处理第二页表格数据
+                    this.handleTableData2()
+                } 
+            }
+        },
+        mounted: function () { 
+            this.centerDialogVisible = true;   
+            setTimeout(()=>{
+                this.loadQueryPage()
+                this.loadViewFieldList()
+            },100)
+
+            this.valParams =  [...this.logicData.inputParams,...this.logicData.outputParams,...this.logicData.varParams]
+ 
+        },
+        methods: {
+
+            //载入关联查询图 
+            loadQueryPage(){ 
+                var relationTablesTree =  this.config.relationTablesTree||{};
+ 
+                var url = oui.getContextPath()+'portal.html';
+                url = oui.setParam(url,'loadMenusUrl','res_engine/portal/menus/join-tree.json'); 
+
+
+                var dialog = oui.showUrlDialog({
+                    title:'设置关联查询表模型',
+                    url:url,
+                    useIFrame:false,
+                    enableWebView:false,
+                    isHidden:true,
+                    actions: [
+                    {
+                        cls:'oui-dialog-ok',
+                        text:'确定',
+                        action:function(){
+                            // var json = dialog.attr('relationTablesTreeJson');
+                            // me.config.relationTablesTree = oui.parseJson(json);
+                            // queryPageTpl.relationTablesTree =  oui.parseJson(json);
+                            // //查询字段
+                            // //动态查询条件字段
+
+
+                            // var fields4queryList = me.config.queryFields||[]; //${nodeId}_${formId}_${fieldId} 节点结构
+                            // var dynamicConditionFields = me.config.dynamicConditionFields||[];
+                            // //根据动态条件字段 获取已经选择的字段值
+                            // //获取根当前表相关的表和字段列表;
+                            // var relationTablesTree = me.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                            // var ids = relationTablesTree.ids ||[];
+                            // var map = relationTablesTree.map ||{};
+                            // oui.eachArray(ids,function(currId){
+                            //     var curr = map[currId] ||{};
+                            //     if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                            //         if(curr.node.queryFields){
+                            //             oui.eachArray(curr.node.queryFields,function(item){
+                            //                 var value4queryFields =   currId+"_"+item.value;
+                            //                 if(fields4queryList.indexOf(value4queryFields)<0){
+                            //                     fields4queryList.push(value4queryFields);
+                            //                 }
+                            //             });
+                            //         }
+                            //         if(curr.node.dynamicConditionFields){
+                            //             oui.eachArray(curr.node.dynamicConditionFields,function(item){
+                            //                 var value4dyna =   currId+"_"+item.value;
+                            //                 if(dynamicConditionFields.indexOf(value4dyna)<0){
+                            //                     dynamicConditionFields.push(value4dyna);
+                            //                 }
+                            //             });
+                            //         }
+                            //     }
+                            // });
+                            // me.config.queryFields = fields4queryList;
+                            // me.config.dynamicConditionFields = dynamicConditionFields;
+                            // queryPageTpl.queryFields = oui.parseJson(oui.parseString(me.config.queryFields));
+                            // queryPageTpl.dynamicConditionFields = oui.parseJson(oui.parseString(me.config.dynamicConditionFields));
+
+                            // dialog&&dialog.hide();
+                            // return false;
+                        }
+                    },
+                    {
+                        cls:'oui-dialog-cancel',
+                        text:'取消',
+                        action:function(){
+                            dialog&&dialog.hide();
+                            return false;
+                        }
+                    }]
+                });
+
+                dialog.attr({
+                    pageId:com.oui.absolute.AbsoluteDesign.data.id,
+                    relationTablesTreeJson:oui.parseString(relationTablesTree)
+                }); 
+ 
+               com.oui.absolute.AbsoluteDesign.dialog4relationTables = dialog;
+
+               this.queryUrl = url 
+       
+            },
+            //保存关联查询设置 
+            saveQueryLogicData(){
+ 
+                var me = this;
+                var queryPageTpl = [];
+           
+                var relationTablesTree =  this.config.relationTablesTree||{};
+                
+                var dialog = com.oui.absolute.AbsoluteDesign.dialog4relationTables;
+
+                var json = dialog.attr('relationTablesTreeJson'); 
+                me.config.relationTablesTree = oui.parseJson(json);
+                queryPageTpl.relationTablesTree =  oui.parseJson(json);
+                //查询字段
+                //动态查询条件字段 
+                var fields4queryList = me.config.queryFields||[]; //${nodeId}_${formId}_${fieldId} 节点结构
+                var dynamicConditionFields = me.config.dynamicConditionFields||[];
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var relationTablesTree = me.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                
+
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+
+
+                        if(curr.node.queryFields){
+
+                            oui.eachArray(curr.node.queryFields,function(item){
+                                var value4queryFields =   currId+"_"+item.value;
+                                if(fields4queryList.indexOf(value4queryFields)<0){
+                                    fields4queryList.push(value4queryFields);
+                                }
+  
+                                //添加是否显示
+                                me.tableData2.forEach(value => {
+                                    if(value.id == item.id){
+                                        
+                                    }else{
+                                        item.show = false
+                                    }
+                                    item.show = true
+                                });
+ 
+                            });
+                        }
+
+
+                        if(curr.node.dynamicConditionFields){
+                            oui.eachArray(curr.node.dynamicConditionFields,function(item){
+                                var value4dyna =   currId+"_"+item.value;
+                                if(dynamicConditionFields.indexOf(value4dyna)<0){
+                                    dynamicConditionFields.push(value4dyna);
+                                }
+                            });
+                        }
+
+
+
+                    }
+
+                    console.info(curr,'currr')
+ 
+                    
+                });
+ 
+                me.config.queryFields = fields4queryList;
+                me.config.dynamicConditionFields = dynamicConditionFields;
+                queryPageTpl.queryFields = oui.parseJson(oui.parseString(me.config.queryFields));
+                queryPageTpl.dynamicConditionFields = oui.parseJson(oui.parseString(me.config.dynamicConditionFields));
+
+ 
+                queryPageTpl.relationTablesTree.map = map
+                
+
+                let  relationCondition =  
+
+                      $.extend(true,
+                            { 
+                            "display": "模板-0",
+                            "queryConditionShowType": 1,
+                            "queryListShowType": 1,
+                            "minPagerSize": 10, 
+                            "orderByAscDescFields":"createTime",
+                            "fields4sortType":"desc",
+                            // "formName": "新的页面15",
+                            // "name": "新的页面15",
+                            "varCount": 1  
+                        },
+                        queryPageTpl
+                        
+                        )
+
+
+                        var relationContent = {
+                            relationContent:relationCondition, 
+                            "bizDes": "",
+                            "limitTpls": [],
+                            "bindProcess": false,
+                            "flowId": "",
+                            "flowName": ""
+                        }
+
+                        var otherAttrs = {
+                            relationCondition:relationContent 
+                        }
+
+                        me.logicData.logics[0] = $.extend(true,me.logicData.logics[0] , otherAttrs)
+
+
+
+
+
+
+
+                oui.postData(me.logicData.saveLogicUrl ,{
+                            id:me.logicData.id,
+                            inputParams:me.logicData.inputParams||[],
+                            outputParams:me.logicData.outputParams||[],
+                            varParams:me.logicData.varParams||[],
+                            logicNodes:me.logicData.logics
+                        },function(res){
+                            if(res.success){
+                                  
+                                    var d= oui.getTop().oui.alert('保存成功');
+                                    setTimeout(function(){
+                                        d.hide();
+                                    },800);
+                                me.centerDialogVisible = false;
+                                var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                                LogicDesign.destroyLogicEditNodeDrawControllers();
+
+                            }else if(res.msg){
+                                oui.getTop().oui.alert(res.msg);
+                            }else{
+                                oui.getTop().oui.alert('保存失败');
+                            }
+                        });
+                 
+            },
+            //载入业务配置 视图设置
+            loadViewFieldList(){
+
+                let viewFieldList = com.startwe.models.project.web.LogicDesignController.data.formAndFieldList;
+
+                viewFieldList.map((item,index)=>{
+                     
+                    let tempdata = {
+                        id: item.formId,
+                        defaultName: item.formName,
+                        name: item.formName,
+                        valname: item.formBizId,
+                        show: true,
+                    } 
+
+                     //处理table2 数据
+                     let temptabledata2 =  []
+
+
+                    let childrenData = []
+                    if(item.fieldList.length>0){
+                        item.fieldList.map((it,i)=>{
+                            childrenData.push({
+                                id: it.fieldId,
+                                defaultName: it.fieldName,
+                                name: it.fieldName,
+                                valname: it.fieldBizId,
+                                show: true
+                            })
+                            
+                            temptabledata2.push({
+                                id: it.fieldId,
+                                defaultName: item.formName + '.' + it.fieldName,
+                                name: item.formName + '.' + it.fieldName,
+                                valname: it.fielfBizId,
+                                orderStr: "none",
+                                show: true
+                            })
+
+                        })
+                        tempdata.children = childrenData;
+                    } 
+                    this.tableData.push(tempdata)
+                    this.tableData2 = temptabledata2 
+
+                    
+                    
+                })
+
+            }, 
+            handleTableData2(){
+                this.tableData.map((item,index)=>{ 
+                    if(item.children.length>0){
+                        item.children.map((value,key)=>{
+                            //过滤掉选择不显示的选项
+                            this.tableData2 = this.tableData2.filter(function(it){
+                                //过滤掉不显示的字段
+                                if(it.id ==  value.id  && !value.show){
+                                    return false
+                                }else{
+                                    return true
+                                }
+
+                                //保存字段排序
+                            })
+                        })
+                           
+                    } 
+                })
+            },
+            initSort(){
+                //绑定拖动排序
+                this.$nextTick(() => {
+                    const tbody = document.querySelector(".settingTable .el-table__body-wrapper > table > tbody"); 
+                    Sortable.create(tbody,{handle: ".move", onEnd: ({ newIndex, oldIndex })  => { // 监听拖动结束事件
+                            // 交换数组中两条数据的位置
+                            const targetRow = this.tableData2.splice(oldIndex, 1)[0];
+                            this.tableData2.splice(newIndex, 0, targetRow);
+                        }
+                    });
+                });
+            }, 
+            addConditon(){
+                if(this.tabRelation == 'and'){  //添加条件
+                    this.conditionAndData.push([])
+                }
+                if(this.tabRelation == 'or'){  //添加条件
+                    this.conditionOrData.push([])
+                }
+            },
+            deleteConditonAnd(index){
+                this.conditionAndData.splice(index,1)
+            },
+            nextstep(){
+                this.stepActive++   
+            },
+            prevstep(){
+                this.stepActive--
+            },
+            topTabHandle(){
+                this.stepActive  =  1
+            }, 
+             //关闭事件
+            handleClose(done) {
+                done&&done();
+            },
+            onCancel:function (){
+                this.centerDialogVisible = false;
+                var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                LogicDesign.destroyLogicEditNodeDrawControllers();
+            }
+
+            
+        }
+    }
+</script>
+
+<style>
+ .s-steps{
+    display: flex;
+ }
+ .s-steps .s-step-item{
+    width: 33%;
+ }
+</style>

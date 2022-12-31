@@ -1,0 +1,308 @@
+<!-- 门户设计左边菜单树 -->
+<template>
+    <div class="project_menu">
+        <div class="project_Title">
+            <div class="menu_inbox">
+                {{rootName}}
+            </div>
+        </div>
+        <div class="scrollbar" :style="{height : slbHeight } ">
+            <el-scrollbar style="height: 100%;">
+                <el-tree ref="tree" node-key="id" :data="data" @node-click="handleNodeClick" highlight-current="true" style="margin-bottom: 10px;">
+                    <span 
+                    
+                    :class="'custom-tree-node tree-node-'+data.nodeType"
+                    :control-pabs-controltype="data.nodeType"
+                    :control-pabs-htmlType="data.nodeType"
+                    
+                    :node-id="data.id" slot-scope="{ data }">
+                        <span class="tree-node-child">
+                            <img class="iconImg" src="/res_startwe/assets/yemian2.png" alt="">
+                            <span>{{ data.name }}</span> 
+                        </span>
+                    </span>
+
+                </el-tree>
+            </el-scrollbar>
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                clientHeight: '',//浏览器可视区域高度
+                slbHeight: '',
+                loadProjectTreeUrl: '',
+                loadProjectPortalUrl: '',
+                menuData: [],
+                rootName: '',
+                currentNodeId: '',
+                data: []
+
+            }
+        },
+        created() {
+        },
+        watch: {
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+            this.$router.query = oui.getParam(); 
+
+            this.loadProjectTreeUrl = this.$router.query.loadProjectTreeUrl;
+            this.clientHeight = `${document.documentElement.clientHeight}`;//获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 300 + 'px';
+            }
+            this.leftMenu();
+        },
+        methods: {
+            changeFixed(clientHeight) {
+                this.slbHeight = clientHeight - 300 + 'px';
+            },
+            findNodeType: function () {
+
+            },
+            handleNodeClick(data) {
+                // console.log(data);
+            },
+            leftMenu: function () {
+                var me = this;
+                var url = me.loadProjectTreeUrl
+                oui.postData(url, {
+                }, function (res) {
+                    me.menuData = oui.parseJson(res.designJson);
+                    // console.log(me.menuData);
+
+                    me.buildTreeData();
+
+                }, function (res) {
+
+                    console.log(res);
+                }, );
+            },
+            newTreeMap: function (treeMapObj, idKey, parentIdKey, nameKey) {
+                var me = this;
+                treeMapObj.idKey = idKey || 'id';
+                treeMapObj.parentIdKey = parentIdKey || 'parentId';
+                treeMapObj.nameKey = nameKey || 'name';
+                treeMapObj.clickName = oui.os.mobile ? 'tap' : 'click';
+                var treeMap = com.oui.TreeMap.newTreeMap(treeMapObj);
+                return treeMap;
+            },
+            buildTreeData: function () {
+                var me = this;
+                var treeMap = me.menuData;
+                oui.require(
+                    oui.getContextPath() + "res_engine/graph-common/js/tree-map.js", function () {
+                        me.$nextTick(function () {
+                            me.treeMap = me.newTreeMap(treeMap);
+
+                            me.renderTree();
+                        });
+
+                    });
+
+
+            },
+            renderTree: function () {
+                var me = this;
+                var treeMap = me.treeMap;
+
+                this.currentNodeId = treeMap.currentNodeId;
+                var root = treeMap.findRoot();
+
+
+                var rootNode = this.findNodes4Tree(root);
+                // console.log('render tree:');
+                // console.log(rootNode);
+                var isRootId = root.id == this.currentNodeId;
+                this.isRootId = isRootId;
+                this.rootId = root.id;
+                this.data = rootNode.children || [];
+
+           
+                this.rootName = root.node.name;
+                if (this.currentNodeId) {
+
+
+                    this.$nextTick(function () {
+
+                        me.$refs['tree'].setCurrentKey(me.currentNodeId);
+
+                    });
+                }
+            },
+            findNodes4Tree: function (node, targetPnode) {
+                var me = this;
+                if (!targetPnode) {
+                    var targetNode = oui.parseJson(oui.parseString(node.node));
+                    targetNode.children = [];
+                    targetPnode = targetNode;
+                    me.findNodes4Tree(node, targetPnode);
+
+                } else {
+                    oui.eachArray(node.childIds || [], function (cid) {
+                        var currNode = me.treeMap.findNode(cid);
+                        var currPNode = oui.parseJson(oui.parseString(currNode.node));
+                        targetPnode.children.push(currPNode);
+                        currPNode.children = [];
+
+
+                        me.findNodes4Tree(currNode, currPNode);
+                    });
+                }
+                return targetPnode;
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .current-root-node {
+        color: #f56c6c;
+        background: #fef0f0;
+        border-right: 2px solid #fbc4c4;
+    }
+
+    body .el-scrollbar__wrap {
+        /* overflow-x: hidden; */
+    }
+    .el-scrollbar .el-scrollbar__wrap  {
+	
+		overflow-x: hidden; 
+	}
+
+    /* 侧边栏 */
+
+    .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+        background: rgba(255, 125, 130, 0.10);
+        color: #FF7D82;
+    }
+
+    .custom-tree-node {
+        width: 80%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .el-tree {
+        background: #f8f8f8;
+    }
+
+    .left-sub-title {
+        font-weight: normal;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    .special {
+        color: #409EFF;
+    }
+
+
+    .project_menu {
+        position: absolute;
+        width: 190px;
+        background-color: #f8f8f8;
+    }
+
+    .project_Title {
+
+        border-bottom: 1px solid #eeeded;
+    }
+
+    .menu_inbox {
+        width: 80%;
+        margin: auto;
+        height: 60px;
+        font-size: 18px;
+        white-space: nowrap;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 60px;
+        color: rgb(88, 88, 88);
+
+    }
+
+    .menu_children {
+        width: 80%;
+        margin: auto;
+        color: #999;
+        font-size: 16px;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 10px;
+    }
+
+    .menu_children>ul>li {
+        font-weight: bold;
+        cursor: pointer;
+
+    }
+
+    .menu_children>ul>li>div {
+        display: flex;
+        align-items: center;
+
+    }
+
+    .menu_children>ul>li>div>img {
+        width: 10px;
+        height: 10px;
+    }
+
+    .menu_children>ul>li>div>div {
+        margin-left: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .inner_menu {
+        margin-left: 20px;
+    }
+
+    .iconImg {
+        margin-right: 10px;
+    }
+</style>

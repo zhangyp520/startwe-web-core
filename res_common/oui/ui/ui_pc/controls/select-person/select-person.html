@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <title>选人界面</title>
+    <!--<link href="../../../../../../res_apps/form/pc/common/css/common.css" rel="stylesheet"/>-->
+    <link href="../../../../../../res_common/third/jquery.zTreeV3.5/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"/>
+    <link href="../../../../../../res_common/oui/ui/ui_pc/css/dialog.css?v=<%=version %>" rel="stylesheet"/>
+    <link href="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/css/select-person.css?v=<%=version %>"
+          rel="stylesheet"/>
+
+</head>
+<body>
+<div class="selectPerson-cont-2">
+    <!--<div class="selectPerson-head">请选择人员</div>-->
+    <i class="selectPerson-close"></i>
+    <div class="selectPerson-tabs">
+        <ul>
+        </ul>
+    </div>
+    <div class="selectPerson-mid">
+        <div class="selectPerson-search">
+            <input type="text"  placeholder="请输入搜索名称"/>
+            <button></button>
+        </div>
+        <div class="selectPerson-mid-item">
+            <div class="selectPerson-mid-item-l">
+                <div class="l-top">
+                    <i class="selectPerson-arrow-up"></i>
+
+                    <div class="person-item">
+                    </div>
+                </div>
+                <div class="l-footer">
+                    <i class="selectPerson-arrow-down"></i>
+
+                    <div class="person-item">
+                    </div>
+                </div>
+            </div>
+            <div class="selectPerson-mid-item-arrow arrow-middle">
+                <div class="selectPerson-arrow"><span></span></div>
+            </div>
+            <div class="selectPerson-mid-item-r">
+                <div class="person-item">
+                    <dl id="selected-ul-view">
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="select-option" style="display: none;">
+        <label>
+            <div class="selectPerson-radio-button-wrapper">
+                <input type="radio" value="0" name="Serial-concurrent" checked="checked">
+                <i class="selectPerson-selected-icon">并发</i>
+                <i class="select-question">
+                    <div class="triangle-up"></div>
+                    <div class="select-info"><img src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/images/select-bingf.png"></div>
+                </i>
+            </div>
+        </label>
+        <label>
+            <div class="selectPerson-radio-button-wrapper">
+                <input type="radio" value="1" name="Serial-concurrent">
+                <i class="selectPerson-selected-icon">串发</i>
+                <i class="select-question">
+                    <div class="triangle-up"></div>
+                    <div class="select-info"><img src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/images/select-chuanf.png"></div>
+                </i>
+            </div>
+        </label>
+    </div>
+    <div class="selectPerson-footer">
+        <div class="selectPerson-footer-operation">
+            <span class="selectPerson-ok">确定</span>
+            <span class="selectPerson-cancel">取消</span>
+        </div>
+    </div>
+</div>
+<script src="../../../../../../login.do?method=ouiContext"></script>
+<script src="../../../../../../res_common/third/jquery/jquery-2.1.4.min.js"></script>
+<script src="../../../../../../res_common/third/jquery-ui/jquery-1.114-ui.min.js"></script>
+<script src="../../../../../../res_common/third/jquery.zTreeV3.5/js/jquery.ztree.core.js"></script>
+<script src="../../../../../../res_common/third/template/template_debug_3_0_0.js"></script>
+
+<script src="../../../../../../res_common/oui/system/oui.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/system/oui-common.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/system/oui-datautils.js?v=<%=version %>"></script>
+
+<script src="../../../../../../res_common/oui/ui/control.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/ui/ui_pc/dialog/dialog.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/select-person-biz.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/select-person-ui.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/select-person-main.js?v=<%=version %>"></script>
+<script src="../../../../../../res_common/oui/ui/ui_pc/controls/select-person/select-person.js?v=<%=version %>"></script>
+</body>
+</html>
+
+
+
+
+

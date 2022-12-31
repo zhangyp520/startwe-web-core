@@ -1,0 +1,171 @@
+<template>
+    <div>
+        <div :id="id" :name="name" class="sw-divider sw-divider-horizontal" v-if="lineType<4">
+            <div :class="['sw-divider-text',textAlignType(textAlign)]"   >
+                <span :style="{color:fontColor}">{{text}}</span>
+            </div> 
+        </div>
+
+        <div :id="id" :name="name"  class="sw-canvas   " v-if="lineType==4">
+            <canvas id="sw-canvas-divider" ></canvas>
+            <div :class="['sw-divider-text','sw-canvas-divider-text',textAlignType(textAlign)]"   >
+                <span  :style="{color:fontColor}">{{text}}</span>
+            </div>  
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                id: '',
+                name: '',
+                data: {},
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: '',
+                title: '',
+                otherAttrs: null,
+                text: '',
+                textAlign: 'left',
+                fontColor: '#000000',
+                borderColor: "#ccc",
+                borderWidth: 1,
+                lineType: "1"
+            }
+        },
+        mounted() {
+            if (this.otherAttrs && this.otherAttrs.direction) {
+                this.direction = this.otherAttrs.direction
+            }
+            if (this.otherAttrs && this.otherAttrs.text) {
+                this.text = this.otherAttrs.text
+            }
+            if (this.otherAttrs && this.otherAttrs.textAlign) {
+                this.textAlign = this.otherAttrs.textAlign
+            }
+            if (this.otherAttrs && this.otherAttrs.fontColor) {
+                this.fontColor = this.otherAttrs.fontColor
+            }
+            if (this.otherAttrs && this.otherAttrs.borderColor) {
+                this.borderColor = this.otherAttrs.borderColor
+            }
+            if (this.otherAttrs && this.otherAttrs.borderWidth) {
+                this.borderWidth = this.otherAttrs.borderWidth
+            }
+            // if ( this.titleShow != this.otherAttrs.titleShow   ) {
+            //     if(this.lineType == 4){
+            //         this.$nextTick(function() {
+            //             this.drawScreen();
+            //         }); 
+            //     }
+            // }
+            if (this.otherAttrs && this.otherAttrs.lineType) {
+                this.lineType = this.otherAttrs.lineType;
+                if(this.lineType == 4){
+                    this.$nextTick(function() {
+                        this.drawScreen();
+                    }); 
+                }
+            }
+
+        },
+        methods: {
+            drawScreen() {
+                var canvas = document.getElementById("sw-canvas-divider")
+                console.info(canvas,'canvascanvas')
+                let width = canvas.clientWidth;
+                canvas.width=canvas.clientWidth;
+                canvas.height=10;
+                var ctx = canvas.getContext('2d')
+                ctx.setLineDash([ 3,3,15,3,3,3]);
+                ctx.lineWidth = this.borderWidth;
+                ctx.strokeStyle = this.borderColor;
+                ctx.beginPath();
+                ctx.moveTo(0,0);
+                ctx.lineTo(width,0);
+                // ctx.font = '14px STheiti, SimHei'; 
+                // ctx.fillText('文字样本', 0, 10); 
+                ctx.stroke();
+            } , 
+            textAlignType(textAlign) {
+
+                let textAlignHead = "is-"
+
+                if (textAlign == 'left') {
+                    return textAlignHead + 'left'
+                } else if (textAlign == 'center') {
+                    return textAlignHead + 'center'
+                } else if (textAlign == 'right') {
+                    return textAlignHead + 'right'
+                }
+
+                return ''
+            },
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {
+                    value: v,
+                    data4DB: v,
+                    display: v
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .sw-divider {
+        background-color: {{borderColor}} ;
+        position: relative;
+    } 
+    .sw-divider-horizontal {
+        display: block; 
+        height: {{borderWidth}}px;
+        width: 100%;
+        margin: 24px 0;
+    }
+
+    .sw-divider .sw-divider-text {
+        font-size: 14px;
+    }
+
+    .sw-divider-text.is-right {
+        right: 20px;
+        transform: translateY(-50%);
+    }
+
+    .sw-divider-text.is-left {
+        left: 20px;
+        transform: translateY(-50%);
+    }
+
+    .sw-divider-text.is-center {
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+
+    .sw-divider-text {
+        position: absolute;
+        background-color: #fff;
+        padding: 0 20px;
+        font-weight: 500;
+        color: #303133;
+        font-size: 14px;
+    }
+    .sw-canvas{
+        position: relative;
+        margin: 24px 0;
+    }
+    .sw-canvas-divider-text{
+        margin-top: -10px;
+    }
+    #sw-canvas-divider{
+        width: 100%;  
+    }
+    
+</style>

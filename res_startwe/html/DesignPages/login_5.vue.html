@@ -1,0 +1,242 @@
+<!-- 设计登录页>>>>>>>5555555555555 -->
+<template>
+    <div class="container">
+        <div class="login_box">
+            <div class="login_content">
+                <!-- title -->
+                <div class="login_Title">
+                    <div>用户登录</div>
+                    <!-- <div>短信登录</div> -->
+                </div>
+                <!-- content -->
+                <!-- 密码登录框 -->
+                <div class="loginContent">
+                    <!-- 输入框 -->
+                    <div>
+                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                            <img src="/res_startwe/html/DesignPages/assets/loginpage5_user.png" alt="" class="user">
+                            <el-form-item prop="name">
+                                <el-input v-model="ruleForm.name" placeholder="手机号"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                            <img src="/res_startwe/html/DesignPages/assets/loginpage5_lock.png" alt="" class="password">
+                            <el-form-item prop="password">
+                                <el-input v-model="ruleForm.password" show-password placeholder="密码"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <!-- 自动登录 -->
+                    <div class="loginState">
+                        <el-checkbox v-model="checked">自动登录</el-checkbox>
+                        <div>
+                            忘记密码
+                        </div>
+                    </div>
+                    <!-- 登录按钮 -->
+                    <div class="loginBtn">
+                        <button>登录
+                            <button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                checked: false,
+                showSlider: false,
+                activeHidden: false,
+                ruleForm: {
+                    name: '',
+                    password: '',
+                    phoneNumber: '',
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '请输入账号', trigger: 'blur' },
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'change' },
+                        { min: 4, max: 16, message: '请输入4到16位字符', trigger: 'blur' }
+                    ],
+                    phoneNumber: [
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        {
+                            validator: function (rule, value, callback) {
+                                if (/^1[345789]\d{9}$/.test(value) == false) {
+                                    callback(new Error("请输入正确的手机号"));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur'
+                        }
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+
+
+    /* element样式修改 */
+
+    .demo-ruleForm {
+        position: relative;
+    }
+
+    .el-input__inner {
+        color: #fff;
+    }
+
+    .el-checkbox__label {
+        color: #fff;
+    }
+
+    .el-checkbox__inner {
+        border: 1px solid #1FB6FC;
+        background-color: #20245E;
+    }
+
+    /* 内容 */
+
+    .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        background: url(/res_startwe/html/DesignPages/assets/loginpage5_bg.png) no-repeat;
+        background-size: 100%;
+    }
+
+    .login_box {
+        background: url(/res_startwe/html/DesignPages/assets/loginpage5_box1.png) no-repeat;
+        margin-right: 100px;
+        width: 437px;
+        height: 432px;
+
+    }
+
+    .login_content {
+        margin: 0 60px;
+    }
+
+    .login_Title {
+        /* display: flex;
+        justify-content: center;
+        align-items: center; */
+        font-size: 30px;
+        color: #fff;
+        margin-top: 68px;
+        height: 50px;
+    }
+
+    .login_Title>div {
+        text-align: center;
+        line-height: 50px;
+    }
+
+    .active {
+        color: #fff;
+        font-weight: bold;
+        border-bottom: 4px solid #fff;
+    }
+
+    .loginContent {
+        margin-top: 30px;
+    }
+
+    .loginContent input {
+        padding-left: 34px;
+        width: 100%;
+        height: 50px;
+        background-color: #20245E;
+        border: 1px solid #1FB6FC;
+    }
+
+    .user {
+        /* margin-bottom: 24px; */
+        position: absolute;
+        top:13px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .password {
+        position: absolute;
+        top:13px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .loginState {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .loginState>div {
+        font-size: 14px;
+        color: #1890FF;
+        cursor: pointer;
+    }
+
+    .loginBtn {
+        display: flex;
+        justify-content: center;
+    }
+
+    .loginBtn>button {
+        width: 100%;
+        height: 50px;
+        font-size: 21px;
+        /* font-weight: bold; */
+        color: #fff;
+        background-image: linear-gradient(180deg, #35C3FF 0%, #1890FF 100%);
+        border-radius: 2px;
+        outline: none;
+        letter-spacing: 10px;
+    }
+
+</style>

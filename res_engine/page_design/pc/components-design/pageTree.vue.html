@@ -1,0 +1,436 @@
+<template>
+  <div class="leftTree oui-page-tree">
+    <el-tree  :data="treeData" :props="defaultProps" :expand-on-click-node="false" @node-click="treeHandleNodeClick"
+      node-key="id" icon-class="s-icon-arrow-right" :highlight-current="true" ref="pageTree"
+      :default-expanded-keys="defaultExpandedIds" :default-checked-keys="[defaultCheckedId]" >
+ 
+      <span 
+          class="s-tree-node" 
+          :class="data.class" 
+          slot-scope="{ node, data }"
+          >
+        <span class="text-ellipsis" :title="node.label"> <i :class="data.icon"></i> {{ node.label }}</span>
+
+        <span class="s-tree-leaf">
+          <i v-if="data.isLeaf" @click.stop="() => rename(node,data)" class="s-icon s-icon-14 s-icon-rename"></i>
+          <i v-if="!data.isLeaf && data.typeCode!=0" @click.stop="() => append(node,data)" class="s-icon s-icon-14 s-icon-copy2"></i>
+          <!-- 根节点不需要删除和重命名 -->
+          <i v-if="data.isLeaf  && data.typeCode!=0 " @click.stop="() => deletes(node,data)" class="s-icon s-icon-14 s-icon-delete3"></i>
+        </span>
+      </span>
+
+
+    </el-tree>
+
+ 
+ 
+
+    <el-dialog 
+      title="新增页面" 
+      :visible.sync="appendPage"
+      width="400px"
+      custom-class="s-dialog-box"
+      top="35vh"
+      >
+      <div class="module_box">
+        <div class="list_center_input"> 
+          <el-input size='small' placeholder="请输入名称" v-model="pageName" type="text" />
+        </div>
+      </div> 
+      <div slot="footer" class="s-dialog-footer">
+        <el-button  @click="appendPage = false" size="small" >取 消</el-button>
+        <el-button type="primary" size="small" @click="addModulePage" >确认</el-button>
+      </div> 
+    </el-dialog>
+
+
+
+    <el-dialog
+      title="删除提示"
+      :visible.sync="delPage"
+      width="400px"
+      custom-class="s-dialog-box"
+      top="35vh"
+      >
+      <span>是否删除页面 [{{currentPageTitle}}]</span> 
+      <span slot="footer" class="s-dialog-foote">
+        <el-button @click="delPage = false"  size="small">取 消</el-button>
+        <el-button type="primary" @click="delModulePage"  size="small">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
+
+  </div>
+</template>
+
+<script>
+  exports = {
+    templateType: "vue",
+    data() {
+      return { 
+        Design : com.oui.absolute.AbsoluteDesign,
+        value: '',
+        userinfo: null,
+        defaultCheckedId: null,  //默认选中id
+        defaultExpandedIds:[],
+        defaultExpandedId: null, //默认展开节点
+        isShowLeaf: true,
+        appendPage: false,
+        delPage:false,
+        moduleType: null,
+        pageName:'',
+        pageType:0,
+        currentAddPid:'', //添加页面父类id
+        currentPageTitle:'',
+        currentRemoveUrl:'',//当前删除接口
+        currentRenameUrl:'',//当前重命名接口
+        currentDelPid:'',//当前删除节点的父id
+        treeData: null,
+        defaultProps: {
+          children: "children",
+          label: "label",
+        },
+        createPageViewListUrl:'', //新增列表模板接口
+        createPageViewEditUrl:'', //新增编辑接口
+        createPageViewDetailUrl:'', //新增详情模板接口
+        circleId:'',
+        projectId:'',
+        pageId:'', 
+      };
+    },
+    mounted: function () {
+      let userinfo = JSON.parse(localStorage.getItem("startwe_user_info"));
+      this.userinfo = userinfo;  
+      var me = this
+      this.$nextTick(()=>{
+        me.loadtreeData();//加载树
+      })
+ 
+
+
+    },
+    methods: {
+
+      /**
+       * 添加页面
+       * @returns {*}
+       */
+      addModulePage:function () {
+          if(!this.pageName) {
+              return this.$message.error('请输入模板名称');
+          }
+          var url = ''
+          var me = this
+          var paramObj = {}
+
+          var Design = com.oui.absolute.AbsoluteDesign
+ 
+          var obj = com.oui.absolute.AbsoluteDesign.data
+ 
+          obj.id = ''
+          var param = oui.getParam()  
+          // obj.controls = []
+          delete  obj.$ref;
+          var pageTypeEnum = oui.PageTypeEnum.findPageTypeEnumByValue(me.pageType);
+          var url = Design[pageTypeEnum.createPageViewUrlKey];
+          var page = {
+            name:me.pageName,
+            pageId:Design.data.pageId,
+            content:'',
+            controls:[],
+            pageType:pageTypeEnum.value,
+            pageDesignType:'normalForm',//暂时写死
+            projectId:Design.data.projectId,
+            moduleId:Design.data.moduleId,
+            appId:Design.data.appId,
+            parentId:Design.data.pageId,
+            nodeType:'page',
+            circleId:Design.data.circleId,
+            enName:Design.data.enName,
+            bizId:Design.data.bizId,
+            version:Design.data.version,
+            otherAttrs:{},
+            events:{}
+
+          };
+
+          oui.postData(url, {
+            pageId:Design.data.pageId,
+            page:page
+          },   (res) => {
+
+            if(res.success){
+               me.$message.success('添加成功');
+
+               me.appendPage = false   
+               //this.$refs.pageTree.setCheckedKeys([me.currentAddPid]); 
+               // this.$refs.pageTree.setCheckedKeys([])
+               
+               Design.loadUrl(); 
+               me.loadtreeData(function (){
+
+                 me.pageName = ''
+                 me.defaultCheckedId =  res.id
+                 me.defaultExpandedId =  me.currentAddPid
+                 var Design = com.oui.absolute.AbsoluteDesign
+                 var data = me.findTreeNodeDataById(res.id);
+                 if(data&&data.isLeaf){//添加后自动跳转加载指定设计器
+                   Design.loadPageDesign(data)
+                 }
+
+               })
+ 
+
+            }else{
+              me.$message.error('添加失败');
+            }
+             
+
+
+          }, function (res) {
+              me.$message.error('添加失败');
+          }, '加载中...');
+      },
+      findTreeNodeDataById:function (id){
+          var one  = oui.findOneFromTreeArrayBy(this.treeData||[],function (item){
+              if(item.id ==id){
+                return true;
+              }
+          });
+          return one;
+      },
+
+      //处理树的数据
+      loadtreeData:function (callback) {
+
+
+          var me = this
+
+          var Design = com.oui.absolute.AbsoluteDesign
+
+          Design.loadedBaseData.then((data)=>{
+             
+            if(data == 'success'){  
+              this.treeData = Design.pageTreeData;
+              console.log('当前页面树的数据',this.treeData);
+              var arr = oui.findManyFromTreeArrayBy(this.treeData,function (item){
+                if(!item.isLeaf){
+                  me.defaultExpandedIds.push(item.id);
+                }
+                return !item.isLeaf;
+              });
+              if(this.defaultCheckedId == null ){
+                  this.defaultCheckedId = this.treeData[0].id
+              }
+              callback&&callback();
+
+            }
+
+          })
+       
+
+
+
+ 
+        
+        
+      },
+      //点击节点触发
+      treeHandleNodeClick(data, node, dom) {
+        if(window.setBusinessSetting){
+          window.setBusinessSetting(data.typeCode == 0)
+        }
+        let id = data.id;
+         
+        //设置当前id 状态
+        this.$refs.pageTree.setCheckedKeys([])
+        var Design = com.oui.absolute.AbsoluteDesign
+
+        
+        if(data.isLeaf){
+          
+     
+          
+          Design.loadPageDesign(data)
+
+         }
+
+        
+
+ 
+
+      }, 
+      // 树节点鼠标移入移出 
+      // treeMouseenter(node, data){ 
+      //   console.info(data,'datas')
+      //   data.showBtn = true
+      //  //s this.$set(data, 'showBtn', true)
+         
+      // },
+       // 树节点鼠标移出
+      treeMouseleave(node, data) {
+        console.info(data,'datas_leave')
+         this.$set(data, 'showBtn', false)
+      },
+      //重命名
+      rename(node, data) {
+     
+        this.$prompt('', '提示', {
+          title: '重命名',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 's-message-box',
+          inputValue:data.label,
+        }).then(({
+          value
+        }) => {
+          if(!value){
+            this.$message({
+              type: 'success',
+              message: '请输入新的名称'
+            });
+          }else{
+
+            this.$set(data,'label',value);
+             
+            oui.postData(data.renameUrl, { name:value , typeCode:data.typeCode  },  (res)=> {
+              if(res.success){
+                this.$message({
+                  type: 'success',
+                  message: res.msg
+                }); 
+                //this.loadtreeData();  
+          
+              }else{
+                this.$message({
+                  type: 'error',
+                  message: res.msg
+                });
+              } 
+              this.delPage = false 
+            })
+ 
+          }
+          
+        }).catch(() => {
+
+        });
+      },
+      deletes(node, data) {  
+        this.currentPageTitle = data.label
+        this.currentRemoveUrl = data.removeUrl 
+        this.currentDelPid = data.pid
+        this.currentDelId = data.id;
+        this.delPage = true
+       
+      },
+      delModulePage(){
+
+        var me = this;
+        var Design = this.Design;
+        var nextId =null;
+        var parent= oui.findOneFromTreeArrayBy(this.treeData,function (item){
+          if(item.id == me.currentDelPid){
+            return true;
+          }
+        });
+        //存在当前分类下可跳转的页面
+        if(parent&&parent.children&&parent.children.length>1){
+          var idx  = -1;
+          oui.findOneFromArrayBy(parent.children,function (item,index){
+            if(item.id==me.currentDelId){
+              idx =index;
+              return true;
+            }
+          });
+          var nextIdx = idx+1;
+          var maxIdx = parent.children.length-1;
+          if(nextIdx>maxIdx){
+            nextIdx = nextIdx-2;//获取前一个作为跳转目标
+          }
+          var nextOne = parent.children[nextIdx];
+          if(nextOne){
+            nextId = nextOne.id;
+          }
+        }else{//寻找下一个可跳转的页面
+           if(parent&&parent.id ){
+             var idx=-1;
+             var delIdx =-1;
+             var arr = oui.findManyFromTreeArrayBy(this.treeData,function (item){
+               if(item.isLeaf){
+                 idx++;
+               }
+               if(me.currentDelId == item.id){
+                  delIdx = idx;
+                }
+
+                return item.isLeaf;
+             });
+             var maxIdx = arr.length-1;
+             var nextIdx = idx+1;
+             if(nextIdx>maxIdx){
+               nextIdx=nextIdx-2;
+             }
+             var nextOne = arr[nextIdx];
+             if(nextOne){
+               nextId = nextOne.id;
+             }
+           }
+        }
+        if(!nextId){
+          nextId = me.Design.data.pageId;
+        }
+
+        oui.postData(this.currentRemoveUrl, { },  (res)=> {
+              if(res.success){
+                this.$message({
+                  type: 'success',
+                  message: res.msg
+                });
+                this.Design.loadUrl();
+                this.loadtreeData(function (){
+                    //删除之后，自动跳转到指定页面
+                  var data = me.findTreeNodeDataById(nextId);
+                  if(data&&data.isLeaf){//添加后自动跳转加载指定设计器
+                    me.defaultCheckedId =  nextId
+                    me.defaultExpandedId =data.pid;
+
+                    Design.loadPageDesign(data)
+                  }
+                });
+                 
+              }else{
+                this.$message({
+                  type: 'error',
+                  message: res.msg
+                });
+              } 
+              this.delPage = false 
+        })
+      },
+      //添加页面
+      append(node, data) {
+        this.appendPage = true;
+        this.pageType = data.typeCode
+        this.currentAddPid = data.id
+      },
+    },
+  };
+</script>
+<style>
+ .oui-page-tree .text-ellipsis{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 170px;
+    overflow: hidden;
+ }
+
+ .oui-page-tree .s-tree-node .s-tree-leaf{
+   display: none;
+ }
+
+ .oui-page-tree .s-tree-node:hover .s-tree-leaf{
+   display: unset;
+ }
+</style>

@@ -1,0 +1,57 @@
+
+<template >
+    <el-input :tempStyle="style" :id="id" :name="name" :bindProp="bindProp" :class="cls" v-model="value" @change="_controlOnUpdate" :placeholder="placeholder"></el-input>
+    
+
+
+    <!-- <div class="textfield">
+        <div>
+            占位符
+        </div>
+        <div><input class="pla_input" type="text"  placeholder="请输入内容" @change='changeInput'></div>
+    </div> -->
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            },
+            changeInput:function() {
+                console.log(23213)
+            }
+        },
+
+    }
+</script>
+
+<style>
+   .textfield{
+         font-size: 14px;
+    }
+    .textfield_pla_flex{
+        display: flex;
+        align-items: center;
+    }
+    .pla_input{
+        border: 1px solid #e6e6e6;
+        height: 35px;
+        border-radius: 4px;
+        outline: none;
+    }
+</style>

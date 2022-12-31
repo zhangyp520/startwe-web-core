@@ -1,0 +1,358 @@
+<!-- 报表设计页 -->
+<template>
+    <!-- 外层大盒子 -->
+    <div class="template_box">
+        <!-- 左边侧边栏 -->
+        <div class="template_leftBox">
+            <ul>
+                <li>
+                    <div class="System_title">系统组件</div>
+                    <ul class="SystemComponents">
+                        <li v-for="item in SystemComponents" key="item">
+                            <img :src="item.imgUrl" alt="">
+                            <div>{{item.text}}</div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="MyComponents">
+                    <div class="System_title">我的组件</div>
+                    <ul class="SystemComponents">
+                        <li>
+                            <img src="" alt="">
+                            <div></div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+
+        </div>
+        <!-- 中间内容盒子 -->
+        <div class="template_middleBox">
+
+        </div>
+        <!-- 右边菜单栏 -->
+        <div class="template_rightBox">
+            <div class="rightContent">
+                <div class="rightTitle">
+                    基础设置
+                </div>
+                <div class="locationSetting">
+                    <div class="X location_inner">
+                        <span>X</span>
+                        <input type="text">
+                    </div>
+                    <div class="Y location_inner">
+                        <span>Y</span>
+                        <input type="text">
+                    </div>
+                    <div class="num">
+                        <!-- <span>0</span> -->
+                            <input type="text" :value="input">
+                    </div>
+                    <div class="W  location_inner">
+                        <span>W</span>
+                        <input type="text">
+                    </div>
+                    <div class="H  location_inner">
+                        <span>H</span>
+                        <input type="text">
+                    </div>
+                    <div class="lockImg">
+                        <img src="/res_startwe/html/DesignPages/assets/locking.png" alt="">
+                    </div>
+                </div>
+                <div class="">
+                    <div class="SubTitle">可选择的数据库</div>
+                    <div class="opDatabase">
+                        <div>数据库A数据库A数据库A数据库A数据库A</div>
+                        <div>数据库A</div>
+                        <div>数据库A</div>
+                        <div>数据库A</div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="SubTitle">可选择的数据库表和字段</div>
+                    <div class="opDatabase">
+                        <div>数据库表A</div>
+                        <div>数据库表A</div>
+                        <div>数据库表A</div>
+                        <div>数据库表A</div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="SubTitle">可选择填充图表的数据库和字段</div>
+                    <div class="opDatabase">
+                        <div>表B-B字段</div>
+                        <div>表B-B字段</div>
+                        <div>表B-B字段</div>
+                        <div>表B-B字段</div>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="SubTitle">可选择图表维度的数据库表和字段</div>
+                    <div class="opDatabase">
+                        <div>数据库表B</div>
+                        <div>数据库表B</div>
+                        <div>数据库表B</div>
+                        <div>数据库表B</div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                input:0,
+                tableData: '',
+                SystemComponents: [{
+                    imgUrl: '/res_startwe/html/DesignPages/assets/bingtu.png',
+                    text: '饼图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/huanxingtu.png',
+                    text: '环形图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/duidietxt.png',
+                    text: '堆叠条形图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/zhexiantu.png',
+                    text: '折线图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/zhuzhuangtu.png',
+                    text: '柱状图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/duidiezzt.png',
+                    text: '堆叠柱状图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/mianjitu.png',
+                    text: '面积图'
+                }, {
+                    imgUrl: '/res_startwe/html/DesignPages/assets/loudoutu.png',
+                    text: '漏斗图'
+                }],
+                currentPage4: 4,
+                isShow: false,
+                navList: [{ text: '组件' }, { text: '树结构' }],
+                checkClick: 0,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        /* font-size: 14px; */
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* elementui样式修改 */
+
+    .el-menu {
+        background-color: #F4F4F4;
+        border: none;
+    }
+
+    .el-submenu__title {
+        width: 240px;
+        color: #999;
+        font-size: 16px;
+    }
+
+    /* 内容 */
+
+    /* 左边侧边栏 */
+
+    .template_box {
+        height: 100%;
+        display: flex;
+        background-color: #F4F4F4;
+
+    }
+
+    .template_leftBox {
+        width: 240px;
+        height: 100%;
+        background: #FFFFFF;
+        box-shadow: 0 2px 12px 2px rgba(0, 0, 0, 0.10);
+    }
+
+    .System_title {
+        background: #E9E9E9;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: bold;
+        text-indent: 10px;
+    }
+
+    .SystemComponents {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .SystemComponents>li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 70px;
+        height: 80px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+
+
+
+
+
+    /* 中间盒子 */
+
+    .template_middleBox {
+        width: 75%;
+    }
+
+
+    /* 右边菜单栏 */
+
+    .template_rightBox {
+        width: 240px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: 0 2px 12px 2px rgba(0, 0, 0, 0.10);
+    }
+
+    .rightContent {
+        margin: 0 12px;
+    }
+
+    .rightTitle {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        /* text-indent: 10px; */
+        height: 60px;
+        line-height: 60px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 50px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    /* .locationSetting>div>img {
+        width: 14px;
+        height: 16px;
+    } */
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+    .num>input{
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .SubTitle {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+        margin: 10px 0 10px;
+    }
+
+    .opDatabase {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+
+    .opDatabase>div {
+        width: 90px;
+        height: 40px;
+        background: #F2F2F2;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        font-size: 14px;
+        line-height: 40px;
+        text-align: center;
+        margin-bottom: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+
+    }
+</style>

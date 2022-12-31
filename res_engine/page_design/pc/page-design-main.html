@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通用表单设计器</title>
+    <link rel="stylesheet" href="css/1.6/page-design.css" />
+    <link rel="stylesheet" href="../../../res_common/third/element-ui/lib/theme-chalk/index.css" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+
+    <link rel="stylesheet" href="../../../res_common/third/mint-ui/lib/style.css" />
+    <link rel="stylesheet" href="../../../res_common/third/progress/nprogress.css" />
+    <link rel="shortcut icon" href="../../../favicon-32.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../res_engine/page_design/pc/css/page-common-runtime.css" />
+
+</head>
+
+<body oui-controller="com.oui.absolute.AbsoluteDesign" onselectstart="return false;">
+    <script>
+        // 监听键盘按下事件
+        document.onkeydown = function () {
+            // 判断 Ctrl+S
+            if (event.ctrlKey == true && event.keyCode == 83) {
+                return false;
+                // alert('触发ctrl+s');
+                // 或者 return false;
+                event.preventDefault();
+            }
+        }
+    </script> 
+    <div class="main">
+        <div class="header">
+            <div class="nav">
+                <div class="logo-m">
+                    <span>S</span>
+                </div>
+                <ul>
+                    <li><a href="#">项目名称</a></li>
+                    <li><a href="#">模块名称</a></li>
+                    <li><a href="#">应用名称</a></li>
+                    <li><a href="#">页面模型名称</a></li>
+                    <li><a href="#">呈现</a></li>
+                    <li><a href="#">编辑</a></li>
+                    <li class="current"><a href="#">标签页1</a></li>
+                </ul>
+            </div>
+
+            <div class="toolbtns">
+                <button oui-e-click="event2preview" type="button" class="s-button is-plain">
+                    <span>预览</span>
+                </button>
+                <button oui-e-click="event2save"
+                    save-id="{{AbsoluteDesign.startTemplateTag}}dataId{{AbsoluteDesign.endTemplateTag}}"
+                    save-url="{{AbsoluteDesign.startTemplateTag}}saveUrl{{AbsoluteDesign.endTemplateTag}}" type="button"
+                    class="s-button s-button--primary">
+                    <span>保存</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="container">
+
+
+            <div class="left-box">
+
+
+                <div class="leftSider">
+
+                    <div class="tabs">
+                        <div class="tabs-item current">
+                            <i class="s-icon-takeon active"></i>
+                            <div>呈现</div>
+                        </div>
+                        <div class="tabs-item">
+                            <i class="s-icon-logic"></i>
+                            <div>逻辑</div>
+                        </div>
+                        <div class="tabs-item" id="sider-explorer-menu">
+                            <i class="s-icon-logic"></i>
+                            <div>资源</div>
+                        </div>
+                    </div>
+
+                </div>
+ 
+
+
+            </div>
+
+
+            <div class="right-contant">
+                
+            </div>
+ 
+
+           
+        </div>
+    </div>
+
+    <div id="right-drawer">
+        <div id="sider-explorer" class="sider-explorer"></div>
+    </div>
+
+
+    <script src="../../../res_common/third/vue/dist/vue.min.js"></script>
+    <!--<script src="../../res_common/third/vue/dist/vue-router.js"></script>-->
+    <script src="../../../res_common/third/element-ui/lib/index.js"></script> 
+
+    <script src="../../../res_common/third/mint-ui/lib/index.js"></script>
+    <script src="../../../res_common/third/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../../res_common/third/jquery/jquery-3.2.1.min.js?_v=1">
+    </script>
+        <script type="text/javascript" charset="utf-8"
+        src="../../../res_common/third/template/template_debug_3_0_0.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="../../../res_common/oui/core.js"></script>
+    <!--<script type="text/javascript" src="../../../context/context.js?_v=1" charset="utf-8"></script>-->
+    <!--系统公共资源结束-->
+    <!--页面入口-->
+    <script type="text/javascript" src="../../../res_common/oui/system/main.js"></script>
+    <script type="text/javascript" src="../../../res_common/third/sortable/sortable1.8.js"></script>
+    <script type="text/javascript" src="../../../res_common/third/sortable/vuedraggable2.20.js"></script>
+ <script> 
+        $(function () {
+            //左边菜单标签切换事件绑定
+            changelefttabs();
+            //左侧Side menu切换
+            changeLeftSide();
+
+            //绑定资源管理器菜单事件 点击弹出资源管理器
+            handlExplorer();
+
+
+            //切换选项卡到组件
+            // $('.action-tabs-item').eq(1).trigger("click");
+ 
+                        // var menu = {
+                        //     id:'logic-design',
+                        //     menuPath:'circle-list/circle/project-list/project-design/logic-design',
+                        //     parentId:'project-design',
+                        //     icon:'',
+                        //     defaultNotShow:true, //默认不显示在菜单中
+                        //     url:'res_engine/logic-graph/logic-design.tpl.html',
+                        //     scripts:[oui.getContextPath()+'res_engine/logic-graph/js/logic-design-require.js'],
+                        //     openType:'inner', //inner,location,openWindow,htmlDialog,urlDialog
+                        //     display:'逻辑设计'
+                        // }; 
+                  
+
+        })
+
+        function clearScriptTag(urls){
+            if((!urls)||(!urls.length)){
+                return ;
+            }
+            var scripts = document.getElementsByTagName('script');
+            for(var i = 0; i < scripts.length; i++){//是否已加载
+                var src =scripts[i].getAttribute('data-url') || scripts[i].src;
+                src = src.substring(0,src.indexOf(oui_context.js_version));
+                if(urls.indexOf(src)>-1){
+                    scripts[i].parentNode.removeChild(scripts[i]);
+                }
+            }
+        }
+
+        function changelefttabs() {
+            $(".action-tabs .action-tabs-item").on("click", function () {
+                $(".action-tabs .action-tabs-item").removeClass("current")
+                $(this).addClass("current");
+                $('.left-list').hide();
+                let type = $(this).data("type");
+                console.info(type, 'typetypetype')
+                $("." + type + '-list').show();
+            })
+        }
+ 
+        function changeLeftSide() {
+            let $el  = $(".leftSider>.tabs>.tabs-item");
+            $el.on("click", function () {
+
+               $el.removeClass("current")
+               $el.find('i').removeClass("active")
+                $(this).addClass('current');
+                $(this).find("i").addClass('active');
+
+
+                if($(this).text().trim() == '逻辑'){
+ 
+                    let scripts = [oui.getContextPath()+'res_engine/logic-graph/js/logic-design-require.js'];
+           
+                        
+                    clearScriptTag(scripts);  
+                    oui.replaceByTplConfig({
+                        url:"res_engine/logic-graph/logic-design-1.6.tpl.html",
+                        scripts:scripts||[],
+                        container:'.pg-body',
+                        callback:function(){
+                            console.info('callback')
+                        },
+                        params:undefined
+                    });
+
+                }
+
+
+                if($(this).text().trim() == '呈现'){
+                    $('.right-contant iframe').attr('src','/res_engine/page_design/pc/page-design.html');
+                     
+                }
+            })
+        }
+
+        //弹出资源管理器
+        function handlExplorer(){
+
+            
+            
+            $('#sider-explorer-menu').on("click",function(){
+                let explorer = 'res_engine/page_design/pc/components-design/explorerDrawer.vue.html';
+                
+                var x = oui.util.loadComponent(explorer,'','',document.querySelector("#sider-explorer"));
+               
+            })
+ 
+
+        }
+    </script>
+
+</body>
+
+</html>

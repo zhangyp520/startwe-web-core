@@ -1,0 +1,42 @@
+@charset "utf-8";
+/** 分页控件 */
+.oui-class-pager{
+    width: 100%;
+}
+.oui-class-pager .pager-btns{
+    padding: .05rem;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.oui-class-pager .pager-btns span{
+    background: #f2f2f2;
+    height: .42rem;
+    line-height: .42rem;
+    text-align: center;
+    -webkit-border-radius: .02rem;
+    -moz-border-radius: .02rem;
+    border-radius: .02rem;
+    display: inline-block;
+}
+.oui-class-pager .pager-btns .btn-go-top{
+    display: block;
+    min-width: 1rem;
+    margin-left: .15rem;
+    color: #aaaaaa;
+    font-size: .14rem;
+}
+.oui-class-pager .pager-btns .btn-next{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    color: #2C82FC;
+    font-size: .16rem;
+}
+
+
+
+
+

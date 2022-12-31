@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="18px" viewBox="0 0 14 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>title</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="页面组件" transform="translate(-238.000000, -216.000000)" fill="#ABABAB" fill-rule="nonzero">
+            <g id="title" transform="translate(238.000000, 216.000000)">
+                <polygon id="路径" points="11.9 0 11.9 8 2.1 8 2.1 0 0 0 0 18 2.1 18 2.1 9.33333333 11.9 9.33333333 11.9 18 14 18 14 0"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

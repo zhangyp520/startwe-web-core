@@ -1,0 +1,142 @@
+<template >
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="text-right-control" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="网页" name="1">
+                    <div class="text-public-box">
+                        <span>网页地址</span>
+                        <div class="bgcolor-color-piker">
+                            <el-input type="textarea" autosize v-model="webPageSrc" @change="handleWebPageSrcChange" ></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>刷新间隔</span>
+                        <div class="bgcolor-color-piker">
+                            <el-input v-model="refreshTime" @change="handleRefreshTimeChange" ></el-input>
+                        </div>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                slbHeight: '',
+                rightToolbarData:{},
+                activeNames: '1', //展开的选项
+                currentControl: {},
+                refreshTime: "",
+                webPageSrc: "https://www.baidu.com"
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+
+            if (this.currentControl.otherAttrs.webPageSrc) {
+                this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+            }
+            if (this.currentControl.otherAttrs.refreshTime) {
+                this.refreshTime = this.currentControl.otherAttrs.refreshTime;
+            }
+        },
+        methods:{
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptControl = Design.data.currentControl;
+
+           
+                $('.el-tooltip__popper').remove();
+                // Design.setCurrPropsData4page('props', 'down2selectPage');
+                if(pptControl&&pptControl.id&&pptControl.controlType){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //网页地址改变事件
+            handleWebPageSrcChange: function (val) {
+                this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+                this.updateCurrentControl();
+            },
+            //网页刷新间隔时间改变事件
+            handleRefreshTimeChange: function (val) {
+                this.currentControl.otherAttrs.refreshTime = this.refreshTime;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.refreshTime = this.currentControl.otherAttrs.refreshTime;
+                this.updateCurrentControl();
+            },
+        }
+    }
+</script>
+
+<style>
+    body {
+        background: #666;
+    }
+    .el-collapse{
+        border: none;
+    }
+    .text-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .text-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .text-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+        width: 70%;
+        padding-right: 20px;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    /* 外层公共盒子 */
+
+    .text-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .text-public-box>span {
+        color: #fff;
+        width: 30%;
+        padding-left: 20px;
+        text-align: left;
+    }
+
+</style>

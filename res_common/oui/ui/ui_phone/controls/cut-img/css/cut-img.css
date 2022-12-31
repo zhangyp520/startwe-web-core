@@ -1,0 +1,110 @@
+/*图片编辑*/
+.upload-multi-edit-cnt{
+    background: rgba(0,0,0,.5);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: table;
+    z-index: 2100;
+}
+.upload-multi-edit-cnt .upload-multi-edit-box{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+.upload-multi-edit-area{
+    background: #ffffff;
+    width: 92%;
+    min-height: 40%;
+    margin: 0 auto;
+    text-align: left;
+    -webkit-border-radius:.03rem;
+    -moz-border-radius:.03rem;
+    border-radius:.03rem;
+}
+.upload-cutImg-area{
+    background: url("../images/cut-img-bg.png") repeat;
+    width: 100%;
+    height: 3rem;
+    position: relative;
+    border-top-left-radius: .03rem;
+    border-top-right-radius: .03rem;
+}
+
+.upload-cutImg-area img{
+    max-width: 100%;
+}
+
+.upload-cutImg-toolbar{
+    width: 100%;
+    padding: .1rem .03rem;
+}
+.upload-cutImg-toolbar .upload-cutImg-toolbar-btn{
+    font-size: 0;
+    text-align: center;
+
+}
+.upload-cutImg-toolbar .upload-cutImg-toolbar-btn i{
+    display: block;
+    font-style: normal;
+}
+.cutimg-toolbar-icon{
+    background: url("../images/cutimg-toolbar-icon.png") no-repeat;
+    background-size: 2.1rem .35rem;
+    width: .35rem;
+    height: .35rem;
+    display: block;
+    margin: 0 auto;
+}
+.cutimg-cut{
+    background-position: -1.4rem 0;
+}
+.cutimg-clockwise{
+    background-position: 0 0;
+}
+.cutimg-anti-clockwise{
+    background-position: -.35rem 0;
+}
+.cutimg-level{
+    background-position: -.7rem 0;
+}
+.cutimg-vertical{
+    background-position: -1.05rem 0;
+}
+.upload-multi-edit-area .upload-multi-edit-footer{
+    background: transparent;
+    padding: .1rem 0;
+    text-align: center;
+}
+.upload-multi-edit-footer button{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 1.2rem;
+    height: .34rem;
+    color: #ffffff;
+    margin: 0 auto;
+    font-size: .14rem;
+    text-align: center;
+    display: inline-block;
+    border: 0;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+}
+.upload-multi-sub{
+    background: #2C82FC;
+}
+.upload-multi-cancel{
+    background: #b4b4b4;
+}
+
+
+
+
+

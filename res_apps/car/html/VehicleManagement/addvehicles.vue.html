@@ -1,0 +1,523 @@
+<template>
+    <div id="customer">
+        <!-- 面包屑头部盒子开始 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>车辆管理</el-breadcrumb-item>
+                <el-breadcrumb-item>添加新的车辆</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 仓库中心，物资出入库记录 -->
+
+        <!-- 面包屑头部盒子结束 -->
+        <el-main>
+
+            <!-- 右侧内部表单布局容器开始-- -->
+            <!-- 第一行数据 -->
+            <div class="content">
+                <!-- 第一层 -->
+                <div class="billing_time">
+                    <ul>
+                        <li>
+                            <div>创建时间：</div><span>{{carInfoFormValue.createTime}}</span>
+                        </li>
+                        <li>
+                            <div>入库人员：</div><span>{{carInfoFormValue.creatorName}}</span>
+                        </li>
+                        <!-- <li></li> -->
+                    </ul>
+                </div>
+                <!-- 第二层 -->
+
+                <div class="list_form">
+
+                    <el-form :inline="true" label-position="top" label-width="80px" :model="carInfoFormValue"
+                             :rules="rules" ref="carInfoFormValue">
+
+                        <!-- 第二层 -->
+                        <div class="source_of_customers">
+                            <ul>
+                                <li>
+                                    <el-form-item label="车辆品牌" style="width: 300px;" prop="carBrand">
+                                        <el-input v-model="carInfoFormValue.carBrand" placeholder="请输入车辆品牌，例如：“一汽大众”"></el-input>
+                                    </el-form-item>
+                                </li>
+                                <li>
+                                    <el-form-item label="车辆型号" style="width: 300px;" prop="carMarque">
+                                        <el-input v-model="carInfoFormValue.carMarque" placeholder="请输入车辆型号，例如：“迈腾”"></el-input>
+                                    </el-form-item>
+                                </li>
+                                <li>
+                                    <el-form-item label="年份及配置" style="width: 300px;" prop="yearCfg">
+                                        <el-input v-model="carInfoFormValue.yearCfg" placeholder="请输入年份及配置，例如：“2020旗舰款”"></el-input>
+                                    </el-form-item>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 第三层 -->
+                        <div class="Price">
+                            <ul>
+                                <li>
+                                    <el-form-item label="排量" style="width: 300px;" prop="deliveryCapacity">
+                                        <el-input v-model="carInfoFormValue.deliveryCapacity" placeholder="请输入汽车排量，例如：“2.0T”"></el-input>
+                                    </el-form-item>
+                                </li>
+                                <!-- 状态 -->
+                                <li class="state">
+                                    <span>状态：</span>
+                                    <el-switch class="switch_box" active-text="启用" inactive-text="禁用" v-model="carInfoFormValue.state" active-color="#1890FF" inactive-color="#eee" :active-value=1 :inactive-value=2></el-switch>
+                                </li>
+                                <li>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 返回和提交 -->
+                        <div class="return_and_save">
+                            <el-form-item>
+                                <el-button @click="backToCarListPage">返回</el-button>
+                                <el-button type="primary" @click="addCarInfo">提交</el-button>
+                            </el-form-item>
+                        </div>
+                    </el-form>
+                </div>
+            </div>
+            <!-- 右侧内部表单布局容器结束 -->
+        </el-main>
+        <!-- </el-main> -->
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                carInfoFormValue:{
+                    id:"",
+                    carBrand : "",
+                    carMarque : "",
+                    yearCfg : "",
+                    deliveryCapacity : "",
+                    state: 1,
+                    createTime: "",
+                    creatorId: "",
+                    creatorName: "",
+                },
+                // 每个对象的验证规则
+                rules: {
+                    carBrand: [
+                        {required: true, message: '请输入车辆品牌名称', trigger: 'blur'},
+                        {min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur'}
+                    ],
+                    carMarque: [
+                        {required: true, message: '请输入车辆型号', trigger: 'blur'},
+                        {min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur'}
+                    ],
+                    yearCfg: [
+                        {required: true, message: '请输入年份及配置', trigger: 'blur'},
+                        {min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur'}
+                    ],
+                    deliveryCapacity: [
+                        {required: true, message: '请输入汽车排量', trigger: 'blur'},
+                        {min: 2, max: 40, message: '长度在 2 到 40 个字符', trigger: 'blur'}
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            this.carInfoFormValue.createTime = oui.dateStrByTime(new Date().getTime(), 'yyyy-MM-dd HH:mm:ss');
+            let loginUser = window.localStorage.getItem("loginUser");
+            let creator = oui.parseJson(loginUser);
+            this.carInfoFormValue.creatorId = creator.id;
+            this.carInfoFormValue.creatorName = creator.empName;
+            let queryParam = this.$router.query;
+            this.carInfoFormValue.id = queryParam.id;
+            this.carInfoFormValue.carBrand = queryParam.carBrand;
+            this.carInfoFormValue.carMarque = queryParam.carMarque;
+            this.carInfoFormValue.yearCfg = queryParam.yearCfg;
+            this.carInfoFormValue.deliveryCapacity = queryParam.deliveryCapacity;
+            if(!queryParam.state){
+                queryParam.state =1;
+            }
+            this.carInfoFormValue.state = parseInt(queryParam.state + '');
+        },
+        methods: {
+            addCarInfo:function() {
+                this.$refs["carInfoFormValue"].validate((valid) => {
+                    if (valid) {
+                        if (this.carInfoFormValue.id == null) {
+                            var me = this;
+                            oui.ajaxPost('company/carInfo/addCarInfo', {
+                                "carBrand": this.carInfoFormValue.carBrand,
+                                "carMarque": this.carInfoFormValue.carMarque,
+                                "yearCfg": this.carInfoFormValue.yearCfg,
+                                "deliveryCapacity": this.carInfoFormValue.deliveryCapacity,
+                                "state": this.carInfoFormValue.state,
+                                "createTime": this.carInfoFormValue.createTime,
+                                "creatorId": this.carInfoFormValue.creatorId,
+                                "creatorName": this.carInfoFormValue.creatorName
+                            }, function (res) {
+                                me.$message({
+                                    message: '汽车信息添加成功',
+                                    type: 'success'
+                                });
+                                oui.router.push("/res_apps/car/html/VehicleManagement/addvehicles.vue.html");
+                            }, function (res) {
+                                me.$message.error(res.message);
+                            });
+                        } else {
+                            var me = this;
+                            oui.ajaxPost('company/carInfo/updateCarInfo', {
+                                "id": this.carInfoFormValue.id,
+                                "carBrand": this.carInfoFormValue.carBrand,
+                                "carMarque": this.carInfoFormValue.carMarque,
+                                "yearCfg": this.carInfoFormValue.yearCfg,
+                                "deliveryCapacity": this.carInfoFormValue.deliveryCapacity,
+                                "state": this.carInfoFormValue.state
+                            }, function (res) {
+                                me.$message({
+                                    message: '汽车信息修改成功',
+                                    type: 'success'
+                                });
+                                oui.router.push("/res_apps/car/html/VehicleManagement/vehiclemanagement.vue.html");
+                            }, function (res) {
+                                me.$message.error(res.message);
+                            });
+                        }
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            backToCarListPage:function() {
+                oui.router.push('res_apps/car/html/VehicleManagement/vehiclemanagement.vue.html')
+            }
+
+        }
+    }
+</script>
+<style>
+    .customer {
+        width: 1040px;
+        height: 700px;
+    }
+
+    html {
+        margin: 0 0px;
+        /* width: 1040px; */
+        /* height: 700px; */
+        /* background-color: rgb(243, 228, 21); */
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+    .el-main {
+        width: 100%;
+        height: 100%;
+        background-color: #f5f5f5;
+        color: #333;
+
+    }
+
+
+    /* 自己的样式 */
+
+        .switch_box .el-switch__label {
+        position: absolute;
+        display: none;
+        color: #fff;
+    }
+
+    /*打开时文字位置设置*/
+
+    .switch_box .el-switch__label--right {
+        z-index: 1;
+        right: -5px;
+    }
+
+    /*关闭时文字位置设置*/
+
+    .switch_box .el-switch__label--left {
+        z-index: 1;
+        left: 20px;
+    }
+
+    /*显示文字*/
+
+    .switch_box .el-switch__label.is-active {
+        display: block;
+    }
+
+    .switch_box.el-switch .el-switch__core,
+    .el-switch .el-switch__label {
+        width: 55px !important;
+        /*开关按钮的宽度大小*/
+    }
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+
+    .el-menu {
+        border: 0;
+        margin: 0 0;
+        padding: 0 0;
+    }
+
+
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+    /* 内容主体区域 */
+    /* 内容区域的头部为空白 */
+    /* 设置右侧头部盒子的边框阴影 */
+    .blank_head {
+        background-color: #fff;
+        height: 60px !important;
+        box-shadow: #fff 0px 0px 0px 0px;
+        line-height: 60px;
+
+    }
+
+    .blank_head>div>span {
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .el-checkbox-group {
+        display: inline;
+
+    }
+
+    /* 内容侧边栏每一项结束---- */
+    /* 内部盒子的内容主体区域 */
+    .inside_box {
+        background-color: #fff;
+        /* line-height: 160px; */
+        text-align: left !important;
+    }
+
+    /* 关键字的样式设置开始 */
+    /* 关键字区域 */
+    .keyword {
+        /* width: 1000px; */
+        height: 60px;
+        font-weight: 700;
+        line-height: 60px;
+        display: flex;
+        justify-content: left;
+    }
+
+    .keyword_content {
+        display: inline;
+        height: 30px;
+        font-size: 14px;
+
+    }
+
+
+
+    /* 正文区域 */
+    .content {
+        background-color: #fff;
+        padding: 20px;
+    }
+
+    /* 第一行内容 */
+    .billing_time>ul {
+        display: flex;
+        justify-content: left;
+        line-height: 30px;
+    }
+
+    .billing_time>ul>li>div {
+        display: inline-block;
+    }
+
+    .billing_time>ul>li>span {
+        font-size: 14px;
+        color: rgb(0, 0, 0, 0.5);
+
+    }
+
+    /* 第二行 */
+    .billing_time>ul>li {
+        width: 300px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .customer_name>ul {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .customer_name>ul>li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第三行 */
+    .vehicle_fuel_volume>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .vehicle_fuel_volume>ul>li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第四行 */
+    .source_of_customers>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .source_of_customers>ul>li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第五行 */
+    .Price>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .Price>ul>li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 状态 */
+    .state {
+        text-align: left;
+        line-height: 112px;
+    }
+
+    /* 修改全局文本框的样式 */
+    .el-textarea {
+        width: 765px;
+
+    }
+
+    /* 修改全局文本框内部的input的样式 */
+    .el-textarea__inner {
+        width: 100%;
+        height: 35px;
+    }
+
+
+
+    /* 返回和保存 */
+    .return_and_save {
+        display: flex;
+        justify-content: center;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .el-button {
+        width: 180px;
+    }
+
+
+
+
+    /* 物资出入库记录 */
+
+    .material_delivery {
+        margin: 24px 0;
+        padding-top: 24px;
+        background-color: #fff;
+    }
+
+    .material_delivery_content {
+        font-weight: 700;
+        margin-left: 24px;
+    }
+
+
+    /* 栅格栏布局自带样式 */
+    .el-row {
+        margin-bottom: 20px;
+
+    }
+
+    .el-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+
+    .bg-purple {
+        background: #d3dce6;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+
+    /* 我的工单区域开始 */
+
+    /* 表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+    /* 分页区域结束----- */
+</style>

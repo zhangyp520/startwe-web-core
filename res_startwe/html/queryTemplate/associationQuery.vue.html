@@ -1,0 +1,419 @@
+<!-- 关联查询表模型弹窗 -->
+<template>
+    <!-- 外层大盒子 -->
+    <div class="template_box">
+        <!-- 左边侧边栏 -->
+        <div class="template_leftBox">
+            <!-- title -->
+            <div class="template_title" >
+                <div :class="{'active':index==checkClick}" v-for="(item,index) in navList" @click="navClick(index)">{{item.text}}</div>
+                <!-- <div>树结构</div> -->
+            </div>
+            <!-- 组件内容 -->
+            <div class="template_content" v-if="checkClick==0">
+                <div class="queryCriteria">
+                    <div class="queryTitle">查询条件</div>
+                    <div class="queryContentImg isActive" @click="queryListClick">
+                        <img src="/res_startwe/assets/template.png" alt="">
+                    </div>
+                </div>
+                <div class="queryList">
+                    <div class="queryTitle">查询列表</div>
+                    <div class="queryContentImg"  @click="queryListClick">
+                        <img src="/res_startwe/assets/template.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <!-- 树结构内容 -->
+            <div v-if="isShow" v-if="checkClick==1">
+                <el-menu @open="handleOpen" @close="handleClose" unique-opened="true">
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/tri.png" alt="">
+                            <span>员工</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="2">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/tri.png" alt="">
+                            <span>部门</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                </el-menu>
+            </div>
+        </div>
+        <!-- 中间内容盒子 -->
+        <div class="template_middleBox">
+            <div class="middleBox_inbox">
+                <div class="searchBox">
+                    <!-- 搜索框 -->
+                    <div class="inSearchBox">
+                        <input type="text">
+                        <img src="/res_startwe/assets/sousuo.png" alt="">
+                    </div>
+                </div>
+                <!-- 操作按钮 -->
+                <div class="operationBtn">
+                    <el-button type="primary">新增</el-button>
+                    <el-button type="primary">编辑</el-button>
+                    <el-button type="primary">删除</el-button>
+                </div>
+                <!-- 表格 -->
+                <div class="template_table">
+                    <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" width="45">
+                        </el-table-column>
+                        <el-table-column label="单行输入框">
+                            <template slot-scope="scope"></template>
+                        </el-table-column>
+                        <el-table-column label="数字输入框">
+                        </el-table-column>
+                    </el-table>
+                    <div class="paging">
+                        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4"
+                            :page-sizes="[100, 200, 300, 400]" :page-size="100" layout="total, sizes, prev, pager, next, jumper"
+                            :total="400">
+                        </el-pagination>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- 右边菜单栏 -->
+        <div class="template_rightBox">
+            <!-- title -->
+            <div class="template_title">
+                属性面板
+            </div>
+            <!-- 内容 -->
+            <div class="right_content">
+                <el-menu @open="handleOpen" @close="handleClose" unique-opened="true">
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/icon_list.png" alt="">
+                            <span>查询字段列表别名设置</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="2">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/icon_query.png" alt="">
+                            <span>动态查询条件</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="3">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/icon_filter.png" alt="">
+                            <span>过滤条件设置</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="4">
+                        <template slot="title">
+                            <!-- <i class="el-icon-location"></i> -->
+                            <img src="/res_startwe/assets/icon_sort.png" alt="">
+                            <span>排序字段</span>
+                        </template>
+                        <el-menu-item-group>
+                            <template slot="title">分组一</template>
+                            <el-menu-item index="1-1">选项1</el-menu-item>
+                            <el-menu-item index="1-2">选项2</el-menu-item>
+                        </el-menu-item-group>
+                        <el-menu-item-group title="分组2">
+                            <el-menu-item index="1-3">选项3</el-menu-item>
+                        </el-menu-item-group>
+                        <el-submenu index="1-4">
+                            <template slot="title">选项4</template>
+                            <el-menu-item index="1-4-1">选项1</el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                </el-menu>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                tableData: '',
+                multipleSelection: [],
+                currentPage4: 4,
+                isShow:false,
+                navList: [{ text: '组件' }, { text: '树结构' }],
+                checkClick: 0,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+            },
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            // 导航切换
+            navClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            // 组件查询列表点击事件
+            queryListClick:function(){
+                console.log(1111);
+                
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        /* font-size: 14px; */
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* elementui样式修改 */
+
+    .el-menu {
+        background-color: #F4F4F4;
+        border: none;
+    }
+
+    .el-submenu__title {
+        width: 240px;
+        color: #999;
+        font-size: 16px;
+    }
+
+    /* 内容 */
+
+    /* 左边侧边栏 */
+
+    .template_box {
+        height: 100%;
+        display: flex;
+
+    }
+
+    .template_leftBox {
+        width: 240px;
+        height: 100%;
+        background-color: #F4F4F4;
+    }
+
+    .template_title {
+        display: flex;
+        justify-content: space-around;
+        height: 50px;
+        line-height: 50px;
+        border-bottom: 1px solid #d1cfcf;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .template_title>div {
+        padding: 0 10px;
+        font-size: 16px;
+    }
+
+    .active {
+        color: #1890FF;
+        border-bottom: 3px solid #1890FF;
+    }
+
+    .template_content {
+        width: 80%;
+        margin: auto;
+    }
+
+    .queryCriteria {
+        margin-bottom: 20px;
+    }
+
+    .queryTitle {
+        height: 40px;
+        font-size: 16px;
+        color: #999;
+        line-height: 40px;
+    }
+
+    .queryContentImg {
+        margin-left: 20px;
+        height: 110px;
+        width: 160px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .isActive {
+        border: 2px solid #1890FF;
+        border-radius: 5px;
+    }
+
+    /* 中间盒子 */
+
+    .template_middleBox {
+        width: 75%;
+    }
+
+    .middleBox_inbox {
+        margin: 24px 24px 0 24px;
+        background-color: #fff;
+    }
+
+    /* 搜索框 */
+
+    .searchBox {
+        display: flex;
+        justify-content: flex-end;
+        ;
+    }
+
+    .inSearchBox {
+        width: 242px;
+        position: relative;
+
+
+    }
+
+    .inSearchBox>input {
+        width: 200px;
+        height: 32px;
+        border: 1px solid #999;
+        padding: 0 20px;
+        outline: none;
+    }
+
+    .inSearchBox>img {
+        position: absolute;
+        top: 8px;
+        right: 15px;
+    }
+
+    /* 操作按钮 */
+
+    .operationBtn {
+        display: flex;
+        margin-top: 30px;
+    }
+
+    /* 表格 */
+
+    .template_table {
+        margin-top: 20px;
+    }
+
+    /* 分页 */
+
+    .paging {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* 右边菜单栏 */
+
+    .template_rightBox {
+        width: 240px;
+        height: 100%;
+        background-color: #F4F4F4;
+    }
+</style>

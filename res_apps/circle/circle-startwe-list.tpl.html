@@ -1,0 +1,76 @@
+<oui-view id="circle-startwe-list"
+          data="com.startwe.models.circle.web.Circle4StartweController4Query.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script id="circle-startwe-list-tpl" type="text/html" charset="utf-8">
+    <div class="row" oui-controller="com.startwe.models.circle.web.Circle4StartweController4Query">
+        <div class="col-sm-8 col-lg-12">
+            <div class="pg-block">
+                <div class="pg-block-header">
+                    {{include 'menu-path-tpl' ({menuId:'circle-startwe-list'})}}
+                </div>
+                <div class="pg-block-cont">
+                    <ul class="pg-list-group rmd-article-list">
+                        {{include 'circles-startwe-data-tpl'}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" charset="utf-8" id="circles-startwe-data-tpl">
+    {{if (!circles) ||(!circles.length)}}
+    <li class="pg-list-item">
+        <div class="row">
+            <div class="col-sm-8 col-md-9">
+                当前还没有你想要找的圈子
+            </div>
+        </div>
+    </li>
+    {{/if}}
+    {{each circles as item index}}
+    <li class="pg-list-item">
+        <div class="pg-list-link">
+            <div class="row">
+                <div class="col-sm-8 col-md-9">
+                    <h3 class="article-title" circle-id="{{item.id}}" load-circle-url="{{item.extraAttrs.loadCircleUrl}}" oui-e-{{clickName}}="event2loadCircle"><a href="#">{{item.name}}</a></h3>
+                    <div class="article-attr">
+                        <object>
+                            <a href="#">{{item.creatorName}}</a>
+                            <em>·</em>
+                            <span>{{item.createTime}}</span>
+                        </object>
+                        <span>|</span>
+                        <object>
+                            <a href="#" class="link-label">
+                                <i class="iconfont icon-huati"></i>
+                                <span>{{Circle4StartweController4Query.findCircleTypeName(item.circleType)}}</span>
+                                <i class="iconfont icon-huati"></i>
+                            </a>
+                        </object>
+                    </div>
+                    <div class="article-count">
+                        <ul>
+                            <li>
+                                <i class="iconfont icon-chakan"></i>
+                                <span>{{item.queryCount||0}}</span>
+                            </li>
+                            <li>
+                                <i class="iconfont icon-pinglun1"></i>
+                                <span>{{item.messageCount||0}}</span>
+                            </li>
+                            <li>
+                                <i class="iconfont icon-xihuan"></i>
+                                <span>{{item.starsCount||0}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-3 text-right hidden-xs">
+                    <img src="/res_apps/common/image/img-default.png" data-src="{{item.circleLogo}}" alt="" class="pg-item-thumb">
+                </div>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</script>

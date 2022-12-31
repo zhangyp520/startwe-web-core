@@ -1,0 +1,101 @@
+<!--审批页面组件-->
+<template >
+    <div>
+
+        <!--审批记录-->
+        <!--<div class="content_box">审批进度</div>-->
+        <div class="block">
+            <el-timeline  :reverse="reverse">
+                <el-timeline-item
+                        v-for="(activity, index) in activities"
+                        :key="index"
+                        :icon="activity.icon"
+                        :type="activity.type"
+                        :color="activity.color"
+                        :size="activity.size"
+                        :timestamp="activity.timestamp"
+                        placement="top">
+
+                    <!--<el-card>-->
+                        <h4>{{activity.content}}</h4>
+                    <!--<div>-->
+                        <!--<span>{{}}</span>-->
+                        <!--<span>{{}}</span>-->
+                        <!--<span>{{}}</span>-->
+                    <!--</div>-->
+                        <p>王小虎 提交于 {{activity.timestamp}}</p>
+                    <!--</el-card>-->
+
+
+
+                </el-timeline-item>
+            </el-timeline>
+        </div>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+
+        data: function () {
+            return {
+                //控制时间周的顺序是否为正序(false)还是倒序(true)
+                    reverse:true,
+//                时间线的配置
+                activities: [{
+                    content: '部门初审',
+                    timestamp: '2018-04-12 20:46',
+                    size: 'large',
+                    type: 'primary',
+                    icon: 'el-icon-more',
+                    color: '#0bbd87'
+                }, {
+                    content: '开始',
+                    timestamp: '2018-04-03 21:40',
+                    color: '#0bbd87'
+                }, {
+                    content: '经理',
+                    timestamp: '2018-04-13 15:36',
+                    size: 'large',
+                    color: '#0bbd87'
+                }, {
+                    content: '总经理',
+                    timestamp: '2018-04-03 20:34',
+                    color: '#0bbd87'
+                }]
+
+
+            }
+        },
+        mounted:function(){
+            var me = this;
+
+            this.$nextTick(function(){
+                me.refresh();
+            });
+        },
+        methods:{
+
+        }
+    }
+</script>
+
+<style>
+
+    .content_box{
+        height: 40px;
+        line-height: 40px;
+        background-color: #eee !important;
+        margin: 20px 0;
+        padding:0 6px ;
+    }
+.block{
+    padding: 0 180px;
+}
+    .el-timeline-item__timestamp{
+        margin: 0  -150px;
+    }
+</style>

@@ -1,0 +1,84 @@
+<template>
+    <div class="big-title">
+        <el-drawer
+            size="70%"
+            title="项目设置"
+            :visible.sync="drawer"
+            :direction="direction"
+            :before-close="handleClose">
+            <div>
+                <oui-include type="module" ref="settingsBox" url="res_startwe/html/workArea/settings.vue.html">
+                </oui-include>
+            </div>
+        </el-drawer>
+        <el-drawer
+            size="40%"
+            title="门户设计"
+            :visible.sync="settingDrawer"
+            :direction="direction"
+            :before-close="handleClose">
+            <div>
+                <oui-include type="module" ref="settingsBox" url="/res_engine/portal_design/portal-design-list.vue.html">
+                </oui-include>
+            </div>
+        </el-drawer>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                drawer: false,
+                settingDrawer: false,
+                direction: 'rtl',
+                project:{}
+            };
+        },
+        mounted:function(){
+            window.handleOpenDrawer = this.handleOpen;
+            window.handleOpenSettingDrawer = this.handleOpenSettings;
+        },
+        methods: {
+            handleClose(done) {
+                done();
+                //console.log(done);
+                //this.drawer = false;
+            },
+            handleOpenSettings(){
+                this.settingDrawer = true;
+            },
+            handleOpen(){
+                this.drawer = true;
+                let {id, circleId} = com.startwe.models.portal.web.PortalController.data.project;
+                oui.postData(com.startwe.models.project.web.ProjectController4Design.data.queryConfigUrl, {
+                    circleId,
+                    projectId:id
+                }, function(res){
+                    if( res.success ){
+                        if(res.data.mailData){
+                            emailConfigInit(JSON.parse(res.data.mailData.contentJson),res.data.mailData.id);
+                        }
+
+                        if(res.data.smsData){
+                            messageConfigInit(JSON.parse(res.data.smsData.contentJson),res.data.smsData.id)
+                        }
+
+                        if(res.data.uploadData){
+                            dbConfigInit(JSON.parse(res.data.uploadData.contentJson), res.data.uploadData.id)
+                        }
+                        
+                        // messageConfigInit(JSON.parse(res.data.messageData.contentJson));
+                        // dbConfigInit(JSON.parse(res.data.dbData.contentJson))
+                    }
+                })
+            }
+        }
+    }
+</script>
+<style>
+    .big-title .el-drawer__header span{
+        font-size: 24px;
+        font-weight: bold;
+        color:black;
+    }
+</style>

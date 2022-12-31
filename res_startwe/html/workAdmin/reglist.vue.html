@@ -1,0 +1,150 @@
+<template>
+    <div>
+        <div class="tabs-box">
+            <span>线索管理</span>
+            <div class="search-box">
+                <el-input size="mini" placeholder="输入搜索信息" v-model="searchContext" @input="searchUser"
+                    suffix-icon="el-icon-search"></el-input>
+            </div>
+        </div>
+        <div class="grid-box">
+            <el-table :data="tableData" style="width: 100%" stripe>
+                <el-table-column prop="creatorId" label="客户编号">
+                </el-table-column>
+                <el-table-column prop="accountName" label="客户姓名">
+                </el-table-column>
+                <el-table-column prop="cellphone" label="手机号">
+                </el-table-column>
+                <el-table-column prop="accountCompany" label="所属公司">
+                </el-table-column>
+                <el-table-column prop="createTime" label="注册时间">
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="changeToAccount(scope)"
+                            :disabled="scope.row.accountStatus == 2">{{scope.row.accountStatus == 2 ? "已转为客户" : "转为客户"}}
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="pager">
+                <el-pagination 
+                    @current-change="currentChange" 
+                    background 
+                    :current-page="pager.page"
+                    :page-size="pager.rows"
+                    layout="prev, pager, next" 
+                    :total="totalPage">
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        methods: {
+            changeToAccount(scope) {
+                console.log('changeToAccount', this)
+                let that = this;
+                oui.postData(this.changeStatusUrl, {
+                    userId: scope.row.id
+                }, function (res) {
+                    if (res.success) {
+                        scope.row.accountStatus = 2;
+                        window.searchReglist();
+                    } else {
+                        that.$message({ type: "error", message: "客户转换失败" })
+                    }
+                });
+            },
+            currentChange(currentPage) {
+                this.getProjects(currentPage);
+            },
+            searchUser(val) {
+                clearTimeout(this.delayNumber);
+                this.delayNumber = setTimeout(this.getProjects,1000)
+            },
+            getProjects: function (pageindex = 1) {
+                this.pager.page = pageindex;
+                let that = this;
+                oui.postData(this.queryAccountByTypeUrl, {
+                    accountType: 2,
+                    accountStatus: 1,
+                    searchContext: that.searchContext,
+                    pager: {
+                        page: pageindex,
+                        rows: that.pager.rows
+                    }
+                }, function (result) {
+                    that.totalPage = result.dataCount;
+                    that.tableData = result.accountList;
+                })
+            },
+        },
+        watch: {
+        },
+        computed: {
+        },
+        data: function () {
+            return {
+                changeStatusUrl: "",
+                searchContext: "",
+                tableData: [],
+                totalPage: 0,
+                pager: { page: 1, rows: 8 },
+                delayNumber: null,
+            }
+        },
+        mounted: function () {
+            let that = this;
+            var str = oui.storage.get('startwe_menus');
+            var startwe_menus = oui.parseJson(str || '[]');
+            let circle_create_by_me
+
+            let circle = oui.findOneFromArrayBy(startwe_menus, function (item) {
+                if (item.id == 'circle_create_by_me') {
+                    return true;
+                }
+            });
+            //首先获取圈子信息
+            oui.postData(circle.params.initPath, {}, function (res) {
+                if (res.success) {
+                    that.changeStatusUrl = res.changeAccountStatusUrl;
+                    that.queryAccountByTypeUrl = res.queryAccountByTypeUrl;
+                    that.getProjects()
+                } else {
+                    oui.alert("获取圈子信息失败！将无法对项目操作。");
+                }
+            }, function (err) {
+                console.log('getProjects error!', err)
+            });
+            
+        }
+    }
+</script>
+<style scoped>
+    .tabs-box {
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        padding: 30px;
+    }
+
+    .tabs-box span {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .el-table th.el-table__cell>.cell {
+        padding-left: 48px;
+    }
+
+    .el-table td.el-table__cell div {
+        padding-left: 48px;
+    }
+
+    .pager {
+        padding-top: 20px;
+        float: right;
+    }
+</style>

@@ -1,0 +1,1991 @@
+<template style="height: 600px;">
+    <!-- 组件最大容器 -->
+    <div id="customer" style="height: 800px;">
+        <!-- element组件的布局容器开始 -->
+        <div class="product">
+            <!-- 面包屑头部盒子 -->
+            <div class="crumbs">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <!-- 主体内容区域 -->
+            <el-main>
+                <!-- 内容主体区域   下边可以放路由占位符渲染不同的组件-->
+                <div class="content_max">
+                    <!-- 顶部公告和常用功能开始 -->
+                    <div class="header_box">
+                        <!-- 公告,问好,代办,区域开始 -->
+                        <div class="left_box">
+                            <!-- 公告栏区域开始 -->
+                            <div class="Notice">
+                                <div>
+                                    <!-- <span>公告:</span> -->
+                                    <div class="Notice_content">数字化浪潮推动“人、货、款、客、店”的现象级重构!</div>
+                                </div>
+                                <!-- <div class="more">更多</div> -->
+                            </div>
+                            <!-- 公告栏区域结束 -->
+                            <!-- 问好区域开始 -->
+                            <div class="user_info_box ">
+                                <div class="to_greet">
+                                    <span>{{myDateTime}}</span>
+                                    <div class="user_photo_box ">
+                                        <img src="/res_apps/car/image/khgl.png" alt="">
+                                        <div class="user_lv_box">
+                                            <h2>早安，{{empName}}，祝你开心每一天！</h2>
+                                            <p>{{roleName}} | {{companyName}}-{{deptName}}-{{roleName}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 代办事项容器 -->
+                                <div class="Todolist" @click="toPage">
+                                    <span class="Todolist_content">待办事项</span>
+                                    <div class="Todolist_number">{{waitToDo}}
+                                        <span>个</span>
+                                    </div>
+                                </div>
+                                <!-- 代办事项容器 -->
+                                <div class="Todolist" v-if="seen" @click="EarlyWarningToPage">
+                                    <span class="EarlyWarning_content">预警事项</span>
+                                    <div class="Todolist_number">{{EarlyWarning}}
+                                        <span>个</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 问好区域结束 -->
+                        </div>
+                        <!-- 公告,问好,代办,区域结束 -->
+                        <!-- 常用功能区域开始 -->
+                        <div class="right_box mouseoverImgBox">
+                            <div class="title">
+                                <div class="gn_maxbox">
+                                    <!-- 常用功能第一行区域开始 -->
+                                    <div class="gn_region">
+                                        <div class="ingn_region">常用功能</div>
+                                        <!-- <div class="set_up">设置</div> -->
+                                    </div>
+                                    <!-- 常用功能第一行区域结束 -->
+                                    <!-- 功能区域文本和图片容器box开始 -->
+
+                                    <div class="Text_content ">
+                                        <!-- <div class="Specific_gn"  v-if="addCustomer0">
+                                                    <div class="gn_picture">
+                                                        <img src="/res_apps/car/image/2.png" alt="">
+                                                        <span>小程序二维码</span>
+                                                    </div>
+                                                </div> -->
+                                        <div v-if="cust">
+                                            <!-- 包裹 到店开单 图片加文字的box -->
+                                            <div v-if="addCustomer0" class="Specific_gn" @click="shopOrder">
+                                                <div class="gn_picture" >
+                                                    <img src="/res_apps/car/image/ddkd.png" alt="">
+                                                    <span>到店开单</span>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="Specific_gn" @mouseenter="enter" @mouseleave="leave">
+                                                <div class="gn_picture">
+                                                    <img src="/res_apps/car/image/2.png" alt="">
+                                                    <span>小程序二维码</span>
+                                                </div>
+                                                <div class="mouseoverImg" v-if="seen">
+                                                    <img src="/res_apps/car/image/1.png" alt="">
+                                                </div>
+                                            </div> -->
+                                            <!-- 包裹 客户中心 图片加文字的box -->
+                                            <div v-if="customerList0" class="Specific_gn" @click="customerCenter">
+                                                <!-- 四个图标和文字 -->
+                                                <div class="gn_picture">
+                                                    <img src="/res_apps/car/image/khgl.png" alt="">
+                                                    <span>客户中心</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-if="wo">
+                                            <!-- 包裹 业务中心 图片加文字的box -->
+                                            <div v-if="workOrder0" class="Specific_gn" @click="businessCenter">
+                                                <!-- 四个图标和文字 -->
+                                                <div class="gn_picture">
+                                                    <img src="/res_apps/car/image/ywzx.png" alt="">
+                                                    <span>工单中心</span>
+                                                </div>
+                                            </div>
+                                            <!-- 包裹 仓库管理 图片加文字的box -->
+                                            <div v-if="warehouse0" class="Specific_gn" @click="storeManagement">
+                                                <!-- 四个图标和文字 -->
+                                                <div class="gn_picture">
+                                                    <img src="/res_apps/car/image/ckzx.png" alt="">
+                                                    <span>仓库管理</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 功能区域文本和图片容器box结束 -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 常用功能区域结束 -->
+                    </div>
+                    <!-- 顶部公告和常用功能结束 -->
+                    <!-- 数据展示区域 -->
+                    <div class="data_show_max " v-if="showAdmin">
+                        <!-- echarts图表 -->
+                        <div class="echarts_photo_box">
+                            <div>
+                                <div class="capacity">产能数据</div>
+                            </div>
+
+                            <div class="number_box">
+                                <div v-for="(item,index) in dataList" :key="index" class="number_item_box">
+                                    <div class="one_day_price">
+                                        <span>{{item.value}}</span>
+                                        <div class="photo_box">
+                                            <img :src="findImgUrl(item)" alt="" alt="">
+                                            <span class="one_day_price_foot">同比上月</span>
+                                        </div>
+                                    </div>
+                                    <div class="foot_title">{{item.name}}</div>
+                                </div>
+                            </div>
+                            <div class="This_month">本月业务分布</div>
+                            <div class="echarts_box">
+                                <div id="main" style="width: 80%;height:400px;"></div>
+                            </div>
+                        </div>
+                        <!-- 业绩排行 -->
+                        <div class="achievement_max">
+                            <div class="title_ye">业绩排行</div>
+                            <div class="table_box" style="margin-top: 10px;">
+                                <el-table size="mini" :data="performanceRankingData" style="width: 100%">
+                                    <el-table-column prop="rank" label="排名" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="empName" label="姓名" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="totalPrice" label="流水" align="center">
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                            <div class="page_box1">
+                                <el-pagination small @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page="currentPage" :page-size="pageSize"
+                                    :total="total" layout="total, prev, pager, next">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 不同的权限展示不同的数据板块 -->
+                    <!-- 维修工展示 -->
+                    <div class="repairTable" v-if="showRepairman">
+                        <!-- 我的工单区域开始 -->
+                        <div class="work_order_box">
+                            <div class="my_work_order">我的工单</div>
+                            <div class="work_order_details">*更新进度请点击【点看】进入详情页</div>
+                        </div>
+                        <!-- 我的工单区域结束 -->
+                        <div class="Table_head">
+                            <!-- 表格头部 -->
+                            <template>
+                                <el-table style="width: 100%" :data="workOrderList">
+                                    <el-table-column type="index" label="序号">
+                                    </el-table-column>
+                                    <el-table-column prop="carBrand" label="车辆品牌型号">
+                                    </el-table-column>
+                                    <el-table-column prop="inTime" label="进场时间" align="center"></el-table-column>
+                                    <el-table-column prop="price" label="项目价格(元)" align="center"></el-table-column>
+                                    <el-table-column prop="carMiles" label="里程数(万公里)" align="center"></el-table-column>
+                                    <el-table-column prop="carNumber" label="车牌号" align="center"></el-table-column>
+                                    <el-table-column prop="workOrderStatus" label="状态" align="center" :formatter="formatStatus"></el-table-column>
+                                    <el-table-column prop="workEmpName" label="维修人" align="center"></el-table-column>
+                                    <el-table-column prop="estDate" label="预计交付时间" align="center"></el-table-column>
+                                    <el-table-column prop="custFromType" label="来源" align="center" :formatter="formatFromType"></el-table-column>
+                                    <el-table-column label="操作" align="center">
+                                        <template slot-scope="scope">
+                                            <el-button type="text" @click="queryOneWorkWordDetail(scope.row)">查看</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <!-- 分页 -->
+                        <div class="page">
+                            <div class="block">
+                                <el-pagination @current-change="handleCurrentChange1" @size-change="handleSizeChange1" :current-page="currentPage1" :page-sizes="[1, 5, 10, 15, 20]"
+                                    :page-size="pageSize1" :total="total1" layout="total, sizes, prev, pager, next, jumper">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 维修工展示结束 -->
+
+                    <!-- 库管展示 -->
+                    <div class="commissionaireTable" v-if="showWarehouse">
+                        <!-- 我的工单区域开始 -->
+                        <div class="work_order_box">
+                            <div class="my_work_order">出库单材料列表</div>
+                        </div>
+                        <!-- 我的工单区域结束 -->
+                        <div class="Table_head">
+                            <!-- 表格头部 -->
+
+                            <template>
+                                <el-table style="width: 100%" :data="materialList">
+                                    <el-table-column type='index' label="编号" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="workOrderMaterials" label="材料清单" align="center">
+                                        <!--                                <template slot-scope="scope">-->
+                                        <!--                                    <div>{{findWorkOrderMaterialNames(scope.row)}}</div>-->
+                                        <!--                                </template>-->
+                                    </el-table-column>
+                                    <!-- <el-table-column label="等待时间(分)" class="time_button">
+                                        <template solt-scope='scope'>
+                                            <div style=" width: 50px; height: 24px; padding: 0; background: rgba(245,34,45,0.05);
+                                                border: 1px solid rgba(245,34,45,0.30);  text-align: center;
+                                                border-radius: 2px;">
+                                            </div>
+                                        </template>
+                                    </el-table-column> -->
+                                    <el-table-column prop="workOrderType" label="业务类型" align="center" :formatter="formatType"></el-table-column>
+                                    <el-table-column prop="carNumber" label="适用车辆" align="center"></el-table-column>
+                                    <el-table-column prop="workOrderStatus" label="状态" align="center" :formatter="formatStatus"></el-table-column>
+                                    <el-table-column prop="empName" label="领取人" align="center"></el-table-column>
+                                    <el-table-column prop="custConfirmDate" label="生成时间"></el-table-column>
+                                    <el-table-column label="操作" align="center">
+                                        <template slot-scope='scope'>
+                                            <el-button type="text" style="color: #1890FF;" @click='seeDetails(scope.row)'>
+                                                查看</el-button>
+                                            <el-button v-if="scope.row.workOrderStatus == 6" type="text" style="color: #1890FF;" @click='warehouseOut(scope.row)'>出库</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <!-- 分页 -->
+                        <div style="display: flex">
+                            <div style="margin-top: 20px;">
+                                <el-button type="primary" @click="seeMore">查看更多</el-button>
+                            </div>
+
+                            <div class="page">
+                                <div class="block">
+                                    <el-pagination @current-change="handleCurrentChange2" @size-change="handleSizeChange2" :current-page="currentPage2" :page-sizes="[1, 5, 10, 15, 20]"
+                                        :page-size="pageSize2" :total="total2" layout="total, sizes, prev, pager, next, jumper">
+                                    </el-pagination>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 库管展示结束 -->
+                    <!-- 销售展示 -->
+                    <div class="saleTable" v-if="showCustomerService">
+                        <div class="work_order_box">
+                            <div class="my_work_order">进行中</div>
+                        </div>
+                        <!-- 表格头部 -->
+                        <div class="Table_head">
+                            <!-- 表格头部 -->
+                            <template>
+                                <el-table style="width: 100% ;" :data="customerList">
+                                    <!-- 编号的地方为索引 需要为<el-table-colum>标签添加:index="index"+"" -->
+                                    <el-table-column type="index" class="newform_bgc" label="编号" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="custName" label="客户名称" align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="custPhoneNo" label="联系方式" align="center"></el-table-column>
+                                    <el-table-column prop="itemNameStr" label="项目内容 " align="center">
+                                    </el-table-column>
+                                    <el-table-column prop="custFromType" label="客户来源" align="center" :formatter="formatFromType">
+                                    </el-table-column>
+                                    <el-table-column prop="customerType" label="客户类型" align="center" :formatter="formatcustType">
+                                    </el-table-column>
+                                    <el-table-column prop="workOrderStatus" label="状态" align="center" :formatter="formatStatus">
+                                    </el-table-column>
+                                    <el-table-column prop="carComments" label="备注" align="center"></el-table-column>
+                                    <el-table-column label="操作" align="center">
+                                        <template slot-scope="scope">
+                                            <el-button type="text" @click="completionSchedule(scope.row)">查看</el-button>
+                                            <el-button type="text" style="color: red;" @click="deleteListData(scope.row)">删除</el-button>
+                                        </template>
+                                    </el-table-column>
+
+                                </el-table>
+                            </template>
+                        </div>
+                        <!-- 分页 -->
+                        <div class="page">
+                            <div class="block">
+                                <el-pagination @current-change="handleCurrentChange3" @size-change="handleSizeChange3" :current-page="currentPage3" :page-sizes="[1, 5, 10, 15, 20]"
+                                    :page-size="pageSize3" :total="total3" layout="total, sizes, prev, pager, next, jumper">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 销售展示结束 -->
+                </div>
+                <!-- 内容主体区域结束   下边可以放路由占位符渲染不同的组件-->
+            </el-main>
+
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            var me = this;
+            return {
+                EarlyWarning: 0,
+                seen: false,
+                showAdmin: false,
+                showRepairman: false,
+                showWarehouse: false,
+                showCustomerService: false,
+                addCustomer0: false,
+                workOrder0: false,
+                customerList0: false,
+                warehouse0: false,
+                cust: false,
+                wo: false,
+                companyName: "",
+                empName: "",
+                roleName: "",
+                deptName: "",
+                id: "",
+                roleType: "",
+                waitToDo: 0,
+                // 销售人员的展示信息存储
+                customerList: [],
+                // 库管展会信息存储
+                materialList: [],
+                // 维修工数据存储
+                workOrderList: [],
+                //当前时间
+                myDateTime: "",
+                // 产能数据
+                currentPage: 1,
+                pageSize: 10,
+                total: 0,
+                currentPage1: 1,
+                pageSize1: 10,
+                total1: 0,
+                currentPage2: 1,
+                pageSize2: 10,
+                total2: 0,
+                currentPage3: 1,
+                pageSize3: 10,
+                total3: 0,
+                //业绩排行数据存储
+                performanceRankingData: [],
+                dataList: [
+                    {
+                        name: '本月总流水',
+                        value: "",
+                        isUp: true
+                    },
+                    {
+                        name: '本月车辆',
+                        value: "",
+                        isUp: true
+                    }],
+                // echarts 饼形图配置
+                option: {
+                    title: {
+                        text: '',
+                        subtext: '销售额',
+                        left: 'center',
+                        top: 'center',
+                        textStyle: {
+                            fontSize: 20,
+                            align: 'center',
+                            top: 'center'
+                        },
+                        subtextStyle: {
+                            fontFamily: '微软雅黑',
+                            fontSize: 16,
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b}: {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: '10%',
+                        top: '50%',
+                        data: [],
+                        formatter: function (name) {
+                            var total = 0;
+                            var data = me.option.series[0].data;
+                            var target;
+                            for (var i = 0, l = data.length; i < l; i++) {
+                                total += data[i].value;
+                                if (data[i].name == name) {
+                                    target = data[i].value;
+                                }
+                            }
+                            return name + '|' + ((target / total) * 100).toFixed(2) + '%' + '|' + target;
+                        }
+
+                    },
+                    series: [
+                        {
+                            name: '业务分布',
+                            type: 'pie',
+                            // color: ['#8543E0', '#1890FF', '#2FC25B', '#FACC14', '#F04864','#F2637B','#FAD337'],
+                            color: ['#F2637B', '#FAD337', '#975FE4', '#3AA0FF', '#4DCB73', '#FA37A3', '#828282', '#FFA2A2', '#FFEFB0', '#D6B9FF', '#37FAFA', '#92FFB3', '#FFA9D9', '#BFBFBF', '#AE0000', '#C9B04C', '#5F2FA0', '#373DFA', '#37FAC7', '#B04882', '#606060'],
+                            radius: ['50%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                normal: {
+                                    labelLine: {
+                                        show: false
+                                    },
+                                    position: 'inner',
+                                    show: false
+                                },
+                                show: true,
+                                position: 'center',
+
+                            },
+                            emphasis: {
+                                show: true
+                            },
+                            itemStyle: {
+                                normal: {
+                                    borderWidth: 5,
+                                    borderColor: '#fff'
+                                }
+                            },
+                            data: []
+                        }
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return ;
+            }
+            this.isLoading = true;
+            this.queryCompanyInfo();
+            let loginUser = window.localStorage.getItem("loginUser");
+            let loginUserInfo = oui.parseJson(loginUser);
+            this.empName = loginUserInfo.empName;
+            this.roleType = loginUserInfo.roleType;
+            this.roleName = loginUserInfo.roleName;
+            this.deptName = loginUserInfo.deptName;
+            this.id = loginUserInfo.id;
+            this.loadData();
+            this.getCurrentTime();
+            let myTimeDisplay = setInterval(() => {
+
+                this.getCurrentTime && this.getCurrentTime(); //每秒更新一次时间
+            }, 1000);
+            this.getMaterielData();
+            // clearInterval(myTimeDisplay);
+        },
+        methods: {
+            EarlyWarningToPage: function () {
+                oui.router.push('res_apps/car/html/warehousecenter/insufficientStock.vue.html');
+
+
+            },
+            getMaterielData: function () {
+                var me = this;
+                // debugger
+                oui.ajaxPost('material/warehouseCenter/queryLackMaterial', {
+
+                },
+                    function (res) {
+                        me.EarlyWarning = res.resultObj.total;
+                        if(me.EarlyWarning !=null && me.roleType == 1){
+                            me.seen=true;
+                        }else if(me.EarlyWarning !=null && me.roleType == 2){
+                            me.seen=true;
+                        }else if(me.EarlyWarning !=null && me.roleType == 7){
+                            me.seen=true;
+                        }else{
+                            me.seen=false;
+                        }
+                    },
+                    function (res) {
+
+                    }
+                )
+            },
+            loadData: function () {
+                let me = this;
+                if (me.roleType == 1) {//超级管理员
+                    me.showAdmin = true;
+                    me.addCustomer0 = true;
+                    me.workOrder0 = true;
+                    me.customerList0 = true;
+                    me.warehouse0 = true;
+                    me.cust = true;
+                    me.wo = true;
+                    // 加载 echarts 进行图表渲染
+                    oui.require([
+
+                        oui.getContextPath() + 'res_common/third/echarts/echarts.min.js'
+                    ], (res) => {
+
+                        this.$nextTick(() => {
+                            // debugger;
+                            this.initEcharts(() => {
+                                // debugger;
+                                var myChart = echarts.init(document.getElementById('main'));
+                                // debugger;
+                                myChart.setOption(this.option);
+                            });
+                        })
+                    });
+                    this.initEcharts();
+                } else if (me.roleType == 2 || me.roleType == 7) {//库房管理员、库房总管
+                    // me.seen = true;
+                    me.showWarehouse = true;
+                    me.warehouse0 = true;
+                    me.wo = true;
+                    this.waitingToBeDeliveredMaterials();
+                } else if (me.roleType == 3) {//维修工
+                    // me.addCustomer0 = true;
+                    me.showRepairman = true;
+                    me.workOrder0 = true;
+                    me.wo = true;
+                    this.queryWorkOrdersByWorkEmpId();
+                } else if (me.roleType == 4) {//维修大师傅
+                    // me.addCustomer0 = true;
+                    me.showRepairman = true;
+                    me.workOrder0 = true;
+                    me.wo = true;
+                    this.queryAllWorkOrders();
+                } else if (me.roleType == 5) {//售后人员
+                    me.showCustomerService = true;
+                    me.addCustomer0 = true;
+                    me.customerList0 = true;
+                    me.cust = true;
+                    this.queryCustomerInfoByReceiverId();
+                } else {//售后人员经理
+                    me.showCustomerService = true;
+                    me.addCustomer0 = true;
+                    me.customerList0 = true;
+                    me.cust = true;
+                    this.queryAllCustomerInfo();
+                }
+            },
+            queryCompanyInfo: function () {
+                let me = this;
+                oui.ajaxPost('company/companyInfo/queryCompanyInfo', {},
+                    function (res) {
+                        me.companyName = res.resultObj.companyName;
+                    }, function (res) {
+                        me.$message.error(res.message)
+                    });
+            },
+            //工单状态显示格式化
+            formatStatus: function (row, column) {
+                if (row.workOrderStatus == 5) {
+                    return "等待用户确认";
+                } else if (row.workOrderStatus == 6) {
+                    return "待材料出库";
+                } else if (row.workOrderStatus == 7) {
+                    return "材料已出库待维修员确认";
+                } else if (row.workOrderStatus == 10) {
+                    return "维修工单施工中";
+                } else if (row.workOrderStatus == 15) {
+                    return "保养工单施工中";
+                } else if (row.workOrderStatus == 20) {
+                    return "其他工单施工中";
+                } else if (row.workOrderStatus == 25) {
+                    return "待付款";
+                } else if (row.workOrderStatus == 30) {
+                    return "订单已完成、收款";
+                } else if (row.workOrderStatus == 35) {
+                    return "已取消订单";
+                }
+            },
+            //客户来源显示格式化
+            formatFromType: function (row, column) {
+                if (row.custFromType == 1) {
+                    return "自主到店";
+                } else if (row.custFromType == 2) {
+                    return "车友会";
+                }
+            },
+            //客户状态显示格式化
+            formatcustType: function (row, column) {
+                if (row.customerType == 1) {
+                    return "新客户";
+                } else if (row.customerType == 2) {
+                    return "老客户";
+                }
+            },
+            //工单状态显示格式化
+            formatType: function (row) {
+                if (row.workOrderType == 1) {
+                    return "维修业务";
+                } else if (row.workOrderType == 2) {
+                    return "保养业务";
+                } else if (row.workOrderType == 3) {
+                    return "其他业务";
+                }
+            },
+            findImgUrl: function (item) {
+                var url = oui.getContextPath() + 'res_apps/car/image/';
+                if (item.isUp) {
+                    url = url + 'rise.png';
+                } else {
+                    url = url + 'down.png';
+                }
+                return url;
+            },
+            initEcharts: function (callback) {
+                this.getEchartsData(callback);
+                this.queryPerformanceRankingData();
+                this.countCarAmount();
+                var that = this;
+                oui.ajaxPost('workorder/projectWorkOrder/queryAllWorkOrders', {},
+                    function (res) {
+                        that.waitToDo = res.resultObj.total;
+                    }, function (res) {
+                        that.$message.error(res.message);
+                    })
+            },
+            //   默认选中那一页
+            handleCurrentChange1: function (val) {
+                if (this.roleType == 3) {
+                    this.currentPage1 = val;
+                    this.queryWorkOrdersByWorkEmpId();
+                } else {
+                    this.currentPage1 = val;
+                    this.queryAllWorkOrders();
+                }
+            },
+            // 每页显示多少条
+            handleSizeChange1: function (val) {
+                if (this.roleType == 3) {
+                    this.pageSize1 = val;
+                    this.queryWorkOrdersByWorkEmpId();
+                } else {
+                    this.pageSize1 = val;
+                    this.queryAllWorkOrders();
+                }
+            },
+            // 库管分页
+            handleCurrentChange2: function (val) {
+                this.currentPage2 = val;
+                this.waitingToBeDeliveredMaterials();
+            },
+            // 每页显示多少条
+            handleSizeChange2: function (val) {
+                this.pageSize2 = val;
+                this.waitingToBeDeliveredMaterials();
+            },
+            //   默认选中那一页
+            handleCurrentChange3: function (val) {
+                this.currentPage3 = val;
+                if (this.roleType == 5) {
+                    this.queryCustomerInfoByReceiverId();
+                } else {
+                    this.queryAllCustomerInfo();
+                }
+            },
+            // 每页显示多少条
+            handleSizeChange3: function (val) {
+                this.pageSize3 = val;
+                if (this.roleType == 5) {
+                    this.queryCustomerInfoByReceiverId();
+                } else {
+                    this.queryAllCustomerInfo();
+                }
+            },
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.currentPage = val;
+                this.queryPerformanceRankingData();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.pageSize = val;
+                this.queryPerformanceRankingData();
+            },
+            toPage: function () {
+                if (this.roleType == 1 || this.roleType == 3 || this.roleType == 4) {//超管跳转到项目工单页面
+                    oui.router.push('res_apps/car/html/compnents/RepairToDoList.vue.html');
+                } else if (this.roleType == 2 || this.roleType == 7) {//库房管理员跳转到待出库物料页面
+                    oui.router.push('res_apps/car/html/compnents/WarehouseToDoList.vue.html')
+                } else if (this.roleType == 5 || this.roleType == 6) {//售后人员跳转到客户中心页面
+                    oui.router.push('res_apps/car/html/compnents/SaleToDoList.vue.html')
+                } else {//库房经理跳转到到待出库物料页面
+                    alert("人员类型有误")
+                }
+            },
+            // 获取图表数据
+            getEchartsData: function (callback) {
+                var me = this;
+                oui.ajaxPost('workorder/projectWorkOrder/countTotalPriceGroupByMaintainItem', {
+                }, function (res) {
+                    me.option.title.text = res.resultObj.totalPrice;
+                    me.echartsData = res.resultObj.countItemTotalPrice;
+                    // 统计项label
+                    me.option.series[0].data = [],
+                        oui.eachArray(me.echartsData, function (item) {
+                            me.option.legend.data.push(item.itemName);
+                            me.option.series[0].data.push({
+                                value: item.totalPrice,
+                                name: item.itemName
+                            });
+                        });
+                    //处理数据 todo
+
+                    callback && callback();
+
+                }, function (res) {
+                    me.$message.error(res.message);
+                })
+            },
+            queryPerformanceRankingData: function () {
+                var that = this;
+                oui.ajaxPost('workorder/projectWorkOrder/performanceRanking', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage,
+                        // 每页显示多少行
+                        "rows": that.pageSize
+                    }
+                }, function (res) {
+                    that.performanceRankingData = res.resultObj.ranking;
+                    that.total = res.resultObj.pager.total;
+                    that.dataList[0].value = res.resultObj.totalPriceOfThisMonth;
+                    if (res.resultObj.totalPriceOfLatMonth < res.resultObj.totalPriceOfThisMonth) {
+                        that.dataList[0].isUp = true;
+                    } else {
+                        that.dataList[0].isUp = false;
+                    }
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            countCarAmount: function () {
+                var that = this;
+                oui.ajaxPost('workorder/projectWorkOrder/countCarAmount', {
+                }, function (res) {
+                    that.dataList[1].value = res.resultObj.carAmountOfThisMonth;
+                    if (res.resultObj.carAmountOfThisMonth > res.resultObj.carAmountOfLatMonth) {
+                        that.dataList[1].isUp = true;
+                    } else {
+                        that.dataList[1].isUp = false;
+                    }
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 销售人员展示模块数据
+            queryCustomerInfoByReceiverId: function () {
+                var that = this;
+                oui.ajaxPost('customer/customerCenter/queryCustomerInfoByReceiverId', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage3,
+                        // 每页显示多少行
+                        "rows": that.pageSize3
+                    },
+                    "receiverId": that.id,
+                }, function (res) {
+                    that.customerList = res.resultObj.customers;
+                    that.total3 = res.resultObj.pager.total;
+                    that.waitToDo = res.resultObj.pager.total;
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 销售经理展示模块数据
+            queryAllCustomerInfo: function () {
+                var that = this;
+                oui.ajaxPost('customer/customerCenter/queryAllCustomerInfo', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage3,
+                        // 每页显示多少行
+                        "rows": that.pageSize3
+                    },
+                }, function (res) {
+                    that.customerList = res.resultObj.customers;
+                    that.total3 = res.resultObj.pager.total;
+                    that.waitToDo = res.resultObj.pager.total;
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 库管展示数据
+            waitingToBeDeliveredMaterials: function () {
+                var that = this;
+                oui.ajaxPost('material/warehouseCenter/waitingToBeDeliveredMaterials', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage2,
+                        // 每页显示多少行
+                        "rows": that.pageSize2
+                    },
+                }, function (res) {
+                    that.materialList = res.resultObj.materialList;
+                    that.total2 = res.resultObj.total;
+                    that.waitToDo = res.resultObj.total;
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 维修工展示数据
+            queryWorkOrdersByWorkEmpId: function () {
+                var that = this;
+                oui.ajaxPost('workorder/projectWorkOrder/queryWorkOrdersByWorkEmpId', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage1,
+                        // 每页显示多少行
+                        "rows": that.pageSize1
+                    },
+                    "workEmpId": that.id,
+                }, function (res) {
+                    that.workOrderList = res.resultObj.workOrders;
+                    that.total1 = res.resultObj.total;
+                    that.waitToDo = res.resultObj.total;
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 维修大师傅展示数据（所有工单）
+            queryAllWorkOrders: function () {
+                var that = this;
+                oui.ajaxPost('workorder/projectWorkOrder/queryAllWorkOrders', {
+                    "pager": {
+                        // 第几页
+                        "page": that.currentPage1,
+                        // 每页显示多少行
+                        "rows": that.pageSize1
+                    },
+                }, function (res) {
+                    that.workOrderList = res.resultObj.workOrders;
+                    that.total1 = res.resultObj.total;
+                    that.waitToDo = res.resultObj.total;
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            // 跳转到已完成2 查看页面
+            completionSchedule: function (row) {
+                oui.router.push('/res_apps/car/html/customer/seeinformation.vue.html', {
+                    custId: row.custId
+                })
+            },
+            // 删除当前客户列表
+            deleteListData: function (row) {
+                let that = this;
+                this.$confirm('确认删除该客户信息吗？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('customer/customerCenter/deleteCustomer', {
+                        "custId": row.custId
+                    },
+                        function () {
+                            that.$message({
+                                message: '删除成功',
+                                type: 'success'
+                            });
+                            // 删除成功后，在重新刷新页面数据
+                            that.queryCustomerInfo()
+                        },
+                        function () {
+                            that.$message.error('删除失败');
+                        }
+                    )
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            // 点击查看跳转到待出库物料的查看详情页面
+            seeDetails: function (res) {
+                oui.router.push('/res_apps/car/html/warehousecenter/tobedelivered.vue.html', {
+                    workOrderId: res.workOrderId
+                })
+            },
+            // 首页工单查看详情
+            queryOneWorkWordDetail: function (row) {
+                oui.router.push("/res_apps/car/html/product/viewproject.vue.html", {
+                    rowId: row.workOrderId
+                });
+            },
+            // 点击出库
+            warehouseOut: function (row) {
+                var that = this;
+                this.$confirm('确认出库该工单的所有材料吗？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('material/warehouseCenter/outOneOrderWait', {
+                        "workOrderId": row.workOrderId
+                    }, function (res) {
+                        that.$message.success('出库成功');
+                        oui.router.push('/res_apps/car/html/warehousecenter/outboundmaterials.vue.html', {
+                        })
+                    }, function (res) {
+                        that.$message.error(res.message);
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消出库'
+                    });
+                });
+            },
+            // 查看更多跳转
+            seeMore: function () {
+                oui.router.push('/res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html')
+            },
+            // 常用功能模块跳转
+            shopOrder: function () {
+                oui.router.push('res_apps/car/html/customer/addworkorder.vue.html')
+            },
+            businessCenter: function () {
+                oui.router.push('res_apps/car/html/product/product.vue.html')
+            },
+            customerCenter: function () {
+                oui.router.push('res_apps/car/html/customer/customer.vue.html')
+            },
+            storeManagement: function () {
+                oui.router.push('res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html')
+            },
+            getCurrentTime() {
+                let me = this;
+                // //获取当前时间
+                // var date = new Date();
+                // var year = date.getFullYear(); //当前年份
+                // var month = date.getMonth(); //当前月份
+                // var data = date.getDate(); //天
+                // var hours = date.getHours(); //小时
+                // var minute = date.getMinutes(); //分
+                // var second = date.getSeconds(); //秒
+                // var time =
+                //     year +
+                //     "-" +
+                //     (month + 1) +
+                //     "-" +
+                //     data +
+                //     "      " +
+                //     hours +
+                //     ":" +
+                //     minute +
+                //     ":" +
+                //     second;
+                // me.myDateTime = time;
+                var date = new Date();  //获取时间对象
+                var year = date.getFullYear(); //获取年
+                var month = date.getMonth() + 1;//获取月份，获取的月份比真实的月份少一个月，所以这里得+1
+                var day = date.getDate();  //获取日
+                var week = date.getDay();//返回0--6，其中0表示星期天，1--6代表星期一到星期六
+                var weekStr = "未知";
+                var hours = date.getHours(); //获取时（24小时制）
+                var minutes = date.getMinutes();  //获取分
+                if (minutes < 10) {
+                    minutes = "0" + minutes;
+                }
+                var seconds = date.getSeconds();  //获取秒
+                if (seconds < 10) {
+                    seconds = "0" + seconds;
+                }
+                // var milliseconds = date.getMilliseconds();//获得毫秒
+                //处理星期的显示
+                switch (week) {
+                    case 1:
+                        weekStr = "一 ";
+                        break;
+                    case 2:
+                        weekStr = "二 ";
+                        break;
+                    case 3:
+                        weekStr = "三 ";
+                        break;
+                    case 4:
+                        weekStr = "四 ";
+                        break;
+                    case 5:
+                        weekStr = "五 ";
+                        break;
+                    case 6:
+                        weekStr = "六 ";
+                        break;
+                    default:
+                        weekStr = "日 ";
+                }
+                // me.myDateTime = year + "年" + month + "月" + day + "日 "+"  星期"+weekStr +"  " + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+                me.myDateTime = year + "年" + month + "月" + day + "日 " + "  星期" + weekStr + "  " + hours + ":" + minutes + ":" + seconds;
+
+            },
+
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+        height: 100% !important;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    body {
+        padding: 0;
+        margin: 0;
+        height: 100% !important;
+    }
+
+    html,
+    body {
+        height: 100% !important;
+    }
+
+    .content_max {
+        /* min-height: 90vh; */
+        height: 100% !important;
+        /* padding: 0 20px; */
+        box-sizing: border-box;
+    }
+
+
+    /* 利用flex布局进行封装的共用类样式开始 */
+
+    /* 弹性布局 */
+
+    .fdc,
+    .jc,
+    .ac,
+    .as,
+    .jac,
+    .jsa,
+    .jsb,
+    .jsbw,
+    .fw,
+    .jend,
+    .aend,
+    .no-blank {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+
+    .fdc {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+    }
+
+    .jc {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+
+    .ac {
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .as {
+        -webkit-box-align: start;
+        -webkit-align-items: flex-start;
+        -ms-flex-align: start;
+        align-items: flex-start;
+    }
+
+    .aend {
+        -webkit-box-align: end;
+        -webkit-align-items: flex-end;
+        -ms-flex-align: end;
+        align-items: flex-end;
+    }
+
+    .jac {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .jsa {
+        -webkit-justify-content: space-around;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+    }
+
+    /* flex的两侧对齐 */
+
+    .jsb {
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+    }
+
+    /* 项目位于容器的中心 */
+
+    .jend {
+        -webkit-box-pack: end;
+        -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+        justify-content: flex-end;
+    }
+
+    /* 两侧对齐 */
+
+    .jsbw {
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+
+    .fw {
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+
+    /* 空处理 */
+
+    .no-blank {
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        color: #999;
+        font-size: 13px;
+        padding: 10px 0;
+    }
+
+    /* 一行显示 */
+
+    .onerow {
+        width: 50px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 三角 */
+
+    .triangle {
+        width: 0;
+        height: 0;
+        border-right: 10px solid transparent;
+        border-left: 10px solid transparent;
+        border-bottom: 10px solid #000;
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+    }
+
+    .triangle_top {
+        -webkit-transform: rotate(0);
+        transform: rotate(0);
+    }
+
+    .triangle_down {
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+    }
+
+    .triangle_left {
+        -webkit-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+    }
+
+    .triangle_right {
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+
+    /* 箭头 */
+
+    .arrow {
+        width: 10px;
+        height: 10px;
+        border: 1px solid #999;
+        border-left: 0 !important;
+        border-bottom: 0 !important;
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+    }
+
+    .arrow_up {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    .arrow_down {
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+    }
+
+    .arrow_left {
+        -webkit-transform: rotate(-135deg);
+        transform: rotate(-135deg);
+    }
+
+    .arrow_right {
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    /* 利用flex布局进行封装的共用类样式结束 */
+
+    /* 自己写的样式开始 */
+
+    /* 首页侧边栏和公共样式 */
+
+    /* 左侧导航 */
+
+    .sidebar-container .el-menu {
+        border: none;
+    }
+
+    .sidebar-container {
+        transition: width 0.28s;
+        width: 210px !important;
+        background-color: #fff;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1001;
+        overflow: hidden;
+        padding: 16px;
+        box-sizing: border-box;
+        box-shadow: 0px 1px 5px #ccc;
+    }
+
+    .sidebar-logo-container {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        background: #fff;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .sidebar-logo-container img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    /* 右侧区域 */
+
+    .main-container {
+        min-height: 100%;
+        -webkit-transition: margin-left 0.28s;
+        transition: margin-left 0.28s;
+        margin-left: 204px;
+        position: relative;
+        background-color: #f5f5f5;
+    }
+
+    /* 右侧上方导航条 */
+
+    .navbar {
+        height: 50px;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+        box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    }
+
+    .navbar>div {
+        float: right;
+        margin-right: 24px;
+        line-height: 50px;
+    }
+
+    .navbar>img {
+        width: 46px;
+        height: 48px;
+        margin-right: 24px;
+    }
+
+    /* 顶部公告和常用功能开始 */
+
+    .header_box {
+        display: flex;
+        justify-content: space-between;
+        /* margin-right: 24px; */
+        margin-bottom: 44px;
+
+    }
+
+    .left_box {
+        /* background-color: #eee !important; */
+        width: 80%;
+        padding-right: 20px;
+
+    }
+
+    /* 公告 */
+
+    .Notice {
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 24px;
+        line-height: 40px;
+        background-color: #fff;
+        margin-bottom: 24px;
+    }
+
+    .Notice>div>span {
+        font-weight: 700;
+    }
+
+    .Notice_content {
+        display: inline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 14px;
+        color: rgb(19, 18, 18);
+        opacity: 0.5;
+    }
+
+    .more {
+        color: #1890ff;
+    }
+
+    /* 代办事项 */
+
+    /* .Todolist{
+  width: 287px;
+  height: px;
+  background-color: rgb(122, 206, 12);
+} */
+
+    /* 问候区域及备忘录 */
+
+    .user_info_box {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* 问候区域 */
+
+    .to_greet {
+        height: 150px;
+        padding-left: 24px;
+        background-color: #fff;
+        width: 80%;
+
+    }
+
+    .to_greet>span {
+        display: block;
+        margin: 14px 0;
+        font-size: 16px;
+    }
+
+    .user_photo_box {
+        display: flex;
+        align-items: center;
+
+
+    }
+
+
+    /* 问候语的外盒子 */
+
+    .user_lv_box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-left: 24px;
+        /*width: 290px;*/
+    }
+
+    .user_lv_box>h2 {
+        font-size: 20px;
+        margin: 12px 0;
+    }
+
+
+    /* 备忘区域 */
+
+    .Todolist {
+        width: 20%;
+        color: red;
+        margin-left: 20px;
+        background-color: #fff;
+        padding-top: 14px;
+    }
+    .EarlyWarning_content {
+        border-bottom: 2px solid rgb(255, 24, 24);
+        color: rgb(253, 37, 37);
+        font-size: 16px;
+        font-weight: 700;
+        margin-left: 20px;
+    }
+
+    .Todolist_content {
+        border-bottom: 2px solid #1890FF;
+        color: #000;
+        font-size: 16px;
+        font-weight: 700;
+        margin-left: 20px;
+
+
+    }
+
+    .Todolist_number {
+        text-align: center;
+        font-size: 30px;
+        margin-top: 25px;
+    }
+
+    .Todolist>div>span {
+        color: #999999;
+    }
+
+
+    .right_box {
+        width: 20%;
+        background: #fff;
+    }
+
+    /* 常用功能 */
+
+    .title {
+        width: 100%;
+
+    }
+
+    /* 可视化及业绩排行左右的盒子 */
+
+    .data_show_max {
+        display: flex;
+        justify-content: space-between;
+        /* align-items: flex-start; */
+        padding: 0;
+        margin-top: -20px;
+    }
+
+    .echarts_photo_box {
+        /* height: 489px; */
+        /* padding-left: 20px; */
+        margin-right: 20px;
+        width: 80%;
+    }
+
+    .data_show_max .echarts_photo_box {
+        /* width: 781px; */
+        /* height: 489px; */
+        background-color: #fff;
+    }
+
+    .echarts_photo_box>div {
+        margin: 20px 20px;
+    }
+
+    .number_box {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        /* margin-left: 20px; */
+    }
+
+    /* 三个小盒子的大小 */
+
+    .number_box>div {
+        width: 100%;
+        height: 106px;
+        border: 1px solid #E9E9E9;
+        margin-right: 20px;
+    }
+
+    /* 产能的盒子 */
+
+    .capacity {
+        display: inline;
+        border-bottom: 2px solid #3ba0ff;
+        margin-bottom: 20px;
+        font-size: 16px;
+        font-weight: 700;
+
+    }
+
+    .photo_box {
+        /* flex-wrap: wrap; */
+        display: flex;
+        flex-direction: column;
+        margin-left: 5px;
+    }
+
+    .foot_title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    /* 本月分布 */
+
+    .This_month {
+        font-weight: 700;
+    }
+
+    /* 可视化外部盒子 */
+
+    .echarts_box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 158px;
+    }
+
+    .echarts_box .title_info {
+        margin-left: 60px;
+    }
+
+
+
+
+
+    /* 业绩排行榜 */
+
+    .achievement_max {
+        width: 20%;
+        background-color: #fff;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding-left: 20px;
+    }
+
+    .title_ye {
+        margin-top: 20px;
+        font-size: 16px;
+        font-weight: 700;
+        box-sizing: border-box;
+    }
+
+    .page_box1 {
+        margin: 25px 0 0 0;
+
+    }
+
+    .el-pagination {
+        float: right;
+    }
+
+    .list_row {
+        display: flex;
+        justify-content: space-between;
+        height: 45px;
+    }
+
+    .xyd {
+        width: 8px;
+        height: 8px;
+        background: #3ba0ff;
+        border-radius: 50%;
+        display: inline-block;
+        line-height: 45px;
+        margin: 6px 6px;
+    }
+
+    .visualization_content {
+        font-size: 14px;
+    }
+
+    .Symbol {
+        color: #111111;
+        opacity: 0.5;
+        /* font-style: normal */
+    }
+
+    .percentage {
+        font-size: 14px;
+        color: #000000;
+        opacity: 0.5;
+    }
+
+    .amount {
+        font-size: 14px;
+        color: #000000;
+        opacity: 0.65;
+    }
+
+    .amount>i {
+        font-style: normal;
+    }
+
+    /* 常用功能区域 */
+
+    .gn_maxbox {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .gn_region {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px;
+    }
+
+    .set_up {
+        color: #3ba0ff;
+    }
+
+
+
+
+    /* 文本区域大盒子 */
+
+    .Text_content {
+        display: flex;
+        /* justify-content: space-between; */
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .Text_content>div {
+        width: 50%;
+        overflow: hidden;
+        /* margin-left: 30px; */
+        /* margin: auto; */
+    }
+
+    .Text_content>div:first-child {
+        margin-left: 20px;
+    }
+
+    .Text_content>div:last-child {
+        margin-right: 20px;
+        /* overflow: hidden; */
+    }
+
+
+    /* 每个小盒子 */
+
+    .Specific_gn {
+        margin-bottom: 30px;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        /* text-overflow: ellipsis; */
+    }
+
+    .mouseoverImgBox {
+        position: relative;
+    }
+
+    .mouseoverImg {
+        position: absolute;
+        top: 100px;
+        left: -40px;
+    }
+
+    /* 图片和文字的盒子 */
+
+    .gn_picture {
+        font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /* 图片 */
+
+    .gn_picture>img {
+        width: 48px;
+        height: 48px;
+        margin-left: 6px;
+        vertical-align: middle
+    }
+
+
+
+    /* 公共样式区域 */
+
+    .bgcfff {
+        background-color: #fff;
+    }
+
+
+
+    /* 自己样式结束 */
+
+    /* element组件自带样式设置开始------- */
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        height: 900px;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        padding-top: 20px;
+    }
+
+    /* element组件自带样式设置开始------- */
+
+    /* 自己的样式 */
+
+    /* 侧边栏开始-------- */
+
+    /* 侧边栏log图片 */
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+    /* 文字盒子span */
+
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束------ */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 右侧头部区域个人信息区域结束------ */
+
+    /* 面包屑区域开始 -------*/
+
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .crumbs.el-breadcrumb {
+        line-height: 40px;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 主体区域最外边的容器 */
+
+    .el-main {
+        line-height: normal;
+        width: 100%;
+        height: 100%;
+
+    }
+
+    /* 维修工展示区域 */
+
+    .repairTable {
+        padding: 21px 20px;
+        background-color: #fff;
+        margin-top: -20px;
+
+    }
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+    /* 分页区域开始---- */
+
+    .page {
+        width: 100%;
+        height: 35px;
+        margin-top: 20px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 维修工展示区域结束 */
+
+    /* 库管展示区域 */
+
+    .commissionaireTable {
+        padding: 21px 20px;
+        background-color: #fff;
+        margin-top: -20px;
+    }
+
+
+    /* 库管展示区域结束 */
+
+    /* 销售展示区域 */
+
+    .saleTable {
+        padding: 21px 20px;
+        background-color: #fff;
+        margin-top: -20px;
+    }
+
+    /* 销售展示结束 */
+
+    /* 列表盒子 */
+
+    .table_box {
+        /* margin-bottom: 21px; */
+        background-color: #fff;
+        /* padding: 24px 24px; */
+        margin-right: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .el-table--scrollable-x .el-table__body-wrapper {
+        /* display: none; */
+        overflow: auto;
+        /* overflow-x: hidden; */
+    }
+
+    /* 每个小盒子的布局 */
+
+    .number_item_box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .number_item_box .one_day_price {
+        display: flex;
+        align-items: center;
+        font-size: 30px;
+        margin-left: 20px;
+
+    }
+
+    .number_item_box .one_day_price>span {
+        color: #1890FF;
+        font-weight: 700;
+        font-size: 30px;
+    }
+
+    .number_item_box .one_day_price img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .number_item_box .one_day_price .one_day_price_foot {
+        font-size: 16px;
+        color: #999;
+    }
+</style>

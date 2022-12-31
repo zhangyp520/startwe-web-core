@@ -1,0 +1,224 @@
+/* 首页侧边栏和公共样式 */
+
+/* 左侧导航 */
+.sidebar-container .el-menu {
+  border: none;
+}
+
+.sidebar-container {
+  transition: width 0.28s;
+  width: 210px !important;
+  background-color: #fff;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1001;
+  overflow: hidden;
+  padding: 16px;
+  box-sizing: border-box;
+  box-shadow: 0px 1px 5px #ccc;
+}
+
+.sidebar-logo-container {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  background: #fff;
+  text-align: center;
+  overflow: hidden;
+}
+
+.sidebar-logo-container img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 右侧区域 */
+.main-container {
+  min-height: 100%;
+  -webkit-transition: margin-left 0.28s;
+  transition: margin-left 0.28s;
+  margin-left: 204px;
+  position: relative;
+  background-color: #f5f5f5;
+}
+
+/* 右侧上方导航条 */
+.navbar {
+  height: 50px;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+}
+
+.navbar > div {
+  float: right;
+  margin-right: 24px;
+  line-height: 50px;
+}
+
+.navbar > img {
+  width: 46px;
+  height: 48px;
+  margin-right: 24px;
+}
+
+/* 公告 */
+.Notice {
+  width: 781px;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+  line-height: 40px;
+}
+
+.Notice > div > span {
+  font-weight: 700;
+}
+
+.Notice_content {
+  display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: rgb(19, 18, 18);
+  opacity: 0.5;
+}
+
+.more {
+  color: #1890ff;
+}
+/* 代办事项 */
+/* .Todolist{
+  width: 287px;
+  height: px;
+  background-color: rgb(122, 206, 12);
+} */
+
+/* 可视化数据类表 */
+.visualization_list {
+  width: 183px;
+  height: 160px;
+}
+
+.list_row {
+  display: flex;
+  justify-content: space-between;
+  height: 45px;
+}
+
+.xyd {
+  width: 8px;
+  height: 8px;
+  background: #3ba0ff;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 45px;
+}
+
+.visualization_content {
+  font-size: 14px;
+}
+
+.Symbol {
+  color: #111111;
+  opacity: 0.5;
+  /* font-style: normal */
+}
+
+.percentage {
+  font-size: 14px;
+  color: #000000;
+  opacity: 0.5;
+}
+
+.amount {
+  font-size: 14px;
+  color: #000000;
+  opacity: 0.65;
+}
+
+.amount > i {
+  font-style: normal;
+}
+
+/* 常用功能区域 */
+.gn_maxbox {
+  width: 240px;
+  height: 214px;
+  margin: 0px 24px;
+}
+.gn_region {
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  line-height: 40px;
+}
+
+.set_up {
+  color: #3ba0ff;
+}
+
+
+/* 文本区域大盒子 */
+.Text_content {
+  /* width: 380px; */
+  width: 240px;
+  height: 160px;
+    margin-top: 24px;
+    /* background-color: rgb(223, 24, 24); */
+    /* border: 1px solid #0fbe35; */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap ;
+  }
+  /* 每个小盒子 */
+.Specific_gn {
+  width: 100px;
+  height: 50px;
+  line-height: 49px;
+  margin: 16px 6px;
+
+  /* background-color: rgb(11, 155, 23); */
+
+}
+
+/* 图片和文字的盒子 */
+/* .gn_picture {
+  width: 140px;
+  height: 48px;
+  line-height: 48px;
+} */
+/* 图片 */
+.gn_picture>img{
+width: 40px;
+height: 40px;
+margin-right: 8px;
+vertical-align: middle
+}
+
+/* 文字 */
+.gn_picture{
+  font-size: 12px;
+}
+
+/* 有问题，明天改正 */
+ .gn_content {
+  /* display: inline;
+  line-height: 48px;
+  margin-right: 16px; */
+  /* vertical-align: middle  */
+
+} 
+
+/* 公共样式区域 */
+.bgcfff {
+  background-color: #fff;
+}

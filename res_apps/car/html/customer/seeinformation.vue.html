@@ -1,0 +1,886 @@
+<!-- 全部2 查看页面 -->
+<template>
+    <div id="customer">
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>客户中心</el-breadcrumb-item>
+                <el-breadcrumb-item>查看中心</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <el-container>
+            <!-- 右侧内容区域主要内容区域开始 -->
+            <el-main class="inside_box">
+                <!-- <el-header class="blank_head"> -->
+                <!-- 关键词开始 -->
+                <div class="keyword">
+                    基本信息
+                </div>
+                <!-- 关键词结束 -->
+                <!-- </el-header> -->
+                <div class="conduct_box">
+                    <!-- 客户信息表格单区域开始 -->
+                    <div class="state">
+                        <i>状态：</i>
+                        <div></div> <span>{{getWorkOrderStatus(item1.workOrderStatus)}}</span>
+                    </div>
+                    <!-- 开单时间第一行 -->
+                    <div class="billing_time_box">
+                        <el-row>
+                            <el-col :span="8">
+                                <div>开单时间：</div>
+                                <span>{{item1.createDate}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>接待人：</div>
+                                <span>{{item1.receiverName}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 进厂第二行 -->
+                        <el-row>
+                            <el-col :span="8">
+                                <div>进厂时间：</div>
+                                <span>{{item1.carEntryDate}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>预计完工时间：</div>
+                                <span>{{item1.estDate}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 进厂第三行 -->
+                        <el-row>
+                            <el-col :span="8">
+                                <div>客户名称：</div>
+                                <span>{{item1.custName}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>联系电话：</div>
+                                <span>{{item1.custPhoneNo}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>业务类型：</div>
+                                <span>{{getBizType(item1.bizType)}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 车载油量第四行 -->
+                        <el-row>
+                            <el-col :span="8">
+                                <div>车载油量：</div>
+                                <span>{{getOilMass(item1.oilMass)}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>车辆品牌：</div>
+                                <span>{{item1.carBrand}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>车牌号码：</div>
+                                <span>{{item1.carNumber}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 客户来源第五行 -->
+                        <el-row>
+                            <el-col :span="8">
+                                <div>客户来源：</div>
+                                <span>{{getCustFromType(item1.custFromType)}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>进厂里程：</div>
+                                <span>{{item1.carMiles}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 客户备注第六行 -->
+                        <el-row>
+                            <el-col :span="8">
+                                <div>客户备注：</div>
+                                <span>{{item1.carComments}}</span>
+                            </el-col>
+                            <el-col :span="8">
+                                <div>随车物品：</div>
+                                <span>{{item1.carAttachments}}</span>
+                            </el-col>
+                        </el-row>
+                        <!-- 维修定价第七行 -->
+                        <el-row class="repair">
+                            <el-col :span="8">
+                                <div>维修定价：</div>
+                                <span>￥</span>
+                                <span>{{item1.workOrderPrice}}</span>
+                                <span>元</span>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div class="maintenance_progress">
+                        <div class="progress_content">维修进度</div>
+                        <div class="progress_bar">
+                            <el-steps :active="number1">
+                                <el-step title="接待" icon="el-icon-success"></el-step>
+                                <el-step title="跟进" icon="el-icon-success"></el-step>
+                                <el-step title="进行" icon="el-icon-success"></el-step>
+                                <el-step title="待付款" icon="el-icon-success"></el-step>
+                                <el-step title="已完成" icon="el-icon-success"></el-step>
+                            </el-steps>
+                        </div>
+                        <div class="view_work_order">
+                            <el-button type="primary" @click="goProjectWorkOrder">查看工单</el-button>
+                        </div>
+                        <div class="maintenance_details">
+                            <div class="maintenance_details_centent">
+                                维修细节
+                            </div>
+                            <div maintenance_details_time>
+                                <div class="block">
+                                    <el-timeline>
+                                        <el-timeline-item v-for="(item,index) in item2" :timestamp="item.completeDate"
+                                            placement="top">
+                                            <el-card>
+                                                <h4>{{item.itemName}}</h4>
+                                                <p>{{item.workEmpName}} 提交于 {{item.completeDate}}</p>
+                                            </el-card>
+                                        </el-timeline-item>
+                                    </el-timeline>
+                                </div>
+                            </div>
+                            <div class="button_box">
+                                <el-button id="confirmSettle" @click="confirmSettlement" type="primary" style=" ;width: 180px; padding: 0; display: none">
+                                    确认结算</el-button>
+                                <el-button @click="completionSchedule()" style="width: 180px; padding: 0;">返回
+                                </el-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-main>
+        </el-container>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 默认维修进度为第几个
+                number1: 1,
+                // 基本信息区域的时间
+                item1: [],
+                // 维修细节区域的时间
+                item2: [],
+                // 改客户的id值
+                custId: "",
+                workOrderId: "",
+                workOrderPrice: 0.00
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            var queryParam = this.$router.query;
+            // 客户中心点击查看传递过来的id
+            this.custId = queryParam.custId;
+            this.workOrderId = queryParam.workOrderId;
+            // 初始化
+            this.getCustomerList()
+        },
+        methods: {
+            // 通过传入的id获取结构数据
+            getCustomerList: function () {
+                var that = this;
+                let queryParam = this.$router.query;
+                oui.ajaxPost('customer/customerCenter/findOneCustomer', {
+                    "custId": queryParam.custId
+                }, function (res) {
+                    // 基本信息区域的时间
+                    that.item1 = res.resultObj;
+                    that.workOrderPrice = res.resultObj.workOrderPrice;
+                    // 维修细节区域的时间
+                    oui.eachArray(res.resultObj.carExecutionProjects, function (item) {
+                        if (item.status == 2) {
+                            that.item2.push(item);
+                        }
+                    });
+                    if (res.resultObj.workOrderStatus == 25) {
+                        var currentBtn = document.getElementById("confirmSettle");
+                        currentBtn.style.display = "inline-block";
+                    }
+                }, function (res) {
+                    that.$message.error(res.message)
+                })
+            },
+            // 返回状态
+            getWorkOrderStatus: function (workOrderStatus) {
+                var status1;
+                var that = this;
+                if (workOrderStatus == 10 || workOrderStatus == 15 || workOrderStatus == 20) {
+                    status1 = "进行中";
+                    that.number1 = 3
+                } else if (workOrderStatus == 5) {
+                    status1 = "待确认";
+                    that.number1 = 2
+                } else if (workOrderStatus == 6) {
+                    status1 = "待出库";
+                    that.number1 = 2
+                } else if (workOrderStatus == 7) {
+                    status1 = "等待维修员确认材料";
+                    that.number1 = 2
+                } else if (workOrderStatus == 25) {
+                    status1 = "待付款";
+                    that.number1 = 4
+                } else if (workOrderStatus == 30) {
+                    status1 = "已完成";
+                    that.number1 = 5
+                } else if (workOrderStatus == 35) {
+                    status1 = "已取消";
+                    that.number1 = 0
+                } else {
+                    status1 = " ";
+                    that.number1 = 0
+                }
+                return status1
+            },
+            // 客户来源
+            getCustFromType: function (custFromType) {
+                var status1;
+                if (custFromType == 1) {
+                    status1 = "自主到店"
+                } else if (custFromType == 2) {
+                    status1 = "车友会"
+                } else {
+                    status1 = " "
+                }
+                return status1
+            },
+            // 车载油量
+            getOilMass: function (oilMass) {
+                var status1;
+                if (oilMass == 1) {
+                    status1 = "大于75%"
+                } else if (oilMass == 2) {
+                    status1 = "75%"
+                } else if (oilMass == 3) {
+                    status1 = "50"
+                } else if (oilMass == 4) {
+                    status1 = "25%"
+                } else {
+                    status1 = " "
+                }
+                return status1
+            },
+            // 业务类型
+            getBizType: function (bizType) {
+                var status1;
+                if (bizType == 1) {
+                    status1 = "维修"
+                } else if (bizType == 2) {
+                    status1 = "保养"
+                } else if (bizType == 3) {
+                    status1 = "其他"
+                } else {
+                    status1 = " "
+                }
+                return status1
+            },
+            completionSchedule: function () {
+                oui.router.push('/res_apps/car/html/customer/customer.vue.html', {});
+            },
+            // 跳转到项目工单
+            goProjectWorkOrder() {
+                // 保存vue的this指向
+                var that = this;
+                oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+                    oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+                        var url = 'res_apps/car/html/customer/completedWorkOrderPopUp.vue.html';
+                        url = oui.addParams(url, {
+                            custId: that.custId
+                        });
+                        var dialog = oui.getTop().oui.showUrlDialog({
+                            url: oui.getContextPath() + 'index4vue.html#' + url,
+                            // 调整弹窗页面大小
+                            contentStyle: 'width:1300px;height:800px',
+                            // 是否隐藏底部
+                            isHideFooter: false,
+                            // 配置按钮的方法，需要传递一个actions数组对象
+                            actions: [{
+                                // 调用确认按钮的方法
+                                text: '确定',
+                                cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    dialog.hide();
+                                }
+                            }, {
+                                // 调用取消按钮的方法
+                                text: '取消',
+                                cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () { dialog.hide(); }
+                            }],
+                            title: '查看工单'
+                        });
+                    });
+                });
+            },
+            // 点击确认结算
+            confirmSettlement: function () {
+                // 保存vue的this指向
+                var that = this;
+                oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+
+                    oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+                        //  弹框
+                        // 存放底层页面的获取底层页面数据并以org_info这个变量进行保存到全局，弹窗页面在到全局进行获取org_info数据时,
+                        var url =oui.getContextPath() + 'res_apps/car/html/customer/settlementBox.vue.html';
+                        url = oui.addParams(url, {
+                            workOrderId: that.workOrderId,
+                            workOrderPrice: that.workOrderPrice
+                        });
+                        // oui.getTop().oui.setPageParam("seeInformation_payAmount",that.workOrderPrice);
+                        var dialog = oui.getTop().oui.showUrlDialog({
+                            // 调用弹框方法           + 对应弹框组件的相对路径
+                            // url:oui.getContextPath()+'index4vue.html#/res_apps/car/project/html/compnents/components.vue.html',
+                            url: oui.getContextPath() + 'index4vue.html#' + url,
+                            // 调整弹窗页面大小
+                            contentStyle: 'width:600px;height:400px',
+                            // 是否隐藏底部
+                            isHideFooter: false,
+                            // 配置按钮的方法，需要传递一个actions数组对象
+                            actions: [{
+                                // 调用确认按钮的方法
+                                text: '确定',
+                                cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    let pageParam = oui.getTop().oui.getPageParam('payAmount');
+                                    var payAmount = oui.parseJson(pageParam);
+                                    that.$confirm('确认结算？', '提示', {
+                                        type: 'warning'
+                                    }).then(() => {
+                                        oui.ajaxPost('workorder/projectWorkOrder/receivePayment',payAmount,
+                                            function (res) {
+                                                that.$message.success('结算成功');
+                                                oui.router.push('res_apps/car/html/customer/customer.vue.html');
+                                            },
+                                            function (res) {
+                                                that.$message.error(res.message)
+                                            }
+                                        )
+                                    }).catch(() => {
+                                        this.$message({
+                                            type: 'info',
+                                            message: '已取消结算'
+                                        });
+                                    });
+                                    dialog.hide();
+                                }
+                            }, {
+                                // 调用取消按钮的方法
+                                text: '取消',
+                                cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () { dialog.hide(); }
+                            }],
+                            title: '查看工单'
+
+                        });
+                    });
+                });
+            }
+        }
+    }
+</script>
+<style>
+    /* 测试时 侧边栏宽度设置开始 */
+    .el-aside {
+        width: 140px !important;
+        margin: 0 0 !important;
+        padding: 0 0 !important;
+    }
+    /* 测试时 侧边栏宽度设置结束 */
+    .customer {
+        width: 1040px;
+        height: 700px;
+    }
+    html {
+        margin: 0 0px;
+        font-size: 14px;
+        /* width: 1040px; */
+        /* height: 700px; */
+        /* background-color: rgb(243, 228, 21); */
+    }
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+    /* 设置侧边栏及右侧头部盒子的阴影部分 */
+    .el-header,
+    .el-footer {
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        padding: 0 20px 0 2px;
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+    /* 美化侧边栏的滚动轴开始 */
+    .page_scroll {
+        height: 100%;
+    }
+    .page_scroll .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+    /* 美化侧边栏的滚动轴结束 */
+    /* 隐藏侧边栏的滚动轴 */
+    /* 调整侧边栏功能区下边的文字居中显示 */
+    .el-menu-item {
+        text-align: center;
+    }
+    /* 功能行的文字颜色 */
+    .el-menu-item-group__title {
+        padding: 7px 0;
+        margin: 8px 0;
+        line-height: normal;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1890FF;
+    }
+    /* 侧边栏高度及背景色 */
+    .el-scrollbar__wrap {
+        overflow: scroll;
+        height: 100%;
+        background-color: #fff !important;
+    }
+    /* 右侧 头部区域个人信息区域 */
+    /* 头部区域el-header标签 */
+    .el-header {
+        height: 48px !important;
+        background-color: #fff;
+        box-shadow: 0 2 6 0 rgb(0, 0, 0, 0.5);
+    }
+    /* 头部三个头像的盒子 */
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+    }
+    .navbar>img {
+        width: 20px;
+        height: 20px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+    #customer {
+        margin: 0 20px;
+        padding: 0 20px;
+        background-color: #fff;
+    }
+    /* 主体内容区域 */
+    .conter_box {
+        /* padding: 15px; */
+        background-color: #eee;
+    }
+    /* iframe标签控制的视图窗口大小 */
+    /* 这个标签决定了组件页面显示的大小 */
+    #main_iframe {
+        width: 100%;
+        height: 100%;
+        border: 0px;
+    }
+    /* 主体内容溢出了不显示，让内部滚动条来控制 */
+    /* 控制内容盒子的高度 */
+    .el-main {
+        overflow: hidden;
+        padding: 0;
+        height: 100% !important;
+    }
+    /* 布局容器自带样式 */
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+    .el-aside {
+        color: #333;
+    }
+    /* 自己设置样式开始 */
+    .el-container {
+        margin: 0;
+        padding: 0;
+    }
+    /* 侧边栏log图片 */
+    .logImage {
+        margin: 0 20px 0 0;
+
+    }
+    .logImage>img {
+        width: 180px;
+        height: 50px;
+    }
+    /* 侧边栏阴影调整 */
+    .el-menu {
+        box-shadow: 2 0 6 0 #eee;
+    }
+    /* 隐藏侧边栏的滚动轴 */
+    /* 美化侧边栏的滚动轴开始 */
+    .page_scroll {
+        height: 100%;
+    }
+    .page_scroll .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+    /* 调整侧边栏功能区下边的文字居中显示 */
+    .el-menu-item {
+        text-align: center;
+    }
+    .el-menu-item-group__title {
+        padding: 7px 0;
+        margin: 8px 0;
+        line-height: normal;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1890FF;
+    }
+    /* 侧边栏高度及背景色 */
+    .el-scrollbar__wrap {
+        overflow: scroll;
+        height: 100%;
+        background-color: #fff !important;
+    }
+    /* 头部区域el-header标签 */
+    .el-header {
+        height: 48px !important;
+        background-color: #fff;
+        box-shadow: 0 2 6 0 rgb(0, 0, 0, 0.5);
+    }
+    /* 头部三个头像的盒子 */
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+    .navbar>img {
+        width: 20px;
+        height: 20px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+    /* 主体内容区域 */
+    .conter_box {
+        /* padding: 15px; */
+        background-color: #eee;
+    }
+    /* iframe标签控制的视图窗口大小 */
+    /* 这个标签决定了组件页面显示的大小 */
+    #main_iframe {
+        width: 100%;
+        height: 100%;
+        border: 0px;
+    }
+    /* 主体内容溢出了不显示，让内部滚动条来控制 */
+    /* 控制内容盒子的高度 */
+    .el-main {
+        overflow: hidden;
+        padding: 0;
+        height: 100% !important;
+    }
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+    }
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+    .product_text {
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+    }
+    .el-menu {
+        border: 0;
+        margin: 0 0;
+        padding: 0 0;
+    }
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+    /* 侧边栏样式结束 */
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        margin-bottom: 20px;
+        background-color: #fff;
+    }
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+    /* 面包屑区域结束------ */
+    /* 内容侧边栏每一项开始---- */
+    .all_customers {
+        width: 146px;
+        height: 40px;
+        background-color: #fff;
+    }
+    .cebain_bgc {
+        background-color: #fff;
+        /* height:780px; */
+    }
+    /* 侧边栏每一项的盒子 */
+    .all_customers li.el-menu-item.is-active {
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        background-color: #fff;
+    }
+    /* element组件伪类上标签span 调整文字的 */
+    .all_customers li.el-menu-item>span {
+        margin: 0;
+    }
+    /* 内容区域的头部为空白 */
+    /* 设置右侧头部盒子的边框阴影 */
+    .blank_head {
+        background-color: #fff;
+        height: 60px !important;
+        box-shadow: #fff 0px 0px 0px 0px;
+        line-height: 60px;
+    }
+    .blank_head>div>span {
+        font-weight: 700;
+        font-size: 14px;
+    }
+    .el-checkbox-group {
+        display: inline;
+    }
+    /* 内容侧边栏每一项结束---- */
+    /* 内部盒子的内容主体区域 */
+    .inside_box {
+        background-color: #fff;
+        /* line-height: 160px; */
+        text-align: left !important;
+    }
+    /* 右侧头部区域基本信息开始 */
+    .keyword {
+        width: 100%;
+        height: 40px;
+        font-weight: 700;
+        line-height: 40px;
+        display: flex;
+        justify-content: left;
+        font-size: 16px;
+    }
+    /* 右侧的内容区域 */
+    .conduct_box {
+        padding-bottom: 50px;
+    }
+    .state {
+        height: 30px;
+        line-height: 30px;
+        margin: 10px 0;
+    }
+    .state>i {
+        display: inline;
+        font-style: normal;
+    }
+    /* 设置红色点 */
+    .state>div {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: red;
+    }
+    .state>span {
+        color: #F5222D;
+    }
+    /* 开但时间第一行样式设置 */
+    .billing_time_box>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+    .billing_time_box>ul>li>div {
+        display: inline-block;
+    }
+    .billing_time_box>ul>li>span {
+        font-size: 14px;
+        color: rgb(0, 0, 0, 0.5);
+    }
+    /* 栅格栏布局的样式 */
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .el-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #fff;
+    }
+
+    /* 栅格栏布局的样式结束 */
+
+
+    /* 这里是影响全局的input样式设置 */
+    .el-input__inner {
+        width: 300px;
+        border-radius: 0px;
+        margin-left: 8px;
+        height: 35px;
+    }
+
+
+
+    /* 开单时间第一行开始 */
+    .billing_time_box>.el-row>.el-col>div {
+        display: inline-block;
+    }
+
+    .billing_time_box>.el-row>.el-col>span {
+        color: rgb(0, 0, 0, 0.5);
+    }
+
+    /* 修改维修定价和缴纳定金样式修改 */
+    .repair>.el-col>span {
+        color: #1B96FF !important;
+    }
+
+    /* 维修进度文字的盒子 */
+    .progress_content {
+        margin: 20px 0;
+        font-weight: 700;
+        border-top: 1px solid #E9E9E9;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .view_work_order {
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        margin: 24px 0;
+    }
+
+    /* 查看工单的按钮 */
+    .view_work_order>button {
+        font-size: 14px;
+    }
+
+    .el-button--primary {
+        width: 180px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+    }
+
+    /* 维修进度上面文字的大小 */
+    .el-step__title {
+        font-size: 14px;
+    }
+
+    /* 维修细节盒子的背景 */
+    .maintenance_details_centent {
+        height: 35px;
+        background-color: #FAFAFA;
+        line-height: 35px;
+        font-weight: 700;
+        padding: 0 30px;
+
+    }
+
+    /* 维修细节的时间节点 */
+    .maintenance_details_time {
+        height: 80px;
+        background-color: rgb(18, 151, 14);
+    }
+
+    /* 返回按钮的盒子 */
+    .button_box {
+        text-align: center;
+
+    }
+
+    .button_box>button {
+        height: 30px;
+    }
+
+    /* 设置进度条线的颜色 */
+    /* .el-step__line{
+    color: #1890FF ;
+}
+.el-step__line-inner {
+    border-color: #1890FF;
+} */
+
+
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+      margin: 20px 0px 20px 220px;
+    } */
+
+    /* 分页区域结束----- */
+</style>

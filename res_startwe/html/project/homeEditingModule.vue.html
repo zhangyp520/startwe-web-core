@@ -1,0 +1,616 @@
+<!-- 编辑名称及样式 -----首页 -->
+
+<template>
+    <el-scrollbar>
+        <div class="container node-icon-seting-container">
+            <!-- 头部 -->
+            <div class="moduleHeader">
+                <el-input v-model="input"></el-input>
+            </div>
+            <!-- 内容 -->
+            <div class="modeuleContent">
+                <!-- 字体颜色 -->
+                <div class="inner_Modeule">
+                    <ul class="modeuleMenu">
+                        <li>字体颜色</li>
+                    </ul>
+                    <ul>
+                        <li class="modeuleBorder">
+                            <div v-for="(item,index) in precutTextColor" class="showWrite">
+                                <div :class="textColor==item?'inner_ModeuleColor inner_ColorBorder':'inner_ModeuleColor inner_Color'" @click="textColorClick(item)">
+                                    <div :style="{background:item}"></div>
+                                </div>
+                            </div>
+
+                            <div class="inner_ModeuleColor inner_Color" style="position: relative;">
+                                <el-color-picker v-model="textColor" @change="changeTextColor" style="position: absolute;opacity: 0;">
+                                </el-color-picker>
+                                <img src="/res_startwe/assets/add_blue.png" alt="">
+                            </div>
+                            <div v-for="(item,index) in textColorData" key="item">
+                                <div :class="textColor==item?'inner_ModeuleColor inner_ColorBorder':'inner_ModeuleColor inner_Color'" @click="textColorClick(item)">
+                                    <div :style="{background:item}"></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- 填充 -->
+                <div class="inner_Modeule">
+                    <ul class="modeuleMenu">
+                        <li>填充</li>
+                    </ul>
+                    <ul>
+                        <li class="modeuleColor">
+                            <div v-for="item in precutbgColor" class="showWrite">
+                                <div :class="bgColor==item?'inner_BorderColor inner_ColorBorder':'inner_BorderColor inner_Color'" @click="bgColorClick(item)">
+                                    <div :style="{background:item}"></div>
+                                </div>
+                            </div>
+                            <div style="position: relative;" class="inner_ModeuleBorder inner_Color">
+                                <el-color-picker v-model="bgColor" @change="changebgColor" style="opacity: 0;position: absolute;">
+                                </el-color-picker>
+                                <img src="/res_startwe/assets/add_blue.png" alt="">
+                            </div>
+                            <div v-for="item in bgColorData" key="item">
+                                <div :class="bgColor==item?'inner_BorderColor inner_ColorBorder':'inner_BorderColor inner_Color'" @click="bgColorClick(item)">
+                                    <div :style="{background:item}"></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- 边框 -->
+                <div class="inner_Modeule">
+                    <ul class="modeuleMenu">
+                        <li>边框</li>
+                    </ul>
+                    <ul>
+                        <li class="modeuleBorder">
+                            <div v-for="item in precutBorderColor" class="showWrite">
+                                <div :class="borderColor==item?'inner_BorderColor inner_ColorBorder':'inner_BorderColor inner_Color'" @click="borderClick(item)">
+                                    <div class="ColorBlock" :style="{borderColor:item}"></div>
+                                </div>
+                            </div>
+                            <div class="inner_BorderColor inner_Color" style="position: relative;">
+                                <el-color-picker v-model="borderColor" @change="changeBorderColor" style="position: absolute;opacity: 0;">
+                                </el-color-picker>
+                                <img src="/res_startwe/assets/add_blue.png" alt="">
+                            </div>
+                            <div v-for="(item,index) in borderColorData" key="item">
+                                <div :class="borderColor==item?'inner_BorderColor inner_ColorBorder':'inner_BorderColor inner_Color'" @click="borderClick(item)">
+                                    <div class="ColorBlock" :style="{borderColor:item}"></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 图标 -->
+                <div class="inner_Modeule">
+                    <ul class="modeuleMenu">
+                        <li>图标</li>
+                    </ul>
+                    <ul>
+                        <li class="modeuleIcon" style="position: relative;">
+                            <!-- <div class="inner_ModeuleIcon inner_IconBorder" style="background-color: #fff;z-index: 10px;">
+                                    <img src="/res_startwe/assets/add_blue.png" alt="">
+                                </div> -->
+                            <div v-for="item in precutIcon">
+                                <div :class="iconId==item.id?'inner_ModeuleIcon inner_IconBorder':'inner_ModeuleIcon inner_Icon'" @click="selectIconClick(item)">
+                                    <img :src="item.imgUrl" alt="">
+                                </div>
+                            </div>
+                            <el-upload class="avatar-uploader inner_ModeuleIcon inner_Icon" :action="uploadUrl" :show-file-list="false" :on-success="handleAvatarSuccess"
+                                :before-upload="beforeAvatarUpload">
+                                <!-- <img v-if="imageUrl" :src="imageUrl" class="imgAvatar"> -->
+                                <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
+                                <img class="el-icon-plus avatar-uploader-icon" src="/res_startwe/assets/add_blue.png" alt="">
+                            </el-upload>
+                            <div v-for="item in iconData" key="item">
+                                <div :class="iconId==item.id?'inner_ModeuleIcon inner_IconBorder':'inner_ModeuleIcon inner_Icon'" @click="selectIconClick(item)">
+                                    <img :src="item.imgUrl" alt="">
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 按钮 -->
+            <div class="submitBtn">
+                <el-button @click="cancelClick">取消</el-button>
+                <el-button type="primary" @click="confirmClick">确认</el-button>
+            </div>
+        </div>
+    </el-scrollbar>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                imageUrl: '',
+                iconPath: '',
+                input: '',
+                bgColor: '#FFFFFF',
+                bgColorData: [],
+                precutbgColor: ['#FFFFFF', '#000000', '#FF6C6C', '#FFE26C', '#55DC53', '#53DCC5', '#CD6CFF', '#6CCDFF', '#6B53DC'],
+                borderColor: '#f3b1b1',
+                borderColorData: [],
+                precutBorderColor: ['#FFFFFF', '#000000', '#FF6C6C', '#FFE26C', '#55DC53', '#53DCC5', '#CD6CFF', '#6CCDFF', '#6B53DC'],
+                textColor: '#FF7D82',
+                textColorData: [],
+                precutTextColor: ['#FFFFFF', '#000000', '#FF6C6C', '#FFE26C', '#55DC53', '#53DCC5', '#CD6CFF', '#6CCDFF', '#6B53DC'],
+                precutIcon: [
+                    { id: 'default_paper', imgUrl: '/res_startwe/assets/paper.png' },
+                    { id: 'default_star', imgUrl: '/res_startwe/assets/star.png' },
+                    { id: 'default_flag', imgUrl: '/res_startwe/assets/flag.png' },
+                    { id: 'default_hook', imgUrl: '/res_startwe/assets/hook.png' },
+                    { id: 'default_warning', imgUrl: '/res_startwe/assets/warning.png' },
+                    { id: 'default_remind', imgUrl: '/res_startwe/assets/remind.png' },
+                    { id: 'default_clock', imgUrl: '/res_startwe/assets/clock.png' },
+                    { id: 'default_write', imgUrl: '/res_startwe/assets/write.png' },
+                    { id: 'default_question', imgUrl: '/res_startwe/assets/question.png' }
+                ],
+                iconId: '',
+                iconData: [],
+                replacedIconData: [],
+                newIconData: [],
+                uploadUrl: oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz'
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            } else {
+                this.loading = true;
+                var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz';
+                url = oui.addParams(url, {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId')
+                });
+                this.uploadUrl = url;
+                this.projectId = com.startwe.models.project.web.ProjectController4Design.data.project.id;
+                
+                //所有节点
+                let map = com.startwe.models.project.web.ProjectController4Design.data.treeMap.map;
+                //当前节点id
+                let currentNodeId = com.startwe.models.project.web.ProjectController4Design.data.treeMap.currentNodeId;
+                //当前节点
+                let currentNode = map[currentNodeId];
+                //当前节点的其他属性
+                let otherAttrs = currentNode.node.otherAttrs || {};
+                this.input = currentNode.node.name || "";
+                var keys = 'bgColorData,borderColorData,textColorData,iconData,bgColor,borderColor,textColor,iconId'.split(',');
+                var me = this;
+                oui.eachArray(keys,function (key) {
+                    me[key] = otherAttrs[key]||me[key]
+                });
+            }
+        },
+        methods: {
+            selectIconClick: function (item) {
+
+                this.iconId = item.id;
+            },
+            textColorClick: function (item) {
+                this.textColor = item;
+
+            },
+            bgColorClick: function (item) {
+                this.bgColor = item;
+            },
+            borderClick: function (item) {
+                this.borderColor = item;
+            },
+            // changeBorderColor:function(item){
+            //     this.borderColor=item;
+            // },
+            changebgColor: function (e) {
+                if (this.bgColorData.indexOf(e) > -1) {
+                    return
+                }
+                this.bgColorData.push(e);
+                var bgColorData = this.bgColorData;
+                if (bgColorData.length > 8) {
+                    bgColorData.splice(0, 1)
+                }
+            },
+            changeBorderColor: function (e) {
+                if (this.borderColorData.indexOf(e) > -1) {
+                    return
+                }
+                this.borderColorData.push(e);
+
+                var borderColorData = this.borderColorData;
+
+                if (borderColorData.length > 8) {
+                    borderColorData.splice(0, 1)
+                }
+            },
+            changeTextColor: function (e) {
+                if (this.textColorData.indexOf(e) > -1) {
+                    return
+                }
+                this.textColorData.push(e);
+                var textColorData = this.textColorData;
+
+                if (textColorData.length > 8) {
+                    textColorData.splice(0, 1)
+                }
+            },
+            handleAvatarSuccess(res, file) {
+                if (res.success) {
+                    this.iconId = res.ids[0];//上传成功
+                    // this.imageUrl = URL.createObjectURL(file.raw);
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    this.imageUrl = imgUrl;
+                    this.iconData.push({id: res.ids[0], imgUrl: this.imageUrl});
+                    if (this.iconData.length > 8) {
+                        this.replacedIconData.push(this.iconData[0]);
+                        this.newIconData.push({id: res.ids[0], imgUrl: this.imageUrl});
+                        this.iconData.splice(0, 1)
+                    }
+
+                }
+            },
+            beforeAvatarUpload(file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true && isLt2M;
+            },
+            confirmClick: function () {
+                let that = this;
+                //所有节点
+                let map = com.startwe.models.project.web.ProjectController4Design.data.treeMap.map;
+                //当前节点id
+                let currentNodeId = com.startwe.models.project.web.ProjectController4Design.data.treeMap.currentNodeId;
+                //当前节点
+                let currentNode = map[currentNodeId];
+                //当前节点的其他属性
+                let otherAttrs = currentNode.node.otherAttrs || {};
+                //设置新添加的背景颜色的数据
+                otherAttrs.bgColorData = that.bgColorData;
+                //设置新添加的边框颜色数据
+                otherAttrs.borderColorData = that.borderColorData;
+                //设置新添加的文本颜色数据
+                otherAttrs.textColorData = that.textColorData;
+                //设置新上传的图标数据
+                otherAttrs.iconData = that.iconData;
+                //设置选中的背景颜色
+                otherAttrs.bgColor = that.bgColor;
+                //设置选中的边框颜色
+                otherAttrs.borderColor = that.borderColor;
+                //设置选中的字体颜色
+                otherAttrs.textColor = that.textColor;
+                //设置选中的图标
+                otherAttrs.iconId = that.iconId;
+                currentNode.node.otherAttrs = otherAttrs;
+                //更新图片
+                if (that.iconData.length < 1) {
+                    //保存项目架构图
+                    com.startwe.models.project.web.ProjectController4Design.saveDesign(function () {
+                        var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap;
+                        com.startwe.models.project.web.ProjectController4Design.refreshByNodeId(currentNodeId,treeMap)
+                    });
+                    return;
+                }
+                oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.updateFilesState.biz', {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId'),
+                    files: that.iconData,
+                    projectId: that.projectId
+                }, function (res) {
+                    //保存项目架构图
+                    com.startwe.models.project.web.ProjectController4Design.saveDesign(function () {
+                        var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap;
+                        com.startwe.models.project.web.ProjectController4Design.refreshByNodeId(currentNodeId,treeMap)
+                    });
+                }, function (res) {
+
+                });
+            },
+            cancelClick: function () {
+
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        /* font-size: 14px; */
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .el-color-picker__trigger {
+        /* border: 1px dotted #1890FF; */
+        border: none;
+        height: 30px;
+        width: 30px;
+        padding: 0;
+    }
+
+    .el-color-picker {
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    .avatar-uploader .el-upload {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* width: 38px;
+        height: 38px; */
+        /* border: 1px dashed #d9d9d9; */
+        /* border-radius: 6px; */
+        cursor: pointer;
+        /* position: absolute;
+        top: 11px;
+        left: 1px; */
+        overflow: hidden;
+    }
+
+    .el-upload input {
+        display: none;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 16px;
+        height: 16px;
+        line-height: 38px;
+        text-align: center;
+    }
+
+    .imgAvatar {
+        /* width: 178px;
+        height: 178px; */
+        width: 16px;
+        height: 16px;
+        display: block;
+    }
+
+    .el-input {
+        display: flex;
+        justify-content: center;
+        /* align-items: center; */
+    }
+
+    .el-input__inner {
+        width: 90%;
+    }
+
+    .container {
+        width: 514px;
+        height: 420px;
+        background: #fff;
+    }
+
+    .node-icon-seting {
+        /* position: absolute; */
+        /* top: 500px;
+        left: 500px; */
+    }
+
+    /* 头部 */
+
+    .moduleHeader {
+        height: 64px;
+        background-color: #f2f2f2;
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    /* 内容 */
+
+    .modeuleContent {
+        width: 90%;
+        margin: auto;
+    }
+
+    .modeuleMenu {
+        display: flex;
+        font-size: 14px;
+        color: #999;
+    }
+
+    .clickShow {
+        color: #fff;
+        background: #1890FF;
+        border-radius: 3px;
+    }
+
+    .inner_Modeule {
+        margin-top: 10px;
+
+    }
+
+    .showWrite>div:first-child div {
+        /* border: 1px solid #C9C9C9; */
+        box-shadow: 0 0 2px rgb(182, 182, 182);
+    }
+
+    /* 图标 */
+
+    .modeuleIcon {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .inner_ModeuleIcon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Icon {
+        width: 38px;
+        height: 38px;
+        border: 1px dotted #1890FF;
+    }
+
+    .inner_IconBorder {
+        width: 40px;
+        height: 40px;
+        background-image: url(/res_startwe/assets/unselect.png);
+    }
+
+    .inner_ModeuleIcon>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* 色块 */
+
+    .modeuleColor {
+        /* margin-top: 10px; */
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .inner_ModeuleColor {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_BorderColor {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Color {
+        width: 38px;
+        height: 38px;
+        border: 1px dotted #1890FF;
+    }
+
+    .inner_ColorBorder {
+        width: 38px;
+        height: 38px;
+        background-image: url(/res_startwe/assets/unselect.png)
+    }
+
+    .inner_ModeuleColor>div {
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;
+    }
+
+    .inner_BorderColor>div {
+        width: 24px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    .ColorBlock {
+        border-width: 1px;
+        border-style: solid;
+    }
+
+
+    /* 边框 */
+
+    .modeuleBorder {
+        /* margin-top: 10px; */
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .inner_ModeuleBorder {
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Border {
+        width: 38px;
+        height: 38px;
+        /* border: 1px dotted #1890FF; */
+        border-width: 1px;
+        border-style: dotted;
+        border-color: #1890FF;
+
+    }
+
+    .inner_ColorBorder {
+        width: 40px;
+        height: 40px;
+        background-image: url(/res_startwe/assets/unselect.png)
+    }
+
+    .inner_ModeuleBorder>div {
+        width: 24px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+
+    /* 提交按钮 */
+
+    .submitBtn {
+        margin:10px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .borderSelset {
+        border: 1px solid #409EFF;
+        width: 38px;
+        height: 38px;
+    }
+</style>

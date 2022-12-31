@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+    <!-- <link href="page-iconfont/iconfont.css" rel="stylesheet" type="text/css" /> -->
+    <!--字体图标库-->
+    <link href="../../../res_engine/page_design/pc/css/page-common.css" type="text/css" rel="stylesheet" />
+    <link href="../../../res_engine/page_design/pc/css/page-design.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../../res_common/third/element-ui/lib/theme-chalk/index.css" />
+    <link rel="stylesheet" href="../../../res_common/third/mint-ui/lib/style.css" />
+    <link rel="stylesheet" href="../../../res_common/third/progress/nprogress.css" />
+    <link rel="shortcut icon" href="../../../favicon-32.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../../res_engine/page_design/pc/css/page-common-runtime.css" />
+    <!-- <script src="../../../res_engine/videojs/video.min.js"></script> -->
+    <!-- <link rel="stylesheet" href="../../videojs/video-js.css"> -->
+    <title>通用表单设计器</title>
+    <style>
+        .design_header {
+            height: 60px;
+            color: rgba(91, 107, 114, 100);
+            font-size: 18px;
+            padding-left: 50px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 25px;
+        }
+
+        .design-middle-left220 {
+            left: 220px !important;
+        }
+
+        /*滚动条样式*/
+        .design-middle::-webkit-scrollbar {
+            width: 4px;
+            /*height: 4px;*/
+        }
+
+        .design-middle::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 5px #fff;
+            box-shadow: inset 0 0 5px #fff;
+
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .design-middle::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 5px #fff;
+            box-shadow: inset 0 0 5px #fff;
+            border-radius: 0;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .header_flex {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .header_middle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .header_middle>div {
+            margin-right: 36px;
+            text-align: center;
+        }
+
+        .header_icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .design-set-content {
+            right: 0 !important;
+        }
+    </style>
+</head>
+
+<body oui-controller="com.oui.absolute.AbsoluteDesign" oncontextmenu="return true;" onselectstart="return false;">
+    <script>
+        // 监听键盘按下事件
+        document.onkeydown = function () {
+            // 判断 Ctrl+S
+            if (event.ctrlKey == true && event.keyCode == 83) {
+                return false;
+                // alert('触发ctrl+s');
+                // 或者 return false;
+                event.preventDefault();
+            }
+        };
+    </script>
+    <div class="ab-design-header">
+        <div class="design-top-name">表单绝对布局设计器</div>
+    </div>
+    <!--设计器定为左中右结构-->
+    <div class="design_header">
+        <div>
+            <oui-include type="module" url="res_common/oui/ui/ui_pc/components/header.vue.html">
+            </oui-include>
+        </div>
+        <div class="header_flex">
+            <div style="margin-right: 35px;" oui-e-click="event2save">
+                <div>保存</div>
+            </div>
+            <div style="margin-right: 146px;" oui-e-click="event2preview">
+                <div>预览</div>
+            </div>
+            <div>
+                
+                <div   oui-e-click="event2save"  >发布</div>
+            </div>
+        </div>
+    </div>
+    <div class="design-container">
+        <div class="design-left-0">
+            <!-- 类型切换 -->
+            <!-- <oui-view id="ab-design-clientType-tabs"></oui-view>
+
+            <div class="design-item-tit">插入文本</div> -->
+            <!-- <ul class="ctrl-cnt">
+                <li>
+                    <div class="design-item" control-abs-htmlType="label" control-abs-description="插入文本"
+                        control-abs-canCloneControl="true">
+                        <span class="design-text-content">插入文本</span>
+                        <i class="ab-icon iconfont icon-text-label"></i>
+                    </div>
+                </li>
+            </ul> -->
+            <!-- <oui-view id="ctrlAreas"></oui-view> -->
+
+            <oui-include type="module" url="res_engine/page_list_design/pc/list_design_left_menu.html">
+            </oui-include>
+        </div>
+        <!-- <div class="total-selection" title="页面属性" oui-e-click="event2triggerPaperDown"></div> -->
+        <!--点击后增加 active -->
+        <!-- <div class="ruler-top-seat"></div>
+        <div class="ruler-top"></div>
+        <div class="ruler-left"></div> -->
+        <div class="design-middle design-middle-left220" id="app" style="left:440px;">
+            <div class="paper-area-outer">
+                <oui-view id="items" useVDom="false" data="com.oui.absolute.AbsoluteDesign.getCurrPropsData()">
+                </oui-view>
+            </div>
+        </div>
+        <div class="design-right" style="width:280px;right:0px">
+            <oui-view id="absoluteProps" useVDom="true"
+                onBeforeRender="com.oui.absolute.AbsoluteDesign.onBeforeRender4Props"
+                onAfterRender="com.oui.absolute.AbsoluteDesign.onAfterRender4Props"
+                data="com.oui.absolute.AbsoluteDesign.getCurrPropsData()"></oui-view>
+        </div>
+        <!-- <div class="position_fixed_bottom background_color height_100 color_fff">1都是理解理解为了维稳</div> -->
+    </div>
+    <!--底部按钮区域--s-->
+    <!-- <div class="ab-design-footer">
+        <div class="design-top-content vertical-middle  "> 
+            
+            <oui-include type="module" url="res_common/oui/ui/ui_pc/components/footer_tag.vue.html">
+            </oui-include>
+            
+            <button class="design-top-btn top-btn-solid" oui-e-click="event2printBatch">批量打印测试</button>
+        </div>
+    </div> -->
+    <!--底部按钮区域 -->
+    <div class="design-moving-layout"></div>
+
+    <!--拖拽代理层区域-->
+    <div class="design-item proxy-drag" style="display: none;position:absolute;">
+        <span class="design-text-content"></span>
+
+        <div class="tableLine-drag-icon" title="通过拖拽改变表格位置"></div>
+        <div class="tableLine-edit-icon" title="编辑完成"></div>
+        <div class="line-v-left proxy-line-left proxy-line"></div>
+        <div class="line-v-center proxy-line-center proxy-line"></div>
+        <div class="line-v-right proxy-line-right proxy-line"></div>
+        <div class="line-h-top proxy-line-top proxy-line"></div>
+        <div class="line-h-middle proxy-line-middle proxy-line"></div>
+        <div class="line-h-bottom proxy-line-bottom proxy-line"></div>
+        <i class="dragging-reduce-size drag-resizer"></i>
+    </div>
+    <!--拖拽占位层区域-->
+    <div class="proxy-drag-placeholder" style="position:absolute;display: none;border:0"></div>
+    <!--端类型切换-->
+    <script type="text/html" id="ab-design-clientType-tabs-tpl">
+        <div class="pg-left-tabs">
+            <div class="tabs-inner">
+                <div class="tab-item {{AbsoluteDesign.getActiveCls('pc')}}" oui-e-click="event2pc">PC端</div>
+                <div class="tab-item {{AbsoluteDesign.getActiveCls('phone')}}" oui-e-click="event2phone">手机端</div>
+            </div>
+        </div>
+    </script>
+
+    <!--页面的业务属性扩展配置-->
+    <script type="text/html" id="absoluteProps-pageProps-biz-tpl">
+        <oui-view id="current-pageProps-biz" oui-controller="{{AbsoluteDesign.FullName}}" data="__data().data">
+        </oui-view>
+    </script>
+    <script type="text/html" id="current-pageProps-biz-tpl">
+        <oui-include url="{{AbsoluteDesign.paramCfg.pageBizPropsUrl}}" ref="page_prop" type="module"
+            data="__data().getPageBizConfig()"></oui-include>
+    </script>
+
+    <!--控件的业务属性扩展-->
+    <script type="text/html" id="absoluteProps-fieldProps-biz-tpl">
+        <oui-view id="current-control-biz-props" oui-controller="{{AbsoluteDesign.FullName}}" data="__data().data">
+        </oui-view>
+    </script>
+    <!--控件业务属性扩展模板-->
+    <script type="text/html" id="current-control-biz-props-tpl">
+        {{if currentControl &&currentControl.controlType && currentControl.id }}
+        <oui-include url="{{AbsoluteDesign.paramCfg.controlBizPropsUrl}}/{{currentControl.controlType}}.art.html"
+            ref="current_prop" type="module" data="__data().getCurrentBizConfig()"></oui-include>
+        {{/if}}
+    </script>
+    <!--toolbar 按钮列表 -->
+    <script type="text/html" id="toolbar-buttons-tpl">
+        {{each AbsoluteDesign.findButtonsByNames(AbsoluteDesign.buttons) as item index}}
+        <button class="design-top-btn {{(item.cls || 'top-btn-transparent')}}"
+            oui-e-click="event2{{item.name}}">{{item.display}}</button>
+        {{if item.name =='import'}}
+        <input type="file" id="import-file" oui-e-change="event2loadFile" class="display_none" />
+        {{/if}}
+        {{/each}}
+    </script>
+    <!--左侧控件区域模板 对应视图 oui-view id=ctrlAreas -->
+    <script type="text/html" id="ctrlAreas-tpl">
+        <div class="design-ctrl-area {{if AbsoluteDesign.isShowDetailControls()}}detail-feilds{{/if}}">
+            {{if AbsoluteDesign.isShowDetailControls()}}
+            {{AbsoluteDesign.findDetailName(AbsoluteDesign.data.currentControl.id)}}
+            {{else}}
+            主表
+            {{/if}}
+            {{each AbsoluteDesign.findControlTypes() as item index}}
+            {{if item.findControls()&&item.findControls().length>0}}
+            <div class="design-item-tit" title="{{item.title}}">{{item.title}}</div>
+            <ul class="ctrl-cnt">
+                {{each item.findControls() as control index}}
+                <li>
+                    <div class="design-item {{item.findCls(control)}}"
+                        {{each AbsoluteDesign.findControlAttrsRepeat4Dom(control) as currAttr index}}
+                        {{currAttr.key}}="{{currAttr.value}}" {{/each}}>
+                        <span class="design-text-content" title="{{control.name}}">{{control.name}}</span>
+                        <i
+                            class="ab-icon iconfont icon-{{control.htmlType}}-{{control.controlType}} {{if AbsoluteDesign.isIconCss(control)}}{{control.icon}}{{/if}}">
+                            {{if AbsoluteDesign.isIconUrl(control)}}<img src="{{control.icon}}" />{{/if}}
+                        </i>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+            {{/if}}
+            {{/each}}
+        </div>
+    </script>
+    <!--设计态所有控件输出模板-->
+    <script type="text/html" id="items-tpl">
+        <div class="page-abs paper-area A4 bg-{{AbsoluteDesign.data.style.backgroundImageFillType}}"
+            style="width:{{AbsoluteDesign.data.style.width}}{{AbsoluteDesign.data.style.cellType}};height:{{AbsoluteDesign.data.style.height}}{{AbsoluteDesign.data.style.cellType}};{{AbsoluteDesign.findStyleString(AbsoluteDesign.data.style,'common-style-tpl')}};{{=AbsoluteDesign.findPageBgImg()}};"
+            oui-e-mousedown="down2selectPaperArea">
+            {{if AbsoluteDesign.findThemeUrl()}}
+            <link link-id="page-link" rel="stylesheet" type="text/css" href="{{AbsoluteDesign.findThemeUrl()}}" />
+            {{/if}}
+
+            {{each controls as item index}}
+            {{include 'item-tpl' ({item:item})}}
+            {{/each}}
+            <!--改变显示层大小-->
+            {{include 'operation-layer-tpl'}}
+        </div>
+    </script>
+    <!--引入操作层模板-->
+    <script type="text/html" id="operation-layer-tpl">
+        <div id="operation-layer" class="design-operation-layer control-abs-component" style="display:none">
+            <div class="operation-select-area drag-select-area"></div>
+            <i class="dragging-reduce-size drag-resizer"></i>
+            <span class="ctrl-del-copy">
+                <i class="design-copy-ctrl design-copy-ctrl-down" oui-e-click="event2cloneControl" title="向下复制">复制</i>
+                <i class="design-copy-ctrl design-copy-ctrl-right" oui-e-click="event2cloneControl" title="向右复制">复制</i>
+                <i class="design-del-ctrl" oui-e-click="event2removeControl" title="删除">删除</i>
+            </span>
+        </div>
+    </script>
+    <!--获取控件设计态样式模板-->
+    <script type="text/html" id="control-style-tpl">
+        {
+
+        {{if !controlInTd}}
+        left: {{style.left}}px;
+        top: {{style.top}}px;
+        {{/if}}
+        z-index:{{style.zIndex}};
+        opacity:{{style.opacity||1}};
+        {{if style.rotate}}
+        -webkit-transform:rotate({{style.rotate}}deg);
+        -moz-transform:rotate({{style.rotate}}deg);
+        -ms-transform:rotate({{style.rotate}}deg);
+        -o-transform:rotate({{style.rotate}}deg);
+        transform:rotate({{style.rotate}}deg);
+        {{/if}}
+        {{if style.lineHeight}}
+        line-height:{{style.lineHeight}};
+        {{/if}}
+        {{if !controlInTd}}
+        {{if AbsoluteDesign.data.pageDesignType=='normalForm' && (!rect4px)}}
+        {{if style.width>=0}}
+        width: {{AbsoluteDesign.getWidthPercent(style.width)}};
+        min-width:{{style.width}}px;
+        {{/if}}
+        {{else}}
+        {{if style.width>=0}} width: {{style.width}}px; {{/if}}
+        {{/if}}
+        {{/if}}
+        {{if style.height>=0}} height: {{style.height}}px; {{/if}}
+        {{if style.borderRadius>=0}}border-radius:{{style.borderRadius}}px;{{/if}}
+        {{if style.borderLeftWidth>=0}} border-left-width:{{style.borderLeftWidth}}px; {{/if}}
+        {{if style.borderTopWidth>=0}} border-top-width:{{style.borderTopWidth}}px; {{/if}}
+        {{if style.borderRightWidth>=0}} border-right-width:{{style.borderRightWidth}}px; {{/if}}
+        {{if style.borderBottomWidth>=0}} border-bottom-width:{{style.borderBottomWidth}}px; {{/if}}
+        {{if style.fontSize}} font-size:{{style.fontSize}}px; {{/if}}
+
+        {{each AbsoluteDesign.findStyleStringKeys(style) as key index}}
+        {{AbsoluteDesign.getUtils().humpTolineAttr(key)}}:{{style[key]||""}};
+        {{/each}}
+        }
+    </script>
+
+    <!--公共样式属性模板-->
+    <script type="text/html" id="common-style-tpl">
+        {
+        {{if style.borderLeftWidth>=0}} border-left-width:{{style.borderLeftWidth}}px; {{/if}}
+        {{if style.borderTopWidth>=0}} border-top-width:{{style.borderTopWidth}}px; {{/if}}
+        {{if style.borderRightWidth>=0}} border-right-width:{{style.borderRightWidth}}px; {{/if}}
+        {{if style.borderBottomWidth>=0}} border-bottom-width:{{style.borderBottomWidth}}px; {{/if}}
+        {{if style.fontSize}} font-size:{{style.fontSize}}px; {{/if}}
+        {{each AbsoluteDesign.findStyleStringKeys(style) as key index}}
+        {{AbsoluteDesign.getUtils().humpTolineAttr(key)}}:{{=style[key]||""}};
+        {{/each}}
+        }
+    </script>
+    <!--公共样式属性模板-->
+    <script type="text/html" id="border-style-tpl">
+        {
+        border-radius:{{style.borderRadius}}px;
+        {{if style.borderLeftWidth>=0}} border-left-width:{{style.borderLeftWidth}}px; {{/if}}
+        {{if style.borderTopWidth>=0}} border-top-width:{{style.borderTopWidth}}px; {{/if}}
+        {{if style.borderRightWidth>=0}} border-right-width:{{style.borderRightWidth}}px; {{/if}}
+        {{if style.borderBottomWidth>=0}} border-bottom-width:{{style.borderBottomWidth}}px; {{/if}}
+        border-left-color:{{style.borderLeftColor}};
+        border-top-color:{{style.borderTopColor}};
+        border-right-color:{{style.borderRightColor}};
+        border-bottom-color:{{style.borderBottomColor}};
+        border-left-style:{{style.borderLeftStyle}};
+        border-top-style:{{style.borderTopStyle}};
+        border-right-style:{{style.borderRightStyle}};
+        border-bottom-style:{{style.borderBottomStyle}};
+        }
+    </script>
+
+    <!--设计态的控件渲染模板-->
+    <script type="text/html" id="item-tpl">
+        {{include 'center-control-tpl'}}
+        {{if AbsoluteDesign.isSelectBox(item)}}
+        {{include 'selectArea-box-tpl'}}
+        {{/if}}
+    </script>
+
+    <!--表格html渲染,运行态使用 -->
+    <script type="text/html" id="control-tableLine-runtime-tpl">
+        <table class="control-abs-table-view">
+            <thead>
+                <tr>
+                    {{each item.style.columnLines as line lineIndex}}
+                    {{if lineIndex<item.style.columnLines.length-1}}
+                    <th title="列{{lineIndex+1}}" control-abs-id="{{item.id}}" class="control-table-column"
+                        style="width:{{AbsoluteDesign.findColumnPos(item,lineIndex).width}}px;border-left-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftStyle}};border-right-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightStyle}};border-left-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftColor}};border-left-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftWidth}}px;border-right-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightWidth}}px;border-right-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightColor}};"
+                        line-column-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+                        line-row-length="{{item.style.rowLines.length}}">
+                        {{oui.getCharCode(lineIndex+1)}}
+                    </th>
+                    {{/if}}
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{each item.style.rowLines as line lineIndex}}
+                {{if lineIndex<item.style.rowLines.length-1}}
+                <tr title="行{{lineIndex+1}}" control-abs-id="{{item.id}}" class="control-table-row"
+                    style="height:{{AbsoluteDesign.findRowPos(item,lineIndex).height}}px;"
+                    line-row-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+                    line-row-length="{{item.style.rowLines.length}}">
+                    {{each item.style.columnLines as columnLine columnLineIndex}}
+                    {{include 'control-table-cell-runtime-tpl' ({item:item,columnLineIndex:columnLineIndex,lineIndex:lineIndex})}}
+                    {{/each}}
+                </tr>
+                {{/if}}
+
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+
+    <!--根据行列信息输出单元格-->
+    <script type="text/html" id="control-table-cell-runtime-tpl">
+        {{if columnLineIndex<item.style.columnLines.length-1}}
+        {{if AbsoluteDesign.hasTableCell(item,columnLineIndex,lineIndex)}}
+        <td title="列{{columnLineIndex+1}}行{{lineIndex}}" control-abs-id="{{item.id}}" class="control-table-column"
+            {{if AbsoluteDesign.findCellColspan(item,columnLineIndex,lineIndex)>1}}
+            colspan="{{AbsoluteDesign.findCellColspan(item,columnLineIndex,lineIndex)}}" {{/if}}
+            {{if AbsoluteDesign.findCellRowspan(item,columnLineIndex,lineIndex)>1}}
+            rowspan="{{AbsoluteDesign.findCellRowspan(item,columnLineIndex,lineIndex)}}" {{/if}}
+            line-column-index="{{columnLineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}">
+            {{if AbsoluteDesign.hasControlInTableCell(item,columnLineIndex,lineIndex)}}
+            {{include 'item-server-tpl' ({item:AbsoluteDesign.findControlInTableCell(item,columnLineIndex,lineIndex),controlInTd:true})}}
+            {{/if}}
+        </td>
+        {{/if}}
+        {{/if}}
+    </script>
+
+    <!--动态表格html渲染,运行态使用 -->
+    <script type="text/html" id="control-detail-runtime-tpl">
+        <!--<table class="control-abs-table-view">-->
+    <!--<thead>-->
+    <!--<tr>-->
+    <!--{{each item.style.columnLines as line lineIndex}}-->
+    <!--{{if lineIndex<item.style.columnLines.length-1}}-->
+    <!--<th title="列{{lineIndex+1}}" control-abs-id="{{item.id}}" class="control-table-column"-->
+    <!--style="width:{{AbsoluteDesign.findColumnPos(item,lineIndex).width}}px;border-left-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftStyle}};border-right-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightStyle}};border-left-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftColor}};border-left-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftWidth}}px;border-right-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightWidth}}px;border-right-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightColor}};"-->
+    <!--line-column-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"-->
+    <!--line-row-length="{{item.style.rowLines.length}}"-->
+    <!-->-->
+    <!--{{oui.getCharCode(lineIndex+1)}}-->
+    <!--</th>-->
+    <!--{{/if}}-->
+    <!--{{/each}}-->
+    <!--</tr>-->
+    <!--{{each item.style.rowLines as line lineIndex}}-->
+    <!--{{if lineIndex<item.style.rowLines.length-1}}-->
+    <!--<tr title="行{{lineIndex+1}}" control-abs-id="{{item.id}}" class="control-table-row"-->
+    <!--style="height:{{AbsoluteDesign.findRowPos(item,lineIndex).height}}px;"-->
+    <!--line-row-index="{{lineIndex}}"-->
+    <!--line-column-length="{{item.style.columnLines.length}}"-->
+    <!--line-row-length="{{item.style.rowLines.length}}"-->
+    <!-->-->
+    <!--{{each item.style.columnLines as columnLine columnLineIndex}}-->
+    <!--{{include 'control-table-headcell-runtime-tpl' ({item:item,columnLineIndex:columnLineIndex,lineIndex:lineIndex})}}-->
+    <!--{{/each}}-->
+    <!--</tr>-->
+    <!--{{/if}}-->
+    <!--{{/each}}-->
+
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--{{if item.id}}-->
+    <!--{{include 'subdata-runtime-each-start' ({item:item})}}-->
+    <!--<tr  control-abs-id="{{item.id}}" class="control-table-row"-->
+    <!-->-->
+    <!--{{each AbsoluteDesign.findCells4Detail(item) as cell}}-->
+    <!--<td control-abs-id="{{item.id}}" class="control-table-column"-->
+    <!--{{if AbsoluteDesign.findCellColspan(item,cell.columnIndex,cell.rowIndex)>1}} colspan="{{AbsoluteDesign.findCellColspan(item,cell.columnIndex,cell.rowIndex)}}" {{/if}}-->
+    <!--line-column-index="{{cell.columnIndex}}"-->
+    <!-->-->
+    <!--{{if AbsoluteDesign.hasControlInTableCell(item,cell.columnIndex,cell.rowIndex)}}-->
+    <!--<div class="cell-detail-abs">-->
+    <!--{{if render4tpl}} {{include 'control-detail-field-runtime-tpl' ({item:item,cell:cell})}} {{/if}}-->
+    <!--</div>-->
+    <!--{{/if}}-->
+    <!--</td>-->
+    <!--{{/each}}-->
+    <!--</tr>-->
+    <!--{{include 'subdata-runtime-each-end' ({item:item})}}-->
+    <!--{{/if}}-->
+    <!--</tbody>-->
+    <!--</table>-->
+    </script>
+
+    <!--根据明细字段信息输出列头 TODO , 需要区分明细表格头中的单元格的显示-->
+    <script type="text/html" id="control-table-headcell-runtime-tpl">
+        {{if columnLineIndex<item.style.columnLines.length-1}}
+        {{if AbsoluteDesign.hasTableCell(item,columnLineIndex,lineIndex)}}
+        <th title="列{{columnLineIndex+1}}行{{lineIndex}}" control-abs-id="{{item.id}}" class="control-table-column"
+            {{if AbsoluteDesign.findCellColspan(item,columnLineIndex,lineIndex)>1}}
+            colspan="{{AbsoluteDesign.findCellColspan(item,columnLineIndex,lineIndex)}}" {{/if}}
+            {{if AbsoluteDesign.findCellRowspan(item,columnLineIndex,lineIndex)>1}}
+            rowspan="{{AbsoluteDesign.findCellRowspan(item,columnLineIndex,lineIndex)}}" {{/if}}
+            line-column-index="{{columnLineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}">
+            {{if AbsoluteDesign.hasControlInTableCell(item,columnLineIndex,lineIndex)}}
+            {{include 'item-server-tpl' ({item:AbsoluteDesign.findControlInTableCell(item,columnLineIndex,lineIndex),inDetail:true,controlInTd:true})}}
+            {{/if}}
+        </th>
+        {{/if}}
+        {{/if}}
+    </script>
+
+    <!--表格线渲染,设计态使用，并且额外追加 拖拽按钮和 编辑按钮 -->
+    <script type="text/html" id="control-tableLine-tpl">
+        {{each item.style.columnLines as line lineIndex}}
+        <div class="control-line-abs line-column" line-column-index="{{lineIndex}}"
+            style="position:absolute;height:{{item.style.height-item.style.borderTopWidth-item.style.borderBottomWidth}}px;border-left: {{line.config.lineHeight}}px solid {{line.config.color}};width:{{line.config.lineHeight}}px;left:{{line.fromPos.left}}px;top:{{line.fromPos.top}}px">
+        </div>
+        {{/each}}
+        {{each item.style.rowLines as line lineIndex}}
+        <div class="control-line-abs line-row" line-row-index="{{lineIndex}}"
+            style="position:absolute;width:{{item.style.width-item.style.borderLeftWidth-item.style.borderBottomWidth}}px;border-top: {{line.config.lineHeight}}px solid {{line.config.color}};height:{{line.config.lineHeight}}px;left:{{line.fromPos.left}}px;top:{{line.fromPos.top}}px">
+        </div>
+        {{/each}}
+        <!--遍历产生合并占位-->
+        {{each AbsoluteDesign.findMergeCellsMapByTableLine(item) as mergeCell }}
+        <div class="merge-cell" start-column-index="{{mergeCell.startColumnIndex}}"
+            start-row-index="{{mergeCell.startRowIndex}}" end-column-index="{{mergeCell.endColumnIndex}}"
+            end-row-index="{{mergeCell.endRowIndex}}"
+            style="left:{{mergeCell.left-item.style.left}}px;top:{{mergeCell.top-item.style.top}}px;width:{{mergeCell.right-mergeCell.left}}px;height:{{mergeCell.bottom-mergeCell.top}}px;position:absolute;">
+        </div>
+        {{/each}}
+        <div class="tableLine-drag-icon" title="通过拖拽改变表格位置{{item.id}}"></div>
+        <div class="tableLine-edit-icon" oui-e-click="event2editTable"
+            title="{{item.style.isDragging4SelectArea?'编辑中':'编辑完成'}}"></div>
+    </script>
+
+    <!--表格 拖拽线条，操作层对应的操作线 ，列号，行号显示，模板-->
+    <script type="text/html" id="control-tableLine-drag-tpl">
+        {{each item.style.columnLines as line lineIndex}}
+        <div control-abs-id="{{item.id}}" class="control-line-abs line-column line-column-resizer drag-resizer"
+            line-column-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}"
+            style="z-index:2;position:absolute;margin-left:{{(line.config.lineHeight-7)/2}}px;height:{{item.style.height-item.style.borderTopWidth-item.style.borderBottomWidth+30}}px;border-left: {{line.config.lineHeight}}px solid {{line.config.color}};width:{{7}}px;left:{{line.fromPos.left+item.style.borderLeftWidth+AbsoluteDesign.operationAreaOffset}}px;top:{{-30}}px">
+        </div>
+        {{if lineIndex<item.style.columnLines.length-1}}
+        <div title="列{{lineIndex+1}}" control-abs-id="{{item.id}}"
+            class="control-column-num-abs control-table-num-abs {{if AbsoluteDesign.isTableColumnActive(item,lineIndex)}}column-active{{/if}}"
+            style="z-index:1;position:absolute;left:{{line.fromPos.left+item.style.borderLeftWidth+AbsoluteDesign.operationAreaOffset/2}}px;width:{{AbsoluteDesign.findColumnPos(item,lineIndex).width}}px;border-left-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftStyle}};border-right-style:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightStyle}};border-left-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftColor}};border-left-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderLeftWidth}}px;border-right-width:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightWidth}}px;border-right-color:{{AbsoluteDesign.findColumnPos(item,lineIndex).borderRightColor}};"
+            line-column-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}">
+            {{oui.getCharCode(lineIndex+1)}}
+        </div>
+        {{/if}}
+        {{/each}}
+
+        {{each item.style.rowLines as line lineIndex}}
+        <div control-abs-id="{{item.id}}" class="control-line-abs line-row line-row-resizer drag-resizer"
+            line-row-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}"
+            style="z-index:2;position:absolute;margin-top:{{(line.config.lineHeight-7)/2}}px;width:{{item.style.width-item.style.borderLeftWidth-item.style.borderBottomWidth+30}}px;border-top: {{line.config.lineHeight}}px solid {{line.config.color}};height:{{7}}px;left:{{-30}}px;top:{{line.fromPos.top+item.style.borderTopWidth+AbsoluteDesign.operationAreaOffset}}px">
+        </div>
+        {{if lineIndex<item.style.rowLines.length-1}}
+        <div title="行{{lineIndex+1}}" control-abs-id="{{item.id}}"
+            class="control-row-num-abs control-table-num-abs {{if AbsoluteDesign.isTableRowActive(item,lineIndex)}}row-active{{/if}}"
+            style="z-index:1;position:absolute;top:{{line.fromPos.top+item.style.borderTopWidth+AbsoluteDesign.operationAreaOffset/2}}px;height:{{AbsoluteDesign.findRowPos(item,lineIndex).height}}px;border-top-style:{{AbsoluteDesign.findRowPos(item,lineIndex).borderTopStyle}};border-bottom-style:{{AbsoluteDesign.findRowPos(item,lineIndex).borderBottomStyle}};border-top-width:{{AbsoluteDesign.findRowPos(item,lineIndex).borderTopWidth}}px;border-top-color:{{AbsoluteDesign.findRowPos(item,lineIndex).borderTopColor}};border-bottom-width:{{AbsoluteDesign.findRowPos(item,lineIndex).borderBottomWidth}}px;border-bottom-color:{{AbsoluteDesign.findRowPos(item,lineIndex).borderBottomColor}};"
+            line-row-index="{{lineIndex}}" line-column-length="{{item.style.columnLines.length}}"
+            line-row-length="{{item.style.rowLines.length}}">
+            <div class="control-row-text-box">
+                <div class="control-row-text-box-item">{{lineIndex+1}}</div>
+            </div>
+        </div>
+        {{/if}}
+
+        {{/each}}
+    </script>
+
+    <!--截取区域box-->
+    <script type="text/html" id="selectArea-box-tpl">
+        <div id="{{item.id}}_box" class="page-abs-selection-box" style="{{AbsoluteDesign.findControlStyle4Dom(item)}}">
+            <span class="design-text-content">{{item.name}}</span>
+        </div>
+    </script>
+
+    <!--canvas对应的html模板-->
+    <script type="text/html" id="item-canvas-div-tpl">
+        <div id="canvas_div_{{item.id}}"
+            class="control-abs control-abs-component control-abs-disable {{AbsoluteDesign.isSelectBox(item)?'page-abs-selection-area':''}}"
+            style="width: {{item.style.width}}px; height: {{item.style.height}}px">
+            <div class="control-title-abs">{{item.name}}</div>
+            <div class="control-container-abs">
+                <input type="text" placeholder="请输入" />
+            </div>
+        </div>
+        {{if AbsoluteDesign.isSelectBox(item)}}
+        <div id="canvas_div_{{item.id}}_box" class="page-abs-selection-box"
+            style=" width: {{item.style.width}}px; height: {{item.style.height}}px">
+            <span class="design-text-content">{{item.name}}</span>
+        </div>
+        {{/if}}
+    </script>
+    <!--canvas实际渲染模板-->
+    <script type="text/html" id="item-canvas-object-tpl">
+        <div id="canvas_object_{{item.id}}"
+            class="control-abs control-abs-component control-abs-component-canvas control-abs-disable {{AbsoluteDesign.isSelectBox(item)?'page-abs-selection-area':''}}"
+            style="left: {{item.style.left}}px; top: {{item.style.top}}px; width: {{item.style.width}}px; height: {{item.style.height}}px">
+        </div>
+    </script>
+    <!--运行态 控件值渲染模板     {pageData:pageData}-->
+    <script type="text/html" id="control-field-runtime-tpl">
+        {{if AbsoluteDesign.runTemplateType =='java'}}
+        ${@pageData.getHtml(pageData.getControl('{{item.id}}'),pageData.getData()) }
+        {{else}}
+        {{AbsoluteDesign.startTemplateTag}}=pageData.getHtml(pageData.getControl('{{item.id}}'),pageData.getData()){{AbsoluteDesign.endTemplateTag}}
+        {{/if}}
+    </script>
+    <!--运行态 控件值 在明细表中渲染模板-->
+    <script type="text/html" id="control-detail-field-runtime-tpl">
+        {{if AbsoluteDesign.runTemplateType =='java'}}
+        ${@pageData.getHtml(pageData.getControl('{{AbsoluteDesign.findControlInTableCell(item,cell.columnIndex,cell.rowIndex).id}}'),subPageData)
+        }
+        {{else}}
+        {{AbsoluteDesign.startTemplateTag}}=pageData.getHtml(pageData.getControl('{{AbsoluteDesign.findControlInTableCell(item,cell.columnIndex,cell.rowIndex).id}}'),subPageData)
+        {{AbsoluteDesign.endTemplateTag}}
+        {{/if}}
+    </script>
+    <!--运行态 循环明细表数据渲染模板开始-->
+    <script type="text/html" id="subdata-runtime-each-start">
+        {{if AbsoluteDesign.runTemplateType =='java'}}
+        <%for subPageData in pageData.getDataList('{{item.id}}'){%>
+        {{else}}
+        {{AbsoluteDesign.startTemplateTag}}each pageData.getDataList('{{item.id}}') as
+        subPageData{{AbsoluteDesign.endTemplateTag}}
+        {{/if}}
+    </script>
+    <!--运行态 循环明细表数据渲染模板结束-->
+    <script type="text/html" id="subdata-runtime-each-end">
+        {{if AbsoluteDesign.runTemplateType =='java'}}
+        <%}%>
+      {{else}}
+          {{AbsoluteDesign.startTemplateTag}}/each{{AbsoluteDesign.endTemplateTag}}
+      {{/if}}
+    </script>
+    <!--控件值设计态和运行态动态渲染模板 默认根据 res_engine/page_design/common/page-design-tpl.html 中配置的设计态和运行太的模板路径-->
+    <script type="text/html" id="control-field-design-runtime-tpl">
+        {{=AbsoluteDesign.findFieldHtml(item,render4tpl)}}
+    </script>
+    <!--控件字段值模板-->
+    <script type="text/html" id="control-field-tpl">
+        {{if item.htmlType !='selectArea'}}
+
+        {{if !AbsoluteDesign.inDetail(item)}}
+
+        {{if item.otherAttrs.titleShow == null  ||  item.otherAttrs.titleShow  }}
+        <div class="control-title-abs" style="{{AbsoluteDesign.findControlInnerStyleTitle4Dom(item)}}">
+            {{item.name}}
+        </div>
+        {{/if}}
+        <div class="control-container-abs" style="text-align: left;{{AbsoluteDesign.findStyleFieldOuter4Dom(item)}}">
+            {{include 'control-field-design-runtime-tpl' ({item:item,render4tpl:render4tpl})}}
+            {{if item.otherAttrs.descType == 'showAtNextLine'  }}
+            <div style=" opacity:1; font-size:14px; color:#333333; margin-left: 5px;text-align: left;">
+                {{item.otherAttrs.desc}}
+            </div>
+            {{/if}}
+        </div> 
+        {{if item.otherAttrs.descType != 'showAtNextLine' }}
+            {{if item.otherAttrs.descType == 'showAtRight'  }}
+                <div class="control-container-abs" style=" opacity:1; font-size:14px; color:#333333;margin-left: 5px; text-align: left;">
+                    <i class="el-icon-warning-outline"></i>
+                </div>
+            {{else if item.otherAttrs.descType == '不展示'  }}
+                
+            {{else }}
+            <!-- <div class="control-container-abs" style=" opacity:1; flex: 0.1; font-size:14px; color:#333333; margin-left: 5px;text-align: left;">
+                <i class="el-icon-warning-outline"></i>
+            </div> -->
+            {{/if}}
+        {{/if}}
+        {{else}}
+        {{if AbsoluteDesign.inDetailEndRow(item)}}
+        <div class="control-container-abs" style="{{AbsoluteDesign.findStyleFieldOuter4Dom(item)}}">
+            {{include 'control-field-design-runtime-tpl' ({item:item,render4tpl:render4tpl})}}
+        </div>
+        {{else}}
+        <div class="control-title-abs" style="{{AbsoluteDesign.findControlInnerStyleTitle4Dom(item)}}">{{item.name}}
+        </div>
+        {{/if}}
+        {{/if}}
+        {{/if}}
+        <style>
+            {{AbsoluteDesign.findStyleTextfield(item)}}
+        </style> 
+
+    </script>
+
+    <!--label 类组件模版-->
+    <script type="text/html" id="control-lable-tpl">
+        <div class="control-title-abs" style="text-align: left;">
+            {{include 'control-field-design-runtime-tpl' ({item:item,render4tpl:render4tpl})}}
+        </div> 
+        
+    </script>
+
+
+    <!--设计区 控件渲染-->
+    <script type="text/html" id="center-control-tpl">
+        <div id="{{item.id}}"
+            class="control-abs control-abs-component control-abs-html-{{item.htmlType}} control-abs-{{item.controlType}} control-abs-{{AbsoluteDesign.findControlLayoutType(item)}} {{AbsoluteDesign.isSelectBox(item)?'page-abs-selection-area':''}} {{AbsoluteDesign.isDragging4SelectArea(item)?'drag-select-area':''}}"
+            style="{{AbsoluteDesign.findControlStyle4DomDesign(item,false,true)}}">
+            <div class="control-inner-abs" style="{{AbsoluteDesign.findControlStyleInnerOuter4Dom(item)}}">
+      
+                {{if item.htmlType=='label'}}
+                    <div class="control-label-abs" style="{{AbsoluteDesign.findControlInnerStyleTitle4Dom(item)}}">
+                        {{item.description}}
+                    </div>
+                {{else if item.htmlType=='tableLine'}}
+                    {{include 'control-tableLine-tpl'}}
+                {{else if item.htmlType !='selectArea'}}
+                    {{if ['title','describe'].indexOf(item.controlType) > -1}}
+                        {{include 'control-lable-tpl' ({item:item,render4tpl:false})}}
+                    {{else}}
+                        {{include 'control-field-tpl' ({item:item,render4tpl:false})}}
+                    {{/if}}
+
+                {{/if}}
+            </div>
+
+
+        </div>
+    </script>
+    <!--运行态的渲染模板,保存时处理 内容区域 或者选择区域的模板
+运行态 暂时不输出 自定义属性
+    {{each AbsoluteDesign.findControlAttrsRepeat4Dom(item) as currAttr index}} {{currAttr.key}}="{{currAttr.value}}" {{/each}}
+-->
+
+    <!--运行态控件内部模板 include模板的}}前面不能有空格-->
+    <script type="text/html" id="item-server-control-inner-tpl">
+        {{if item.htmlType=='label'}}
+        <div class="control-label-abs" style="{{AbsoluteDesign.findControlInnerStyleTitle4Dom(item)}}">
+            {{item.description}}</div>
+        {{else if (item.htmlType=='tableLine')&&(item.controlType=='detail')}}
+        {{include 'control-field-design-runtime-tpl' ({item:item,render4tpl:true})}}
+        {{else if item.htmlType=='tableLine'}}
+        {{include 'control-tableLine-runtime-tpl' ({item:item,render4tpl:true,inDetail:inDetail})}}
+        {{else if item.htmlType !='selectArea'}}
+        {{include 'control-field-tpl' ({item:item,render4tpl:true,inDetail:inDetail})}}
+        {{/if}}
+    </script>
+    <!--运行态的渲染模板,保存时处理 内容区域 或者选择区域的模板
+运行态 暂时不输出 自定义属性
+    运行态模板 include 子模板时右侧的结束}}前不能有空格TODO
+-->
+    <script type="text/html" id="item-server-tpl">
+        {{if !AbsoluteDesign.isSelectBox(item)}}
+        {{if controlInTd ||((!controlInTd) && (!(item&&item.style&&item.style.rect&&item.style.rect.tableLineId)))}}
+        <div id="{{item.id}}"
+            class="control-abs control-abs-component control-abs-html-{{item.htmlType}} control-abs-{{item.controlType}} {{AbsoluteDesign.startTemplateTag}}pageData.getControl&&pageData.getControl('{{item.id}}').style.cls{{AbsoluteDesign.endTemplateTag}} control-abs-{{item.style.layoutType}} {{AbsoluteDesign.isSelectBox(item)?'page-abs-selection-area':''}}"
+            style="{{AbsoluteDesign.findControlStyle4Dom(item,controlInTd)}}">
+            <div class="control-inner-abs" style="{{AbsoluteDesign.findControlStyleInnerOuter4Dom(item)}}">
+                {{include 'item-server-control-inner-tpl'}}
+            </div>
+        </div>
+        {{/if}}
+        {{/if}}
+        {{if AbsoluteDesign.isSelectBox(item)}}
+        <div id="{{item.id}}_box" class="page-abs-selection-box"
+            style="{{AbsoluteDesign.findControlStyle4Dom(item.style)}}">
+            <span class="design-text-content">{{item.name}}</span>
+        </div>
+        {{/if}}
+    </script>
+
+    <!--选择区域模板渲染,提供 给运行态使用
+{{each AbsoluteDesign.findPageAttrsRepeat4Dom() as currAttr index}} {{currAttr.key}}="{{currAttr.value}}" {{/each}}
+-->
+    <script type="text/html" id="items-select-tpl">
+        {{if AbsoluteDesign.hasSelectBox() }}
+        <div class="page-abs paper-area bg-center select-area"
+            style="width:{{AbsoluteDesign.findSelectBox().style.width4mm}}{{AbsoluteDesign.data.style.cellType}};height:{{AbsoluteDesign.findSelectBox().style.height4mm}}{{AbsoluteDesign.data.style.cellType}};{{AbsoluteDesign.findControlStyleBorder4Dom(AbsoluteDesign.findSelectBox())}};">
+            {{if AbsoluteDesign.data.style.backgroundImage}}
+            <div class="paper-area page-abs-{{AbsoluteDesign.data.pageDesignType||'printForm'}} A4 bg-{{AbsoluteDesign.data.style.backgroundImageFillType}}"
+                style="left:-{{AbsoluteDesign.findSelectBox().style.left+AbsoluteDesign.findSelectBox().style.borderLeftWidth}}px;top:-{{AbsoluteDesign.findSelectBox().style.top+AbsoluteDesign.findSelectBox().style.borderTopWidth}}px;width:{{AbsoluteDesign.data.style.width}}{{AbsoluteDesign.data.style.cellType}};height:{{AbsoluteDesign.data.style.height}}{{AbsoluteDesign.data.style.cellType}};{{=AbsoluteDesign.findStyleString(AbsoluteDesign.data.style,'common-style-tpl')}};{{=AbsoluteDesign.findPageBgImgTpl()}};">
+            </div>
+            {{/if}}
+            {{each AbsoluteDesign.findSelectAreaItems() as item index}} {{if render4tpl}}
+            {{include 'item-server-tpl' ({item:item})}} {{else}} {{include 'item-tpl' ({item:item})}} {{/if}} {{/each}}
+        </div>
+        {{/if}}
+    </script>
+
+    <!--内容区域模板渲染,提供 给运行态使用 如打印
+     运行态暂时不输出自定义额外属性
+     {{each AbsoluteDesign.findPageAttrsRepeat4Dom() as currAttr index}} {{currAttr.key}}="{{currAttr.value}}" {{/each}}
+    需要考虑，编辑、查看等 TODO
+
+    {{AbsoluteDesign.startTemplateTag}}if true {{AbsoluteDesign.endTemplateTag}}
+    <div style="text-align: center">
+        <button oui-e-click="event2save" save-id="{{AbsoluteDesign.startTemplateTag}}dataId{{AbsoluteDesign.endTemplateTag}}" save-url="{{AbsoluteDesign.startTemplateTag}}saveUrl{{AbsoluteDesign.endTemplateTag}}">保存</button>
+    </div>
+    {{AbsoluteDesign.startTemplateTag}}/if{{AbsoluteDesign.endTemplateTag}}
+
+-->
+    <script type="text/html" id="items-content-tpl">
+        <div class="page-abs page-abs-{{AbsoluteDesign.data.pageDesignType||'printForm'}} paper-area A4 bg-{{AbsoluteDesign.data.style.backgroundImageFillType}}"
+            style="width:{{AbsoluteDesign.data.style.width}}{{AbsoluteDesign.data.style.cellType}};height:{{AbsoluteDesign.data.style.height}}{{AbsoluteDesign.data.style.cellType}};{{AbsoluteDesign.findStyleString(AbsoluteDesign.data.style,'common-style-tpl')}};{{=AbsoluteDesign.findPageBgImgTpl()}};">
+            {{if AbsoluteDesign.findThemeUrl()}}
+            <link link-id="page-link" rel="stylesheet" type="text/css" href="{{AbsoluteDesign.findThemeUrl()}}" />
+            {{/if}}
+
+            {{each AbsoluteDesign.findItems() as item index}} {{if render4tpl}}
+            {{=AbsoluteDesign.trimTpl('item-server-tpl',({item:item}))}} {{else}}
+            {{=AbsoluteDesign.trimTpl('item-tpl',({item:item}))}} {{/if}} {{/each}}
+        </div>
+    </script>
+    <!--运行态列表页面-->
+    <script type="text/html" id="list-content-tpl">
+        <div class="toolbar">
+            <div class="header">
+                <div class="button-wrap">
+                    <button oui-e-click="event2new" type="button" class="btn">
+                        <span>新增</span>
+                    </button>
+                    <button oui-e-click="event2edit" type="button" class="btn">
+                        <span>编辑</span>
+                    </button>
+                    <button oui-e-click="event2remove" type="button" class="btn">
+                        <span>删除</span>
+                    </button>
+                </div>
+                <div class="search">
+                    <oui-condition id="simple-search-condition" showType="10" type="condition" callback=""
+                        cancelback="">
+
+                    </oui-condition>
+                </div>
+            </div>
+        </div>
+        <div class="table-details">
+            <oui-table id="list-{{AbsoluteDesign.data.id}}" type="tablegrid" showHLines="false" style="height: 100%"
+                allowColumnResize="true" allowAlternating="true" multiSelect="true" onCelldblclick="" onAfterLoad=""
+                onCellClick="" lockColumnSize="2" showHeaderLines="false" showColumnsMenu="false"
+                dataUrl="{{AbsoluteDesign.startTemplateTag}}logic4query{{AbsoluteDesign.endTemplateTag}}"
+                emptyTips="暂无数据">
+                <oui-columns>
+                    <oui-column-checkbox width="40" headerAlign="center" align="center"></oui-column-checkbox>
+                    <oui-column fieldName="id" hideable4menu="true" visible="false"></oui-column>
+                    <oui-column fieldName="eid" hideable4menu="true" visible="false"></oui-column>
+
+                    {{each AbsoluteDesign.findItems4list() as item index}}
+                    <oui-column allowSort="true" width="120" fieldName="{{item.bizId||item.id}}" align="left"
+                        headerAlign="left">{{item.name}}</oui-column>
+                    {{/each}}
+                </oui-columns>
+                <oui-pager id="oui-pager" type="pager" showPageNumSize="10" pageIndex="1" pageSize="10" total="1"
+                    class="oui-class-pager text-right"></oui-pager>
+            </oui-table>
+        </div>
+    </script>
+
+    <!--页面基本属性-->
+    <script type="text/html" id="absoluteProps-pageProps-base-tpl">
+        <div class="design-attribute-item" id="absoluteProps-pageProps-base">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-pageProps-base',true)}}">
+                基本属性
+                <i class="retract-arrow-icon"></i>
+            </div>
+            <div class="design-set-area">
+                <div class="design-field ">
+                    <div class="fieldname">页面设计名称</div>
+                    <div class="fieldblock"><input type="text" class="" blur4change="changed4props"
+                            bindPropAfter="changed4propsRealTime" bindProp="name" placeholder="表单名称" value="{{name}}">
+                    </div>
+                    <div class="fielderror" id="check_name">
+                        {{if AbsoluteDesign.findCheckMessage("name")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("name")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <!--隐藏页面设计类型-->
+                <div class="design-field ">
+                    <div class="fieldname">页面设计类型</div>
+                    <div class="fieldblock">
+                        <select bindProp="pageDesignType" value="{{AbsoluteDesign.data.pageDesignType}}">
+                            <option value="printForm"
+                                {{if AbsoluteDesign.data.pageDesignType=='printForm'}}selected="selected" {{/if}}>
+                                表单打印设计器</option>
+                            <option value="normalForm"
+                                {{if AbsoluteDesign.data.pageDesignType=='normalForm'}}selected="selected" {{/if}}>
+                                瀑布流表单设计器</option>
+                            <option value="tableForm"
+                                {{if AbsoluteDesign.data.pageDesignType=='tableForm'}}selected="selected" {{/if}}>
+                                表格式表单设计器</option>
+                            <option value="absoluteForm"
+                                {{if AbsoluteDesign.data.pageDesignType=='absoluteForm'}}selected="selected" {{/if}}>
+                                绝对布局表单设计器</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">备注说明</div>
+                    <div class="fieldblock"><textarea class="" bindPropAfter="changed4props" bindProp="description"
+                            placeholder="备注说明" value="{{description}}">{{description}}</textarea></div>
+                    <div class="fielderror" id="check_description">
+                        {{if AbsoluteDesign.findCheckMessage("description")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("description")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </script>
+
+    <!--外观样式模板-->
+    <script type="text/html" id="absoluteProps-pageProps-theme-tpl">
+        <div class="design-field">
+            <div class="fieldname">外观主题模板</div>
+            <div class="fieldblock">
+                <div class="design-select-paper">
+                    <div class="selected-result" oui-e-click="event2showOrHideThemeSelect">
+                        {{if AbsoluteDesign.data.style.theme}}
+                        {{AbsoluteDesign.findThemeName(AbsoluteDesign.data.style.theme)}}
+                        {{else}}
+                        选择外观主题
+                        {{/if}}
+                    </div>
+                    <div class="select-paper-list">
+                        <ul>
+                            {{each AbsoluteDesign.themeTypes as item index}}
+                            {{if item.value !='self_edit'}}
+                            <li oui-e-click="event2setTheme" value="{{item.value}}">{{item.value}}<i
+                                    class="paper-size-info">（{{item.display}}）</i> </li>
+                            {{else}}
+                            <li oui-e-click="event2setTheme" value="{{item.value}}">自定义</li>
+                            {{/if}}
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!--页面尺寸模板-->
+    <script type="text/html" id="absoluteProps-pageProps-pageSize-tpl">
+        <div class="design-field">
+            <div class="fieldname">页面尺寸</div>
+            <div class="fieldblock">
+                <div class="design-select-paper">
+                    <div class="selected-result" oui-e-click="event2showOrHidePaperSizeSelect">
+                        {{if AbsoluteDesign.data.style.paperType}}
+                        {{AbsoluteDesign.findPaperTypeName(AbsoluteDesign.data.style.paperType)}}
+                        {{else}}
+                        选择尺寸
+                        {{/if}}</div>
+                    <div class="select-paper-list">
+                        <ul>
+                            {{each AbsoluteDesign.paperRuleTypes as item index}}
+                            {{if item.value !='self_edit'}}
+                            <li oui-e-click="event2setPageInfo" value="{{item.value}}">{{item.value}}<i
+                                    class="paper-size-info">（{{item.width}}{{item.cellType}}*{{item.height}}{{item.cellType}}）</i>
+                            </li>
+                            {{else}}
+                            <li oui-e-click="event2setPageInfo" value="{{item.value}}">自定义</li>
+                            {{/if}}
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{if AbsoluteDesign.data.style.paperType =='self_edit'}}
+        <div class="design-field design-setting-wh">
+            <div class="fieldname">宽度(mm)</div>
+            <div class="fieldblock"><input type="text" class="" propType="int" blur4change="changed4props"
+                    bindPropAfter="changed4propsRealTime" bindProp="style.width" placeholder="宽度"
+                    value="{{style.width}}"></div>
+            <div class="fielderror" id="check_style_width">
+                {{if AbsoluteDesign.findCheckMessage("style.width")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("style.width")}}</div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="design-field design-setting-wh">
+            <div class="fieldname">高度(mm)</div>
+            <div class="fieldblock"><input type="text" class="" propType="int" blur4change="changed4props"
+                    bindPropAfter="changed4propsRealTime" bindProp="style.height" value="{{style.height}}"
+                    placeholder="高度"></div>
+            <div class="fielderror" id="check_style_height">
+                {{if AbsoluteDesign.findCheckMessage("style.height")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("style.height")}}</div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+    </script>
+    <!--页面背景设置-->
+    <script type="text/html" id="absoluteProps-pageProps-bg-tpl">
+        <div class="design-field design-field-abBtn">
+            <div class="fieldname">背景图片</div>
+            <div class="fieldblock">
+                <input type="text" class="" value="{{backgroundImageName}}" bindProp="backgroundImageName"
+                    placeholder="背景图片">
+                <button class="gene-btn ab-noBg-btn" oui-e-click="event2showCutImg">上传</button>
+                <i class="page-abs-del" oui-e-click="event2removePaperBgImg"></i>
+            </div>
+            <div class="fielderror" id="check_style_backgroundImageName">
+                {{if AbsoluteDesign.findCheckMessage("backgroundImageName")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("backgroundImageName")}}</div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="design-field design-field-radio">
+            <div class="fieldname">背景填充方式</div>
+            <div class="fieldblock ">
+                <label>
+                    <span class="radio-button-wrapper">
+                        <input type="radio" bindPropAfter="changed4props" name="bg"
+                            {{=style.backgroundImageFillType =='repeat' ?'checked=\'checked\'':''}}
+                            bindProp="style.backgroundImageFillType" value="repeat" />
+                        <i class="selected-icon"></i>
+                    </span>
+                    平铺
+                </label>
+                <label>
+                    <span class="radio-button-wrapper">
+                        <input type="radio" bindPropAfter="changed4props" name="bg"
+                            {{=style.backgroundImageFillType =='center' ?'checked=\'checked\'':''}}
+                            bindProp="style.backgroundImageFillType" value="center" />
+                        <i class="selected-icon"></i>
+                    </span>
+                    居中
+                </label>
+                <label>
+                    <span class="radio-button-wrapper">
+                        <input type="radio" bindPropAfter="changed4props" name="bg"
+                            {{=style.backgroundImageFillType =='cover' ?'checked=\'checked\'':''}}
+                            bindProp="style.backgroundImageFillType" value="cover" />
+                        <i class="selected-icon"></i>
+                    </span>
+                    自适应
+                </label>
+            </div>
+        </div>
+        <div class="design-field">
+            <div class="fieldname">背景颜色</div>
+            <div class="fieldblock">
+                <div class="set-color-area">
+                    <span class="set-color-box" type="spectrum" invoke-prop="style.backgroundColor"
+                        invoke-fun="changed4props" value="{{style.backgroundColor}}"
+                        style="background-color: {{style.backgroundColor}};"></span>
+                    <span class="set-color-info">{{style.backgroundColor||'transparent'}}</span>
+                </div>
+            </div>
+            <div class="fielderror" id="check_style_backgroundImageName">
+                {{if AbsoluteDesign.findCheckMessage("style.backgroundColor")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("style.backgroundColor")}}</div>
+                {{/if}}
+            </div>
+        </div>
+    </script>
+    <!--页面的背景、全局属性设置-->
+    <script type="text/html" id="absoluteProps-pageProps-setttings-tpl">
+        <div class="design-attribute-item " id="absoluteProps-pageProps-setttings">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-pageProps-setttings')}}">
+                全局设置<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                {{include 'absoluteProps-pageProps-theme-tpl'}}
+                {{include 'absoluteProps-pageProps-pageSize-tpl'}}
+                {{include 'absoluteProps-pageProps-bg-tpl'}}
+            </div>
+        </div>
+    </script>
+    <!--页面属性模板-->
+    <script type="text/html" id="absoluteProps-pageProps-tpl">
+        {{if (AbsoluteDesign.state =='down2selectPage' || AbsoluteDesign.state =='init')}}
+        {{include 'absoluteProps-pageProps-base-tpl'}}
+        {{include 'absoluteProps-pageProps-setttings-tpl'}}
+
+        <!--全局设置-->
+        {{include 'absoluteProps-fieldProps-control-tpl'}}
+        {{include 'absoluteProps-fieldProps-title-tpl'}}
+        {{include 'absoluteProps-fieldProps-field-tpl'}}
+
+        {{/if}}
+    </script>
+    <!--控件的 边框属性设置-->
+    <script type="text/html" id="absoluteProps-fieldProps-border-tpl">
+        <div class="design-field ">
+            <div class="fieldname">圆角设置（px）</div>
+            <div class="fieldblock">
+                <input type="text" value="{{AbsoluteDesign.findBorderRadius(currentControl,bindPropKey)}}"
+                    propType="int"
+                    bindProp="{{bindPropKey.replace('tempControl','currentControl').replace('_borders','borderRadius')}}"
+                    blur4change="changed4props" bindPropAfter="changed4propsRealTime">
+            </div>
+            <div class="fielderror">
+
+                {{if (AbsoluteDesign.state =='down2selectPage' || AbsoluteDesign.state =='init')}}
+                {{if AbsoluteDesign.findCheckMessage(bindPropKey.replace('tempControl.','innerStyle.').replace('_borders','borderRadius'))}}
+                <div class="fielderror-info">
+                    {{AbsoluteDesign.findCheckMessage(bindPropKey.replace('tempControl.','innerStyle.').replace('_borders','borderRadius'))}}
+                </div>
+                {{/if}}
+                {{else}}
+                {{if AbsoluteDesign.findCheckMessage(bindPropKey.replace('tempControl.','controls[*].').replace('_borders','borderRadius'))}}
+                <div class="fielderror-info">
+                    {{AbsoluteDesign.findCheckMessage(bindPropKey.replace('tempControl.','controls[*].').replace('_borders','borderRadius'))}}
+                </div>
+                {{/if}}
+                {{/if}}
+
+            </div>
+        </div>
+        <div class="design-field">
+            <div class="fieldname">边框设置</div>
+            <div class="fieldblock">
+
+                <select id="{{bindPropKey.replace(/\./ig,'_')}}_{{currentControl.id}}"
+                    value="{{if !AbsoluteDesign.hasBorder(currentControl,bindPropKey)}}none{{else}}borderLeftWidth,borderTopWidth,borderRightWidth,borderBottomWidth{{/if}}"
+                    bindProp="{{bindPropKey}}" bindPropAfter="changed4setBorders">
+                    <option value="none" {{if !AbsoluteDesign.hasBorder(currentControl,bindPropKey)}}selected="selected"
+                        {{/if}}>无边框</option>
+                    <option value="borderLeftWidth,borderTopWidth,borderRightWidth,borderBottomWidth"
+                        {{if AbsoluteDesign.hasBorder(currentControl,bindPropKey)}}selected="selected" {{/if}}>有边框
+                    </option>
+                </select>
+            </div>
+            {{if AbsoluteDesign.hasBorder(currentControl,bindPropKey)}}
+            <div class="fieldblock">
+                <label>
+                    <span class="checkbox-wrapper">
+                        <input type="checkbox" name="{{bindPropKey.replace(/\./ig,'_')}}" bindProp="{{bindPropKey}}"
+                            bindPropAfter="changed4setBorders" value="borderTopWidth"
+                            {{if AbsoluteDesign.hasBorderTop(currentControl,bindPropKey)}}checked="checked" {{/if}}>
+                        <i class="selected-icon"></i>
+                    </span>
+                    上
+                </label>
+                <label>
+                    <span class="checkbox-wrapper">
+                        <input type="checkbox" name="{{bindPropKey.replace(/\./ig,'_')}}" bindProp="{{bindPropKey}}"
+                            bindPropAfter="changed4setBorders" value="borderBottomWidth"
+                            {{if AbsoluteDesign.hasBorderBottom(currentControl,bindPropKey)}}checked="checked" {{/if}}>
+                        <i class="selected-icon"></i>
+                    </span>
+                    下
+                </label>
+                <label>
+                    <span class="checkbox-wrapper">
+                        <input type="checkbox" name="{{bindPropKey.replace(/\./ig,'_')}}" bindProp="{{bindPropKey}}"
+                            bindPropAfter="changed4setBorders" value="borderLeftWidth"
+                            {{if AbsoluteDesign.hasBorderLeft(currentControl,bindPropKey)}}checked="checked" {{/if}}>
+                        <i class="selected-icon"></i>
+                    </span>
+                    左
+                </label>
+                <label>
+                    <span class="checkbox-wrapper">
+                        <input type="checkbox" name="{{bindPropKey.replace(/\./ig,'_')}}" bindProp="{{bindPropKey}}"
+                            bindPropAfter="changed4setBorders" value="borderRightWidth"
+                            {{if AbsoluteDesign.hasBorderRight(currentControl,bindPropKey)}}checked="checked" {{/if}}>
+                        <i class="selected-icon"></i>
+                    </span>
+                    右
+                </label>
+            </div>
+            {{/if}}
+        </div>
+        {{if AbsoluteDesign.hasBorder(currentControl,bindPropKey)}}
+        <div class="design-field design-setting-wh">
+            <div class="fieldname">边框粗细（px）</div>
+            <div class="fieldblock">
+                <input type="text" value="{{AbsoluteDesign.findBorderWidth(currentControl,bindPropKey)}}" propType="int"
+                    bindProp="{{bindPropKey4Width}}" blur4change="changed4props" bindPropAfter="changed4setBorderWidth"
+                    placeholder="请输入1~20之间的任意数字" title="请输入1~20之间的任意数字">
+            </div>
+            <div class="fielderror">
+                {{if AbsoluteDesign.findCheckMessage(bindPropKey4Width)}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage(bindPropKey4Width)}}</div>
+                {{/if}}
+            </div>
+        </div>
+        <div class="design-field design-setting-wh">
+            <div class="fieldname">边框样式（px）</div>
+            <div class="fieldblock">
+                <select bindProp="{{bindPropKey.replace('._borders','._borderStyle')}}"
+                    bindPropAfter="changed4setBorderStyle">
+                    <option value="solid"
+                        {{if AbsoluteDesign.findBorderStyle(currentControl,bindPropKey)=='solid'}}selected="selected"
+                        {{/if}}>实线</option>
+                    <option value="dashed"
+                        {{if AbsoluteDesign.findBorderStyle(currentControl,bindPropKey)=='dashed'}}selected="selected"
+                        {{/if}}>虚线</option>
+                </select>
+            </div>
+        </div>
+        <div class="design-field">
+            <div class="fieldname">边框颜色</div>
+            <div class="fieldblock">
+                <div class="set-color-area">
+                    <span class="set-color-box" type="spectrum"
+                        invoke-prop="{{bindPropKey.replace('._borders','._borderColor')}}"
+                        invoke-fun="changed4setBorderColor"
+                        value="{{AbsoluteDesign.findBorderColor(currentControl,bindPropKey)}}"
+                        style="background-color: {{AbsoluteDesign.findBorderColor(currentControl,bindPropKey)}};"></span>
+                    <span
+                        class="set-color-info">{{AbsoluteDesign.findBorderColor(currentControl,bindPropKey)||'transparent'}}</span>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </script>
+    <!--控件的基本属性 和业务属性-->
+    <script type="text/html" id="absoluteProps-fieldProps-base-tpl">
+        {{if !AbsoluteDesign.isSelectBox(currentControl)}}
+        <div class="design-attribute-item" id="absoluteProps-fieldProps-base">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-fieldProps-base',true)}}">
+                基本属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                {{if currentControl&&currentControl.htmlType!='label'}}
+                <div class="design-field">
+                    <div class="fieldname">控件名称</div>
+                    <div class="fieldblock">
+                        <input type="text" blur4change="changed4props" bindPropAfter="changed4propsRealTime"
+                            placeholder="控件名称" bindProp="currentControl.name" value="{{currentControl.name}}" />
+                    </div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_name">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].name")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].name")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/if}}
+                <div class="design-field">
+                    <div class="fieldname">控件描述</div>
+                    <div class="fieldblock">
+                        <textarea bindPropAfter="changed4props" placeholder="控件描述" bindProp="currentControl.description"
+                            value="{{currentControl.description}}">{{currentControl.description}}</textarea>
+                    </div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_description">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].description")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].description")}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{if currentControl&&currentControl.htmlType=='image'}}
+                <div class="design-field design-field-abBtn">
+                    <div class="fieldname">插入图片</div>
+                    <div class="fieldblock">
+                        <input type="text" class=""
+                            value="{{currentControl.otherAttrs&&currentControl.otherAttrs.imgName}}"
+                            bindProp="currentControl.otherAttrs.imgName" placeholder="插入图片">
+                        <button class="gene-btn ab-noBg-btn" changeProp="currentControl.otherAttrs.img"
+                            oui-e-click="event2showCutImg">上传</button>
+                        <i class="page-abs-del" changeProp="currentControl.otherAttrs.img"
+                            oui-e-click="event2removeImg"></i>
+                    </div>
+                    <div class="fielderror">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.imgName")}}
+                        <div class="fielderror-info">
+                            {{AbsoluteDesign.findCheckMessage("controls[*].otherAttrs.imgName")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+    </script>
+
+    <!--控件的外框属性-->
+    <script type="text/html" id="absoluteProps-fieldProps-control-tpl">
+        <div class="design-attribute-item" id="absoluteProps-fieldProps-control">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-fieldProps-control')}} ">
+                外框属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                {{if ('down2selectField,drag2newField,draggingField,dragEndField,cloneField'.split(',').indexOf(AbsoluteDesign.state)>-1)&&(!currentControl.style.rect) }}
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">宽度(px)</div>
+                    <div class="fieldblock"><input type="text" class="" propType="int"
+                            blur4change="changed4otherCellType,changed4props"
+                            bindPropAfter="changed4otherCellType,changed4propsRealTime"
+                            bindProp="currentControl.style.width" placeholder="宽度"
+                            value="{{currentControl.style.width}}"></div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_style_width">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].style.width")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].style.width")}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">高度(px)</div>
+                    <div class="fieldblock"><input type="text" class="" propType="int"
+                            blur4change="changed4otherCellType,changed4props"
+                            bindPropAfter="changed4otherCellType,changed4propsRealTime"
+                            bindProp="currentControl.style.height" value="{{currentControl.style.height}}"
+                            placeholder="高度"></div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_style_height">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].style.height")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].style.height")}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">左边距(px)</div>
+                    <div class="fieldblock"><input type="text" class="" propType="int"
+                            blur4change="changed4otherCellType,changed4props"
+                            bindPropAfter="changed4otherCellType,changed4propsRealTime"
+                            bindProp="currentControl.style.left" value="{{currentControl.style.left}}"
+                            placeholder="左边距"></div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_style_left">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].style.left")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].style.left")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">上边距(px)</div>
+                    <div class="fieldblock"><input type="text" class="" propType="int"
+                            blur4change="changed4otherCellType,changed4props"
+                            bindPropAfter="changed4otherCellType,changed4propsRealTime"
+                            bindProp="currentControl.style.top" value="{{currentControl.style.top}}" placeholder="上边距">
+                    </div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_style_top">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].style.top")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("controls[*].style.top")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/if}}
+                <div class="design-field  ">
+                    <div class="fieldname">排列方式</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.style.layoutType" bindPropAfter="changed4props">
+                            <option value="oneLine"
+                                {{if (currentControl.style.layoutType) == ('oneLine' ) }}selected="selected" {{/if}}>并列
+                            </option>
+                            <option value="twoLine"
+                                {{if (currentControl.style.layoutType) == ('twoLine') }}selected="selected" {{/if}}>换行
+                            </option>
+                            <option value="hideTitle"
+                                {{if (currentControl.style.layoutType) == ('hideTitle' ) }}selected="selected" {{/if}}>
+                                隐藏标题</option>
+                            <option value="onlyTitle"
+                                {{if (currentControl.style.layoutType) == ('onlyTitle' ) }}selected="selected" {{/if}}>
+                                只显示标题</option>
+                        </select>
+                    </div>
+                </div>
+                {{if currentControl.innerStyle &&currentControl.innerStyle.styleInnerOuter}}
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">垂直位置</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleInnerOuter.verticalAlign"
+                            bindPropAfter="changed4props">
+                            <option value="top"
+                                {{if currentControl.innerStyle.styleInnerOuter.verticalAlign =='top'}}selected="selected"
+                                {{/if}}>居上</option>
+                            <option value="middle"
+                                {{if currentControl.innerStyle.styleInnerOuter.verticalAlign =='middle'}}selected="selected"
+                                {{/if}}>居中</option>
+                            <option value="bottom"
+                                {{if currentControl.innerStyle.styleInnerOuter.verticalAlign =='bottom'}}selected="selected"
+                                {{/if}}>居下</option>
+                        </select>
+                    </div>
+                </div>
+                {{/if}}
+
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">旋转</div>
+                    <div class="fieldblock">
+                        <select propType="int" bindProp="currentControl.style.rotate" bindPropAfter="changed4props">
+                            {{each [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360] as rotate}}
+                            <option value="{{rotate}}"
+                                {{if (currentControl.style.rotate+'') == (rotate+'') }}selected="selected" {{/if}}>
+                                {{rotate}}度</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">透明度</div>
+                    <div class="fieldblock">
+                        <select propType="float" bindProp="currentControl.style.opacity" bindPropAfter="changed4props">
+                            {{each [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] as opacityItem}}
+                            <option value="{{opacityItem}}"
+                                {{if (currentControl.style.opacity+'') == (''+ opacityItem ) }}selected="selected"
+                                {{/if}}>{{opacityItem}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">背景颜色</div>
+                    <div class="fieldblock">
+                        <div class="set-color-area">
+                            <span class="set-color-box" type="spectrum"
+                                invoke-prop="currentControl.style.backgroundColor" invoke-fun="changed4props"
+                                value="{{currentControl.style.backgroundColor}}"
+                                style="background-color: {{currentControl.style.backgroundColor||'transparent'}};"></span>
+                            <span class="set-color-info">{{currentControl.style.backgroundColor||'transparent'}}</span>
+                        </div>
+                    </div>
+                </div>
+                {{include 'absoluteProps-fieldProps-border-tpl' ({currentControl:currentControl,bindPropKey:'tempControl.style._borders',bindPropKey4Width:'tempControl.style._borderWidth'})}}
+            </div>
+        </div>
+    </script>
+    <!--控件的标题文字属性-->
+    <script type="text/html" id="absoluteProps-fieldProps-title-tpl">
+        <div class="design-attribute-item" id="absoluteProps-fieldProps-title">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-fieldProps-title')}}">
+                文字属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体颜色</div>
+                    <div class="fieldblock">
+                        <div class="set-color-area">
+                            <span class="set-color-box" type="spectrum"
+                                invoke-prop="currentControl.innerStyle.styleTitle.color" invoke-fun="changed4props"
+                                value="{{currentControl.innerStyle.styleTitle.color}}"
+                                style="background-color: {{currentControl.innerStyle.styleTitle.color||'#e6e6e6'}};"></span>
+                            <span
+                                class="set-color-info">{{currentControl.innerStyle.styleTitle.color||'transparent'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体背景</div>
+                    <div class="fieldblock">
+                        <div class="set-color-area">
+                            <span class="set-color-box" type="spectrum"
+                                invoke-prop="currentControl.innerStyle.styleTitle.backgroundColor"
+                                invoke-fun="changed4props"
+                                value="{{currentControl.innerStyle.styleTitle.backgroundColor}}"
+                                style="background-color: {{currentControl.innerStyle.styleTitle.backgroundColor||'transparent'}};"></span>
+                            <span
+                                class="set-color-info">{{currentControl.innerStyle.styleTitle.backgroundColor||'transparent'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体大小(px)</div>
+                    <div class="fieldblock"><input type="text" propType="int" blur4change="changed4props"
+                            bindPropAfter="changed4propsRealTime"
+                            bindProp="currentControl.innerStyle.styleTitle.fontSize" class=""
+                            value="{{currentControl.innerStyle.styleTitle.fontSize}}" placeholder="字体大小"></div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_innerStyle_styleTitle_fontSize">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].innerStyle.styleTitle.fontSize")}}
+                        <div class="fielderror-info">
+                            {{AbsoluteDesign.findCheckMessage("controls[*].innerStyle.styleTitle.fontSize")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体粗细</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleTitle.fontWeight"
+                            bindPropAfter="changed4props">
+                            <option value="normal"
+                                {{if currentControl.innerStyle.styleTitle.fontWeight == 'normal'}}selected="selected"
+                                {{/if}}>默认</option>
+                            <option value="lighter"
+                                {{if currentControl.innerStyle.styleTitle.fontWeight == 'lighter'}}selected="selected"
+                                {{/if}}>更细</option>
+                            <option value="bold"
+                                {{if currentControl.innerStyle.styleTitle.fontWeight == 'bold'}}selected="selected"
+                                {{/if}}>更粗</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">水平位置</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleTitle.textAlign" bindPropAfter="changed4props">
+                            <option value="left"
+                                {{if currentControl.innerStyle.styleTitle.textAlign == 'left'}}selected="selected"
+                                {{/if}}>居左</option>
+                            <option value="center"
+                                {{if currentControl.innerStyle.styleTitle.textAlign == 'center'}}selected="selected"
+                                {{/if}}>居中</option>
+                            <option value="right"
+                                {{if currentControl.innerStyle.styleTitle.textAlign == 'right'}}selected="selected"
+                                {{/if}}>居右</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">标题行高</div>
+                    <div class="fieldblock">
+                        <select propType="float" bindProp="currentControl.innerStyle.styleTitle.lineHeight"
+                            bindPropAfter="changed4props">
+                            {{each [1.2,1.4,1.6,1.8,2] as lineHeight}}
+                            <option value="{{lineHeight}}"
+                                {{if (currentControl.innerStyle.styleTitle.lineHeight+'') == (lineHeight+'')}}selected="selected"
+                                {{/if}}> {{lineHeight}}倍</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">显示方式</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleTitle.whiteSpace"
+                            bindPropAfter="changed4props">
+                            <option value="normal"
+                                {{if currentControl.innerStyle.styleTitle.whiteSpace == 'normal'}}selected="selected"
+                                {{/if}}>自适应</option>
+                            <option value="nowrap"
+                                {{if currentControl.innerStyle.styleTitle.whiteSpace == 'nowrap'}}selected="selected"
+                                {{/if}}>一行显示（超出省略）</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!--控件的字段输入属性-->
+    <script type="text/html" id="absoluteProps-fieldProps-field-tpl">
+        <div class="design-attribute-item" id="absoluteProps-fieldProps-field">
+            <div
+                class="design-set-attribute-tit {{AbsoluteDesign.findAccordingActiveCls('absoluteProps-fieldProps-field')}}">
+                输入属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                {{if currentControl&&(currentControl.htmlType!='image')}}
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体颜色</div>
+                    <div class="fieldblock">
+                        <div class="set-color-area">
+                            <span class="set-color-box" type="spectrum"
+                                invoke-prop="currentControl.innerStyle.styleField.color" invoke-fun="changed4props"
+                                value="{{currentControl.innerStyle.styleField.color}}"
+                                style="background-color:{{currentControl.innerStyle.styleField.color||'#e6e6e6'}};"></span>
+                            <span
+                                class="set-color-info">{{currentControl.innerStyle.styleField.color||'#e6e6e6'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体背景</div>
+                    <div class="fieldblock">
+                        <div class="set-color-area">
+                            <span class="set-color-box" type="spectrum"
+                                invoke-prop="currentControl.innerStyle.styleField.backgroundColor"
+                                invoke-fun="changed4props"
+                                value="{{currentControl.innerStyle.styleField.backgroundColor}}"
+                                style="background-color:{{currentControl.innerStyle.styleField.backgroundColor||'transparent'}};"></span>
+                            <span
+                                class="set-color-info">{{currentControl.innerStyle.styleField.backgroundColor||'transparent'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体大小(px)</div>
+                    <div class="fieldblock">
+                        <input type="text" propType="int" bindProp="currentControl.innerStyle.styleField.fontSize"
+                            blur4change="changed4props" bindPropAfter="changed4propsRealTime" class=""
+                            value="{{currentControl.innerStyle.styleField.fontSize}}" placeholder="字体大小" />
+                    </div>
+                    <div class="fielderror" id="check_controls_{{currentControl.id}}_innerStyle_styleField_fontSize">
+                        {{if AbsoluteDesign.findCheckMessage("controls[*].innerStyle.styleField.fontSize")}}
+                        <div class="fielderror-info">
+                            {{AbsoluteDesign.findCheckMessage("controls[*].innerStyle.styleField.fontSize")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">字体粗细</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleField.fontWeight"
+                            bindPropAfter="changed4props">
+                            <option value="normal"
+                                {{if currentControl.innerStyle.styleField.fontWeight =='normal'}}selected="selected"
+                                {{/if}}>默认</option>
+                            <option value="lighter"
+                                {{if currentControl.innerStyle.styleField.fontWeight =='lighter'}}selected="selected"
+                                {{/if}}>更细</option>
+                            <option value="bold"
+                                {{if currentControl.innerStyle.styleField.fontWeight =='bold'}}selected="selected"
+                                {{/if}}>更粗</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field design-setting-wh">
+                    <div class="fieldname">水平位置</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleFieldOuter.textAlign"
+                            bindPropAfter="changed4props">
+                            <option value="left"
+                                {{if currentControl.innerStyle.styleFieldOuter.textAlign =='left'}}selected="selected"
+                                {{/if}}>居左</option>
+                            <option value="center"
+                                {{if currentControl.innerStyle.styleFieldOuter.textAlign =='center'}}selected="selected"
+                                {{/if}}>居中</option>
+                            <option value="right"
+                                {{if currentControl.innerStyle.styleFieldOuter.textAlign =='right'}}selected="selected"
+                                {{/if}}>居右</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="design-field ">
+                    <div class="fieldname">控件值行高</div>
+                    <div class="fieldblock">
+                        <select propType="float" bindProp="currentControl.innerStyle.styleField.lineHeight"
+                            bindPropAfter="changed4props">
+                            {{each [1.2,1.4,1.6,1.8,2] as lineHeight}}
+                            <option value="{{lineHeight}}"
+                                {{if (currentControl.innerStyle.styleField.lineHeight+'') == (lineHeight+'')}}selected="selected"
+                                {{/if}}> {{lineHeight}}倍</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">控件值显示方式</div>
+                    <div class="fieldblock">
+                        <select bindProp="currentControl.innerStyle.styleField.whiteSpace"
+                            bindPropAfter="changed4props">
+                            <option value="normal"
+                                {{if  currentControl.innerStyle.styleField.whiteSpace == 'normal'}}selected="selected"
+                                {{/if}}>自适应</option>
+                            <option value="nowrap"
+                                {{if currentControl.innerStyle.styleField.whiteSpace == 'nowrap'}}selected="selected"
+                                {{/if}}>一行显示（超出省略）</option>
+                        </select>
+                    </div>
+                </div>
+                {{include 'absoluteProps-fieldProps-border-tpl' ({currentControl:currentControl,bindPropKey:'tempControl.innerStyle.styleField._borders',bindPropKey4Width:'tempControl.innerStyle.styleField._borderWidth'})}}
+                {{/if}}
+            </div>
+        </div>
+    </script>
+
+    <!--所有字段 属性面板设置(拖拽中字段、选择区域字段，控件 等)-->
+    <script type="text/html" id="absoluteProps-fieldProps-tpl">
+        {{if ('down2selectField,drag2newField,draggingField,dragEndField,cloneField'.split(',').indexOf(AbsoluteDesign.state)>-1) }}
+        {{if currentControl}}
+        {{include 'absoluteProps-fieldProps-base-tpl'}}
+        {{if currentControl.htmlType !='tableLine'}}
+        {{include 'absoluteProps-fieldProps-control-tpl'}}
+        {{if (currentControl.htmlType !='selectArea')&&(currentControl.innerStyle&&currentControl.innerStyle.styleTitle)}}
+        {{include 'absoluteProps-fieldProps-title-tpl'}}
+        {{/if}}
+        {{if currentControl.htmlType !='selectArea'&&(currentControl.innerStyle&&currentControl.innerStyle.styleFieldOuter &&currentControl.innerStyle.styleField) && (currentControl.htmlType !='label')&&(currentControl.controlType !='label') &&(currentControl.controlType !='seperateline')&&(currentControl.controlType !='imagegroup')&&(currentControl.htmlType !='image')  }}
+        {{include 'absoluteProps-fieldProps-field-tpl'}}
+        {{/if}}
+        {{/if}}
+        {{/if}}
+        {{/if}}
+    </script>
+    <!--整体属性面板-->
+    <script type="text/html" id="absoluteProps-tpl">
+        {{if  AbsoluteDesign.isShowPageProps()}}
+        <oui-include type="module" url="{{AbsoluteDesign.findCurrentPropslUrl()}}">
+        </oui-include>
+        {{/if}}
+        {{if  AbsoluteDesign.isShowControlProps()}}
+        <oui-include type="module" url="{{AbsoluteDesign.findCurrentPropslUrl()}}">
+        </oui-include>
+        {{/if}}
+    </script>
+    <!--<script type="text/javascript" src="../../../res_common/third/jquery/jquery-2.1.4.min.js"></script>-->
+    <!--<script type="text/javascript" src="../../../res_common/third/template/template_debug_3_0_0.js"></script>-->
+    <!--<script type="text/javascript" charset="utf-8" src="../../../res_common/oui/core.min.js"></script>-->
+    <!--<script type="text/javascript" src="../../../context/context.js?_v=1" charset="utf-8"></script>-->
+
+    <!--引入进度条-->
+    <script type="text/javascript" src="../../../res_common/third/progress/nprogress.js"></script>
+    <script type="text/javascript">
+        NProgress.start();
+        document.onreadystatechange = function () {
+            if (document.readyState === "interactive") {
+                NProgress.set(0.5);
+            } else if (document.readyState === "complete") {
+                NProgress.done();
+            }
+        };
+    </script>
+    <!-- 引入echarts -->
+    <script type="text/javascript" src="../../../res_common/oui/system/oui-echarts.js"></script>
+    <!--第三方公共资源开始-->
+    <script src="../../../res_common/third/vue/dist/vue.min.js"></script>
+    <!--<script src="../../res_common/third/vue/dist/vue-router.js"></script>-->
+    <script src="../../../res_common/third/element-ui/lib/index.js"></script>
+    <script src="../../../res_common/third/mint-ui/lib/index.js"></script>
+    <script src="../../../res_common/third/axios/dist/axios.min.js"></script>
+    <!--第三方公共资源结束-->
+
+    <!--系统公共资源开始-->
+    <script type="text/javascript" src="../../../res_common/oui/system/util.js"></script>
+    <script type="text/javascript" src="../../../res_common/oui/system/component-adapter.js"></script>
+    <!--自定义路由组件-->
+    <script type="text/javascript" src="../../../res_common/oui/system/route.js"></script>
+
+    <!--这是基于oui-view相关公共组件-->
+    <script type="text/javascript" charset="utf-8" src="../../../res_common/third/jquery/jquery-3.2.1.min.js?_v=1">
+    </script>
+    <script type="text/javascript" charset="utf-8"
+        src="../../../res_common/third/template/template_debug_3_0_0.js?_v=1"></script>
+    <script type="text/javascript" charset="utf-8" src="../../../res_common/oui/core.min.js"></script>
+    <!--<script type="text/javascript" src="../../../context/context.js?_v=1" charset="utf-8"></script>-->
+    <!--系统公共资源结束-->
+    <!--页面入口-->
+    <script type="text/javascript" src="../../../res_common/oui/system/main.js"></script>
+    <script type="text/javascript" src="../../../res_common/third/sortable/sortable1.8.js"></script>
+    <script type="text/javascript" src="../../../res_common/third/sortable/vuedraggable2.20.js"></script>
+ 
+
+    <!--<script type="text/javascript" charset="utf-8" src="../../../res_common/third/sortable/sortable.min.js"></script>-->
+    <!--<script type="text/javascript" src="../../../res_common/third/jquery-ui/jquery-1.114-ui.min.js"></script>-->
+    <script type="text/javascript">
+        var init = function () {
+            var me = com.oui.absolute.AbsoluteDesign;
+             
+            me.init();
+        };
+        var cssArray = [];
+        if (oui.os.mobile) {
+            cssArray = [
+                oui.getContextPath() + "res_common/oui/ui/ui_phone/css/dialog.css",
+                oui.getContextPath() + "res_common/oui/ui/ui_phone/css/control.css",
+            ];
+        } else {
+            cssArray = [
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/css/dialog.css",
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/css/control.css",
+                oui.getContextPath() +
+                "res_common/oui/ui/ui_pc/controls/tips/css/tips.css",
+                oui.getContextPath() +
+                "res_common/third/color-picker/css/spectrum.css",
+                oui.getContextPath() + "res_common/third/shape/css/shape.css",
+            ];
+        }
+
+
+        oui.require4notSort(
+            cssArray,
+            function () {},
+            function () {},
+            false
+        );
+
+        var jsArray = [];
+
+        
+
+        if (oui.os.mobile) {
+            jsArray.push(
+                oui.getContextPath() + "res_common/third/jquery.tap/jquery.tap.js"
+            );
+        }
+
+        if (!oui.os.mobile) {
+            jsArray.push(
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/dialog/dialog.js"
+            );
+            jsArray.push(
+                oui.getContextPath() + "res_common/oui/ui/ui_pc/controls/tips/tips.js"
+            );
+        } else {
+            jsArray.push(
+                oui.getContextPath() + "res_common/oui/ui/ui_phone/dialog/dialog.js"
+            );
+        }
+        jsArray.push(
+            oui.getContextPath() +
+            "res_common/third/jquery.hotkeys/jquery.hotkeys.js"
+        );
+        jsArray.push(
+            oui.getContextPath() + "res_common/third/color-picker/spectrum.js"
+        );
+        jsArray.push(
+            oui.getContextPath() +
+            "res_common/third/html2canvas/dist/html2canvas.js"
+        );
+        jsArray.push(
+            oui.getContextPath() +
+            "res_common/third/jquery-mousewheel-master/jquery.mousewheel.js"
+        );
+        //    jsArray.push(oui.getContextPath()+'res_common/third/export/exportFile.js');
+        jsArray.push(
+            oui.getContextPath() +
+            "res_engine/page_design/common/js/page-design-type-enum.js"
+        );
+
+        jsArray.push(
+            oui.getContextPath() +
+            "res_engine/page_list_design/pc/js/page_list_design.js"
+        );
+        jsArray.push(
+            oui.getContextPath() + "res_engine/page_design/pc/js/page-validate.js"
+        );
+        jsArray.push(
+            oui.getContextPath() +
+            "res_engine/page_list_design/pc/js/page_controls_list.js"
+        );
+ 
+        
+        // jsArray.push(oui.getContextPath() +
+        //     "res_common/third/tinymce/tinymce.min.js"
+        // );
+        //    jsArray.push(oui.getContextPath()+'res_common/third/algebra/algebra-0.2.5.min.js');
+        //    jsArray.push(oui.getContextPath()+'res_common/third/shape_min/shape.min.js');
+        //    jsArray.push(oui.getContextPath()+'res_common/third/jquery.print/jQuery.print.js');
+        oui.require(
+            jsArray,
+            function () {
+                init();
+            },
+            function () {},
+            false
+        );
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<oui-view id="circle-entity"
+          data="com.startwe.models.circle.web.CircleController4Edit.getData()"
+          class="oui-class-ouiview">
+</oui-view>
+<script id="circle-entity-tpl" type="text/html" charset="utf-8">
+    <div class="pg-block" oui-controller="com.startwe.models.circle.web.CircleController4Edit" >
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'circle'})}}
+        </div>
+        {{if circle.id}}
+        <div class="pg-block-header">
+            <a href="#" oui-e-{{clickName}}="event2projectMgr">项目管理
+            </a>
+        </div>
+        {{/if}}
+        <div class="pg-block-cont">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-circle-name" class="col-sm-2 control-label">圈子名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" bindProp="circle.name" value="{{circle.name}}" id="input-circle-name" placeholder="输入圈子名称">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-circle-name" class="col-sm-2 control-label">圈子账号(唯一能找到圈子的别名，命名规则：英文字母开始，英文、数字、_、的结合,可以只要多个单词的首字母组合,不能有中文，长度不能超过10位)</label>
+                    <div class="col-sm-10">
+                        <input type="text"  {{if circle.id}}readOnly="readOnly"{{/if}} class="form-control" bindProp="circle.enName" value="{{circle.enName}}" id="input-circle-enName" placeholder="输入圈子账号，该账号将跟随项目、应用的绑定">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">圈子分类</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" value="{{circle.circleType}}" bindProp="circle.circleType">
+                            <option value="" {{if !circle.circleType}}selected="selected"{{/if}}>选择圈子分类</option>
+                            {{each circleTypes as item index}}
+                                <option value="{{item.value}}" {{if circle.circleType==item.value}}selected="selected"{{/if}}>{{item.display}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <label class="col-sm-2 control-label">访问权限</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" value="{{circle.permission}}" bindProp="circle.permission">
+                            {{each permissionTypes as item index}}
+                            <option value="{{item.value}}" {{if circle.permission==item.value}}selected="selected"{{/if}}>{{item.display}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-2 control-label">圈子Logo</label>-->
+                    <!--<div class="col-sm-10">-->
+                        <!--<div class="input-group">-->
+                            <!--<input type="text" class="form-control" placeholder="选择图片" readonly="readonly" />-->
+                            <!--<span class="input-group-btn">-->
+                                <!--<button class="btn btn-default" type="button">-->
+                                    <!--<i class="glyphicon glyphicon-plus"></i>-->
+                                <!--</button>-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">圈子描述</label>
+                    <div class="col-sm-10">
+                        <div class="article-editor">
+                            {{=circle.description}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class=" text-center">
+                        <button class="article-btn" oui-e-{{clickName}}="event2saveCircle">
+                            <i class="iconfont icon-fasong"></i> 保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<!--部门编辑模板-->
+<script type="text/html" id="dept-edit-tpl">
+    <div class="oui-row dialog-row">
+        <div class="wrapper-content">
+            <div class="oui-col-span-24">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">组织名称</div></div>
+                <div class="oui-col-span-14">
+                    <input type="text" name="orgName" value="{{org.name}}" validate="{{validate.name}}" placeholder="请输入" class="oui-input"/>
+                    <div class="oui-input-error" id="orgName_error"></div>
+                </div>
+            </div>
+            <div class="oui-col-span-24 dialogMarginBottom">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">组织负责人</div></div>
+                <div class="oui-col-span-14">
+                    <oui-form type="selectperson" showType="3" tabs='3' id="selectPerson4leader" filterSelf="false" name="selectPerson4leader"  data="{{leaderData}}" value='{{org.leaderId}}'></oui-form>
+                </div>
+            </div>
+            <div class="oui-col-span-24 dialogMarginBottom">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">编制</div></div>
+                <div class="oui-col-span-14">
+                    <oui-form type="number" id="limitCount4dept" validate="{{validate.limitCount}}" value="{{org.limitCount}}" placeholder="请输入"  ></oui-form>
+                    <div class="oui-input-error" id="limitCount_error"></div>
+                </div>
+            </div>
+            <div class="oui-col-span-24 dialogMarginBottom">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">组织编码</div></div>
+                <div class="oui-col-span-14">
+                    <input name="orgCode" validate="{{validate.orgCode}}" value="{{org.orgCode}}" type="text" placeholder="请输入" class="oui-input"/>
+                    <div class="oui-input-error" id="orgCode_error"></div>
+                </div>
+            </div>
+            <div class="oui-col-span-24 dialogMarginBottom">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">文本描述</div></div>
+                <div class="oui-col-span-14">
+                    <oui-form type="textarea" id="description4dept"  validate="{{validate.description}}" value="{{org.description}}" placeholder="请输入" ></oui-form>
+                    <div class="oui-input-error" id="description_error"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</script>
+
+<!--版本编辑模板-->
+<script type="text/html" id="org-version-tpl">
+    <div class="oui-row dialog-row">
+        <div class="wrapper-content">
+            <div class="oui-col-span-24">
+                <div class="oui-col-span-7"><div class="oui-input-info textRight">新版本名称</div></div>
+                <div class="oui-col-span-14"><input type="text" id="orgVersionName" validate="{{validate.name}}" placeholder="请输入" class="oui-input"/></div>
+                <div class="error-info-color" id="orgVersionName_error"></div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="org-history-tpl">
+    <div id="orgHistory" class="oui-common-operation hide-operation-footer oui-operation-show">
+        <div class="oui-common-mask"></div>
+        <div class="oui-common-operation-header">
+            <div class="oui-title">查看历史版本</div>
+            <span class="oui-close-btn " oui-e-click="event2hideHistoryOperation"></span>
+        </div>
+        <div class="oui-common-operation-content">
+            <!--历史版本时间轴-->
+            <div class="oui-time-axis">
+                <ul class="oui-time-axis-content">
+                    <li class="oui-time-axis-item" oui-e-click="event2showCurrOrg">
+                        <h4 class="oui-time-axis-title">当前版本</h4>
+                    <span class="oui-time-axis-otherInfo">
+                        <i class="otherInfo-text"></i>
+                    </span>
+                    </li>
+                    {{if versions&&versions.length}}
+                    {{each versions as version}}
+                    <li class="oui-time-axis-item" version-url="{{version.detailUrl}}" del-url="{{version.deleteUrl}}" version-id="{{version.id}}" oui-e-click="event2showOrgByVersion">
+                        <h4 class="oui-time-axis-title">{{version.name}}</h4>
+                        <span class="oui-time-axis-otherInfo">
+                        <i class="otherInfo-text">{{version.createTime}}</i>
+                        </span>
+                        <i class="oui-operation-icon oui-operation-icon-delete" version-url="{{version.detailUrl}}" del-url="{{version.deleteUrl}}" version-id="{{version.id}}" oui-e-click="event2delVersion"></i>
+                    </li>
+                    {{/each}}
+                    {{/if}}
+
+                    {{if (!versions)||(!versions.length)}}
+                    <li class="oui-time-axis-item">
+                        <h4 class="oui-time-axis-title">还没有组织架构历史版本</h4>
+                        <span class="oui-time-axis-otherInfo">
+                        <i class="otherInfo-text"> </i>
+                        </span>
+                    </li>
+                    {{/if}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+</body>
+</html>
+

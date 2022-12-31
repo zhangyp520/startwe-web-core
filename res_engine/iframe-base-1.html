@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>内容页</title>
+
+</head>
+<body class="fixed skin-green">
+
+<link type="text/css" charset="utf-8" rel="stylesheet" href="../res_common/oui/ui/ui_common/themes/theme-1.css?_v=1" />
+<link rel="stylesheet" charset="utf-8" href="portal/css/portal-1.css" />
+<style type="text/css">
+
+    body{
+        background: #fff;
+    }
+    .container{
+        background: #fff;
+    }
+</style>
+<!--iframe框架固定根容器 不能修改-->
+<div class="container">
+    <!--html模板位置-->
+</div>
+
+<!--菜单导航公共模板-->
+<script type="text/html" id="portal-menu-path-tpl">
+    {{each PortalController.findPathMenusByMenuId(menuId) as item index}}
+    <a href="#" menu-id="{{item.id}}" oui-e-click="com.portal.PortalController.event2doMenuAction">{{item.display}}</a> /
+    {{/each}}
+    {{if PortalController.findMenuById(menuId)}}
+    <a>{{PortalController.findMenuById(menuId).display}}</a>
+    {{/if}}
+</script>
+
+
+<script type="text/javascript" charset="utf-8" src="../res_common/third/jquery/jquery-3.2.1.min.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/third/template/template_debug_3_0_0.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-jsclazz.js"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-define.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-tags.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/parser.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-datautils.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-common.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-checkform.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/ui/tpl-type.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/ui/base-control.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/ui/form-control.js?_v=1"></script>
+<script type="text/javascript" charset="utf-8" src="../res_common/oui/system/oui-biz-ext.js?_v=1"></script>
+<script type="text/javascript">
+    !(function(){
+        /** iframe 内容页PortalController对象定义，用于使用顶层PortalController的api调用****/
+        var PortalController = {
+            "package": "com.oui.portal",
+            "class": "PortalController",
+            data:{},
+            init:function(){
+                var me = this;
+                me.data.clickName=oui.browser.mobile?'tap':'click';
+                template.helper('PortalController',this);
+                template.helper('oui',oui);
+            },
+            /** 执行portal 菜单事件***/
+            event2doMenuAction:function(cfg){
+                oui.getTop().com.oui.portal.PortalController.event2doMenuAction(cfg);
+            },
+            /** 执行portal 菜单数据获取***/
+            findPathMenusByMenuId:function(menuId){
+                return oui.getTop().com.oui.portal.PortalController.findPathMenusByMenuId(menuId);
+            },
+            /** 执行portal中 菜单数据检索****/
+            findMenuById:function(menuId){
+                return oui.getTop().com.oui.portal.PortalController.findMenuById(menuId);
+            }
+        };
+
+        PortalController = oui.biz.Tool.crateOrUpdateClass(PortalController);
+        PortalController.init();
+    })(window);
+</script>
+
+</body>
+</html>
+
+

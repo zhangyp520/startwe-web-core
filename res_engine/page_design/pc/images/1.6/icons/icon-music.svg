@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_music</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="资源管理器" transform="translate(-548.000000, -541.000000)">
+            <g id="icon_music" transform="translate(548.000000, 541.000000)">
+                <rect id="矩形" x="0" y="0" width="12" height="12"></rect>
+                <g id="编组" transform="translate(1.200000, 1.200000)" stroke="#7F7F7F" stroke-linejoin="round" stroke-width="0.6">
+                    <line x1="6.15326307" y1="0" x2="6.15326307" y2="7.73333333" id="路径" stroke-linecap="round"></line>
+                    <path d="M2.40779859,8.01066667 C2.40779859,7.2684 3.01148721,6.66666667 3.7561658,6.66666667 L6.15326307,6.66666667 L6.15326307,8.256 C6.15326307,8.99826667 5.54957446,9.6 4.80489586,9.6 L3.7561658,9.6 C3.01148721,9.6 2.40779859,8.99826667 2.40779859,8.256 L2.40779859,8.01066667 Z" id="路径"></path>
+                    <polygon id="路径" stroke-linecap="round" points="6.15326307 2.15104 9.6 2.96573333 9.6 0.803570667 6.15326307 0"></polygon>
+                    <line x1="0" y1="0.533333333" x2="3.74546448" y2="0.533333333" id="路径" stroke-linecap="round"></line>
+                    <line x1="0" y1="2.66666667" x2="3.74546448" y2="2.66666667" id="路径" stroke-linecap="round"></line>
+                    <line x1="0" y1="4.8" x2="2.67533177" y2="4.8" id="路径" stroke-linecap="round"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

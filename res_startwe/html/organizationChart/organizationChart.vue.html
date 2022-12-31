@@ -1,0 +1,388 @@
+<!-- 页面设计>>>>>>>组织架构图设计弹窗>>>>>>>组织机构模型配置 -->
+<template>
+    <!-- 最外层大盒子 -->
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div>
+                <span :class="{'active':index==checkClick}" v-for="(item,index) in header_menu" @click="spanClick(index)">{{item.text}}</span>
+            </div>
+        </div>
+
+        <!-- 组织机构模型配置内容 -->
+        <div v-if="checkClick==0">
+            <!-- 第一行 -->
+            <div class="projectID">
+                <div class="IDtitle">项目ID</div>
+                <div>
+                    <el-input type="text" class="IDinput"></el-input>
+                </div>
+            </div>
+            <!-- 第二行 -->
+            <div class="operation">
+                <div class="addBox operationbox">
+                    <img src="/res_startwe/assets/add_3.png" alt="">
+                    <span>添加基本参与者类型</span>
+                </div>
+                <div class="addBox operationbox">
+                    <img src="/res_startwe/assets/add_3.png" alt="">
+                    <span>添加组合参与者类型</span>
+                </div>
+                <div class="clearBox operationbox">
+                    <img src="/res_startwe/assets/del_1.png" alt="">
+                    <span>清空</span>
+                </div>
+            </div>
+            <!-- 第三行 -->
+            <div class="selectionModel">
+                <div class="selectionTitle">从项目中选择组织机构模型</div>
+                <div>
+                    <el-input type="text" class="modelInput"></el-input>
+                </div>
+            </div>
+            <!-- 第四行 -->
+            <div class="tableBox">
+                <el-table :data="tableData" style="width: 100%">
+                    <el-table-column type="index">
+                        <template slot-scope="scope">
+                            <div class="index_numberBox">
+                                <img src="/res_startwe/assets/sort.png" alt="">
+                                <span class="index_number">{{scope.row.index}}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="combination" label="组合参与者类型" width="120%">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.combination" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="code" label="参与者类型编码">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.code" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="参与者类型名称">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.name" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="model" label="绑定表模型">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.model" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="id" label="绑定表模型的ID字段">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.id" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="nameField" label="绑定表模型的名称字段">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.nameField" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="rootDisplay" label="可在根节点显示" width="120%">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.rootDisplay" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="childDisplay" label="是否为叶子节点" width="120%">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.childDisplay" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="100%">
+                        <template slot-scope="scope">
+                            <div class="addOrRemove">
+                                <div class="add">
+                                    <img src="/res_startwe/assets/add_2.png" alt="">
+                                </div>
+                                <div>
+                                    <img src="/res_startwe/assets/del.png" alt="">
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <!-- 第五行 -->
+            <div class="subBtn">
+                <el-button class="preservation">保存全部</el-button>
+            </div>
+        </div>
+
+        <!-- 组织架构维护 -->
+        <div v-show="checkClick==1">
+            <oui-include type="module" url="res_startwe/html/organizationChart/architectureMaintenance.vue.html">
+            </oui-include>
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                header_menu: [{
+                    text: '组织机构模型配置'
+                }, {
+                    text: '组织架构维护'
+                }],
+                checkClick: 0,
+                count: 0,
+                Y: "Y",
+                N: "N",
+                tableData: [{
+                    index: 1,
+                    code: '',
+                    name: '',
+                    model: '',
+                    id: '',
+                    nameField: ''
+                }, {
+                    index: 2,
+                    code: '',
+                    name: '',
+                    model: '',
+                    id: '',
+                    nameField: ''
+                }, {
+                    index: 3,
+                    code: '',
+                    name: '',
+                    model: '',
+                    id: '',
+                    nameField: ''
+                }, {
+                    index: 4,
+                    code: '',
+                    name: '',
+                    model: '',
+                    id: '',
+                    nameField: ''
+                }],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            indexMethod(index) {
+                this.indexMethod = index * 2;
+            },
+            //改变状态
+            changeStatus: function (row) {
+
+            },
+            spanClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            // 滚动条
+            load() {
+                this.count += 2
+            }
+
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .el-input__inner {
+        height: 32px;
+    }
+
+    /* 内容 */
+
+    /* .wrapper {
+        width: 100%;
+        height: 100%;
+
+    } */
+
+    /* 头部 */
+
+    .header {
+        border-bottom: 1px solid rgba(151, 151, 151, 0.50);
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 22px;
+        font-weight: bold;
+    }
+
+    .header>div {
+        margin-left: 24px;
+    }
+
+    .header span {
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+        padding: 0 10px;
+        margin-right: 10px;
+        cursor: pointer;
+
+    }
+
+    .active {
+        font-size: 16px;
+        color: #FF7D82;
+        line-height: 22px;
+        font-weight: bold;
+        border-bottom: 3px solid #FF7D82;
+    }
+
+    /* 第一行 */
+
+    .projectID {
+        display: flex;
+        margin-top: 24px;
+        margin-left: 24px;
+    }
+
+    .IDtitle {
+        margin-right: 20px;
+        line-height: 30px;
+    }
+
+    .IDinput>input {
+        width: 600px;
+        border-radius: 2px;
+    }
+
+    /* 第二行 */
+
+    .operation {
+        display: flex;
+        margin-left: 24px;
+    }
+
+    .operationbox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .operationbox>img {
+        margin-right: 5px;
+    }
+
+    .addBox {
+        padding: 5px;
+        border: 1px solid #1890FF;
+        border-radius: 2px;
+        margin: 24px 20px 24px 0;
+        color: #1890FF;
+    }
+
+    .clearBox {
+        padding: 5px;
+        border: 1px solid #FF1818;
+        border-radius: 2px;
+        margin: 24px 20px 24px 0;
+        color: #FF1818;
+    }
+
+    /* 第三行 */
+
+    .selectionModel {
+        background: #F4F4F4;
+        margin: 0 24px;
+    }
+
+    .selectionTitle {
+        line-height: 50px;
+        margin-left: 24px;
+    }
+
+    .modelInput>input {
+        width: 640px;
+        border-radius: 2px;
+        margin: -10px 0 24px 24px;
+    }
+
+    /* 第四行 */
+
+    .tableBox {
+        border: 1px dashed #979797;
+        margin: 24px 24px 0 24px;
+    }
+
+    .addOrRemove {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .addOrRemove>.add {
+        margin-right: 10px;
+    }
+
+    /* 提交按钮 */
+
+    .subBtn {
+        display: flex;
+        justify-content: center;
+        margin: 55px 0 24px;
+    }
+    .preservation {
+        width: 220px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+    }
+
+    .preservation:focus,
+    .preservation:hover {
+        color: #fff;
+        border-color: #524D62;
+        background-color: #524D62;
+    }
+</style>

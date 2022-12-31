@@ -1,0 +1,299 @@
+
+<template >
+    <div>
+        <el-tabs v-model="value" :type="tabsType" @tab-click="handleClick">
+            <el-tab-pane v-for="(item,index) in tables" :key="index" :label="item.name" :name="item.id">
+                <div >
+                    <el-table
+                            height="650"
+                            :data="item.data"
+                            stripe
+                            style="width: 100%">
+
+                        <el-table-column
+                                prop="controlType"
+                                label="控件类型"
+                                width="120">
+                        </el-table-column>
+                        <el-table-column
+                                prop="bizId"
+                                label="业务id"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="name"
+                                label="字段名称"
+                                width="180">
+                        </el-table-column>
+
+
+
+                        <el-table-column
+                                prop="edit"
+                                label="编辑"
+                                width="80"
+                                >
+                            <template slot-scope="scope">
+                                <el-switch
+                                        @change="_controlOnUpdate(scope.row,'edit')"
+                                        v-model="scope.row.limitMap.edit"
+                                        :active-value="true"
+                                        :inactive-value="false"
+                                        :active-color="activeColor"
+                                        :inactive-color="inactiveColor"
+                                        :active-text="activeText"
+                                        :inactive-text="inactiveText"
+                                        >
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="read"
+                                label="浏览"
+                                width="80"
+
+                                >
+                            <template slot-scope="scope">
+                            <el-switch
+                                    @change="_controlOnUpdate(scope.row,'read')"
+                                    v-model="scope.row.limitMap.read"
+                                    :active-value="true"
+                                    :inactive-value="false"
+                                    :active-color="activeColor"
+                                    :inactive-color="inactiveColor"
+                                    :active-text="activeText"
+                                    :inactive-text="inactiveText"
+                                    >
+                            </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                width="80"
+                                prop="hidden"
+                                label="隐藏">
+                            <template slot-scope="scope">
+                                <el-switch
+
+                                        @change="_controlOnUpdate(scope.row,'hidden')"
+                                        v-model="scope.row.limitMap.hidden"
+                                        :active-value="true"
+                                        :inactive-value="false"
+                                        :active-color="activeColor"
+                                        :inactive-color="inactiveColor"
+                                        :active-text="activeText"
+                                        :inactive-text="inactiveText"
+                                        >
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                width="80"
+                                prop="canNotRead"
+                                label="不可见">
+                            <template slot-scope="scope">
+                                <el-switch
+                                        @change="_controlOnUpdate(scope.row,'canNotRead')"
+                                        v-model="scope.row.limitMap.canNotRead"
+                                        :active-value="true"
+                                        :inactive-value="false"
+                                        :active-color="activeColor"
+                                        :inactive-color="inactiveColor"
+                                        :active-text="activeText"
+                                        :inactive-text="inactiveText"
+                                        >
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                width="80"
+
+                                prop="required"
+                                label="必填">
+                            <template slot-scope="scope">
+                                <el-switch
+
+                                        @change="_controlOnUpdate(scope.row,'required')"
+                                        v-model="scope.row.limitMap.required"
+                                        :active-value="true"
+                                        :inactive-value="false"
+                                        :active-color="activeColor"
+                                        :inactive-color="inactiveColor"
+                                        :active-text="activeText"
+                                        :inactive-text="inactiveText"
+                                        >
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="defaultValue"
+                                width="180"
+                                label="默认值">
+                            <template slot-scope="scope">
+                                <oui-include type="module" :url="findControlUrl(scope.row)" :ref="scope.row.rowId+'_defaultValue_'+item.id" :data="getControlRenderData(scope.row)"></oui-include>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                activeColor:'',
+                inactiveColor:'',
+                activeText:'',
+                inactiveText:'',
+                currTab:{},
+                bindProp:'',
+                showType:0,
+                tabsType:'',
+                value:'-1',
+                tables:[],
+                data:[]
+            }
+        },
+        mounted:function(){
+
+
+            /*
+             var htmlUrl =oui.getContextPath() + 'index.html' ;
+             htmlUrl = oui.setParam(htmlUrl,"loadMenusUrl",url);
+
+             <oui-include v-if="currTab" type="module" :ref="currTab.value" :url="findUrl(item)" :data="tabData" ></oui-include>
+             */
+            var me = this;
+            var showTypeMap = {
+                '0':'',
+                '1':'card',
+                '2':'border-card'
+            };
+            var dialog = oui.getTop().com.oui.absolute.AbsoluteDesign.dialog4limitTpl;
+            var tpl = dialog.limitTpl;
+            var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+            tpl = oui.util.buildPageLimitTpl(tpl,AbsoluteDesign.data);
+            this.tables = tpl.tables;
+
+            console.log('currshowType:'+this.showType);
+            var showType = this.showType;
+            if(!showType){
+                this.showType = 0;
+            }
+
+            this.tabsType = showTypeMap[this.showType]||'';
+            var currTab = oui.findOneFromArrayBy(this.tables,function(temp){
+                if((temp.id+'') == (AbsoluteDesign.data.id+'')){//默认为主表
+                    return true;
+                }
+            });
+            var tempV = '';
+            if(currTab){
+                tempV= currTab.id;
+                me.currTab = currTab;
+            }else{
+                me.currTab = me.tables[0];
+            }
+            me.value = tempV || me.tables[0].id;
+
+
+        },
+        methods:{
+            findControlUrl:function(control){
+                if(control && control.hasAssociation){ //存在关联关系
+                    return 'res_common/oui/ui/ui_pc/components/association.vue.html';
+                }else if(control){
+                    return 'res_common/oui/ui/ui_pc/components/'+control.controlType+'.vue.html';
+                }
+                return '';
+            },
+            getControlRenderData:function(row){
+                var me = this;
+                if(!me.controlCache){
+                    me.controlCache = {};
+                }
+                var controlId = row.controlId;
+                var tabId = row.tabId;//页签id
+                var rowId  = row.rowId;
+                //从缓存获取控件渲染对象
+                if(me.controlCache[tabId+'_'+controlId]){
+                    return me.controlCache[tabId+'_'+controlId]
+                }
+                var data = {};
+                //获取控件的渲染数据
+                var control = row ;
+                if(control){
+                    data.showType = 0;//控件显示类型
+                    data.controlId = control.controlId; //控件id
+                    data.bizId = control.bizId; //控件业务id
+                    data.control = control; //控件定义
+                    data.id='field-'+control.controlId+'_'+control.rowId; //组件id
+                    data.name='field-'+control.controlId+'_'+control.rowId;//组件name
+                    //.limitMap.required
+                    data.bindProp = controlId+'_'+rowId+'_defaultValue'; //双向绑定的业务属性
+
+                    data.title=control.name; //组件title
+                    data.value = row.limitMap.defaultValue;
+                    data.cls = 'control-field-value-abs oui-comp-'+control.controlType;//组件css样式
+                    data.otherAttrs = control.otherAttrs;
+                    data.notClone4Component = true; //组件include 引入时不进行克隆处理
+                    //更新表单字段处理
+                    data.onUpdate = function(key,v,ov,options){
+                        this.updatePageData(key,options);
+                    };
+                    data.updatePageData = function(key,options){
+                        this.getPageData().updatePageData(key,options,this);//更新主表
+                    };
+                    data.getPageData = function(){
+                        return me;
+                    };
+                    var placeholder = control.placeholder||(control.otherAttrs&&control.otherAttrs.placeholder)||"";
+                    if(placeholder){
+                        data.placeholder= placeholder;
+                    }
+                }
+                me.controlCache[tabId+'_'+controlId] = data;
+                return data;
+            },
+            updatePageData:function(key,options,renderData){
+                oui.JsonPathUtil.setObjByPath('control.limitMap.defaultValue',renderData,options.value,true);
+                this._controlOnUpdate(renderData.control,'defaultValue');
+            },
+            isCurrTab:function(item){
+                return this.currTab&&(this.currTab.value==item.value);
+            },
+            _controlOnUpdate:function(row,key){
+                var keys = ['edit','read','hidden','canNotRead'];
+                if(keys.indexOf(key)>-1){
+                    if(row.limitMap[key]){//true的情况
+                        oui.eachArray(keys,function(item){
+                            if(item !=key){
+                                row.limitMap[item] = false;
+                            }
+                        })
+                    }
+                }
+                var dialog = oui.getTop().com.oui.absolute.AbsoluteDesign.dialog4limitTpl;
+                var tpl = dialog.limitTpl;
+                //值改变时触发变更
+                tpl.tableMap[row.tabId].fieldMap[row.controlId] = oui.parseJson(oui.parseString(row));
+            },
+            handleClick:function(tab,event){
+                var ov = this.value||"";
+                this.value = tab.name;
+                var me = this;
+                this.currTab = oui.findOneFromArrayBy(this.data,function(item){
+                    if(item.value == me.value){
+                        return true;
+                    }
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+</style>

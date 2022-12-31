@@ -1,0 +1,107 @@
+
+<template >
+    <el-input 
+    :tempStyle="style" 
+    type="textarea"   
+    :rows="rows" 
+    :id="id" 
+    :type="type"
+    :name="name" 
+    :bindProp="bindProp" 
+    :class="cls" 
+    :showWordLimit="showWordLimit"  
+    :clearable="clearable" 
+    :maxlength="maxlength" 
+    v-model="value" 
+    :autosize="{ minRows: rows, maxRows: maxRows }"
+    :style="{'width':inputWidth + '%', textAlign:'left', color:'#009900' }" 
+    @change="_controlOnUpdate" 
+    :placeholder="placeholder"
+    :disabled="disabled"
+    :readonly="readonly"
+    >
+</el-input>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                type:"textarea",
+                otherAttrs:null,
+                placeholder:'',
+                rows:3, 
+                maxlength:40,
+                maxRows:3, 
+                clearable:false,
+                showWordLimit:false,
+                inputWidth:'', //输入框宽度
+                status:'',
+                disabled:false,
+                readonly:false
+            }
+        },
+        mounted() {
+  
+            if(this.otherAttrs && this.otherAttrs.placeholder){ //占位内容
+                this.placeholder = this.otherAttrs.placeholder;
+            }
+            if(this.otherAttrs && this.otherAttrs.defaulttext){ //默认内容 
+                this.value = this.otherAttrs.defaulttext;
+            }
+            if(this.otherAttrs && this.otherAttrs.defaultRows){ //默认行数 
+                this.rows = this.otherAttrs.defaultRows;
+            }
+            if(this.otherAttrs && this.otherAttrs.maxRows){ //最高行数 
+                this.maxRows = this.otherAttrs.maxRows;
+            }
+            if( this.otherAttrs.clearable ){
+                this.clearable = this.otherAttrs.clearable;
+            }
+            if( this.otherAttrs.showWordLimit ){
+                this.showWordLimit = this.otherAttrs.showWordLimit;
+            }
+            if( this.otherAttrs.inputWidth ){
+                this.inputWidth = this.otherAttrs.inputWidth;
+            }
+
+            if( this.otherAttrs.status ){
+
+
+                if(this.otherAttrs.status == '禁用'){
+                    this.disabled = true;
+                }
+                if(this.otherAttrs.status == '只读'){
+                    this.readonly = true;
+                } 
+                if(this.otherAttrs.status == '隐藏'){
+                    this.type = "hidden";
+                }
+
+            }
+
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

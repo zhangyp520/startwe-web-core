@@ -1,0 +1,390 @@
+<template>
+    <div class="oui-class-video">
+        <div class="videomask" :class="currentQueue.cls">
+            <div class="videobox" v-if="!isShowImgMask" :style="{ width:contentWidth, height: contentHeight }">
+                <video :src="videoSrc" controls :style="{ width:contentWidth, height: contentHeight }"
+                    :autoplay="autoplay" :loop="loop" :preload="preload" :id="videoId">
+                </video>
+
+            </div>
+            <div class="coverImgbox" v-if="isShowImgMask" :style="{ width:contentWidth, height: contentHeight }">
+                <div class="controlmask" v-if="isShowImgMask&&videoList.length>0" :style="{ width:contentWidth, height: contentHeight }">
+                    <img @click="click2play"  :src="imagesMap.videoplayicon" style="width: 20%;"
+                        alt="">
+                </div>
+                <img v-if="coverImg" :src="coverImg" style="width: 100%;height: 100%;" alt="">
+            </div>
+
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                videoId: 'video_' + oui.getUUIDLong(),
+                videoSrc: "",
+                coverImg: oui.getContextPath() + 'res_engine/ppt_design/images/uploadVideo.png',  
+                currentQueue: {
+                    cls: '' 
+                },
+                autoplay: false, //自动播放
+                loop: false, //视频循环播放
+                preload: true, //属性规定是否在页面加载后载入视频。
+                isShowImgMask: true,
+                isShowControlMask: true,
+                isshouw: false,
+                intoList: [],
+                doingList: [],
+                exitList: [],
+                currentIndex: 0, //当前视频的index 默认第一个
+                videoList: [],
+                contentWidth: '100%',
+                contentHeight: '100%',
+                playIconShow: true,
+                imagesMap: {
+                    videoplayicon: oui.getContextPath() + 'res_engine/ppt_design/images/videopaly.png',
+                },
+                delayTime: 1000,
+                autoSwitch: true
+            }
+        },
+        mounted: function () {
+
+            console.log('vodeo 视频组件数据', this.control.otherAttrs);
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+
+            var animationsList = [];
+            if (this.control.otherAttrs.animationList) {
+                animationsList = this.control.otherAttrs.animationList;
+                var intoList = [];
+                var doingList = [];
+                var exitList = [];
+                oui.eachArray(animationsList, function (item) {
+                    if (item.type == '1') {
+                        intoList.push(item);
+                    } else if (item.type == '2') {
+                        doingList.push(item);
+                    } else if (item.type == '3') {
+                        exitList.push(item);
+                    }
+                });
+                // 判断是否有开场动画 显示播放按钮
+                if (intoList.length < 1 && this.control.otherAttrs.videoList) {
+                    this.isShowControlMask = true
+                }
+                this.intoList = intoList;
+                this.doingList = doingList;
+                this.exitList = exitList;
+            }
+            if (this.control.otherAttrs.delayTime) {
+                this.delayTime = this.control.otherAttrs.delayTime * 1000
+            }
+
+            if (typeof this.control.otherAttrs.autoSwitch == 'undefined') {
+                this.control.otherAttrs.autoSwitch = false;
+            }
+            this.autoSwitch = this.control.otherAttrs.autoSwitch;
+
+            if (this.control.otherAttrs.videoList) {
+                this.videoList = this.control.otherAttrs.videoList;
+                // this.coverImg = this.videoList[this.currentIndex].coverImg;
+                this.getBase64(this.videoList[this.currentIndex].coverImg)
+                this.videoSrc = this.videoList[this.currentIndex].url;
+                if (!this.control.otherAttrs.fillStyleArr) {
+                    this.proportion(this.videoList[this.currentIndex].defaultProp)
+                } else {
+                    this.proportion(this.control.otherAttrs.fillStyleArr)
+                }
+            }
+            if (this.control.otherAttrs.animationList && this.control.otherAttrs.videoList) {
+                this.start()
+            }
+            // if (this.control.autoSwitch) {
+            //     this.start()
+            // }
+        },
+        methods: {
+            getBase64: function (imgUrl) {
+                let that = this;
+                debugger
+                window.URL = window.URL || window.webkitURL;
+                var xhr = new XMLHttpRequest();
+                xhr.open("get", imgUrl, true);
+                // 至关重要
+                xhr.responseType = "blob";
+                xhr.onload = function () {
+                    if (this.status == 200) {
+                        //得到一个blob对象
+                        var blob = this.response;
+                        // 至关重要
+                        let oFileReader = new FileReader();
+                        oFileReader.onloadend = function (e) {
+                            // 此处拿到的已经是 base64的图片了
+                            that.coverImg = e.target.result;
+                        };
+                        oFileReader.readAsDataURL(blob);
+                    }
+                };
+                xhr.send();
+            },
+            start: function () {
+                var me = this;
+                let coverImg = me.videoList[me.currentIndex].coverImg;
+                me.videoSrc = me.videoList[me.currentIndex].url;
+                me.getBase64(coverImg);
+
+                if (this.control.otherAttrs.videoList && this.control.otherAttrs.animationList) {
+                    this.playInto(function () {
+                        me.playDoing(function () {
+                            me.click2play()
+                            // me.playExit(function () {
+                            //     if (me.currentIndex < me.control.otherAttrs.videoList
+                            //         .length) {
+                            //         me.currentIndex++
+                            //         me.currentQueue.cls = '';
+                            //         if (me.currentIndex == me.control.otherAttrs
+                            //             .videoList.length) {
+                            //             me.currentIndex = 0
+                            //         }
+                            //         me.coverImg = me.videoList[me.currentIndex].coverImg
+                            //         me.videoSrc = me.videoList[me.currentIndex].url
+
+                            //         //自动播放开关
+                            //         if (me.autoSwitch) {
+                            //             setTimeout(() => {
+                            //                 me.click2play()
+                            //             }, me.delayTime)
+                            //         }
+
+                            //     } else {
+                            //         me.currentQueue.cls = '';
+                            //         me.currentIndex = 0
+                            //     }
+                            // });
+                        });
+
+                    });
+                }
+            },
+            // 比例计算
+            proportion(proportion) {
+
+                let outwidth = this.control.style.width;
+                let outheight = this.control.style.height;
+                let height = (outwidth * proportion[1] / proportion[0]).toFixed(2);
+
+                if (height > outheight) {
+                    height = outheight;
+                }
+
+                var width = (height * proportion[0] / proportion[1]).toFixed(2);
+                if (width > outwidth) {
+                    width = outwidth;
+                    height = (outwidth * proportion[1] / proportion[0]).toFixed(2);
+                }
+                this.contentHeight = height + 'px';
+                this.contentWidth = width + 'px';
+            },
+            //获取当前动画
+            getCurrentAnimation: function () {
+                return this.currentQueue;
+            },
+            //播放开始进入
+            playInto: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.intoList, function (item) {
+                    console.log('into动画参数', item);
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        count: 0,
+                        run: function () {
+                            console.log('动画：', this.cls);
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this.delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                                me.isShowControlMask = true
+                            }, time);
+                        }
+                    });
+                });
+                this.intoListQueue = qu;
+                qu.start(function () {
+                    callback && callback();
+                });
+            },
+            //播放强调
+            playDoing: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.doingList, function (item) {
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        run: function () {
+                            console.log('动画：', this.cls);
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this.delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                            }, time);
+                        }
+                    });
+                });
+                this.doingListQueue = qu;
+                qu.start(function () {
+                    callback && callback();
+                });
+            },
+            //播放退出
+            playExit: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.exitList, function (item) {
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        run: function () {
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this.delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                            }, time);
+                        }
+                    });
+                });
+                this.exitListQueue = qu;
+                qu.start(function () {
+                    callback && callback();
+                });
+            },
+            click2play: function () {
+                var video = document.getElementById(this.videoId);
+                let me = this;
+                if (me.endedFun) {
+                    video.removeEventListener('ended', me.endedFun);
+                }
+                if (me.playFun) {
+                    video.removeEventListener('play', me.playFun);
+                }
+                var endedFun = function (e) {
+                    console.log('视频播放完了');
+                    console.log(e);
+                    me.playExit(function () {
+                        me.currentIndex++;
+                        me.currentQueue.cls = '';
+                        if (me.currentIndex >= me.control.otherAttrs.videoList.length) {
+                            me.currentIndex = 0
+                        }
+                        console.log(me.currentIndex);
+                        //自动播放开关
+                        if (me.autoSwitch) {
+                            setTimeout(() => {
+                                me.start()
+                            }, me.delayTime)
+                        }
+                    });
+                };
+                me.endedFun = endedFun;
+                var playFun = function (e) {
+                    me.isShowImgMask = false;
+                    console.log('提示该视频正在播放中');
+                    console.log(e)
+                };
+                me.playFun = playFun;
+                video.addEventListener('ended', me.endedFun);
+                video.addEventListener('play', me.playFun);
+                me.isShowImgMask = false;
+                // video.play()
+                //监听事件 播放结束后 执行 退出动画
+                // this.playExit(function () {
+                // });
+                // this.isShowControlMask = false
+            },
+
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, { //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value: v, //值
+                    data4DB: v, //提交到后端的额外数据
+                    display: v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    .coverImgbox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .videobox {
+        width: 100%;
+        height: 100%;
+
+    }
+
+
+    .oui-class-video {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .videomask {
+
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+
+    .controlmask {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 4;
+        background-color: rgba(255, 255, 255, 0);
+        font-size: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+
+
+    }
+</style>

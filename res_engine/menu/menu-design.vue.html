@@ -1,0 +1,1035 @@
+<template>
+    <div class="menu-design-container">
+        <div>
+            <oui-include type="module" url="res_engine/menu/menuHeader.vue.html" :data="menuHeader">
+            </oui-include>
+        </div>
+        <div class="menu-design-content">
+            <!-- 左边树形结构 -->
+            <div class="left-tree">
+                <!-- <el-scrollbar style="height: 100%;" class="scrollbar">
+                    <el-tree ref="tree" node-key="id" :data="data" highlight-current="true"
+                        @node-drag-start="handleDragstart" @node-drag-end="handleDragend" draggable default-expand-all
+                        :allow-drop="returnFalse">
+                        <span :class="'custom-tree-node tree-node-'+data.nodeType"
+                            :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                            :node-id="data.id" slot-scope="{ data }">
+                            <span class="tree-node-child">
+                                <img class="iconImg" :src="iconImgUrl" alt="">
+                                <span>{{ data.name }}</span>
+                            </span>
+                        </span>
+                    </el-tree>
+                </el-scrollbar> -->
+                <div class="menu-tabs">
+                    <div v-for='(item,index) in tablist' :class='index == tabindex ? "tabfontcolor" : "" ' @click = 'changeTab(index)'>
+                        {{item}}
+                    </div>
+                </div>
+            
+                <div v-if='tabindex == 0'>
+                    <div class="menu-boximg" >
+                        <div class="menu-img" @click='changeStyle(1)' @mousedown="move">
+                            <img src="/res_startwe/assets/menu_01.png" alt="">
+                        </div>
+                        <div class="menu_name" @click='changeStyle(1)'>样式一</div>
+                        <div class="menu-img" @click='changeStyle(2)'>
+                            <img src="/res_startwe/assets/menu_02.png" alt="">
+                        </div>
+                        <div class="menu_name" @click='changeStyle(2)'>样式二</div>
+                        <div class="menu-img"  @click='changeStyle(3)'>
+                            <img src="/res_startwe/assets/menu_03.png" alt="">
+                        </div>
+                        <div class="menu_name"  @click='changeStyle(3)'>样式三</div>
+                    </div>
+
+                    <!-- <div class="checkbox-bot">
+                        <div>菜单布局</div>
+                        <div>
+                            <el-checkbox></el-checkbox>左侧菜单
+                            <el-checkbox></el-checkbox>右侧菜单
+                            <el-checkbox></el-checkbox>上方菜单
+                            <el-checkbox></el-checkbox>下方菜单
+                            <el-checkbox></el-checkbox>左右菜单
+                            <el-checkbox></el-checkbox>九宫格
+                        </div>
+                        <div class="morediv">
+                            查看更多样式>>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div v-else class="paddingTop">
+                    <el-tree ref="tree" node-key="id" :data="data" highlight-current="true"
+                        @node-drag-start="handleDragstart" @node-drag-end="handleDragend" draggable default-expand-all
+                        :allow-drop="returnFalse">
+                        <span :class="'custom-tree-node tree-node-'+data.nodeType"
+                            :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                            :node-id="data.id" slot-scope="{ data }">
+                            <span class="tree-node-child">
+                                <img class="iconImg" :src="iconImgUrl" alt="">
+                                <span>{{ data.name }}</span>
+                            </span>
+                        </span>
+                    </el-tree>
+                </div>
+
+            </div>
+            <!-- 中间拖拽区域 -->
+            <div class="middle-drag">
+                <div class="middle-bigbox">
+                    <div class="middle-drag-title">菜单设计</div>
+
+                    <div class="middle-drag-box" id="qqq" v-show='styleType == 3'>
+                        <div class="middle-content02">
+                            <div class="middle-left02" :style="bgcolor">
+                                <div style="height: 100%;">
+                                    <el-scrollbar style="height: 100%;" class="scrollbar arr">
+                                        <div class="upimgdiv02">上传图片</div>
+                                        <div>
+                                            <div class="userImg"></div>
+                                            <div class="username">用户名</div>
+                                        </div>
+                                        <el-tree class="middleTreeStyle" @node-click="handleNodeClick" ref="middleTree" node-key="id" :data="middleTreeData" highlight-current="true"
+                                                 @node-drag-start="handleMiddleDragstart"
+                                                 @node-drag-end="handleMiddleDragend"
+                                            draggable default-expand-all :allow-drop="returnTrue" :expand-on-click-node="true" style="padding: 0;margin: 0;">
+                                            <span :class="'custom-tree-node tree-node-'+data.nodeType" :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                                                :node-id="data.id" slot-scope="{ node,data }">
+                                                <span :class="'tree-node-child-' + data.id" style="padding-left:25px;">
+                                                    {{ data.name }}
+                                                </span>
+                                            </span>
+                                        </el-tree>
+                                    </el-scrollbar>
+                                </div>
+                            </div>
+                            <div class="middle-right"></div>
+                        </div>
+                    </div>
+
+                    <div class="middle-drag-box" id="qqq" v-show='styleType == 1 || styleType == 2'>
+                        <div class="middle-drag-header">
+                            
+                            <el-upload  
+                       
+                            action="#"
+                            list-type="picture-card"
+                            :auto-upload="false"
+                            :show-file-list = 'false'
+                            :on-change='imgSuccess'>
+                            <!-- <div class="upimgdiv">上传图片</div> -->
+                                <img v-if='imgUrl' :src="imgUrl" alt="" style="height: 30px;">
+                                <span v-else>上传图片</span>
+                                
+                            </el-upload>
+                            
+                            <div>用户名</div>
+                        </div>
+                        <div class="middle-content">
+                            <div class="middle-left" :style="bgcolor">
+                                <div style="height: 100%;">
+                                    <el-scrollbar style="height: 100%;" class="scrollbar tops">
+                                        <el-tree class="middleTreeStyle" @node-click="handleNodeClick" ref="middleTree" node-key="id" :data="middleTreeData" highlight-current="true"
+                                                 @node-drag-start="handleMiddleDragstart"
+                                                 @node-drag-end="handleMiddleDragend"
+                                            draggable default-expand-all :allow-drop="returnTrue" :expand-on-click-node="true">
+                                            <span :class="'custom-tree-node tree-node-'+data.nodeType" :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                                                :node-id="data.id" slot-scope="{ node,data }" class="opacitySpan">
+                                                <span :class="'tree-node-child-' + data.id">
+                                                  
+                                                    <span>{{ data.name }}</span>
+                                                    
+                                                </span>
+                                            </span>
+                                        </el-tree>
+                                    </el-scrollbar>
+                                </div>
+                            </div>
+                            <div class="middle-right"></div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+            <!-- 右边配置区域 -->
+            <div class="right-configure">
+                <div v-show="isNodeProp">
+                    <oui-include v-if="menuRightConfigUrl" ref="refRight" type="module" :url="menuRightConfigUrl"
+                        :data="configData">
+                    </oui-include>
+                </div>
+                <div v-show="!isNodeProp">
+                    <oui-include v-if="menuRightConfigPropsUrl" ref="refRight4prop" type="module"
+                        :url="menuRightConfigPropsUrl" :data="propData">
+                    </oui-include>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 预览 -->
+        <div class="hhh" v-if='previewDom'>
+            <div class="previewHeader">
+                
+                <div @click='previewDom = false' class="preview_back"><i class="el-icon-back"></i>
+                    <div style="margin-left:5px;">返回设计台</div>
+                </div>
+            </div>
+            <div class="preview_flex">
+                <!-- <div class="preview_content" v-html='www'></div> -->
+                <div class="middle-drag-box preview_content" id="qqq" v-show='styleType == 1 || styleType == 2'>
+                    <div class="middle-drag-header">
+                        <div class="upimgdiv" v-if='!imgUrl'>上传图片</div>
+                        <img v-else :src="imgUrl" alt="" style="height: 30px;margin-left: 25px;">
+                        <div>用户名</div>
+                    </div>
+                    <div class="middle-content">
+                        <div class="middle-left" :style="bgcolor">
+                            <div style="height: 100%;">
+                                <el-scrollbar style="height: 100%;" class="scrollbar">
+                                    <el-tree class="middleTreeStyle" @node-click="handleNodeClick" ref="middleTree" node-key="id" :data="middleTreeData" highlight-current="true"
+                                             @node-drag-start="handleMiddleDragstart"
+                                             @node-drag-end="handleMiddleDragend"
+                                        draggable default-expand-all :allow-drop="returnTrue" :expand-on-click-node="true">
+                                        <span :class="'custom-tree-node tree-node-'+data.nodeType" :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                                            :node-id="data.id" slot-scope="{ node,data }" class="opacitySpan">
+                                            <span :class="'tree-node-child-' + data.id">
+                                                <span>{{ data.name }}</span>
+                                            </span>
+                                        </span>
+                                    </el-tree>
+                                </el-scrollbar>
+                            </div>
+                        </div>
+                        <div class="middle-right"></div>
+                    </div>
+                </div>
+                <div class="middle-drag-box preview_content" id="qqq" v-show='styleType == 3'>
+                    <div class="middle-content02">
+                        <div class="middle-left02" :style="bgcolor">
+                            <div style="height: 100%;">
+                                <el-scrollbar style="height: 100%;" class="scrollbar arr">
+                                    <!-- <div class="upimgdiv02">上传图片</div> -->
+                                    <div class="upimgdiv02" v-if='!imgUrl'>上传图片</div>
+                                    <div v-else style="text-align: center;margin-top: 38px;">
+                                        <img :src="imgUrl" alt="" style="height: 30px">
+                                    </div>
+                                    <div>
+                                        <div class="userImg"></div>
+                                        <div class="username">用户名</div>
+                                    </div>
+                                    <el-tree class="middleTreeStyle" @node-click="handleNodeClick" ref="middleTree" node-key="id" :data="middleTreeData" highlight-current="true"
+                                             @node-drag-start="handleMiddleDragstart"
+                                             @node-drag-end="handleMiddleDragend"
+                                        draggable default-expand-all :allow-drop="returnTrue" :expand-on-click-node="true" style="padding: 0;margin: 0;">
+                                        <span :class="'custom-tree-node tree-node-'+data.nodeType" :control-abs-controltype="data.nodeType" :control-abs-htmlType="data.nodeType"
+                                            :node-id="data.id" slot-scope="{ node,data }">
+                                            <span :class="'tree-node-child-' + data.id" style="padding-left:25px;">
+                                                {{ data.name }}
+                                            </span>
+                                        </span>
+                                    </el-tree>
+                                </el-scrollbar>
+                            </div>
+                        </div>
+                        <div class="middle-right"></div>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                previewDom:false,
+                inputV:'',
+                inputchildren:false,
+                inputshow:false,
+                input:'',
+                isNodeProp: false,
+                menuRightConfigUrl: '',
+                menuRightConfigPropsUrl: '',
+                iconImgUrl: '/res_startwe/assets/yemian2.png',
+                clientHeight: '',//浏览器可视区域高度
+                leftHight: '',
+                middleHeight: '',
+                propData: {},
+                configData: {},
+                menuHeader: {},
+                refId: '',
+                loadProjectTreeUrl: '',
+                menuData: [],
+                currentNodeId: '',
+                data: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
+                middleTreeData: [],
+                tabindex:0,
+                tablist:[
+                    '组件',
+                    '项目树'
+                ],
+                bgcolor:'#001529 ',
+                id:'',
+                textColor:'#FFFFFF',
+                borderCss:'',
+                borderColor:'',
+                hoverColor:'#1890FF',
+                hoverTextColor:'#ffffff',
+                www:null,
+                styleType:1,
+                imgUrl:''
+             
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.loadProjectTreeUrl = this.$router.query.loadProjectTreeUrl;
+         
+            this.loadProjectMenuUrl = this.$router.query.loadProjectMenuUrl;
+            // 获取浏览器高度自适应
+            this.clientHeight = `${document.documentElement.clientHeight}`;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                this.leftHight = this.clientHeight - 85 + 'px';
+                this.middleHeight = this.clientHeight - 185 + 'px';
+            };
+            this.leftMenuData();
+            let me = this;
+            // window.addEventListener("message", function (event) {
+            //     var data = event.data;
+            //     me[data.cmd] && me[data.cmd](data.params.configData);
+            // });
+            window.addEventListener("message", function (event) {
+                var data = event.data;
+                if(data.cmd == "colorData") {
+                    me.bgcolor = data.param.color
+                    console.log(me.bgcolor,'颜色')
+                    return
+                }
+                if(data.cmd == 'colorText') {
+                    me.textColor = data.param.color
+                    return
+                }
+                if(data.cmd == 'colorBorder') {
+                    me.borderColor = '1px solid ' +  data.param.color
+                    return
+                }
+                if(data.cmd == 'previewPage') {
+                    me.previewDom = true
+                    return
+                }
+                if(!me[data.cmd]) {
+                    return
+                }
+                me[data.cmd](data)
+            });
+
+        
+        },
+        watch: {
+            // 监听屏幕高度变化
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            },
+        },
+        methods: {
+            move(e) {
+                let odiv = e.target
+                let disX = e.clientX - odiv.offsetLeft;
+                let disY = e.clientY - odiv.offsetTop;
+                document.onmousemove = (e)=>{       //鼠标按下并移动的事件
+                    //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+                    let left = e.clientX - disX;    
+                    let top = e.clientY - disY;
+                
+                    //移动当前元素
+                    odiv.style.left = left + 'px';
+                    odiv.style.top = top + 'px';
+                    console.log(left,top)
+                };
+                document.onmouseup = (e) => {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+            };
+            },
+            changeMenuOne(index) {
+                console.log(index,32132)
+                this.data[index].show = true
+                console.log(this.data[index])
+                this.$forceUpdate()
+                
+            },
+            changeInput(index,key) {
+                this.data[index].children[key].show = false
+                this.$forceUpdate()
+               
+            },
+            changeInputA(index) {
+                this.data[index].show = false
+                this.$forceUpdate()
+            },
+            changeInputC(index,key,i,item) {
+               
+                this.data[index].children[key].children[i].show = false
+                this.$forceUpdate()
+
+            },
+            subtract(item,index,key) {
+                console.log(item,index,key)
+                this.data[index].children[key].show = true
+                this.$forceUpdate()
+                
+            },
+            subtractCh(index,key,i,item) {
+                this.data[index].children[key].children[i].show = true
+                
+                this.$forceUpdate()
+            },
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+         
+            cmd4currentNodeDataChange: function (dataStr) {
+                var data = oui.parseJson(dataStr);
+                var currentNodeData = this.$refs.middleTree.getCurrentNode();
+                currentNodeData.otherAttrs = data.otherAttrs;
+            },
+            init4default: function () {
+                var that = this;
+                var url = 'res_engine/menu/menuRightPorps.vue.html';
+                this.isNodeProp = false;
+                this.menuRightConfigPropsUrl = url;
+            },
+            handleNodeClick: function (data,index) {
+
+                console.log(data.name,data,index)
+                this.id = data.id
+                window.postMessage({
+                    cmd: 'menuRightPorpsData',
+                    param: {
+                        text:data.name
+                    }
+                }, '*');
+                return
+                var that = this;
+                var nodeId = data.id;
+                that.currentNodeId = nodeId;
+                var url = 'res_engine/menu/menuRightConfig.art.html';
+                this.isNodeProp = true;
+                url = oui.addParams(url, {
+                    nodeId: nodeId,
+                    url: 'res_engine/menu/menuRightConfig.vue.html?nodeId=' + nodeId
+                });
+                that.configData.nodeId = nodeId;
+                oui.setPageParam('menu_design_currentNode', oui.parseString(data));
+                //默认参数处理
+                that.configData.$router = {
+                    query: {
+                        nodeId: nodeId,
+                        url: 'res_engine/menu/menuRightConfig.vue.html?nodeId=' + nodeId
+                    }
+                };
+                that.menuRightConfigUrl = url;
+                //传入参数处理
+                if (that.$refs['refRight'] && that.$refs['refRight'].comp) {
+                    that.$refs['refRight'].comp.configData = {
+                        nodeId: nodeId,
+                        $router: {
+                            query: {
+                                nodeId: nodeId,
+                                url: 'res_engine/menu/menuRightConfig.vue.html?nodeId=' + nodeId
+                            }
+                        },
+                        url: 'res_engine/menu/menuRightConfig.vue.html?nodeId=' + nodeId
+                    };
+                }
+                //刷新组件
+                this.refresh();
+            },
+            // 屏幕高度变化自适应
+            changeFixed(clientHeight) {
+                this.leftHight = clientHeight - 85 + 'px';
+                this.middleHeight = clientHeight - 185 + 'px';
+            },
+            // 拿到菜单树数据
+            leftMenuData: function () {
+                var me = this;
+                var url = me.loadProjectTreeUrl;
+                oui.postData(url, {
+                }, function (res) {
+                    me.menuData = oui.parseJson(res.designJson);
+                    me.buildTreeData();
+               
+                }, function (res) {
+                    // console.log(res);
+                }, "加载中...");
+            },
+            newTreeMap: function (treeMapObj, idKey, parentIdKey, nameKey) {
+                var me = this;
+                treeMapObj.idKey = idKey || 'id';
+                treeMapObj.parentIdKey = parentIdKey || 'parentId';
+                treeMapObj.nameKey = nameKey || 'name';
+                treeMapObj.clickName = oui.os.mobile ? 'tap' : 'click';
+                var treeMap = com.oui.TreeMap.newTreeMap(treeMapObj);
+                return treeMap;
+            },
+            buildTreeData: function () {
+                var me = this;
+                var treeMap = me.menuData;
+                var url = me.loadProjectMenuUrl;
+                me.map4Ids = {};
+                oui.postData(url, {
+                }, function (res) {
+                    let json = '';
+                    if (json) {
+                        json = res.projectMenu.json;
+                    } else {
+                        var str = oui.parseString(treeMap);
+                        var ids = treeMap.ids || [];
+                        var map4Ids = {};
+                        oui.eachArray(ids, function (cid) {
+                            var id4new = 'm_' + oui.getUUIDLong();
+                            map4Ids[id4new] = cid;
+                            str = str.replace(new RegExp(cid, 'ig'), id4new);
+                        });
+                        me.map4Ids = map4Ids;
+                        json = oui.parseJson(str);
+                    }
+                    me.initMiddleTreeByJson(json);
+                }, function (res) {
+                    // console.log(res);
+                }, "加载中...");
+            },
+            initMiddleTreeByJson: function (json) {
+                let me = this;
+                oui.require(
+                    oui.getContextPath() + "res_engine/graph-common/js/tree-map.js", function () {
+                        me.$nextTick(function () {
+                            me.menuData4treeMap = me.newTreeMap(me.menuData);
+                            me.treeMap = me.newTreeMap(oui.parseJson(json));
+                            var map4Ids = me.map4Ids;
+                            for (var k in map4Ids) {
+                                me.treeMap.findSourceNode(k).sourceNodeId = map4Ids[k];
+                            }
+                            me.renderTree();
+                        });
+                    });
+            },
+            renderTree: function () {
+                var me = this;
+                var menuData4treeMap = me.menuData4treeMap;
+                var root = menuData4treeMap.findRoot();
+                var rootNode = this.findNodes4Tree(root, null, menuData4treeMap);
+                this.data = rootNode.children || [];
+                var middleTreeMap = me.treeMap;
+                var middleRoot = middleTreeMap.findRoot();
+                var middleRootNode = this.findNodes4Tree(middleRoot, null, middleTreeMap);
+                this.middleTreeData = middleRootNode.children || [];
+                this.$nextTick(function () {
+                    me.init4default();
+                });
+                
+                for (const item of this.data) {
+                   
+                   item.show = false
+                   if(item.children.length > 0) {
+                       for (const i of item.children) {
+                           i.show = false
+                           if(i.children.length > 0) {
+                               for (const a of i.children) {
+                                   a.show = false
+                               }
+                           }
+                       }
+                   }
+                }
+            },
+            findNodes4Tree: function (node, targetPnode, treeMap) {
+                var me = this;
+                if (!targetPnode) {
+                    var targetNode = oui.parseJson(oui.parseString(node.node));
+                    targetNode.children = [];
+                    targetPnode = targetNode;
+                    me.findNodes4Tree(node, targetPnode, treeMap);
+                } else {
+                    oui.eachArray(node.childIds || [], function (cid) {
+                        var currNode = treeMap.findNode(cid);
+                        var currPNode = oui.parseJson(oui.parseString(currNode.node));
+                        targetPnode.children.push(currPNode);
+                        currPNode.children = [];
+                        me.findNodes4Tree(currNode, currPNode, treeMap);
+                    });
+                }
+                return targetPnode;
+            },
+            //左侧拖拽开始事件
+            handleDragstart(node, event) {
+                this.$refs.middleTree.$emit('tree-node-drag-start', event, { node: node });
+            },
+            //中间拖拽开始事件
+            handleMiddleDragstart: function (node, event) {
+            },
+            handleDragend(draggingNode, endNode, position, event) {
+                // 插入一个空节点用于占位
+                let emptyData = { id: 'm_' + oui.getUUIDLong(), children: [] };
+                this.$refs.tree.insertBefore(emptyData, draggingNode);
+                this.$refs.middleTree.$emit('tree-node-drag-end', event);
+                //保证数据拖拽后不变化
+                this.$nextTick(() => {
+                    // 如果是移动到了当前树上，需要清掉空节点
+                    if (this.$refs.tree.getNode(draggingNode.data)) {
+                        this.$refs.tree.remove(emptyData);
+                    } else {
+                        // 如果移动到了别的树上，需要恢复该节点，并清掉空节点
+                        let data = JSON.parse(JSON.stringify(draggingNode.data));
+                        this.$refs.tree.insertAfter(data, this.$refs.tree.getNode(emptyData));
+                        this.$refs.tree.remove(emptyData);
+                    }
+                })
+            },
+            handleMiddleDragend: function (draggingNode, endNode, position, event) {
+                let emptyData = { id: 'm_' + oui.getUUIDLong(), children: [] };
+                //拖拽结束后，保证  sourceNodeId 传递项目树菜单节点id;
+                this.$nextTick(() => {
+                    // 如果是移动到了当前树上，需要清掉空节点
+                    var dragData = this.$refs.middleTree.getNode(draggingNode.data);
+                    if (dragData) {
+                        debugger;
+                        //处理节点上的数据 ，更新  id，更新sourceNodeId;
+                        var sourceNodeId = draggingNode.data.sourceNodeId || '';
+                        if (!sourceNodeId) {
+                            var newId = 'm_' + oui.getUUIDLong();
+                            var oldId = dragData.data.id;
+                            this.map4Ids[newId] = sourceNodeId;
+                            // 更新节点的 sourceNodeId属性
+                            //TODO 根据api 更新节点数据, 目的：最终获取当前 this.middleTreeData 数据正常
+                            dragData.data.id = newId;
+                            dragData.data.sourceNodeId = oldId;
+                        }
+                    }
+                    console.log(this.middleTreeData);
+                })
+            },
+            returnTrue() {
+                return true;
+            },
+            returnFalse() {
+                return false;
+            },
+            changeTab(index){
+                this.tabindex = index
+            },
+            cmdMessageData(e) {
+                let text = e.param.configData.text
+                this.forofData(text,this.middleTreeData)
+            },
+            forofData(text,arr) {
+                for (const item of arr) {
+                    if(item.id == this.id) {
+                        item.name = text
+                    }else{
+                        this.forofData(text,item.children)
+                    }
+                }
+            },
+            //改变样式
+            changeStyle(e) {
+                if(e == 1) {
+                    this.styleType = 1
+                    this.hoverColor ='#1890FF',
+                    this.hoverTextColor ='#ffffff',
+                    this.bgcolor = '#001529',
+                    this.textColor = '#fff'
+                }else if(e == 2) {
+                    this.styleType = 2
+                    this.hoverColor ='#E6F7FF',
+                    this.hoverTextColor ='#1890FF',
+                    this.bgcolor = '#FFFFFF',
+                    this.textColor = '#000'
+                }else if(e == 3) {
+                    this.styleType = 3
+                    this.textColor = '#fff',
+                    this.bgcolor = '#583FD3'
+                }
+                
+            },
+            imgSuccess(e,s) {
+                console.log(e)
+                this.imgUrl = e.url
+            }
+        }
+    }
+
+</script>
+<style scoped>
+    .middleTreeStyle {
+        background-color: {{bgcolor}};
+        
+     
+    }
+
+    .middleTreeStyle .tree-node-child {
+        background-color: #055CB6;
+        /*控制节点字体颜色*/
+        color: red;
+    }
+
+    .middleTreeStyle .el-tree-node {
+        /*节点边框*/
+        /* border: 1px solid #ddd; */
+    }
+
+    .middleTreeStyle .el-tree-node__content {
+        /*控制节点高度*/
+        height: 40px;
+       
+        border-bottom: {{borderColor}};
+        
+    }
+
+    .middleTreeStyle .el-tree-node__content:hover {
+        /*控制鼠标移动到节点上的背景颜色*/
+        color: {{hoverTextColor}};
+        background: {{hoverColor}};
+    }
+   .arr .middleTreeStyle .el-tree-node__content:hover {
+        color: #583FD3;
+        background-color:#fff ;
+    }
+
+    .middleTreeStyle .el-tree-node:focus>.el-tree-node__content {
+        /*控制选中节点时的颜色*/
+        /* background-color: red; */
+      
+    }
+
+    .menu-design-content {
+        display: flex;
+    }
+
+    .left-tree {
+        width: 200px;
+        background-color: #fff;
+        box-shadow: 0 2px 12px 2px rgba(0, 0, 0, 0.10);
+        position: relative;
+    }
+
+    .right-configure {
+        width: 300px;
+        background-color: #fff;
+    }
+
+    .middle-drag {
+        flex: 1;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .middle-bigbox {
+        height: 90%;
+        width: 80%;
+    }
+
+    .middle-drag-header {
+        height: 49px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        border-bottom: 1px solid #ebebeb;
+    }   
+
+    .upimgdiv{
+        border: 1px dashed #000;
+        width: 90px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .middle-content {
+        display: flex;
+        height: calc(100% - 50px);
+    }
+    .middle-content02 {
+        display: flex;
+        height: 100%;
+    }
+
+    .middle-left {
+        width: 210px;
+        height: 100%;
+        background-color: {{bgcolor}};
+    }
+
+    .middle-left02 {
+        width: 210px;
+        height: 100%;
+        background-color: {{bgcolor}};
+        border-radius: 0 25px 25px 0;
+    }
+
+    .middle-right {
+        width: calc(100% - 210px);
+        height: 100%;
+        background-color: #f2f8fe;
+    }
+
+    .middle-drag-title {
+        margin-bottom: 20px;
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+    }
+
+    .middle-drag-box {
+        height: 95%;
+        background-color: #fff;
+    }
+   
+    .middle-drag .el-tree {
+        background: none;
+    }
+    .menu-tabs{
+        display: flex;
+        align-items: center;
+        /* justify-content: space-around; */
+        font-size: 16px;
+        height: 50px;
+        line-height: 50px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-weight: 400;
+        font-family: PingFangSC-Regular;
+    }
+    .menu-tabs>div{
+        width: 50%;  
+        text-align: center;
+        font-weight: 400;
+    }
+    .menu-boximg{
+        width: 80%;
+        margin: 25px auto;
+        text-align: center;
+    }
+    .menu-img{
+        height: 100px;
+       
+    }
+    .menu-img>img{
+        width: 100%;
+        box-shadow: 0 3px 5px 0 #494949;
+        cursor: pointer;
+    }
+
+    /* .middle-drag>div {
+        width: 80%;
+        height: 80%;
+        background: #fff
+    } */
+
+    .custom-tree-node {
+        width: 80%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .scrollbar .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+    .tabfontcolor{
+        color: #FF7D82;
+        border-bottom: 2px solid #FF7D82;
+    }
+    .paddingTop{
+        padding-top:10px;
+    }
+    .el-tree-node__content{
+        height: 40px;
+    }
+    .el-tree-node__content:hover {
+        
+        color: #f56c6c;
+    background: #fef0f0;
+    }
+    .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+        /* color: {{hoverTextColor}};
+        background: {{hoverColor}}; */
+        color: #f56c6c;
+        background: #fef0f0;
+    }
+
+    .tops .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+        color: {{hoverTextColor}};
+        background: {{hoverColor}};
+    }
+    .arr .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+        color: #583FD3;
+        background-color:#fff ;
+    }
+    .arr .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
+        width: 80%;
+        margin-left: 20%;
+        border-radius: 20px 0 0 20px;
+        padding: 0;
+        color: #583FD3;
+        background-color:#fff ;
+        opacity: 1;
+    }
+    .el-menu{
+        border-right: 0;
+    }
+    .checkbox-bot{
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        border-top: 1px solid #eee;
+        padding: 20px 0;
+    }
+    .morediv{
+        margin-top: 20px;
+        text-align: center;
+        color: #f56c6c;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .middleTreeStyle .el-tree-node{
+      
+        color:{{textColor}}
+    }
+    .middleTreeStyle .el-tree-node__content{
+
+       
+    
+        border-bottom: {{borderCss}};
+    }
+
+    .arr .middleTreeStyle .el-tree-node__content{
+
+        width: 80%;
+        margin-left: 20%;
+        border-radius: 20px 0 0 20px;
+ 
+        border-bottom: {{borderCss}};
+}
+
+    .opacitySpan{
+        opacity: 0.5;
+    }
+    .opacitySpan:hover{
+        opacity: 1;
+    }
+    .menu_name{
+        margin-top: 16px;
+        margin-bottom: 44px;
+        font-family: PingFangSC-Regular;
+        font-size: 16px;
+        color: rgba(0,0,0,0.65);
+        font-weight: 400;
+    }
+    .hhh{
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10000;
+        background: #f2f2f2;
+    }
+    .previewHeader{
+        height: 80px;
+        display: flex;
+        align-items: center;
+        font-family: PingFangSC-Medium;
+        font-size: 16px;
+        color: #000000;
+        font-weight: 500;
+        background-color: #fff;
+    }
+    .preview_content{
+        width: 90%;
+        height: 90%;
+        margin: auto;
+     
+    }
+    .preview_flex{
+        display: flex;
+        align-items: center;
+        height: calc(100% - 60px);;
+    }
+    .preview_back{
+        cursor: pointer;
+        width: 90%;
+        margin: auto;
+        display: flex;
+        align-items: center;
+
+    }
+    .arr .el-tree-node__expand-icon.expanded,.arr .el-tree-node__content>.el-tree-node__expand-icon{
+        position: absolute;
+        right: 10px;
+    }
+    .upimgdiv02{
+        border: 1px dashed #fff;
+        width: 90%;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: auto;
+        color: #fff;
+        margin-top: 38px;
+    }
+    .userImg{
+        border-radius: 50%;
+        width: 62px;
+        height: 62px;
+        margin: auto;
+        background-color: red;
+        margin-top: 34px;
+    }
+    .username{
+        margin-top: 10px;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 25px;
+    }
+    .el-upload--picture-card{
+        border: 1px dashed #000;
+        width: 90px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+</style>

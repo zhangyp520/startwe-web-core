@@ -1,0 +1,89 @@
+<template>
+    <header class="startweheader">
+        <div><img class="logo" src="/res_startwe/assets/logo2.png" /></div>
+        <div class="actives">
+            <!-- <div class="icon"><img class="icon" src="/res_startwe/assets/question-circle@2x.png"/></div>
+            <div class="icon"><img class="icon" src="/res_startwe/assets/bell@2x.png"/></div> -->
+            <div class="user-header">
+                <el-popover>
+                    <div class="text-center"><el-button type="text" @click="logOut">注销</el-button></div>
+                    <img slot="reference" class="user-header" src="/res_startwe/assets/temp/h1.jpeg"/>
+                </el-popover>
+            </div>
+        </div>
+    </header>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data:function(){
+            return {}
+        },
+        mounted:function(){
+
+        },
+        methods:{
+            logOut(){
+
+                this.$confirm('确认注销登录?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    oui.cookie('tokenId',"", -1);
+                    oui.cookie('userId',"", -1);
+                    location.href="/index4vue.html#res_startwe/html/login.vue.html"
+                }).catch(() => {
+                       
+                });
+                
+            }
+        }
+    }
+</script>
+<style>
+    .startweheader{
+        display: flex;
+        justify-content:space-between;
+        background: #FFFFFF;
+        box-shadow: 0px 1px 4px 0px rgba(0, 21, 41, 0.12);
+        height:48px;
+        position: relative;
+        z-index:100;
+    }
+
+    .logo{
+        width: 93px;
+        height: 33px;
+        margin:8px 58px;
+    }
+
+    .actives{
+        display: flex;
+        width:150px;
+        margin-right:26px;
+    }
+
+    .actives>div{
+        flex: 1;
+        text-align: right;
+        align-self: center;
+    }
+
+    .icon{
+        height:16px;
+        width:16px;
+    }
+
+    .user-header{
+        height:24px;
+        width:24px;
+        border-radius: 12px;
+    }
+
+    .text-center{
+        text-align:center;
+    }
+</style>

@@ -1,0 +1,500 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>系统设置</el-breadcrumb-item>
+                <el-breadcrumb-item>部门管理</el-breadcrumb-item>
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <!-- 放置路由占位符，渲染组件部分 -->
+            <!-- <router-link ></router-link> -->
+            <!-- 主体内容区域 -->
+
+            <!-- 工单表格区域 -->
+            <div class="table_box">
+                <el-row>
+                    <el-button type="primary" class="el-icon-plus Workorder_button" @click='addDepartmentInfo'>添加部门
+                    </el-button>
+                </el-row>
+
+                <div class="Table_head">
+                    <!-- 表格头部 -->
+                    <template>
+                        <el-table :data="queryInfo.tableData" style="width: 100%" v-loading="loading">
+                            <el-table-column prop="" type="index" label="序号" align="center">
+                            </el-table-column>
+                            <el-table-column prop="deptCode" label="部门编码" align="center">
+                            </el-table-column>
+                            <el-table-column prop="deptName" label="部门名称" align="center"></el-table-column>
+                            <el-table-column class="operation_box" prop="state" label="操作" align="center">
+                                <template slot-scope="scope">
+                                    <el-button type="text" @click="handleEdit(scope.row)">编辑
+                                    </el-button>
+                                    <el-button type="text" style="color: red;"
+                                               @click="deleteDepartmentInfo(scope.$index, scope.row.id)">删除</el-button>
+                                    <el-switch class="tableScopeSwitch" v-model="scope.row.state" :active-value="1" :inactive-value="2"
+                                    active-text="启用" inactive-text="禁用" 
+                                               active-color="#1890FF" inactive-color="#eee"
+                                               @change='changeDepartmentState(scope.row)'>
+                                    </el-switch>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </div>
+                <!-- 分页 -->
+                <div class="page">
+                    <div class="block">
+                        <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                                       :current-page="queryInfo.currentPage" :page-sizes="[1, 3, 5, 10, 20]"
+                                       :page-size="queryInfo.pageSize" :total="queryInfo.total"
+                                       layout="total, sizes, prev, pager, next, jumper">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </el-main>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                // 列表数据
+                queryInfo: {
+                    tableData: null,
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            this.queryDepartmentInfoList();
+        },
+        methods: {
+            // 点击添加部门按钮进行跳转
+            addDepartmentInfo() {
+                oui.router.push("/res_apps/car/html/departmentmanagement/new_add_department.vue.html")
+            },
+
+            // 最开始初始化获取列表数据
+            queryDepartmentInfoList() {
+                var that = this;
+                // debugger
+                oui.ajaxPost('company/deptInfo/queryDepartmentInfo', {
+                        "pager": {
+                            // 第几页
+                            "page": that.queryInfo.currentPage,
+                            // 每页显示多少行
+                            "rows": that.queryInfo.pageSize
+                        }
+                    },
+
+                    function (res) {
+                        that.queryInfo.tableData = res.resultObj.departments || [];
+                        that.queryInfo.total = res.resultObj.total || [];
+                        that.loading=false;
+                    }
+                )
+            },
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.queryInfo.currentPage = val;
+                this.queryDepartmentInfoList();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.queryInfo.pageSize = val;
+                this.queryDepartmentInfoList();
+            },
+            // 编辑列表
+            handleEdit(row) {
+                oui.router.push('res_apps/car/html/departmentmanagement/modifydepartment.vue.html', {
+                    deptId: row.id,
+                    deptName: row.deptName
+                })
+            },
+            // 删除列表数据
+            deleteDepartmentInfo:function(index, id) {
+                var that = this;
+                this.$confirm('确认删除该部门信息吗？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('company/deptInfo/deleteDepartment', {
+                            "id": id
+                        },
+                        function () {
+                            that.$message({
+                                message: '部门信息删除成功',
+                                type: 'success'
+                            });
+                            // 删除成功后，在重新刷新页面数据
+                            that.queryDepartmentInfoList()
+                        },
+                        function () {
+                            that.$message.error('部门信息删除失败');
+                        }
+                    )
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            // 改变开关的启用状态
+            changeDepartmentState:function(row) {
+                var that = this;
+                oui.ajaxPost('company/deptInfo/changeDepartmentState', {
+                        "id": row.id
+                    },
+                    function (res) {
+                        if (row.state == 1) {
+                            that.$message({
+                                message: '部门启用成功',
+                                type: 'success'
+                            });
+                        } else {
+                            that.$message({
+                                message: '部门禁用成功',
+                                type: 'success'
+                            });
+                        }
+                    },function (res) {
+                        that.$message.error('部门信息修改失败');
+                    }
+                )
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+    /* 开关按钮文字提示 */
+.tableScopeSwitch .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+/*打开时文字位置设置*/
+.tableScopeSwitch .el-switch__label--right {
+  z-index: 1;
+  right: 5px;
+}
+/*关闭时文字位置设置*/
+.tableScopeSwitch .el-switch__label--left {
+  z-index: 1;
+  left: 5px;
+}
+/*显示文字*/
+.tableScopeSwitch .el-switch__label.is-active {
+  display: block;
+}
+.tableScopeSwitch.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 55px !important;    /*开关按钮的宽度大小*/
+}
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+
+    }
+
+    /* body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    } */
+
+    /* 自己的样式 */
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+    /* 在厂车辆数量情况 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+    .vehicle_content {
+        width: 100%;
+        height: 30px;
+        padding-top: 20px;
+    }
+
+    .vehicle_content>div {
+        display: inline;
+        margin-right: 16px;
+        line-height: 30px;
+    }
+
+    .vehicle_content>div>span {
+        color: #1890FF;
+    }
+
+    .Dropdown {
+        margin: 20px 0px;
+    }
+
+    .el-input__inner {
+        /* width: 160px; */
+        height: 32px;
+        margin: 0 3px;
+    }
+
+    /* 关键字区域 */
+    .keyword {
+        width: 1000px;
+        height: 46px;
+        font-weight: 700;
+        line-height: 46px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+
+    }
+
+    .keyword_content {
+        display: inline;
+        height: 30px;
+
+    }
+
+    .Reset_button>.el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+
+    .Reset_button>.el-button>span {
+        font-size: 14px;
+    }
+
+    .query_button1>.el-button {
+        border-radius: 0;
+    }
+
+    .query_button1>.el-button>span {
+        font-size: 14px;
+    }
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+    /* 表单单独的按钮 */
+    .Workorder_button {
+        margin-bottom: 15px;
+
+    }
+
+    /* 改变加号和文字之间的距离 */
+    .el-icon-plus:before {
+        margin-right: 8px;
+    }
+
+
+    /* 工单表格处 */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+    /* 调整按钮之间的距离 */
+    .el-button--text {
+        margin-right: 40px;
+
+    }
+
+    /* 我的工单区域结束 */
+
+
+
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

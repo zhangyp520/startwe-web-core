@@ -1,0 +1,46 @@
+
+<template >
+
+    <el-date-picker
+            v-model="value"
+            type="date"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            :format="format" :value-format="format"
+            @change="_controlOnUpdate"
+            >
+    </el-date-picker>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                format:'yyyy-MM-dd HH:mm:ss',
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'请选择日期时间'
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

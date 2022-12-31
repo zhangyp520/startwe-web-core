@@ -1,0 +1,46 @@
+<template>
+
+  <div class="logic-content"  >
+    
+    <oui-include url="res_engine/logic-graph/logic-design.tpl.html" type="html"  ></oui-include>
+
+    
+  </div>
+</template>
+
+<script>  
+  export default {
+    templateType: "vue",
+    props: {
+      property: {
+        type: Array,
+        default: function () {
+          return [];
+        },
+        required: true,
+      },
+    },
+    data() {
+      return { 
+      };
+    }, 
+    methods: {
+       
+
+    },
+    mounted() {
+       
+                        oui.replaceByTplConfig({
+                        url:"res_engine/logic-graph/logic-design.tpl.html",
+                        scripts: [oui.getContextPath()+'res_engine/logic-graph/js/logic-design-require.js'],
+                        container:'.paper-area-outer',
+                        callback:function(){
+                             
+                        },
+                        params:[]
+         });
+
+    },
+  };
+</script>
+ 

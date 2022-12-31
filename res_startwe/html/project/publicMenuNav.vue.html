@@ -1,0 +1,327 @@
+<!-- 项目设计公共侧边栏 -->
+<template>
+    <div class="project_menu">
+        <div :class="isRootId?'project_Title':'project_Title'">
+            <div  class="menu_inbox">
+                <el-input v-model="searchStr" size="mini" placeholder="搜索"></el-input>
+            </div>
+        </div>
+        <div class="scrollbar" :style="{height : slbHeight } ">
+            <el-scrollbar style="height: 100%;">
+                <el-tree ref="tree" node-key="id" :expand-on-click-node="isNodeExpand" :data="data"
+                    :props="defaultProps" @node-click="handleNodeClick" highlight-current="true"
+                    default-expand-all="true" :filter-node-method="filterNode">
+                </el-tree>
+            </el-scrollbar>
+        </div>
+        
+        <!-- 模板权限设置 -->
+        <div>
+            <oui-include type="module" url="res_startwe/html/project/modalPwoer.vue.html">
+            </oui-include>
+        </div>
+
+        <!-- 页面权限设置弹框 -->
+        <div>
+            <oui-include type="module" url="res_startwe/html/project/pageWorper.vue.html">
+            </oui-include>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                clientHeight: '',//浏览器可视区域高度
+                slbHeight: '',
+                isRootId: false,
+                isNodeExpand: false,
+                currentNodeId: '',
+                rootName: '',
+                treeClickCount: 0,
+                data: [],
+                searchStr:"",
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
+            }
+        },
+        watch: {
+            searchStr(val){
+                this.$refs.tree.filter(val);
+            },
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        mounted: function () { 
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+            var me = this;
+            this.clientHeight = `${document.documentElement.clientHeight}`;//获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 152 + 'px';
+            }
+            me.buildTreeData(); 
+        },
+        methods: {
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.name.indexOf(value) !== -1;
+            },
+            changeFixed(clientHeight) {
+                this.slbHeight = clientHeight - 152 + 'px';
+            },
+            rootSelect: function () {
+                this.isRootId = true;
+                var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap;
+                treeMap.currentNodeId = this.rootId;
+                var ids = treeMap.ids;
+                oui.eachArray(ids, function (id) {
+                    treeMap.expandChildren(id);
+                });
+                com.startwe.models.project.web.ProjectController4Design.refreshByRoot(treeMap);
+
+            },
+            buildTreeData: function () {
+                var me = this;
+                var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap; 
+                this.currentNodeId = treeMap.currentNodeId;
+                var root = treeMap.findRoot(); 
+
+                var rootNode = this.findNodes4Tree(root);
+                var isRootId = root.id == this.currentNodeId;
+                this.isRootId = isRootId;
+                this.rootId = root.id;
+                this.data = rootNode.children || [];
+                this.rootName = root.node.name;
+                if (this.currentNodeId) {
+                    this.$nextTick(function () {
+
+                        me.$refs['tree'].setCurrentKey(me.currentNodeId);
+
+                    });
+                }
+
+            },
+            findNodes4Tree: function (node, targetPnode) {
+                var me = this;
+                if (!targetPnode) {
+                    var targetNode = oui.parseJson(oui.parseString(node.node));
+                    targetNode.children = [];
+                    targetPnode = targetNode;
+                    me.findNodes4Tree(node, targetPnode);
+
+                } else {
+                    oui.eachArray(node.childIds || [], function (cid) {
+                        var currNode = com.startwe.models.project.web.ProjectController4Design.data.treeMap.findNode(cid);
+                        var currPNode = oui.parseJson(oui.parseString(currNode.node));
+                        targetPnode.children.push(currPNode);
+                        currPNode.children = [];
+
+
+                        me.findNodes4Tree(currNode, currPNode);
+                    });
+                }
+                return targetPnode;
+            },
+            handleNodeClick(data, node) {
+                var that = this;
+
+                var nodeId = data.id;
+                that.currentNodeId = nodeId;
+
+                that.$refs['tree'].setCurrentKey(that.currentNodeId);
+                var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap;
+                treeMap.currentNodeId = nodeId;
+                var pallIds = treeMap.findParentIdsAll(nodeId);
+                var rootId = treeMap.findRootId();
+                var pids = [nodeId].concat(pallIds);
+                var ids = treeMap.ids;
+                //展开所有
+                oui.eachArray(ids, function (id) {
+
+                    treeMap.expandChildren(id);
+                });
+                pids = pids.reverse();
+
+                oui.eachArray(pids, function (id) {
+
+                    // treeMap.expandChildren(id);
+                    var pid = treeMap.findParentId(id);
+                    if (pid) {
+                        var cids = treeMap.findChildIds(pid);
+                        oui.eachArray(cids, function (cid) {
+                            if (cid != id) {
+                                treeMap.unExpandChildren(cid);
+                            }
+                        });
+                    }
+
+                });
+                com.startwe.models.project.web.ProjectController4Design.refreshByRoot(treeMap);
+
+
+
+
+
+
+
+
+                // that.treeClickCount++;
+                // if (that.treeClickCount >= 2) {
+                //     return
+                // }
+                // if(that.timer){
+                //     clearTimeout(that.timer);
+                // }
+                // that.timer = window.setTimeout(() => {
+                //     if (that.treeClickCount == 1) {
+                //         //把次数归零
+                //         that.treeClickCount = 0;
+                //         //单击事件处理
+                //         that.isNodeExpand=false;
+                //         console.log('单击事件,可在此处理对应逻辑')
+
+                //     } else if (this.treeClickCount ==2) {
+                //         //把次数归零
+                //         that.treeClickCount = 0;
+                //         //双击事件
+                //         console.log('双击事件,可在此处理对应逻辑')
+                //         that.isNodeExpand=true;
+                //     }
+                // }, 300);
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .current-root-node {
+        color: #f56c6c;
+        background: #fef0f0;
+        border-right: 2px solid #fbc4c4;
+    }
+
+    .scrollbar .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    /* 侧边栏 */
+
+    .el-tree-node__label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size:14px;
+    }
+
+    .left-sub-title {
+        font-weight: normal;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    .special {
+        color: #409EFF;
+    }
+
+
+    .project_menu {
+        position: absolute;
+        width: 190px;
+        background-color: #fff;
+    }
+
+    .project_Title {
+        border-bottom: 1px solid #eeeded;
+    }
+
+    .menu_inbox {
+        padding:10px;   
+        /* width: 80%;
+        margin: auto;
+        height: 60px;
+        font-size: 18px;
+        white-space: nowrap;
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 60px;
+        color: rgb(88, 88, 88); */
+
+    }
+
+    .menu_children {
+        width: 80%;
+        margin: auto;
+        color: #999;
+        font-size: 16px;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 10px;
+    }
+
+    .menu_children>ul>li {
+        font-weight: bold;
+        cursor: pointer;
+
+    }
+
+    .menu_children>ul>li>div {
+        display: flex;
+        align-items: center;
+
+    }
+
+    .menu_children>ul>li>div>img {
+        width: 10px;
+        height: 10px;
+    }
+
+    .menu_children>ul>li>div>div {
+        margin-left: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .inner_menu {
+        margin-left: 20px;
+    }
+
+
+
+</style>

@@ -1,0 +1,629 @@
+<template>
+    <div :style="{height:slbHeight } " class="ppt-control-props-right ">
+        <oui-include type="module" url='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData">
+        </oui-include>
+        <div class="pageBasic  scollY"  id="scroolY" data-type="setting" style="width: 100%">
+            <el-collapse v-model="activeNames" class="property-collapse" @change="PanelSwitch">
+                <el-collapse-item :title="query.imageTitle" name="1">
+                    <div class=" base_box">
+                        <div class=" property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title ">填充样式</div>
+                            <el-dropdown class="select_fill_stylebox" size="200" trigger="click"
+                                @command="selectionRatio">
+                                <div class="el-dropdown-link selected_val">
+                                    <div>{{query.fillStyle}}</div><i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command=0>原始比例</el-dropdown-item>
+                                    <el-dropdown-item command="1:1">1:1</el-dropdown-item>
+                                    <el-dropdown-item command="4:3">4:3</el-dropdown-item>
+                                    <el-dropdown-item command="16:9">16:9</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                        <div class=" property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+                            <div id="selectBackColor" class="layui-inline" style="display: flex; align-items: center">
+                                <el-switch @change="changeAutoSwitch" v-model="query.autoSwitch"></el-switch>
+                                <input @change="intervalsChange" v-model="intervalsChangeValue"
+                                    style="width: 50px;text-align: center; margin-left: 10px" class="base_box_input" />
+                                <span style="margin-left: 5px;">秒</span>
+                            </div>
+                        </div>
+                        <!-- <div class=" property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title">音量</div>
+                            <el-slider class="slide-bar" v-model="query.volume"></el-slider>
+                            <input class="base_box_input" style="width: 50px; margin-left: 10px"
+                                v-model="query.volume" />
+                        </div> -->
+                        <div class="property-item videos-container">
+                            <div v-for="(item,index) in query.imagesList" :key="index" class="video-item">
+                                <div class="video-container">
+                                    <img style="width: 100%;height: 100%;border-radius: 4px;" :src="item.imgUrl" alt="">
+                                </div>
+                                <div class="video-content">
+                                    <h4 style="text-align: center">{{item.title}}</h4>
+                                    <div
+                                        style="display: flex; justify-content: space-between; flex-direction: column; height: 100%; padding-bottom: 5px">
+                                        <div class="video-content-property">
+                                            <span>{{item.duration}}</span>
+                                            <span>{{item.size}}</span>
+                                        </div>
+                                        <div class="video-content-property">
+                                            <div style="width: 18px;height: 18px;"> <img @click="upImage(index)"
+                                                    :src="imagesMap.uploadImg"
+                                                    :class="index == 0?'video-img-operation image-readOnly':'video-img-operation'" />
+                                            </div>
+
+
+                                            <div style="width: 18px;height: 18px;"><img
+                                                    :class="index == query.imagesList.length-1?'video-img-operation image-readOnly':'video-img-operation'"
+                                                    @click="downImage(index)" :src="imagesMap. downloadImg" /></div>
+                                            <img @click=" delImage(index) " :src="imagesMap.trashImg"
+                                                class="video-img-operation" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bottom_addvideo">
+<!--                                <el-upload class="upload-demo" ref="upload" :limit=2 :auto-upload="false"-->
+<!--                                    :show-file-list="false" :on-change="addImage">-->
+                                    <el-button class="addvideo_btn" :plain=false slot="trigger" size="small" @click="selectImg"><img
+                                            :src="imagesMap.addBotVideo" class="video-img-operation" /></el-button>
+<!--                                </el-upload>-->
+                            </div>
+                        </div>
+                    </div>
+                </el-collapse-item>
+                <el-collapse-item title="基础" name="2">
+                    <oui-include type="module" url='res_engine/ppt_design/common/panelcomponent/basicinfo.vue.html'>
+                    </oui-include>
+                </el-collapse-item>
+                <el-collapse-item title="动画" name="3">
+                    <oui-include type="module" url='res_engine/ppt_design/common/panelcomponent/animation.vue.html'>
+                    </oui-include>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            var status = oui.getPageParam("ppt_design_props_status");
+            if (!status) {
+                status = ['1', '2', '3'];
+            }
+            oui.setPageParam('ppt_design_props_status', status);
+            return {
+                scrollTop:oui.getPageParam('right_props_scrollTop')||0,
+                intervalsChangeValue: 1,
+                rightToolbarData: {},
+                slbHeight: '',
+                activeNames: status,
+                activeName: 'first',
+                query: {
+                    animationList: [],
+                    borderBg: '#f0f0f0',
+                    borderRadius: 0,
+                    borderWidth: 0, //边框宽度
+                    delay: 3,
+                    fillStyle: '原始比例',
+                    rotate: '0',
+                    name: '图片1',
+                    volume: 10, //音量
+                    autoSwitch: true, // 自动切换
+                    imageTitle: '图片2',
+                    imagesList: []
+                },
+                imagesMap: {
+                    uploadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-up.png',
+                    downloadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-down.png',
+                    trashImg: oui.getContextPath() + 'res_engine/ppt_design/images/trash.png',
+                    addBotVideo: oui.getContextPath() + 'res_engine/ppt_design/images/add_video.png',
+                },
+            }
+        },
+        mounted() {
+            let that = this;
+            this.$nextTick(function(){
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll[0]){
+                    $scroll[0].scrollTop = that.scrollTop;
+                }
+            });
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if (!currentControl || (!currentControl.id) || (!currentControl.controlType)) {
+                return;
+            }
+            //拷贝
+            this.currentControl = oui.parseJson(oui.parseString(currentControl));
+            // 圆角回填
+            // 名字回填
+            if (this.currentControl.otherAttrs.imgModeName) {
+                this.query.imageTitle = this.currentControl.otherAttrs.imgModeName
+                this.query.name = this.currentControl.otherAttrs.imgModeName
+            } else {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imgModeName = "图片1"
+            }
+            if (this.currentControl.style.borderRadius) {
+                this.query.borderRadius = this.currentControl.style.borderRadius
+            }
+            // 边框宽度回填
+            if (this.currentControl.style.borderLeftWidth) {
+                this.query.borderWidth = this.currentControl.style.borderLeftWidth
+            }
+            // 边框颜色回填
+            if (this.currentControl.style.borderBottomColor) {
+                this.query.borderBg = this.currentControl.style.borderBottomColor
+            }
+            //位置回填
+            if (this.currentControl.style) {
+                console.log(this.currentControl.style);
+                if (this.currentControl.style.left) {
+                    this.query.x = this.parseFloat(this.currentControl.style.left)
+                }
+                if (this.currentControl.style.top) {
+                    this.query.y = this.parseFloat(this.currentControl.style.top);
+                }
+                if (this.currentControl.style.width) {
+                    this.query.w = this.parseFloat(this.currentControl.style.width)
+                }
+                if (this.currentControl.style.height) {
+                    this.query.h = this.parseFloat(this.currentControl.style.height)
+                }
+            }
+            //透明度
+            if (this.currentControl.style.opacity) {
+                this.query.opacity = this.currentControl.style.opacity * 100
+            }
+            // <<<<<<<<<<<<<数据相关>>>>>>>>>>>>>>>>>>
+            //回显度数
+            if (this.currentControl.otherAttrs.rotate) {
+                this.query.rotate = this.currentControl.otherAttrs.rotate
+            }
+            // 回显选项
+            if (this.currentControl.otherAttrs.fillStyle) {
+                this.query.fillStyle = this.currentControl.otherAttrs.fillStyle
+            }
+            // 回显图片列表数据
+            if (this.currentControl.otherAttrs.imagesList) {
+                this.query.imagesList = this.currentControl.otherAttrs.imagesList
+            }
+            //回显秒数
+            if (this.currentControl.otherAttrs.imgIntervals) {
+                this.intervalsChangeValue = this.currentControl.otherAttrs.imgIntervals
+            }
+            // 是否自动播放开关回显
+            this.query.autoSwitch = this.currentControl.otherAttrs.autoSwitch;
+            if (this.query.autoSwitch == undefined) {
+                this.currentControl.otherAttrs.autoSwitch = true;
+                this.query.autoSwitch = this.currentControl.otherAttrs.autoSwitch;
+            }
+        },
+        methods: {
+            //更改旋转度数
+            rotateChange() {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.rotate = this.query.rotate;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.transform = 'rotate(' + this.query
+                    .rotate + 'deg);';
+                // transform: rotate(angle);
+                this.updateCurrentControl()
+            },
+            PanelSwitch(status) {
+                oui.setPageParam('ppt_design_props_status', status);
+                this.activeNames = status
+            },
+            modeNameChange() {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imgModeName = this.query.name
+                this.updateCurrentControl()
+            },
+            //字符串转数字
+            parseFloat: function (num) {
+                var temp = num;
+                if (num) {
+                    if (typeof num == 'string') {
+                        temp = parseFloat(num);
+                    }
+                }
+                if (temp) {
+                    temp = temp.toFixed(2);
+                }
+                return temp;
+            },
+            //m,n为正整数的分子和分母
+            reductionTo: function (m, n) {
+                var arr = [];
+                if (!this.isInteger(m) || !this.isInteger(n)) {
+                    console.log('m和n必须为整数');
+                    return;
+                } else if (m <= 0 || n <= 0) {
+                    console.log('m和n必须大于0');
+                    return;
+                }
+                var a = m;
+                var b = n;
+                (a >= b) ? (a = m, b = n) : (a = n, b = m);
+                if (m != 1 && n != 1) {
+                    for (var i = b; i >= 2; i--) {
+                        if (m % i == 0 && n % i == 0) {
+                            m = m / i;
+                            n = n / i;
+                        }
+                    }
+                }
+                arr[0] = m;
+                arr[1] = n;
+                return arr;
+            },
+            //判断一个数是否为整数
+            isInteger: function (obj) {
+                return obj % 1 === 0
+            },
+            downImage: function (index) {
+                if (index + 1 < this.query.imagesList.length) {
+                    let temp1 = this.query.imagesList[index];
+                    let temp2 = this.query.imagesList[index + 1];
+                    this.query.imagesList[index + 1] = temp1;
+                    this.query.imagesList[index] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imagesList = oui.parseJson(
+                        oui.parseString(this.query.imagesList));
+                    this.updateCurrentControl()
+                }
+            },
+            upImage: function (index) {
+                if (index > 0) {
+                    let temp1 = this.query.imagesList[index - 1];
+                    let temp2 = this.query.imagesList[index];
+                    this.query.imagesList[index] = temp1;
+                    this.query.imagesList[index - 1] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imagesList = oui.parseJson(
+                        oui.parseString(this.query.imagesList));
+                    this.updateCurrentControl()
+                }
+            },
+            delImage: function (index) {
+                this.query.imagesList.splice(index, 1);
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imagesList = oui.parseJson(oui
+                    .parseString(this.query.imagesList));
+                this.updateCurrentControl()
+            },
+            // 自动播放秒数
+            intervalsChange(event) {
+                console.log(this.intervalsChangeValue);
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imgIntervals = this
+                    .intervalsChangeValue;
+                this.updateCurrentControl()
+            },
+            //自动播放
+            changeAutoSwitch(Switch) {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.autoSwitch = Switch;
+                this.query.autoSwitch = Switch;
+                this.updateCurrentControl()
+            },
+            //选择图片
+            selectImg: function () {
+                let me = this;
+                com.oui.absolute.AbsoluteDesign.showFileDialog({
+                    fileType:2,
+                    fileTypes:['image'],
+                    local:false,
+                    callback:function (res) {
+                        oui.eachArray(res, function (item) {
+                            let propList = item.resolution.split('*');
+                            let imageData = {
+                                title: item.fileName.split('.')[0],
+                                duration: item.resolution,
+                                size: (item.fileSize / 1024000).toFixed(1) + 'M',
+                                imgUrl: item.url,
+                                activeProp: propList,
+                                defaultProp: propList
+                            };
+                            me.query.imagesList.push(imageData)
+                        });
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imagesList = oui
+                            .parseJson(oui.parseString(me.query.imagesList));
+                        me.updateCurrentControl()
+                    }
+                })
+            },
+            // 添加图片
+            addImage(filea) {
+                var event = event || window.event;
+                let file = event.target.files[0];
+                let base64Url = '';
+                let imagedata = {};
+                let reader = new FileReader();
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    localUrl = window.createObjectURL(filea.raw);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    localUrl = window.URL.createObjectURL(filea.raw);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    localUrl = window.webkitURL.createObjectURL(filea.raw);
+                }
+                //转base64
+                reader.onload = function (e) {
+                    base64Url = e.target.result
+                };
+                reader.readAsDataURL(file);
+                var me = this;
+                this.imgLoad(localUrl, (imgProportion) => {
+                    let proportion = this.reductionTo(imgProportion.width, imgProportion.height);
+                    imagedata = {
+                        id: 'img_' + oui.getUUIDLong(),
+                        // title: filea.name.split('.')[0],
+                        duration: imgProportion.width + 'x' + imgProportion.height,
+                        size: (filea.size / 1024000).toFixed(1) + 'M',
+                        imgUrl: base64Url,
+                        activeProp: proportion,
+                        defaultProp: proportion
+                    };
+                    me.query.imagesList.push(imagedata);
+
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imagesList = oui
+                        .parseJson(oui.parseString(me.query.imagesList));
+                    me.updateCurrentControl()
+                });
+            },
+            imgLoad(url, callback) {
+                let img = new Image();
+                let imgbili = {};
+                img.src = url;
+                if (img.complete) {
+                    imgbili.width = img.width;
+                    imgbili.height = img.height;
+                    callback && callback(imagedata);
+                } else {
+                    img.onload = (e) => {
+                        imgbili.width = img.width;
+                        imgbili.height = img.height;
+                        img.onload = null;
+                        callback && callback(imgbili);
+                    };
+                };
+            },
+            //选择比例
+            selectionRatio(command) {
+                let propList = [];
+                if (command == 0) {
+                    this.query.fillStyle = '原始比例';
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = '原始比例';
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyleArr = false;
+                } else {
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = command;
+                    this.query.fillStyle = command;
+                    propList = command.split(":");
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyleArr = propList;
+                }
+                this.updateCurrentControl()
+            },
+            updateCurrControlStyle: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.updateCurrControlStyle();
+                }
+            },
+            //更新
+            updateCurrentControl: function () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+<style scoped>
+    .scollY{
+        overflow-y:auto;
+        height: calc(100vh - 66px);
+        width: 100%;
+    }
+    .ppt-control-props-right{
+
+    }
+    .el-color-picker__trigger {
+        width: 60px !important;
+    }
+
+    .base_titleA {
+        width: 50px;
+    }
+
+    .video-img-operation.image-readOnly:hover,
+    .video-img-operation.image-readOnly {
+        cursor: default;
+        opacity: 0.3;
+    }
+
+    .el-dropdown-menu__item {
+        width: 200px;
+    }
+
+    .addvideo_btn {
+        width: 271px;
+        height: 25px;
+        padding: 0;
+        background: #464646;
+        border: none;
+    }
+
+    .bottom_addvideo {
+        width: 271px;
+        height: 25px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .base_box_input {
+        width: 120px;
+    }
+
+    .el-collapse {
+        border: none;
+    }
+
+    .selected_val {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .selected_val>div {
+        width: 150px;
+    }
+
+    .select_fill_stylebox {
+        color: #fff;
+        outline: none;
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide-bar {
+        width: 50%;
+    }
+
+    .video-item {
+        width: 271px;
+        height: 112px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding-left: 8px;
+        margin-top: 10px;
+    }
+
+    .video-container {
+        width: 96px;
+        height: 96px;
+        opacity: 1;
+        background: #2d2d2d;
+        border-radius: 4px;
+    }
+
+    .videos-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .video-content {
+        display: flex;
+        flex-direction: column;
+        height: 96px;
+        width: 165px;
+        padding-left: 10px;
+        opacity: 0.6;
+    }
+
+    .video-content-property {
+        width: 120px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .video-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .video-img-operation:hover {
+        opacity: 1;
+    }
+
+    .el-color-picker {
+        height: 36px !important;
+    }
+
+    .el-color-picker__trigger {
+        height: 36px !important;
+        width: 80px !important;
+    }
+
+    .el-color-picker__icon {
+        display: none !important;
+    }
+
+    .animation-container-in {
+        display: flex;
+        flex-direction: row;
+        flex-flow: wrap;
+    }
+
+    .animation-item-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 20px;
+        width: 50px;
+        margin-top: 10px;
+    }
+
+
+
+    .base_box_input-unit-container {
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+
+    .seconds-input {
+        height: 100%;
+        border: 0;
+        background: #303030;
+        color: #fff;
+        outline: none;
+    }
+
+    .color-choose {
+        padding: 10px 12px;
+        opacity: 1;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+    }
+
+    .color-container {
+        background: #fff;
+        height: 100%;
+    }
+</style>

@@ -1,0 +1,78 @@
+<!-- 时间选择 -->
+<template>
+
+    <!--<el-date-picker
+            v-model="value"
+            type="date"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            :format="format" :value-format="format"
+            @change="_controlOnUpdate"
+            >
+    </el-date-picker>-->
+    <span>
+        <mt-button type="primary" size="small" @click="openPicker">选择时间</mt-button>
+        <span class="picker-value">{{value}}</span>
+        <mt-datetime-picker
+                ref="picker"
+                type="time"
+                @confirm="handleConfirm"
+                :id="id"
+                :name="name"
+                :bindProp="bindProp"
+                :tempStyle="style"
+                :class="cls"
+                :placeholder="placeholder"
+                :format="format" :value-format="format"
+                @change="_controlOnUpdate">
+        </mt-datetime-picker>
+    </span>
+
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                format: 'yyyy-MM-dd HH:mm:ss',
+                id: '',
+                name: '',
+                data: [],
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: '请选择日期时间'
+            }
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            },
+            openPicker: function()
+            {
+                this.$refs.picker.open();
+            },
+            handleConfirm: function(value)
+            {
+                this.value = value;
+            }
+        }
+    }
+</script>
+
+<style>
+    .picker-value {
+        padding: 0 10px;
+        font-size: 13px;
+        color: #333;
+    }
+</style>

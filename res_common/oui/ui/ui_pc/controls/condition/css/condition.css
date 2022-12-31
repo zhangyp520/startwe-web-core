@@ -1,0 +1,1104 @@
+@charset "utf-8";
+/*
+inner-condition--内嵌
+tips-condition--Tips弹窗
+dialog-condition--Dialog弹框
+
+paved-condition--平铺查询
+selector-condition--下拉查询
+*/
+/*简单查询*/
+.oui-class-condition{
+    width: 250px;
+    display: inline-block;
+    padding-right: 30px;
+    text-align: left;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    border-radius: 16px;
+    position: relative;
+    vertical-align: top;
+}
+.simple-condition{
+    font-size: 0;
+}
+.simple-condition.simple-condition-onlyOne  .simple-condition-fields-area,
+.oui-class-condition .condition-operation-area{
+    display: none;
+}
+.simple-condition.simple-condition-onlyOne  .simple-condition-value-area{
+    width: 100%;
+}
+.simple-condition-fields-area{
+    font-size: 14px;
+}
+.simple-condition-selected,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-selected{
+    padding: 4px 6px 3px 10px;
+    background: url("../images/search-arrow.jpg") center right no-repeat;
+    padding-right: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+.condition-var-area:after{
+    content: "";
+    background: url("../images/search-arrow.jpg") center right no-repeat;
+    width: 16px;
+    height: 6px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -3px;
+}
+.simple-condition-options,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options{
+    background: #ffffff;
+    padding: 5px 0;
+    position: absolute;
+    border: 1px solid #e6e6e6;
+    left: 0;
+    right: 0;
+    top: 41px;
+    z-index: 1000;
+    box-shadow: 0 0 6px rgba(40, 120, 255, 0.11), 0 0 7px rgba(0, 0, 0, 0.11);
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+.simple-condition-options ul,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul{
+    max-height: 200px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+    margin: 0 !important;
+}
+.simple-condition-options ul li,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul li{
+    width: 100%;
+    padding: 5px !important;
+    text-align: left;
+    line-height: 1.5;
+    font-size: 14px;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+.simple-condition-options ul li:hover,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul li:hover{
+    background: #e6e6e6;
+}
+.oui-simple-search-submit-btn{
+    background: url("../images/oui-simple-search-icon.png") center no-repeat;
+    background-position: 0 -2px;
+    width: 32px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+.oui-simple-search-submit-btn.oui-simple-search-close{
+    background-position: -33px -3px;
+}
+/*点击后的宽度*/
+.simple-condition-field-half{
+    width: 50%;
+    display: inline-block;
+    position: relative;
+    border-right: 1px solid #e6e6e6;
+}
+.simple-condition-value-area{
+    width: 50%;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+.simple-condition-value-area-nocontrol{
+    line-height: 35px;
+    padding: 0 5px !important;
+    color: #515151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.simple-condition-value-area.display_none{
+    display: none;
+}
+.simple-condition-value-area input,
+.condition-var-area input{
+    background: none;
+    min-height: inherit !important;
+    border: 0 !important;
+    font-size: 12px !important;
+    height: 24px !important;/*IE11需要定义高度*/
+    outline: none;
+    color: #515151;
+    padding: 0 5px 0 10px;
+    padding-right: 5px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.simple-condition-value-area>div,
+.condition-var-area>div{
+    border: 0 !important;
+    padding-top: 3px;
+    padding-bottom: 1px;
+}
+.simple-condition-value-area  .oui-class-selectperson .personarea,
+.simple-condition-value-area  .oui-class-selectperson-2 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-3 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-4 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-6 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-3 .multi-personarea,
+.simple-condition-value-area  .oui-class-selectperson-4 .multi-personarea,
+.simple-condition-value-area  .oui-class-selectperson-6 .multi-personarea{
+    min-height: 24px !important;
+    border: 0 !important;
+    height: 24px;
+    line-height: 24px;
+    background-color: transparent;
+}
+/*oui-class-condition-10简单查询*/
+.oui-class-condition-10{
+    width: 250px;
+    display: inline-block;
+    padding-right: 30px;
+    text-align: left;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    border-radius: 16px;
+    position: relative;
+    vertical-align: top;
+}
+.oui-class-condition-10 .simple-condition-select-icon{
+    background: url("../images/condition-select.png") no-repeat;
+    background-position: -1px -1px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: top;
+}
+.oui-class-condition-10 .simple-condition-select-icon:hover{
+    background-position: -33px -1px;
+}
+.oui-class-condition-10 .simple-condition-field-half{
+    background: url("../images/condition-colon.png") no-repeat;
+    background-position: center right;
+    background-size: auto 7px;
+    width: auto;
+    float: left;
+    font-size: 0;
+    border-right: 0;
+}
+.oui-class-condition-10 .simple-condition-selected,
+.oui-class-condition-10 .simple-condition-select-icon{
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+}
+.oui-class-condition-10 .simple-condition-selected{
+    background: none;
+    padding: 5px 6px 5px 0;
+    max-width: 100px;
+}
+.oui-class-condition-10 .simple-condition-value-area{
+    width: auto;
+    display: block;
+    overflow: hidden;
+}
+.oui-class-condition-10 .simple-condition-options{
+    width: 120px;
+}
+.oui-class-condition-10 .simple-condition-value-area input,
+.oui-class-condition-10 .condition-var-area input{
+    font-size: 14px !important;
+}
+.oui-class-condition-10.simple-condition-onlyOne .simple-condition-selected,
+.oui-class-condition-10.simple-condition-onlyOne .simple-condition-select-icon{
+    display: none;
+}
+.oui-class-condition-10 .oui-class-timepicker input{
+    width: 40%;
+    display: inline-block;
+    vertical-align: top;
+}
+.oui-class-condition-10 .oui-class-timepicker i{
+    height: 24px;
+    line-height: 18px;
+    display: inline-block;
+    vertical-align: top;
+}
+.oui-class-condition-10 .oui-class-timepicker{
+    padding-right: 28px;
+}
+.oui-class-condition-10 .oui-class-timepicker .time-picker-clear{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -12px;
+    margin-left: 0;
+}
+/*
+组合查询*/
+.paved-condition,
+.selector-condition{
+    display: inline-block;
+    position: relative;
+    /*z-index: 200;*/
+    margin: 0 auto;
+    vertical-align: top;
+}
+
+.group-condition{
+    background: url("../images/group-condition-icon.png") no-repeat;
+    background-position: 0 0;
+    width: 32px;
+    height: 32px;
+    font-size: 0;
+    display: inline-block;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+    vertical-align: top;
+}
+.group-condition:hover{
+    background-position: -32px 0;
+}
+.group-condition.group-condition-hide{
+    display: none;
+}
+.selector-condition .group-condition.condition-setting-btn{
+    width: auto;
+    height: auto;
+    background: #2C82FC;
+    font-size: 14px;
+    padding: 6px 12px;
+    color: #ffffff;
+}
+.selector-condition .group-condition.condition-setting-btn:hover{
+    background: #4779C5;
+}
+.tips-condition .group-condition-area{
+    background: #ffffff;
+    /*width: 600px;*/
+    padding: 15px 10px;
+    padding-top: 7px;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: absolute;
+    top: 40px;
+    z-index: 999;
+    text-align: left;
+}
+.dialog-condition .group-condition-area{
+    background: #ffffff;
+    min-width: 650px;
+    max-width: 800px;
+    padding: 15px 10px;
+    padding-top: 7px;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    margin-left: -325px;
+    z-index: 400;
+    text-align: left;
+    box-shadow: 0 0 25px rgba(0,0,0,.13);
+}
+
+.group-condition-triangle{
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-top: solid 1px #e6e6e6;
+    border-right: solid 1px #e6e6e6;
+    position: absolute;
+    top: -5px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    z-index: 6;
+}
+.dialog-condition .group-condition-triangle{
+    display: none;
+}
+.group-condition-title{
+    display: block;
+    font-size: 15px;
+    color: #2C82FC;
+    text-align: left;
+    position: relative;
+    z-index: 10;
+}
+.group-condition-webrobot{
+    display: block;
+    font-size: 13px;
+    color: #515151;
+    position: relative;
+    z-index: 10;
+    text-align: left;
+}
+.group-condition-area>ul{
+    position: relative;
+    z-index: 10;
+    overflow-y: auto;
+    /*max-height: 210px;
+    overflow-y: auto;*/
+    /*不设置最大高度的原因是：设置后弹窗弹出会被遮挡*/
+}
+.oui-class-singleselect-2 ul li, .oui-class-singleselect-3 ul li, .oui-class-multiselect-2 ul li, .oui-class-multiselect-3 ul li, .oui-class-singleselect-4 ul li, .oui-class-singleselect-5 ul li{
+    padding-top: 0 !important;
+    min-width: inherit !important;
+}
+.group-condition-area ul li{
+    position: relative;
+    /*padding-top: 5px;*/
+    margin-top: 0;
+    float: none;
+}
+.selector-condition .oui-class-condition{
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+.group-condition-area ul li .group-condition-add,
+.group-condition-area ul li .group-condition-del,
+.group-condition-area ul li .group-condition-accordion{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0;
+    cursor: pointer;
+    margin-right: 10px;
+    border: 0;
+    padding: 0;
+    float: none;
+}
+.group-condition-area ul li .group-condition-add,
+.group-condition-area ul li .group-condition-del{
+     background: url("../images/group-condition-option-icon.png") no-repeat;
+    width: 20px;
+    height: 20px;
+}
+.group-condition-area ul li .group-condition-add{
+    background-position: 0 0;
+    right: 33px;
+}
+.group-condition-area ul li .group-condition-del{
+    background-position: -20px 0;
+    right: 3px;
+}
+.group-condition-area ul li .group-condition-accordion{
+    width: 30px;
+    height: 30px;
+    margin-right: 0;
+    position: absolute;
+    right: 0;
+    top: 38px;
+    display: none;
+}
+.group-condition-area ul li .group-condition-accordion:after{
+    content: "展开";
+    width: 30px;
+    height: 30px;
+    color: #2C82FC;
+    line-height: 30px;
+    text-align: center;
+    font-size: 12px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.group-condition-area ul li .oui-class-condition.condition-height-clear + .group-condition-accordion:after{
+    content: "收起";
+}
+.group-condition-add-rule{
+    background: transparent;
+    width: 100%;
+    height: 34px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #2C82FC;
+    border: 1px solid #2C82FC;
+    margin-top: 10px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+    outline: none;
+    display: none;
+}
+.group-condition-area ul li .group-condition-calc{
+    height: 26px;
+    line-height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+    float: none;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    padding: 0 12px;
+}
+.group-condition-area ul li .group-condition-calc:hover{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.group-condition-area ul li .simple-condition-options ul li,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul li{
+    margin: 0;
+    min-width: inherit;
+    width: auto;
+    float: none;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .oui-simple-search-submit-btn{
+    display: none;
+}
+.group-condition-area ul li .oui-class-condition{
+    padding-right:0;
+    border: 0;
+    margin: 5px 0;
+    display: inline-block;
+}
+
+.group-condition-area ul li .oui-class-condition .simple-condition{
+    font-size: 0;
+}
+
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-var-area{
+    display: inline-block;
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    font-size: 14px;
+    position: relative;
+    vertical-align: middle;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area{
+    width: 200px;/*178*/
+    margin-right: 10px;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-var-area{
+    width: 200px;/*178*/
+    margin-right: 10px;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-var-area{
+    min-height: 30px;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area{
+    width: 80px;
+    margin-right: 10px;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area{
+    width: 180px;
+    margin-right: 10px;
+}
+.group-condition-area .group-condition-foot-area{
+    display: block;
+    text-align: center;
+    padding-top: 20px;
+    position: relative;
+}
+.group-condition-area .group-condition-foot-area span{
+    width: 90px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    margin:  0 20px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    float: none;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-confirm-btn{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-confirm-btn:hover{
+    background: #4878c5;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-cancel-btn{
+    background: #e5e5e5;
+    color: #515151;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-cancel-btn:hover{
+    background: #c4c4c4;
+    color: #515151;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-more-btn{
+    background: #ffffff;
+    width: 60px;
+    font-weight: bold;
+    border: 1px solid #e6e6e6;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    position: absolute;
+    left: 51px;
+    top: -1px;
+    z-index: 200;
+    display: none;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-more-btn:hover{
+    color: #2C82FC;
+    cursor: pointer;
+}
+/*蒙层*/
+.oui-condition-field-mask-layer,
+.oui-condition-operation-mask-layer,
+.oui-condition-group-mask-layer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 5;
+}
+
+/*
+弹窗位置*/
+.condition-left{
+    left: 0;
+}
+.condition-center{
+    left: 50%;
+    margin-left: -300px;
+}
+.condition-right{
+    right: 0;
+}
+.condition-left .group-condition-triangle{
+    left: 10px;
+}
+.condition-center .group-condition-triangle{
+    left: 50%;
+    margin-left: -4px;
+}
+.condition-right .group-condition-triangle{
+    right: 10px;
+}
+/*
+重构时间样式*/
+.oui-class-condition .simple-condition-value-area .oui-class-timepicker input{
+    width: 45%;
+    vertical-align: top;
+}
+.oui-class-condition .simple-condition-value-area .oui-class-timepicker i{
+    font-style: normal;
+    width: 10%;
+    padding: 0;
+    text-align: center;
+    height: 24px;
+    font-size: 14px;
+    vertical-align: top;
+    display: inline-block;
+}
+.oui-class-condition .simple-condition-value-area .oui-class-timepicker .time-picker-clear{
+    width: 16px;
+    height: 16px !important;
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    margin-left: 0;
+    right: 0;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition-value-area .oui-class-timepicker .time-picker-clear{
+    margin-left: 6px;
+    right: 5px;
+}
+/****/
+.oui-condition-content{
+    position: relative;
+    z-index: 100;
+    /*width: 620px;*/
+    max-height: inherit !important;
+}
+.oui-condition-content .oui-condition-root{
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: top;
+    float: none;
+    max-height: 215px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+.oui-condition-content .oui-condition-root>li{
+    width: 100%;
+}
+.group-condition-rules{
+    width: 100%;
+    min-width: 500px;
+    display: block;
+    white-space: nowrap;
+    padding-top: 5px;
+    padding-bottom: 8px;
+    color: #515151;
+    font-size: 15px;
+}
+.group-condition-rules .group-condition-rules-match{
+    margin-right: 10px;
+}
+.group-condition-rules .group-condition-rules-addMsg{
+    margin-right: 15px;
+}
+.group-condition-rules .group-condition-rules-or{
+    margin-right: 10px;
+    margin-left:10px;
+    color: #2C82FC;
+    font-family: arial, helvetica, sans-serif;
+}
+.group-condition-rules button{
+    background: none;
+    min-width: 60px;
+    padding: 0 8px;
+    height: 28px;
+    font-size: 14px;
+    font-family: Arial, sans-serif, Helvetica, Tahoma;
+    border: 1px solid #2C82FC;
+    outline: none;
+    margin-right: 15px;
+    color: #2C82FC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.group-condition-rules button:hover{
+    background: #2C82FC;
+    color: #ffffff;
+    cursor: pointer;
+}
+.group-condition-rules button.group-condition-del-group{
+    border-color: #e74c3c;
+    color: #e74c3c;
+    font-size: 14px;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+}
+.group-condition-rules button:hover.group-condition-del-group{
+    background: #cc0000;
+    border-color:#cc0000;
+    color: #ffffff;
+}
+.group-condition-area ul li .group-condition-rules{
+    background: #f6f6f6;
+}
+.group-condition-area ul li ul.group-condition-rules-or-content{
+    width: 100%;
+    min-width: 500px;
+    padding-left: 50px;
+    padding-right: 20px;
+    background: #f6f6f6;
+    /*padding-bottom: 10px;*/
+    white-space: nowrap;
+    border: 1px dashed #dedede;
+    border-bottom: 0;
+    border-right: 0;
+    border-left: 0;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    float: none;
+}
+.oui-class-condition-1 .group-condition-area ul li ul li{
+    margin-top: 0;
+}
+.group-condition-area .group-condition-preview{
+    position: relative;
+    z-index: 10;
+    color: rgba(81,81,81,.8);
+    font-size: 15px;
+}
+.group-condition-area .group-condition-preview-title{
+    font-style: normal;
+}
+.group-condition-area .group-condition-preview-content{
+    width: 100%;
+    display: block;
+    max-height: 60px;
+    overflow-y: auto;
+    color: #515151;
+    font-size: 15px;
+    margin-top: 3px;
+    border-bottom: 1px solid #f6f6f6;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+}
+.group-condition-area .group-condition-preview-content span.and,
+.group-condition-area .group-condition-preview-content span.or{
+    color: #2C82FC;
+    font-family: Arial, sans-serif, Helvetica, Tahoma;
+}
+
+/*内嵌下拉*/
+.selector-condition.inner-condition .group-condition-area{
+    display: block !important;
+}
+
+.selector-condition.inner-condition .group-condition-area{
+    min-width: 710px;
+    max-width: 850px;
+    text-align: left;
+
+}
+.selector-condition.inner-condition .group-condition,
+.selector-condition.inner-condition .oui-condition-group-mask-layer,
+.selector-condition.inner-condition .group-condition-title,
+.selector-condition.inner-condition .group-condition-triangle,
+.selector-condition.inner-condition .group-condition-area ul li .oui-class-condition .simple-condition .oui-simple-search-submit-btn,
+.selector-condition.inner-condition .group-condition.condition-setting-btn,
+.selector-condition.inner-condition .group-condition-area .group-condition-foot-area{
+    display: none;
+}
+
+.selector-condition.inner-condition .group-condition-area .group-condition-preview,
+.selector-condition.inner-condition .oui-condition-content{
+    position: inherit;
+    z-index: 0;
+}
+.selector-condition.inner-condition .condition-center{
+    left: inherit;
+
+    margin-left: 0;
+}
+.selector-condition.inner-condition .oui-condition-content .oui-condition-root{
+    max-height: inherit;
+}
+/*内嵌下拉*/
+/*平铺条件开始*/
+.paved-condition{
+    display: block;
+}
+.paved-condition .group-condition-area{
+    width: 100%;
+    z-index: 120;
+}
+.paved-condition .oui-condition-content .oui-condition-root{
+    max-height: 360px;
+    white-space: normal;
+}
+.paved-condition .group-condition-area ul li{
+    border-bottom: 1px dashed #e6e6e6;
+}
+.paved-condition.inner-condition .group-condition-area ul{
+    font-size: 0;
+}
+.paved-condition.inner-condition .group-condition-area ul li{
+    border-bottom: 0;
+    width: auto;
+    display: inline-block;
+    vertical-align: top;
+}
+.paved-condition.inner-condition .group-condition-area ul li.li-one-line{
+    display: block;
+    /*border-bottom: 1px dashed #e6e6e6;*/
+}
+.paved-condition .group-condition-area .oui-class-singleselect-3 ul.singleselect-hidden-radio,
+.paved-condition .group-condition-area .oui-class-singleselect-4 ul.singleselect-hidden-radio,
+.paved-condition .group-condition-area .oui-class-singleselect-5 ul.singleselect-hidden-radio,
+.paved-condition .group-condition-area .oui-class-multiselect-3 ul,
+.paved-condition .group-condition-area .oui-class-multiselect-3 ul .button-wrapper-info{
+    font-size: 12px !important;
+    z-index: 100;
+}
+.singleselect-hidden-radio label{
+    font-size: 12px;
+}
+.paved-condition .group-condition-area .oui-class-singleselect-3 ul.singleselect-hidden-radio li,
+.paved-condition .group-condition-area .oui-class-singleselect-4 ul.singleselect-hidden-radio li,
+.paved-condition .group-condition-area .oui-class-singleselect-5 ul.singleselect-hidden-radio li,
+.paved-condition .group-condition-area .oui-class-multiselect-3 ul li{
+    display: block;
+}
+.paved-condition .group-condition-area .simple-condition-options,
+.paved-condition .group-condition-preview,
+.paved-condition .group-condition-rules,
+.paved-condition .condition-operation-area,
+.paved-condition .group-condition-area ul li .group-condition-add,
+.paved-condition .group-condition-area ul li .group-condition-del{
+    display: none !important;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition{
+    width: 100%;
+    display: block;
+    margin: 0;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition:after{
+    content: "";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area{
+    width: auto;
+    max-width: 120px;
+    border: 0;
+    float: left;
+    text-align: right;
+    margin-right: 5px;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area{
+    width:auto;
+    /*min-height: 40px;*/
+    display: block;
+    overflow: hidden;
+}
+
+.paved-condition .group-condition-area ul li .oui-class-condition.condition-height-clear .simple-condition .simple-condition-value-area{
+    height: auto;
+}
+.paved-condition .group-condition-area .simple-condition-selected{
+    background: transparent;
+    width: 85px;
+    padding: 10px 0 10px 0;
+    cursor: default;
+    font-size: 12px;
+}
+.paved-condition .simple-condition-value-area>div{
+    border: 1px solid #cccccc !important;
+}
+.paved-condition .simple-condition-fields-area.simple-condition-field-half + .condition-operation-area + .simple-condition-value-area,
+.paved-condition .simple-condition-value-area>div.oui-class-radio-4,
+.paved-condition .simple-condition-value-area>div.oui-class-multiselect-6{
+    border: 0 solid transparent !important;
+}
+.paved-condition .simple-condition-value-area>div{
+    width: 130px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.paved-condition .simple-condition-value-area>div.oui-class-radio-4,
+.paved-condition .simple-condition-value-area>div.oui-class-multiselect-6{
+    width: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    border: 0 !important;
+}
+.paved-condition .group-condition-area ul li .group-condition-del{
+    position: absolute;
+    right: 3px;
+    top: 4px;
+    margin-right: 0;
+}
+.paved-condition .condition-center{
+    margin-left: -160px;
+}
+.paved-condition .oui-class-multiselect-6 > label,
+.paved-condition .oui-class-radio-4 > span{
+    padding: 5px 8px 4px;
+    margin: 6px 10px 5px 0;
+}
+.paved-condition .oui-class-multiselect-6 .button-wrapper-info,
+.paved-condition .oui-class-radio-4 .button-wrapper-info{
+    font-size: 12px;
+}
+.paved-condition .oui-class-multiselect-6 .oui-class-other,
+.paved-condition .oui-class-radio-4 .oui-class-other{
+    font-size: 12px;
+    color: #515151;
+}
+.paved-condition .oui-class-multiselect-6 .oui-class-other .oui-input-others,
+.paved-condition .oui-class-radio-4 .oui-class-other .oui-input-others{
+    width: 0;
+    padding: 0 !important;
+    height: 0 !important;
+    display: none;
+}
+/*时间组件--从-到-s*/
+.paved-condition .simple-condition-value-area .oui-class-datepicker input,
+.paved-condition .simple-condition-value-area .oui-class-datepicker-1 input,
+.paved-condition .simple-condition-value-area .oui-class-datepicker-4 input{
+    background: url(../../../images/datepicker-icon.png) #ffffff no-repeat;
+    background-position: left 4px center;
+    background-size: 17px auto;
+    padding-left: 25px;
+}
+.paved-condition .simple-condition-value-area .start-info,
+.paved-condition .simple-condition-value-area .end-info,
+.paved-condition .simple-condition-value-area .oui-class-datepicker,
+.paved-condition .simple-condition-value-area .oui-class-datepicker-1,
+.paved-condition .simple-condition-value-area .oui-class-datepicker-4{
+    display: inline-block;
+    vertical-align: middle;
+}
+.paved-condition .simple-condition-value-area .start-info{
+    margin-right: 4px;
+    font-size: 12px;
+}
+.paved-condition .simple-condition-value-area .end-info{
+    margin: 0 4px;
+    font-size: 12px;
+}
+.paved-condition .group-condition-area .group-condition-foot-area span.group-condition-more-btn{
+    display: block;
+    font-size: 12px;
+    z-index: 80;
+}
+.paved-condition .simple-condition-value-area>div.select-radio-area,
+.paved-condition .simple-condition-value-area>div.select-control-area{
+    border: 0 !important;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area{
+    margin-left: 7px;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker,
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker-1,
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker-4{
+    border: 1px solid #cccccc !important;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker input,
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker-1 input,
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker-4 input{
+    width: 120px;
+    height: 25px !important;
+    line-height: 23px;
+}
+/*时间组件--从-到-e*/
+/*平铺条件结束*/
+/*内嵌平铺*/
+.paved-condition .oui-condition-content{
+    /*height: 103px;*/
+    overflow: hidden;
+}
+.paved-condition.inner-condition .oui-condition-content.oui-condition-content-auto{
+    height: auto;
+    max-height: inherit !important;
+    overflow: auto;
+    overflow-x: hidden;
+}
+.paved-condition.inner-condition .oui-condition-content .oui-condition-root{
+    max-height: 114px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.paved-condition.inner-condition .oui-condition-content.oui-condition-content-auto .oui-condition-root{
+    max-height: 195px !important;
+}
+.paved-condition.inner-condition .group-condition-area{
+    display: block !important;
+}
+.paved-condition.inner-condition .group-condition,
+.paved-condition.inner-condition .oui-condition-group-mask-layer,
+.paved-condition.inner-condition .group-condition-title,
+.paved-condition.inner-condition .group-condition-triangle,
+.paved-condition.inner-condition .group-condition-area ul li .oui-class-condition .simple-condition .oui-simple-search-submit-btn,
+.paved-condition.inner-condition .group-condition.condition-setting-btn,
+.paved-condition.inner-condition .group-condition-area .group-condition-add-rule{
+    display: none;
+}
+.paved-condition.inner-condition .group-condition-foot-area{
+    border-top: 1px solid #e6e6e6;
+    padding-top: 10px;
+}
+.paved-condition.inner-condition .oui-class-multiselect-6 > label,
+.paved-condition.inner-condition .oui-class-radio-4 > span{
+    margin: 6px 10px 5px 0;
+}
+/*Tips展开更多*/
+.paved-condition.tips-condition .group-condition-area .group-condition-foot-area span.group-condition-more-btn{
+    left: 5px;
+}
+/*Tips&弹框平铺*/
+.paved-condition.tips-condition .oui-condition-content.oui-condition-content-auto,
+.paved-condition.dialog-condition .oui-condition-content.oui-condition-content-auto{
+    height: auto;
+    max-height: 306px !important;;
+    overflow: auto;
+    overflow-x: hidden;
+}
+/*Dialog显示条件组件--宽度*/
+.paved-condition.dialog-condition .group-condition-area{
+    width: auto;
+}
+/*Tips显示条件组件--宽度*/
+.paved-condition.tips-condition .group-condition-area{
+    width: 460px;
+}
+/*为了避免被冲掉，故下面代码只能放在最底部*/
+.display_none{
+    display: none !important;
+}
+/*只有一个条件切且选中的情况*/
+.oui-conditions-only .simple-condition-selected{
+    display:none;
+}
+.oui-conditions-only .simple-condition-value-area{
+    width:100%;
+}
+.oui-conditions-only .simple-condition-value-area input{
+    padding-left: 10px !important;
+}
+/*数字控件*/
+.simple-condition-value-area .oui-form.oui-number-split+.oui-number-split-area{
+    min-height: 24px;
+    line-height: 28px;
+    border: 0;
+    font-size: 14px;
+}
+.group-condition-area ul li .group-condition-accordion,
+.group-condition-add-rule{
+    display: none;
+}
+/*
+错误高亮*/
+.simple-condition-value-area>div.error-border-highlight {
+    border: 1px solid #e4393c !important;
+}
+
+
+
+
+

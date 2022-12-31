@@ -1,0 +1,33 @@
+<!--省市区 控件 TODO-->
+<template >
+    <!--这里是 微信小程序模板-->
+</template>
+
+<script>
+    exports = {
+        resourceUrl: '', //如果是自定义组件 则指定自定义组件的路径 以 /开始
+        templateType:'wxxcx',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+   /*这里是微信小程序样式*/
+</style>

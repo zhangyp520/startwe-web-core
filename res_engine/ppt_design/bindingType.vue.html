@@ -1,0 +1,55 @@
+<template>
+    <div>
+        <el-select v-model="value" placeholder="请选择">
+            <el-option v-for="item in presentation" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+        </el-select>
+        <div>
+            <div>
+                
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                presentation: [{
+                    value: '选项1',
+                    label: '列表页面'
+                }, {
+                    value: '选项2',
+                    label: '查看页面'
+                }, {
+                    value: '选项3',
+                    label: '编辑页面'
+                }, {
+                    value: '选项4',
+                    label: '表单/自定义页面'
+                }],
+                value: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+
+        }
+
+    }
+
+</script>
+<style>
+</style>

@@ -1,0 +1,9 @@
+window.svd = require('./index')
+
+
+
+
+
+
+
+

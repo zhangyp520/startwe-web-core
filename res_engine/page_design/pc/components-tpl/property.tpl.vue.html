@@ -1,0 +1,1179 @@
+<template>
+
+  <div class="detailCollapse">
+    <template v-if="table.length > 1">
+
+      <el-collapse accordion value="0">
+
+        <el-collapse-item :title="g.name" v-for="(g,index) in table" :key="g.name" :name="`${index}`">
+
+
+          <el-form size="mini" label-width="100px">
+            <template v-for="item in g.items">
+              <el-form-item :label=" item.zhName  " :key="item.name" :rules="
+                item.required ? [{ required: item.required, trigger: 'blur' }] : []
+              ">
+                <template v-if="item.type === 'string'">
+                  <!-- 未完，需要添加pattern支持 -->
+                  <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                    :minlength="item.min" @input="(val,$event) => onChange(event , item.name, val, item.type, item)"
+                    :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                    :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+                    <template slot="prepend" v-if="item.prepend">{{
+                      item.prepend
+                      }}</template>
+                    <template slot="append" v-if="item.append">{{
+                      item.append
+                      }}</template>
+                  </el-input>
+                </template>
+
+                <template v-else-if="item.type === 'number'">
+                  <!-- 未完，需要添加数据类型的pattern支持 -->
+                  <el-input v-model="item.default" @input="(val) => onChange(item.name, val, item.type, item)"
+                    :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                    :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+                    <template slot="prepend" v-if="item.prepend">{{
+                      item.prepend
+                      }}</template>
+                    <template slot="append" v-if="item.append">{{
+                      item.append
+                      }}</template>
+                  </el-input>
+                </template>
+
+                <template v-else-if="item.type === 'method'">
+                  <!-- 未完，需要添加数据类型的pattern支持 -->
+                  <el-input v-model="item.default" type="textarea"
+                    @change="(val) => onChange(item.name, val, item.type, item)" :placeholder="item.placeholder"
+                    :clearable="item.clearable" :disabled="item.disabled" :autosize="{ minRows: 3 }">
+                  </el-input>
+                </template>
+                <template v-else-if="item.type === 'slider'">
+                  <div style="display: flex;flex-direction: row;align-items: center;">
+                    <el-slider style="width:80%;margin-right: 10px;" v-model="item.default"
+                      @change="(val) => onChange(item.name, val, item.type, item)"></el-slider>
+                    <span
+                      style="display: inline-block; width: 40px; text-align: right;">{{item.default}}{{item.dangwei}}</span>
+                  </div>
+                </template>
+
+                <template v-else-if="item.type === 'integer' || item.type === 'float'">
+                  <el-slider v-model="item.default" :step="item.step" :min="item.min" :max="item.max"
+                    v-if="item.slider">
+                  </el-slider>
+                  <el-input-number v-model="item.default" :step="item.step" :min="item.min" :max="item.max"
+                    :precision="item.type === 'float' ? 2 : undefined" v-else></el-input-number>
+                </template>
+                <template v-else-if="item.type === 'switch' ">
+                  <el-switch v-model="item.default"
+                             @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                  </el-switch>
+                </template>
+                <template v-else-if="item.type === 'colorPicker' ">
+                  <el-color-picker v-model="item.default"
+                    @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                  </el-color-picker>
+                </template>
+                <template v-else-if="item.type === 'array'">
+                  <el-select v-model="item.default" :placeholder="item.placeholder" :clearable="item.clearable"
+                    :disabled="item.disabled" :suffix-icon="item.suffix" :prefix-icon="item.prefix"
+                    @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                    <el-option v-for="item in item.data" :key="item.value"
+                      :label="item.display" :value="item.value">
+                    </el-option>
+                  </el-select>
+                </template>
+                <template v-else-if="item.type === 'enum'">
+                  <el-checkbox-group v-model="item.default" :disabled="item.disabled" v-if="item.checkbox">
+                    <el-checkbox-button v-for="item in item.data" :key="item.value"
+                      :label="item.value">
+                      {{ item.display }}</el-checkbox-button>
+                  </el-checkbox-group>
+                  <el-radio-group v-model="item.default" :disabled="item.disabled" v-else-if="item.radio">
+                    <el-radio-button v-for="item in item.data" :key="item.value"
+                      :label="item.value">
+                      {{ item.display }}
+                    </el-radio-button>
+                  </el-radio-group>
+                </template>
+
+
+
+                <!--输入框带 多选框-->
+                <template v-else-if="item.type === 'inputandcheckbox'">
+
+                  <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                    :minlength="item.min" @input="(val,$event) => onChange(event, item.name, val, item.type, item, )"
+                    :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                    :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+
+                    <template slot="prepend" v-if="item.prepend">{{
+                      item.prepend
+                      }}</template>
+                    <template slot="append" v-if="item.append">{{
+                      item.append
+                      }}</template>
+                  </el-input>
+
+                  <el-checkbox v-model="item.checkboxdefault"
+                    @change="(val,$event) => onChange(event, item.checkboxname, val, item.type, item, )">{{
+                    item.checkboxtitle }}</el-checkbox>
+
+                </template>
+
+                <!--下拉选择带 输入框-->
+                <template v-else-if="item.type === 'arrayandinput'">
+
+                  <el-select v-model="item.defaultArray"
+                    @change="(val,$event) => onChange(event,item.selectname, val, item.type, item)"
+                    :placeholder="item.placeholderArray" :clearable="item.clearable" :disabled="item.disabled"
+                    :suffix-icon="item.suffix" :prefix-icon="item.prefix">
+                    <el-option v-for="item in item.data" :key="item.value"
+                      :label="item.display" :value="item.value">
+                    </el-option>
+                  </el-select>
+
+                  <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                    :minlength="item.min" @input="(val,$event) => onChange(event,item.name, val, item.type, item)"
+                    :placeholder="item.placeholderInput" :clearable="item.clearable" :disabled="item.disabled"
+                    :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize"
+                    :showWordLimit="item.max">
+                    <template slot="prepend" v-if="item.prepend">{{
+                      item.prepend
+                      }}</template>
+                    <template slot="append" v-if="item.append">{{
+                      item.append
+                      }}</template>
+                  </el-input>
+
+                </template>
+
+                <!--图标选择器-->
+                <template v-else-if="item.type === 'iconselect' ">
+
+                  <el-input :placeholder="item.placeholder" v-model="item.default" :clearable="item.clearable"
+                    :disabled="item.disabled" @input="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                    <template slot="append">
+                      <el-popover placement="bottom" :visible-arrow="false" title="" width="200" trigger="manual"
+                        v-model="item.iconlistvisible">
+                        <div class="iconselect-iconlist">
+                          <i v-for="it in item.iconlist"
+                            @click="onChange( $event , item.name, it, item.type, item) ;  item.default = it; item.iconlistvisible=!item.iconlistvisible;"
+                            :class="it"></i>
+                        </div>
+                        <el-button slot="reference" @click="item.iconlistvisible=!item.iconlistvisible; ">选择</el-button>
+                      </el-popover>
+                    </template>
+                  </el-input>
+                </template>
+
+                <!--分段单选（支持图标）-->
+                <template v-else-if="item.type==='radiogroupselect'">
+
+                  <el-radio-group v-model="item.default" size="mini"
+                    @change="(val,$event) => onChange(event , item.name, val, item.type, item)">
+                    <el-radio-button v-for="(it,key) in item.data" :label="it.value">
+                      <template v-if="item.labelsicon">
+                        <i :class="item.labelsicon[key]" style="font-size: 16px;"></i>
+                      </template>
+                      <template v-else>
+                        {{it.display}}
+                      </template>
+                    </el-radio-button>
+                  </el-radio-group>
+                </template>
+
+                <!--单选按钮 开启显示输入框 输入范围值 -->
+                <template v-else-if="item.type==='switch_input_maxmin'">
+
+                  <el-switch v-model="item.default" @change="(val) => onChange(item.name, val, item.type, item)">
+                  </el-switch>
+
+                  <div style="display: flex;margin-top: 5px;" v-if="item.default">
+                    <el-input v-model="item.minvalue"></el-input>
+                    ~
+                    <el-input v-model="item.maxvalue"></el-input>
+                  </div>
+                </template>
+
+
+                <!--单选按钮 + 输入框 -->
+                <template v-else-if="item.type==='switch_input'">
+
+                  <el-switch v-model="item.default"
+                    @change="(val,$event) => onChange(event, item.name, val, item.type, item)">
+                  </el-switch>
+
+                  <div style="display: flex;margin-top: 5px;" v-if="item.default">
+                    <el-input v-model="item.value" :placeholder="item.placeholder"
+                      @input="(val,$event) => onChange(event, item.textname, val, item.type, item)">
+                      <template slot="prepend" v-if="item.prepend">{{
+                        item.prepend
+                        }}</template>
+                      <template slot="append" v-if="item.append">{{
+                        item.append
+                        }}</template>
+                    </el-input>
+                  </div>
+                </template>
+
+                <!--单独按钮-->
+                <template v-if="item.type==='button'">
+
+                  <el-button @click="item.actionFun" :size="item.size" :type="item.btnType"
+                    :style="item.isBlock?'width:100%':''">{{item.btnText}}</el-button>
+
+
+                </template>
+
+                <!--数字输入 可鼠标选择-->
+                <template v-else-if="item.type === 'input_number'">
+
+                  <el-input-number v-model="item.default"
+                    :controls-position="item.controlsPosition?item.controlsPosition:''"
+                    @change="(val,$event) => onChange(event, item.name, val, item.type, item)" :min="0" :max="item.max">
+                  </el-input-number>
+
+                </template>
+
+                <!--富文本编辑器-->
+                <template v-else-if="item.type === 'editor'">
+                  <!-- <div id="textContent" v-html="item.default">
+                </div> -->
+
+                  <el-input type="textarea" v-model="item.default" :rows="3"
+                    @input="(val,$event) => onChange(event , item.name, val, item.type, item)"
+                    :placeholder="item.placeholder">
+                  </el-input>
+                </template>
+
+                <!--日期控件-->
+                <template v-else-if="item.type === 'date_picker'">
+                  <el-date-picker v-model="item.default" :type="item.datetype" size="mini" placeholder="选择日期">
+                  </el-date-picker>
+                </template>
+              </el-form-item>
+              <template v-if="item.asyncLoadModel && item.default == '1'">
+                <el-form-item label="数据源">
+                  <el-select v-model="item.asyncLoadModel.modelVal"
+                    @change="(val,$event) => onChange(event, 'arrayDataSource' , val, item.type, item)">
+                    <el-option v-for="_item in item.asyncLoadModel.modelList" :key="_item.value" :label="_item.label"
+                      :value="_item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="字段关联">
+                  <el-select v-model="item.asyncLoadModel.valueField"
+                    @change="(val,$event) => onChange(event, 'arrayFieldColumn' , val, item.type, item)">
+                    <el-option v-for="_item in item.asyncLoadModel.fieldList" :key="_item.value" :label="_item.label"
+                      :value="_item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="显示字段">
+                  <el-select v-model="item.asyncLoadModel.showField"
+                    @change="(val,$event) => onChange(event, 'arrayShowColumn' , val, item.type, item)">
+                    <el-option v-for="_item in item.asyncLoadModel.fieldList" :key="_item.value" :label="_item.label"
+                      :value="_item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </template>
+
+
+              <template v-if="item.type =='tableListTools'">
+
+                <el-form-item label="标题名称">
+
+                  <el-input v-model="item.tableListToolsTitle" :type="'text'"
+                    @input="(val,$event) => onChange(event , 'tableListToolsTitle', val, item.type, item)"
+                    :placeholder="item.placeholder"></el-input>
+
+                </el-form-item>
+
+                <el-form-item label="关联页面" v-if="item.needPage">
+ 
+                  <el-select v-model="item.default" :placeholder="item.placeholder" :clearable="item.clearable"
+                    :disabled="item.disabled" :suffix-icon="item.suffix" :prefix-icon="item.prefix"
+                    @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                    <el-option v-for="item in item.pageData" :key="item.value"
+                      :label="item.display" :value="item.value">
+                    </el-option>
+                  </el-select>
+
+
+                </el-form-item>
+
+                <el-form-item label="数据源" v-if="item.needDataSource"> 
+
+                  <el-select v-model="item.default" :placeholder="item.placeholder" :clearable="item.clearable"
+                    :disabled="item.disabled" :suffix-icon="item.suffix" :prefix-icon="item.prefix"
+                    @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                    <el-option v-for="item in item.data" :key="item.value"
+                      :label="item.display" :value="item.value">
+                    </el-option>
+                  </el-select>
+
+
+                </el-form-item>
+
+
+                <el-button v-if="item.isAddBtn" @click="item.actionFun" size="mini" type="primary" style=" width:100%">
+                  添加按钮</el-button>
+
+
+              </template>
+
+
+            </template>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+
+
+    </template>
+    <template v-else>
+
+
+
+      <div :title="g.name" v-for="(g,index) in table" :key="g.name" :name="`${index}`">
+
+        <el-form size="mini" label-width="100px">
+          <template v-for="item in g.items">
+            <!-- <span>{{JSON.stringify(item)}}</span> -->
+            <el-form-item :label="item.zhName  " :key="item.name" :rules="
+                item.required ? [{ required: item.required, trigger: 'blur' }] : []
+              ">
+              <template v-if="item.type === 'string'">
+                <!-- 未完，需要添加pattern支持 -->
+                <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                  :minlength="item.min" @input="(val,$event) => onChange(event , item.name, val, item.type, item)"
+                  :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                  :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+                  <template slot="prepend" v-if="item.prepend">{{
+                    item.prepend
+                    }}</template>
+                  <template slot="append" v-if="item.append">{{
+                    item.append
+                    }}</template>
+                </el-input>
+              </template>
+
+              <template v-else-if="item.type === 'number'">
+                <!-- 未完，需要添加数据类型的pattern支持 -->
+                <el-input v-model="item.default" @input="(val) => onChange(item.name, val, item.type, item)"
+                  :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                  :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+                  <template slot="prepend" v-if="item.prepend">{{
+                    item.prepend
+                    }}</template>
+                  <template slot="append" v-if="item.append">{{
+                    item.append
+                    }}</template>
+                </el-input>
+              </template>
+
+              <template v-else-if="item.type === 'method'">
+                <!-- 未完，需要添加数据类型的pattern支持 -->
+                <el-input v-model="item.default" type="textarea"
+                  @change="(val) => onChange(item.name, val, item.type, item)" :placeholder="item.placeholder"
+                  :clearable="item.clearable" :disabled="item.disabled" :autosize="{ minRows: 3 }">
+                </el-input>
+              </template>
+              <template v-else-if="item.type === 'slider'">
+                <div style="display: flex;flex-direction: row;align-items: center;">
+                  <el-slider style="width:80%;margin-right: 10px;" v-model="item.default"
+                    @change="(val) => onChange(item.name, val, item.type, item)"></el-slider>
+                  <span
+                    style="display: inline-block; width: 40px; text-align: right;">{{item.default}}{{item.dangwei}}</span>
+                </div>
+              </template>
+
+              <template v-else-if="item.type === 'integer' || item.type === 'float'">
+                <el-slider v-model="item.default" :step="item.step" :min="item.min" :max="item.max" v-if="item.slider">
+                </el-slider>
+                <el-input-number v-model="item.default" :step="item.step" :min="item.min" :max="item.max"
+                  :precision="item.type === 'float' ? 2 : undefined" v-else></el-input-number>
+              </template>
+              <template v-else-if="item.type === 'switch' ">
+                <el-switch v-model="item.default"
+                  @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                </el-switch>
+              </template>
+              <template v-else-if="item.type === 'colorPicker' ">
+                <el-color-picker v-model="item.default"
+                  @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                </el-color-picker>
+              </template>
+              <template v-else-if="item.type === 'array'">
+                <el-select v-model="item.default" :placeholder="item.placeholder" :clearable="item.clearable"
+                  :disabled="item.disabled" :suffix-icon="item.suffix" :prefix-icon="item.prefix"
+                  @change="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                  <el-option v-for="item in item.data" :key="item.value" :label="item.display"
+                    :value="item.value">
+                  </el-option>
+
+                </el-select>
+              </template>
+              <template v-else-if="item.type === 'enum'">
+                <el-checkbox-group v-model="item.default" :disabled="item.disabled" v-if="item.checkbox">
+                  <el-checkbox-button v-for="item in item.data" :key="item.value"
+                    :label="item.value">
+                    {{ item.display }}</el-checkbox-button>
+                </el-checkbox-group>
+                <el-radio-group v-model="item.default" :disabled="item.disabled" v-else-if="item.radio">
+                  <el-radio-button v-for="item in item.data" :key="item.value"
+                    :label="item.value">
+                    {{ item.display }}
+                  </el-radio-button>
+                </el-radio-group>
+              </template>
+
+
+
+              <!--输入框带 多选框-->
+              <template v-if="item.type === 'inputandcheckbox'">
+
+                <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                  :minlength="item.min" @input="(val,$event) => onChange(event, item.name, val, item.type, item, )"
+                  :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+                  :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+                  <template slot="prepend" v-if="item.prepend">{{
+                    item.prepend
+                    }}</template>
+                  <template slot="append" v-if="item.append">{{
+                    item.append
+                    }}</template>
+                </el-input>
+
+                <el-checkbox v-model="item.checkboxdefault"
+                  @change="(val,$event) => onChange(event, item.checkboxname, val, item.type, item, )">{{
+                  item.checkboxtitle }}</el-checkbox>
+
+              </template>
+
+              <!--下拉选择带 输入框-->
+              <template v-if="item.type === 'arrayandinput'">
+
+                <el-select v-model="item.defaultArray"
+                  @change="(val,$event) => onChange(event,item.selectname, val, item.type, item)"
+                  :placeholder="item.placeholderArray" :clearable="item.clearable" :disabled="item.disabled"
+                  :suffix-icon="item.suffix" :prefix-icon="item.prefix">
+                  <el-option v-for="item in item.data" :key="item.value" :label="item.display"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+
+                <el-input v-model="item.defaultInput" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+                  :minlength="item.min" @input="(val,$event) => onChange(event,item.name, val, item.type, item)"
+                  :placeholder="item.placeholderInput" :clearable="item.clearable" :disabled="item.disabled"
+                  :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize"
+                  :showWordLimit="item.max">
+                  <template slot="prepend" v-if="item.prepend">{{
+                    item.prepend
+                    }}</template>
+                  <template slot="append" v-if="item.append">{{
+                    item.append
+                    }}</template>
+                </el-input>
+
+              </template>
+
+              <!--图标选择器-->
+              <template v-else-if="item.type === 'iconselect' ">
+
+                <el-input :placeholder="item.placeholder" v-model="item.default" :clearable="item.clearable"
+                  :disabled="item.disabled" @input="(val,$event) => onChange(event,item.name, val, item.type, item)">
+                  <template slot="append">
+                    <el-popover placement="bottom" :visible-arrow="false" title="" width="200" trigger="manual"
+                      v-model="item.iconlistvisible">
+                      <div class="iconselect-iconlist">
+                        <i v-for="it in item.iconlist"
+                          @click="onChange( $event , item.name, it, item.type, item) ;  item.default = it; item.iconlistvisible=!item.iconlistvisible;"
+                          :class="it"></i>
+                      </div>
+                      <el-button slot="reference" @click="item.iconlistvisible=!item.iconlistvisible; ">选择</el-button>
+                    </el-popover>
+                  </template>
+                </el-input>
+              </template>
+
+              <!--分段单选（支持图标）-->
+              <template v-else-if="item.type==='radiogroupselect'">
+
+                <el-radio-group v-model="item.default" size="mini"
+                  @change="(val,$event) => onChange(event , item.name, val, item.type, item)">
+                  <el-radio-button v-for="(it,key) in item.data" :label="it.value">
+                    <template v-if="item.labelsicon">
+                      <i :class="item.labelsicon[key]" style="font-size: 16px;"></i>
+                    </template>
+                    <template v-else>
+                      {{it.display}}
+                    </template>
+                  </el-radio-button>
+                </el-radio-group>
+              </template>
+
+              <!--单选按钮 开启显示输入框 输入范围值 -->
+              <template v-else-if="item.type==='switch_input_maxmin'">
+
+                <el-switch v-model="item.default" @change="(val) => onChange(item.name, val, item.type, item)">
+                </el-switch>
+
+                <div style="display: flex;margin-top: 5px;" v-if="item.default">
+                  <el-input v-model="item.minvalue"></el-input>
+                  ~
+                  <el-input v-model="item.maxvalue"></el-input>
+                </div>
+              </template>
+
+
+              <!--单选按钮 + 输入框 -->
+              <template v-else-if="item.type==='switch_input'">
+
+                <el-switch v-model="item.default"
+                  @change="(val,$event) => onChange(event, item.name, val, item.type, item)">
+                </el-switch>
+
+                <div style="display: flex;margin-top: 5px;" v-if="item.default">
+                  <el-input v-model="item.value" :placeholder="item.placeholder"
+                    @input="(val,$event) => onChange(event, item.textname, val, item.type, item)">
+                    <template slot="prepend" v-if="item.prepend">{{
+                      item.prepend
+                      }}</template>
+                    <template slot="append" v-if="item.append">{{
+                      item.append
+                      }}</template>
+                  </el-input>
+                </div>
+              </template>
+
+              <!--单独按钮-->
+              <template v-if="item.type==='button'">
+  
+                <el-button @click="item.actionFun" :size="item.size" :type="item.btnType"
+                  :style="item.isBlock?'width:100%':''">{{item.btnText}} </el-button>
+
+                  <div v-if="item.name==='otherAttrs.action'  && item.actionSetting.interaction">
+                    
+                    已绑定交互动作
+                    
+                    <div v-for="(v,k) in item.actionSetting.interaction ">
+ 
+ 
+                      {{triggerTypeData[v.trigMethod]}} -> {{actionNameData[v.executeAction]}}
+
+
+                    </div>
+
+                  </div>
+
+
+              </template>
+
+              <!--数字输入 可鼠标选择-->
+              <template v-else-if="item.type === 'input_number'">
+
+                <el-input-number v-model="item.default"
+                  :controls-position="item.controlsPosition?item.controlsPosition:''"
+                  @change="(val,$event) => onChange(event, item.name, val, item.type, item)" :min="0" :max="item.max">
+                </el-input-number>
+
+              </template>
+
+              <!--富文本编辑器-->
+              <template v-else-if="item.type === 'editor'">
+                <!-- <div id="textContent" v-html="item.default">
+                </div> -->
+
+                <el-input type="textarea" v-model="item.default" :rows="3"
+                  @input="(val,$event) => onChange(event , item.name, val, item.type, item)"
+                  :placeholder="item.placeholder">
+                </el-input>
+              </template>
+
+              <!--日期控件-->
+              <template v-else-if="item.type === 'date_picker'">
+                <el-date-picker v-model="item.default" :type="item.datetype" size="mini" placeholder="选择日期">
+                </el-date-picker>
+              </template>
+
+
+
+            </el-form-item>
+
+
+            <template v-if="item.asyncLoadModel && item.default == '1'">
+              <el-form-item label="数据源">
+                <el-select v-model="item.asyncLoadModel.modelVal"
+                  @change="(val,$event) => onChange(event, 'otherAttrs.arrayChangeDataSource' , val, 'arrayChangeDataSource', item)">
+                  <el-option v-for="_item in item.asyncLoadModel.modelList" :key="_item.value" :label="_item.label"
+                    :value="_item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="字段关联">
+                <el-select v-model="item.asyncLoadModel.valueField"
+                  @change="(val,$event) => onChange(event, 'otherAttrs.arrayChangeFieldColumn' , val, 'arrayChangeFieldColumn', item)">
+                  <el-option v-for="_item in item.asyncLoadModel.fieldList" :key="_item.value" :label="_item.label"
+                    :value="_item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="显示字段">
+                <el-select v-model="item.asyncLoadModel.showField"
+                  @change="(val,$event) => onChange(event, 'otherAttrs.arrayChangeShowColumn' , val, 'arrayChangeShowColumn', item)">
+                  <el-option v-for="_item in item.asyncLoadModel.fieldList" :key="_item.value" :label="_item.label"
+                    :value="_item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </template>
+
+            <template v-if="item.asyncLoadModel && item.default == 'diy'">
+              <div class="dropbox">
+                <div v-for="(diy, index) in item.sourceDiyValues.items" class="diy-row-item" draggable
+                  @dragstart="onDragStart(event,index)" @drop="onDrop(event,index,item)" @dragover.prevent>
+                  <el-checkbox v-if="item.sourceDiyValues.multiple" v-model="diy.checked" 
+                    @change="(val,$event) => onChange(event , item.name, val, item.type, item)"></el-checkbox>
+                  <el-radio v-else v-model="item.sourceDiyValues.defaultShow" :label="diy.key"
+                    @change="(val,$event) => onChange(event , item.name, val, item.type, item)"></el-radio>
+                  <el-input v-model="diy.display" size="mini" class="item-label" placeholder="自定义文本"
+                    @input="(val,$event) => onChange(event , item.name, val, item.type, item)"></el-input>
+                  <el-input v-model="diy.value" size="mini" class="item-value" placeholder="值"
+                    @input="(val,$event) => onChange(event , item.name, val, item.type, item)"></el-input>
+                  <i class="el-icon-delete" @click="deleteDiyItem(event, index, item)"></i>
+                  <i class="el-icon-sort"></i>
+                </div>
+              </div>
+              <div>
+                <el-button style="width:100%;margin-bottom:30px;" type="primary" size="mini"
+                  @click="addDiyItem(event,item)">增加</el-button>
+              </div>
+            </template>
+
+            <template v-if="item.type =='tableListTools'">
+              tableListTools
+            </template>
+
+          </template>
+        </el-form>
+
+
+
+      </div>
+
+
+
+    </template>
+
+
+
+
+  </div>
+
+  <div>
+
+  </div>
+</template>
+
+<script>
+  export default {
+    templateType: "vue",
+    props: {
+      property: {
+        type: Array,
+        default: function () {
+          return [];
+        },
+        required: true,
+      },
+    },
+    data() {
+      return {
+        dragItemIndex: null,
+        formatTooltipValue: "",
+        input: "111",
+        table: [],
+        queryKey: '',
+        url: "",
+        DataList: [],
+        IconlistVisible: [], //显示图标选择窗口 
+        triggerTypeData:{
+          "click":'单击',
+          "beforeInit":'页面加载',
+        },
+        actionNameData:{
+          'pageTurn':'页面转向',
+          'backEndLogic':'后端逻辑',
+        }
+      };
+    },
+    computed: {},
+    filters: {},
+    methods: {
+      /**
+       * 格式化 property
+       *
+       * [
+       *   "string", // 字符串，输入文本框
+       *   "number", // 数字，输入文本框
+       *   "method", // 方法，多行输入文本框
+       *   "regexp", // 正则表达式，输入文本框
+       *   "integer", // 整型数字，输入数字框、Slider 滑块
+       *   "float", // 浮点数，输入数字框、Slider 滑块
+       *   "array", // 普通数据，下拉列表
+       *   "enum", // 枚举项，按钮组（radio button 和 checkbox button）
+       *   "date", //日期时间，日期时间选择器
+       *   "color", // 颜色Hex，颜色选择器
+       *   "icon", // 图标，图标选择器
+       * ]
+       */
+      deleteDiyItem(e, index, item) {
+        item.sourceDiyValues.items.splice(index, 1);
+        this.onChange(e, item.name, null, null, item);
+      },
+      onDrop(e, index, item) {
+        console.log('onDrop', e, index);
+        let diyValues = item.sourceDiyValues;
+        let temp = [...diyValues.items];
+        [temp[index], temp[this.dragItemIndex]] = [temp[this.dragItemIndex], temp[index]]
+        diyValues.items = temp;
+        console.log('changeindex onDrop', diyValues)
+        this.dragItemIndex = null;
+        this.onChange(e, item.name, null, null, item);
+      },
+      onDragStart(e, index, a) {
+        console.log('onDragStart', e, index);
+        this.dragItemIndex = index;
+      },
+      addDiyItem(e, item) {
+        item.sourceDiyValues.items.push({ display: "", value: "", key: `di${item.sourceDiyValues.items.length + new Date().getTime()}` });
+        this.onChange(e, item.name, null, null, item);
+      },
+      init() {
+        try {
+
+
+          //this.textContent();
+          // 分组
+          var flag = {};
+          // 真实分组数据存储
+          var temp = [];
+          var parsing = function (prop) {
+            // 数据校验
+            if (!prop.type) throw "property.type is required";
+            if (!prop.name) throw "property.name is required";
+            var common = {
+              name: "",
+              zhName: "",
+              type: "string",
+              group: "未分组",
+              required: false,
+              disabled: false,
+              default: "",
+            };
+
+
+
+            /**
+             * 公共Schema
+             * {
+             *      name: "Name", // 字段名，必填
+             *      zhName: "字段名称", // 字段中文名，默认值 ""
+             *      type: "string", // 属性类型,默认值 "string",
+             *      group: "内容设置", // 字段组名，默认值 "未分组",
+             *      required: false, // 必须的，默认值 false
+             *      disabled: false, // 禁用的，默认值false
+             *      default: '', // 默认值，任意类型
+             * }
+             */
+            var definition = {
+              string: {
+                placeholder: "",
+                len: undefined,
+                min: undefined,
+                max: undefined,
+                pattern: undefined,
+                suffix: undefined,
+                prefix: undefined,
+                prepend: undefined,
+                append: undefined,
+                clearable: true,
+                textarea: false,
+                autosize: false,
+              },
+              number: {
+                placeholder: "",
+                min: undefined,
+                max: undefined,
+                suffix: undefined,
+                prefix: undefined,
+                prepend: undefined,
+                append: undefined,
+                clearable: true,
+              },
+              method: {
+                placeholder: "",
+                clearable: true,
+              },
+              regexp: {
+                placeholder: "",
+                len: undefined,
+                min: undefined,
+                max: undefined,
+                pattern: undefined,
+                suffix: undefined,
+                prefix: undefined,
+                prepend: undefined,
+                append: undefined,
+                clearable: true,
+              },
+              integer: {
+                placeholder: "",
+                slider: true,
+                step: 0.1,
+                min: undefined,
+                max: undefined,
+                pattern: undefined,
+                suffix: undefined,
+                prefix: undefined,
+                prepend: undefined,
+                append: undefined,
+                clearable: true,
+              },
+              float: {
+                placeholder: "",
+                slider: true,
+                step: 1,
+                min: undefined,
+                max: undefined,
+                pattern: undefined,
+                suffix: undefined,
+                prefix: undefined,
+                prepend: undefined,
+                append: undefined,
+                clearable: true,
+              },
+              array: {
+                data:[],
+                clearable: true
+              },
+              enum: {
+                data:[],
+                radio: true,
+                checkbox: false,
+                clearable: true
+              },
+              date: {
+                picker: "date",
+                "start-placeholder": undefined,
+                "end-placeholder": undefined,
+                "value-format": "timestamp",
+                "is-range": false,
+                "range-separator": "-",
+                clearable: true,
+              },
+              color: {
+                "show-alpha": false,
+                predefine: [],
+                "color-format": "hex",
+              },
+              icon: {
+                placeholder: "",
+                clearable: true,
+              },
+              inputandcheckbox: {
+                checkboxdefault: true
+              }
+            };
+            var define = definition[prop.type];
+            return Object.assign(common, define, prop);
+
+          };
+          let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+          //根据不同的组件类型 处理不同的回填数据。
+          let errorItem = null;
+          this.property.forEach((prop) => {
+            errorItem = prop.zhName + "_" + prop.name;
+            var group = prop.group;
+            if (!group) group = "未分组";
+            try {
+              switch (prop.type) {
+                case "inputandcheckbox": {
+                  let value = oui.JsonPathUtil.getJsonByPath(prop.name, currentControl);
+                  let check = oui.JsonPathUtil.getJsonByPath(prop.checkboxname, currentControl);
+                  if (value == undefined) {
+                    oui.JsonPathUtil.setObjByPath(prop.name, currentControl, prop.default, true);
+                  } else {
+                    prop.default = value;
+                  }
+
+                  if (check == undefined) {
+                    oui.JsonPathUtil.setObjByPath(prop.checkboxname, currentControl, prop.checkboxdefault, true);
+                  } else {
+                    prop.checkboxdefault = check;
+                  }
+
+                  break;
+                }
+                case "arrayandinput": {
+                  let da = oui.JsonPathUtil.getJsonByPath(prop.selectname, currentControl);
+                  let di = oui.JsonPathUtil.getJsonByPath(prop.name, currentControl);
+                  if (da == undefined) {
+                    oui.JsonPathUtil.setObjByPath(prop.name, currentControl, prop.defaultInput, true);
+                  } else {
+                    prop.defaultArray = da;
+                  }
+
+                  if (di == undefined) {
+                    oui.JsonPathUtil.setObjByPath(prop.selectname, currentControl, prop.defaultArray, true);
+                  } else {
+                    prop.defaultInput = di;
+                  }
+                  break;
+                }
+                case "array": {
+                   
+                  let value = oui.JsonPathUtil.getJsonByPath(prop.name, currentControl);
+                  // prop.default = value;
+                  if (value == undefined) {
+                    oui.JsonPathUtil.setObjByPath(prop.name, currentControl, prop.default, true);
+                    oui.JsonPathUtil.setObjByPath('otherAttrs.sourceDiyValues', currentControl, prop.sourceDiyValues, true);
+                  } else {
+                    prop.default = value;
+                    if (prop.default == 'diy') {
+                      let sourceDiyValues = oui.JsonPathUtil.getJsonByPath('otherAttrs.sourceDiyValues', currentControl);
+                      prop.sourceDiyValues = JSON.parse(JSON.stringify(sourceDiyValues));
+                    } else if (prop.default == '1') {
+                      this.selectConfigChangeHandle(null, 'otherAttrs.sourceType', '1', prop.type, prop, currentControl.otherAttrs.targetLines)
+                    }
+                  }
+                  break;
+                }
+                default: {
+                  let value = oui.JsonPathUtil.getJsonByPath(prop.name, currentControl);
+                  if (value == undefined) { 
+                    oui.JsonPathUtil.setObjByPath(prop.name, currentControl, prop.default, true);
+                  } else {
+                    prop.default = value;
+                  }
+                }
+              }
+
+            } catch (err) {
+              console.log('异常组件:' + errorItem, err);
+              console.log('异常组件配置：',prop);
+              console.log('异常组件类型',currentControl.controlType);
+            }
+
+            if (flag[group] === undefined) {
+
+              var index = Object.keys(flag).length;
+              flag[group] = index;
+              temp[index] = {
+                name: group,
+                items: [],
+              };
+            }
+            // 获取组数组索引，并添加数组对象
+            temp[flag[group]].items.push((prop));
+          });
+          this.table = temp;
+          console.log('当前页签',this.table.length);
+          this.$set(this,'table',this.table);
+        } catch (err) {
+          console.log('init error', err)
+        }
+      },
+
+      loadRemoteData: function (query) {
+        //加载远程地址
+        query = query || '';
+        var me = this;
+
+        me.loading = true;
+        //根据输入参数模糊匹配
+        //查询所有
+        var url = this.url;
+        if (url) {
+
+          var queryParams = oui.parseJson(oui.parseString(this.queryParams));
+          console.log('--query1---->', queryParams);
+          queryParams[this.queryKey] = query;
+          console.info(url, 'urlurlurlurl');
+          oui.postData(url, queryParams, function (res) {
+            if (res.success) {
+              console.log('--query2---->', res);
+              me.loadBack(res);
+            }
+            me.loading = false;
+          }, function (res) {
+
+            me.loading = false;
+          }, '加载中...');
+        }
+      },
+      textContent: function () {
+        var me = this;
+        oui.require([
+          oui.getContextPath() + "res_common/third/bootstrap-3.3.7/css/bootstrap.min.css",
+          oui.getContextPath() + "res_common/third/bootstrap-3.3.7/js/bootstrap.min.js",
+          oui.getContextPath() + 'res_common/third/editor/dist/summernote.css',
+          oui.getContextPath() + 'res_common/third/editor/dist/summernote.min.js',
+          oui.getContextPath() + 'res_common/third/editor/dist/lang/summernote-zh-CN.js'
+        ], function () {
+          me.$nextTick(function () {
+            $('#textContent').summernote({
+              height: 300,
+              tabsize: 2,
+              lang: 'zh-CN'
+            });
+          });
+        });
+      },
+      // let  currentControl =  com.oui.absolute.AbsoluteDesign.data.currentControl
+      // true 是不是数组
+      // oui.JsonPathUtil.setObjByPath(key,currentControl,value,true); 
+      /**
+       * 触发 change 事件，通知对应的字段进行值更新
+       */
+      onChange(e, name, val, type, ref) {
+        console.log('onChange ====> ', name, type, ref, val);
+        let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+
+ 
+
+        if (currentControl && currentControl.id) {
+          if ( ['otherAttrs.dataSource','otherAttrs.toolsDeleteBtn' ].indexOf(name) != -1) {
+            //数据源转化为events 保存
+            this.saveEvents(ref)
+          }
+          if (ref.default == "1" && ref.type=='array') {// todo 关联配置的场景
+             
+            let opt = JSON.parse(JSON.stringify(ref))
+            this.selectConfigChangeHandle(e, name, val, type, ref);
+            let lineType = 1;
+            let formId = com.oui.absolute.AbsoluteDesign.data.id;
+            let fieldId = currentControl.id;
+            let targetFormId = ref.asyncLoadModel.modelVal;
+            let targetFieldId = ref.asyncLoadModel.valueField;
+            let targetDisplayFieldId = ref.asyncLoadModel.showField;
+            let lineId = `${formId}_${fieldId}_${targetFormId}_${targetFieldId}_1`;
+
+            let params = {
+              "bizDes": "",
+              "useRelation": true,
+              "targetLines": [
+                {
+                  lineType,
+                  formId,
+                  fieldId,
+                  targetFormId,
+                  targetFieldId,
+                  targetDisplayFieldId,
+                  lineId
+                }
+              ],
+              "relationShowType": 1
+            }
+            oui.JsonPathUtil.setObjByPath(name, currentControl, opt.default, true);
+            currentControl.otherAttrs = { ...currentControl.otherAttrs, ...params }
+            // oui.JsonPathUtil.setObjByPath('otherAttrs', currentControl, params, true);
+          } else if (ref.default == "diy") {
+             
+            let opt = JSON.parse(JSON.stringify(ref))
+            oui.JsonPathUtil.setObjByPath(name, currentControl, opt.default, true);
+            oui.JsonPathUtil.setObjByPath('otherAttrs.sourceDiyValues', currentControl, opt.sourceDiyValues, true);
+            console.log('table', this.table)
+          } else {
+            //更新参数数据
+            console.log("更新参数数据...")
+
+
+            oui.JsonPathUtil.setObjByPath(name, currentControl, val, true);
+
+          }
+          //渲染更新预览组件
+          com.oui.absolute.AbsoluteDesign.changed4propsRealTime({ e: e, el: e.target });
+        }
+      },
+      selectConfigChangeHandle(e, name, val, type, ref, targetLines) {
+        console.log('selectConfigChangeHandle', name, type, targetLines)
+        //如果选项名称是 '选项配置' 并且 选项值为 '关联其他表单数据' 着展示关联数据 相关下拉框并初始化值
+        if (type === 'arrayChangeDataSource') {
+          ref.asyncLoadModel.modelVal = val;
+          oui.postData(ref.asyncLoadModel.queryPageFieldsUrl, { "formId": ref.asyncLoadModel.modelVal }, function (res) {
+            if (res.success && res.fields.length) {
+              ref.asyncLoadModel.fieldList = res.fields.map((item) => {
+                return { label: item.display, value: item.id }
+              });
+              //默认都为初始化选中项
+              ref.asyncLoadModel.showField = ref.asyncLoadModel.valueField = ref.asyncLoadModel.fieldList[0].value;
+            }
+          }, function (res) {
+          }, '加载中...');
+        } else if (type === 'arrayChangeFieldColumn') {
+          ref.asyncLoadModel.valueField = val;
+        } else if (type === 'arrayChangeShowColumn') {
+          ref.asyncLoadModel.showField = val;
+        } else if (ref.zhName === '选项配置' && ref.default === '1') {
+          console.log("init select...")
+          let initModelVal = null;
+          let initShowField = null;
+          let initValueField = null;
+          if (Array.isArray(targetLines) && targetLines.length == 1) {
+            initModelVal = targetLines[0].targetFormId;
+            initShowField = targetLines[0].targetDisplayFieldId;
+            initValueField = targetLines[0].targetFieldId;
+          }
+          oui.postData(ref.asyncLoadModel.queryPageModelsUrl, {}, function (res) {
+            console.log(res);
+            if (res.success && res.pages.length) {
+              ref.asyncLoadModel.modelList = res.pages.map((item) => {
+                return { label: item.display, value: item.id }
+              })
+              ref.asyncLoadModel.modelVal = initModelVal || ref.asyncLoadModel.modelList[0].value;
+              //模型数据请求成功后 开始根据第一个选中数据请求对应绑定列值
+              oui.postData(ref.asyncLoadModel.queryPageFieldsUrl, { "formId": ref.asyncLoadModel.modelVal }, function (res) {
+                if (res.success && res.fields.length) {
+                  ref.asyncLoadModel.fieldList = res.fields.map((item) => {
+                    return { label: item.display, value: item.id }
+                  })
+                  ref.asyncLoadModel.showField = initShowField || ref.asyncLoadModel.fieldList[0].value
+                  ref.asyncLoadModel.valueField = initValueField || ref.asyncLoadModel.fieldList[0].value
+                }
+              }, function (res) {
+              }, '加载中...');
+
+            }
+          }, function (res) {
+          }, '加载中...');
+        }
+
+        return ref;
+      },
+       //保存 数据源绑定到 events中
+       saveEvents(ref){ 
+        ref.actionFun(ref)
+      },
+
+
+      handle_select() {
+        this.IconlistVisible = !this.IconlistVisible;
+      }
+
+    },
+    mounted() {
+
+
+      this.loadRemoteData();
+      this.init();
+    }
+  };
+</script>

@@ -1,0 +1,130 @@
+
+<template >
+    <div class="button-outer">
+        <el-button
+                v-if="buttonLayout=='onlyIcon' || buttonLayout=='leftIcon'"
+                :tempStyle="style"
+                :title="title"
+                :id="id"
+                :bindProp="bindProp"
+                :class="cls"
+                v-model="title"
+                @click="event2click"
+                :placeholder="placeholder"
+                :icon="iconCls"
+                :plain="plain"
+                :round="round"
+                :circle="circle"
+                :disabled="disabled"
+                :size="buttonSize"
+
+                :type="buttonShowType"
+                >
+            {{getDisplay()}}
+        </el-button>
+        <el-button
+                v-if="buttonLayout=='rightIcon'"
+                :tempStyle="style"
+                :title="title"
+                :id="id"
+                :bindProp="bindProp"
+                :class="cls"
+                v-model="title"
+                @click="event2click"
+                :placeholder="placeholder"
+                :plain="plain"
+                :round="round"
+                :circle="circle"
+                :disabled="disabled"
+                :size="buttonSize"
+                :type="buttonShowType"
+                >
+            {{title||display}}<i :class="iconCls+' el-icon--right'"></i>
+        </el-button>
+        <el-button
+                v-if="buttonLayout=='onlyText'"
+                :tempStyle="style"
+                :title="title"
+                :id="id"
+                :bindProp="bindProp"
+                :class="cls"
+                v-model="title"
+                @click="event2click"
+                :placeholder="placeholder"
+                :plain="plain"
+                :round="round"
+                :circle="circle"
+                :disabled="disabled"
+                :size="buttonSize"
+                :type="buttonShowType"
+                >
+            {{title||display}}
+        </el-button>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                iconCls:'',
+                title:'',
+
+                value:'',
+                display:'',
+                buttonLayout:'onlyText', //onlyText,leftIcon,rightIcon,onlyIcon
+                buttonShowType:'primary',//default,primary,success,info,warning,danger,text
+                plain:false,
+                round:false,
+                circle:false,
+                disabled:false,
+                events:{},
+                detailTableFullName:'',
+                rowIndex:-1,
+                buttonSize:'default'
+            }
+        },
+        mounted:function(){
+            console.log(this.id);
+            console.log('button.vue.html');
+            console.log(this.title);
+            this.title = this.title || this.display;
+            this.bindEvents();
+        },
+        methods:{
+            bindEvents:function(){
+                if(this.events && this.events.click){
+                    this.onClick = oui.parseJson2Function(this.events.click);
+                }
+            },
+            //获取明细对象
+            getDetail:function(){
+                if(this.detailTableFullName){ //明细表处理
+                    return oui.util.eval(this.detailTableFullName);
+                }
+                return null;
+            },
+            getDisplay:function(){
+                if(this.buttonLayout=='onlyIcon'){
+                    return '';
+                }
+                return this.title||this.display;
+            },
+            event2click:function(){ //icon图标点击事件
+                this.onClick&&this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

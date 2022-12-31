@@ -1,0 +1,8 @@
+{
+  "success":true,
+  "ErrorCode":"0",
+  "Data":{
+    "Name":"测试页面2",
+    "Pages":[{"Name":"页面1","Id":"1"},{"Name":"页面2","Id":"2"}]
+  }
+}

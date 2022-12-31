@@ -1,0 +1,231 @@
+<!-- 首页内容 -->
+<template>
+
+    <div class="">
+        <div class="personal_right_title">
+            <div class="flex" style="cursor: pointer;">
+                <div class="per_mar_r" :class='index == tabIndexs ? "per_bor_bot" : ""  ' v-for='(item,index) in tablists' :key='index' @click='changeTab(index)'>{{item}}</div>
+            </div>
+        </div>
+        
+
+        <div v-if='tabIndexs == 0 '>
+
+            <div class="per_mar_box" v-if='type == 1'>
+                <div class="per_po_r" @click='changeType()'>编辑</div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">真实姓名</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">身份证号</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex" style="align-items: end;">
+                    <div class="per_mar_right">身份证照</div>
+                    <div>
+                        <div class="per_card"></div>
+                        <div class="per_text_center">正面照片</div>
+                        <div class="per_card per_mar_03"></div>
+                        <div class="per_text_center">背面照片</div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="per_mar_box " v-else>
+                <div class="flex">
+                    <div class="per_mar_half">
+                        <div>真实姓名</div>
+                        <div><input class="per_input" type="text"></div>
+        
+                        <div>身份证照</div>
+                        <div class="per_card per_mar_015"></div>
+                    </div>
+                    <div class="per_mar_half">
+                        <div>真实姓名</div>
+                        <div><input class="per_input" type="text"></div>
+        
+                        <div>身份证照</div>
+                        <div class="per_card per_mar_015"></div>
+                    </div>
+                </div>
+    
+                <div class="flex" style=" justify-content:center;margin-top: 80px;margin-bottom: 30px;">
+                    <div class="isbut" @click='type = 1'>取消</div>
+                    <div class="isbut">保存</div>
+                </div>
+            </div>
+        </div>
+        <div class="" v-else>
+            <div class="per_mar_box" v-if='CompanyType == 1'>
+                <div class="per_po_r" @click='changeCompanyType()'>编辑</div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">企业名称</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">运营电话</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">擅长领域</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex per_mar_bot">
+                    <div class="per_mar_right">认证描述</div>
+                    <div>未填写</div>
+                </div>
+                <div class="flex" style="align-items: end;">
+                    <div class="per_mar_right">身份证照</div>
+                    <div>
+                        <div class="per_card"></div>
+                        <div class="per_text_center">正面照片</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="per_mar_box" v-else>
+                <div class="flex">
+                    <div class="flex per_mar_right">
+                        <div class="input_table">企业名称</div>
+                        <div><input class="personal_right_input" type="text"></div>
+                    </div>
+                    <div class="flex">
+                        <div class="input_table">企业名称</div>
+                        <div><input class="personal_right_input" type="text"></div>
+                    </div>
+                </div>
+
+                <div class="flex per_mar_03" style="align-items: end;">
+                    <div class="input_table">擅长领域</div>
+                    <div>
+                        <textarea class="per_text_area" name="" id="" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+                <div class="flex per_mar_03" style="align-items: end;">
+                    <div class="input_table">认证描述</div>
+                    <div>
+                        <textarea class="per_text_area" name="" id="" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex per_mar_03" style="align-items: end;">
+                    <div class="input_table">证明材料</div>
+                    <div class="per_card"></div>
+                </div>
+
+                <div class="flex" style=" justify-content:center">
+                    <div class="isbut" @click='CompanyType = 1'>取消</div>
+                    <div class="isbut">保存</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'data',
+        data: function () {
+            return {
+                type:1,
+                tablists:[
+                    '个人实名认证',
+                    '企业机构认证'
+
+                ],
+                tabIndexs:0,
+                CompanyType:1
+              
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+
+        },
+        methods: {
+            changeType () {
+                this.type = 2
+            },
+            changeTab(index) {
+                this.tabIndexs = index
+               
+            },
+            changeCompanyType() {
+                this.CompanyType= 2
+            }
+
+        }
+    }
+
+</script>
+<style scoped>
+   .per_mar_right{
+       margin-right: 40px;
+   }
+   .per_mar_box{
+        position: relative;
+        width: 100%;
+        margin-top: 5px;
+        background-color: #fff;
+        padding: 30px 30px 30px 34px;
+        font-size: 14px;
+   }
+   .per_po_r{
+       position: absolute;
+       right: 20px;
+       top: 20px;
+       color: rgba(69, 151, 255, 100);
+        font-size: 14px;
+        cursor: pointer;
+   }
+   .per_card{
+        width: 239px;
+        height: 164px;
+        border: 1px solid;
+   }
+   .per_text_center{
+       text-align: center;
+   }
+   .per_mar_03{
+       margin-top: 30px;
+   }
+ 
+   .per_mar_half{
+       width: 50%;
+   }
+   .per_mar_015{
+       margin-top: 15px;
+   }
+   .per_input{
+        margin-top: 15px;
+        width: 200px;
+        height: 30px;
+        border-radius: 5px;
+        color: rgba(187, 187, 187, 100);
+        font-size: 14px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        margin-bottom: 40px;
+        padding: 0 15px;
+        outline:none;
+   }
+   .per_bor_bot{
+        border-bottom: 1px solid rgba(255, 68, 0, 100);
+        
+   }
+   .per_text_area{
+        width: 696px;
+        height: 66px;
+        border-radius: 5px;
+        color: rgba(187, 187, 187, 100);
+        font-size: 14px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        outline:none;
+    }
+</style>

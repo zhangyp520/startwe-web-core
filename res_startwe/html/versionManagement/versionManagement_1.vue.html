@@ -1,0 +1,356 @@
+<!-- 设计项目版本管理弹窗 -->
+<template>
+    <div>
+        <!-- 头部 -->
+        <div class="header">
+            <el-button class="newVersion">新增版本</el-button>
+        </div>
+        <!-- 内容 -->
+        <!-- 页面名称 -->
+        <div>
+            <div class="tableBox">
+                <el-table :data="tableData" style="width: 100%" :header-cell-style="{background:'#FAFAFA'}">
+                    <el-table-column prop="versionNumber" label="版本号" align="center" width="100%">
+                    </el-table-column>
+                    <el-table-column prop="CreationTime" label="创建时间" align="center" width="200%">
+                    </el-table-column>
+                    <el-table-column prop="briefIntroduction" label="更新内容简介" align="center">
+                        <template slot-scope='scope'>
+                            <div class="briefIntroduction">{{scope.row.briefIntroduction}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" align="center" width="200%">
+                        <template slot-scope='scope'>
+                            <div class="operation">
+                                <div class="see">查看</div>
+                                <div class="del" @click="dialogVisible = true">删除</div>
+                            </div>
+                            <div>
+                                <!-- 弹窗 -->
+                                <el-dialog title="删除项目" :visible.sync="dialogVisible" width="700px" :before-close="handleClose">
+                                    <div class="oneTips">您确定要删除版本
+                                        <span>{{scope.row.versionNumber}}</span>吗？</div>
+                                    <div class="twoTips">删除项目30天内，可在「项目回收站」恢复</div>
+                                    <span slot="footer" class="dialog-footer">
+                                        <el-button class="cancelBtn" @click="dialogVisible = false">取 消</el-button>
+                                        <el-button class="determineDelBtn" @click="dialogVisible = false">确 认 删 除</el-button>
+                                    </span>
+                                </el-dialog>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <!-- 按钮 -->
+            <!-- <div class="subBtn">
+                <el-button class="cancelBtn">取消</el-button>
+                <el-button class="determineBtn">确定</el-button>
+            </div> -->
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 弹窗
+                dialogVisible: false,
+                tableData: [{
+                    versionNumber: 'V1.12beat',
+                    CreationTime: '2021/2/1  9:00:12',
+                    briefIntroduction: '1231231222222222222222222222222222222',
+              
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+
+                }]
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => { });
+
+            }
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .el-dialog__header {
+        height: 54px;
+        background-color: #F2F2F2;
+        line-height: 22px;
+        font-size: 20px;
+        color: #524D62;
+        text-align: left;
+
+    }
+    .el-dialog__body {
+        padding: 10px 20px;
+    }
+    .el-message-box__btns>.el-button {
+        width: 60px;
+        height: 34px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 10px;
+    }
+
+    .el-message-box__btns>.el-button>span {
+        font-size: 14px;
+    }
+
+    .el-message-box__btns>.el-button:first-child:hover,
+    .el-button:first-child:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .el-message-box__btns>.el-button:last-child {
+        width: 60px;
+        height: 34px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border-color: #524D62;
+    }
+
+    .el-message-box__btns>.el-button:last-child:focus,
+    .el-message-box__btns>.el-button:last-child:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+
+    /* 头部 */
+
+    .header {
+        font-size: 20px;
+        color: #8C8C8C;
+        line-height: 22px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .newVersion {
+        margin-left: 24px;
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+
+    }
+
+    .newVersion>span {
+        font-size: 16px;
+    }
+
+    .newVersion:focus,
+    .newVersion:hover {
+        color: #fff;
+        border: 1px solid #524D62;
+        background: #524D62;
+    }
+
+    /* .header span {
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 10px;
+        margin-right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+
+    } */
+
+    /* 表格 */
+
+    .tableBox {
+        margin: 24px 24px 0 24px;
+    }
+
+    .briefIntroduction {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .operation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .see {
+        color: #1890FF;
+        margin-right: 20px;
+        cursor: pointer;
+    }
+
+    .del {
+        color: #F5222D;
+        cursor: pointer;
+    }
+
+    /* 按钮 */
+
+    .subBtn {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineDelBtn {
+        width: 140px;
+        height: 40px;
+        background: #FF7D82;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+    .determineDelBtn>span{
+        font-size: 16px;
+    }
+
+    .determineDelBtn:focus,
+    .determineDelBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #FF7D82;
+    }
+
+    .oneTips {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        /* line-height: 50px; */
+        font-weight: bold;
+        /* margin-left: 24px; */
+        text-align: left;
+    }
+
+    .oneTips>span {
+        font-size: 20px;
+        /* color: rgba(0, 0, 0, 0.85); */
+        /* line-height: 50px; */
+        font-weight: bold;
+        margin: 0 10px;
+        color: #FF7D82;
+    }
+
+    .twoTips {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        font-weight: 400;
+        /* margin-left: 24px; */
+        margin-top: 10px;
+    }
+
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancelBtn>span {
+        font-size: 16px;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineBtn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineBtn>span {
+        font-size: 16px;
+    }
+
+    .determineBtn:focus,
+    .determineBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

@@ -1,0 +1,389 @@
+@charset "UTF-8";
+* {
+	padding: 0;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: "Ping Fang SC", Arial, "Microsoft YaHei", Helvetica, sans-serif, "SimSun";
+}
+.ouiFile-btn{
+	background: none;
+	min-width: 90px;
+	display: inline-block;
+	margin-bottom: 0;
+	font-weight: 400;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	border: 1px solid #2C82FC;
+	white-space: nowrap;
+	line-height: 1.5;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	padding: 6px 12px;
+	font-size: 0;
+	border-radius: 3px;
+	color: #2C82FC;
+	outline: none;
+}
+.ouiFile-btn>span{
+	font-size: 12px;
+}
+.ouiFile-btn-download:hover{
+	background-color: rgba(55, 150, 236, .05);
+	color: #2C82FC;
+	border-color: #2C82FC;
+}
+.ouiFile-btn-download span {
+	padding-left: 20px;
+	background: url("../images/downloadFile.png") left center no-repeat;
+}
+/*批量导入*/
+.import-file {
+	text-align: left;
+}
+
+.import-file .step-one,
+.import-file .step-two {
+	padding: 0 0 10px;
+}
+
+.import-file .ouiFile-download {
+	margin-bottom: 9px;
+}
+
+.import-file .ouiFile-import-file {
+	display: block;
+	width: 100%;
+	background-color: #fff;
+	text-align: center;
+	border: 1px dashed #D8E1E6;
+	border-radius: 2px;
+	padding: 10px 12px;
+	outline: none;
+	cursor: pointer;
+	position: relative;
+}
+
+.import-file .ouiFile-import-file:hover {
+	border-color: #3796EC;
+	background-color: rgba(55, 150, 236, 0.05);
+}
+
+.ouiFile-import-file .import-file-btn{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	outline: none;
+	opacity: 0;
+	filter:alpha(opacity=0);
+	cursor: pointer;
+}
+.import-file .ouiFile-import-file span {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	margin-top: 30px;
+	background: url("../images/import-file.png") -37px -121px no-repeat;
+}
+
+.import-file .ouiFile-import-file p {
+	font-size: 14px;
+	font-weight: 400;
+	color: #3796ec;
+	line-height: 20px;
+	margin-top: 8px;
+	margin-bottom: 20px;
+}
+
+.ouiFile-import-file.ouiFile-import-file-error p{
+	color: #F65C78;
+}
+
+.ouiFile-import-file.ouiFile-import-file-error span{
+	background-position: -121px -121px;
+}
+.ouiFile-import-file.ouiFile-import-file-error:hover {
+	border-color: #F65C78;
+	background-color: rgba(243, 92, 120, 0.05);
+}
+.front-error-msg,
+.ouiFile-import-file.ouiFile-import-file-error p{
+	display: none;
+}
+.ouiFile-import-file.ouiFile-import-file-error p.front-error-msg{
+	display: block;
+}
+.import-file .ouiFile-load-file-list {
+	margin: 10px 0 30px;
+	max-height: 150px;
+	overflow-y: auto;
+}
+
+.import-file .ouiFile-load-file-list .ouiFile-load-file-item {
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	border: 1px dashed #d8e1e6;
+	margin-bottom: 5px;
+}
+
+.import-file .ouiFile-load-file-list .ouiFile-load-file-item .icon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 19px;
+	height: 24px;
+	margin: 0 10px 0 13px;
+	background: #f7f9fa url("../images/import-file.png") 0 -115px no-repeat;
+}
+
+.import-file .ouiFile-load-file-list .ouiFile-load-file-item .file-name {
+	display: inline-block;
+	vertical-align: middle;
+	width: 370px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 12px;
+	font-weight: 400;
+	color: #3e4967;
+	line-height: 17px;
+}
+
+.import-file .ouiFile-load-file-list .ouiFile-load-file-item .file-operation {
+	float: right;
+	width: 15px;
+	height: 16px;
+	margin: 12px 12px 0 0;
+	background: url("../images/import-file.png") -71px -123px no-repeat;
+	cursor: pointer;
+}
+
+.import-file .ouiFile-load-file-list .ouiFile-load-file-item .file-operation:hover {
+	background: url("../images/import-file.png") -87px -123px no-repeat;
+}
+
+.import-file .ouiFile-warn-info h3 {
+	font-size: 12px;
+	color: #3e4967;
+	line-height: 24px;
+	font-weight: bold;
+	margin-top: 8px;
+}
+
+.import-file .ouiFile-warn-info p {
+	font-size: 12px;
+	font-weight: 400;
+	color: #3e4967;
+	line-height: 22px;
+}
+
+.import-file .step-three {
+	/*正在上传*/
+	/*上传成功*/
+	/*上传失败*/
+	/*下载失败*/
+}
+
+.import-file .step-three .ouiFile-importing {
+	text-align: center;
+	font-size: 0;
+}
+
+.import-file .step-three .ouiFile-importing .icon {
+	display: inline-block;
+	width: 110px;
+	height: 100px;
+	margin-top: 50px;
+	background: url("../images/import-file.png") -220px 0 no-repeat;
+}
+
+.import-file .step-three .ouiFile-import-progress {
+	position: relative;
+	width: calc(100% - 50px);
+	height: 4px;
+	border-radius: 2px;
+	background-color: #D8E1E6;
+	margin: 30px auto 0;
+}
+
+.import-file .step-three .ouiFile-importing-file {
+	font-size: 12px;
+	font-weight: 400;
+	color: #62757b;
+	line-height: 24px;
+	text-align: center;
+	margin-top: 10px;
+}
+
+.import-file .step-three .ouiFile-importing-file .ouiFile-import-status {
+	display: none;
+}
+
+.import-file .step-three .ouiFile-importing-file .ouiFile-import-ing {
+	display: block;
+	margin-bottom: 30px;
+}
+
+.import-file .step-three .ouiFile-import-active-progress {
+	position: absolute;
+	left: 0;
+	top: 0;
+	border-radius: 2px;
+	width: 50%;
+	height: 100%;
+	background-color: #3796EC;
+}
+
+.import-file .step-three .ouiFile-import-successData {
+	display: none;
+}
+
+.import-file .step-three .ouiFile-import-failData {
+	display: none;
+	position: relative;
+	height: 44px;
+	line-height: 44px;
+	background: #f5f7f9;
+	text-indent: 44px;
+	margin: 10px 0 30px;
+	color: #F65C78;
+}
+
+.import-file .step-three .ouiFile-import-successData {
+	position: relative;
+	height: 44px;
+	line-height: 44px;
+	background: #f5f7f9;
+	text-indent: 44px;
+	margin: 10px 0 30px;
+}
+
+.import-file .step-three .ouiFile-import-successData:before,
+.import-file .step-three .ouiFile-import-failData:before {
+	position: absolute;
+	content: '';
+	width: 8px;
+	height: 8px;
+	left: 25px;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+	border-radius: 50%;
+	background: #3796ec;
+}
+
+.import-file .step-three .ouiFile-import-failData:before {
+	background-color: #F65C78;
+}
+
+.import-file .step-three .success .ouiFile-importing .icon {
+	width: 100px;
+	background: url("../images/import-file.png") -330px 0 no-repeat;
+}
+
+.import-file .step-three .success .ouiFile-import-active-progress {
+	width: 100%;
+}
+
+.import-file .step-three .success .ouiFile-importing-file .ouiFile-import-ing {
+	display: none;
+}
+
+.import-file .step-three .success .ouiFile-importing-file .ouiFile-import-success {
+	display: inline;
+}
+
+.import-file .step-three .success .ouiFile-import-successData {
+	display: block;
+}
+
+.import-file .step-three .fail .ouiFile-importing .icon {
+	background: url("../images/import-file.png") -430px 0 no-repeat;
+}
+
+.import-file .step-three .fail .ouiFile-import-active-progress {
+	width: 100%;
+	background: linear-gradient(314deg, #ff8b82 0%, #f55977 100%);
+}
+
+.import-file .step-three .fail .ouiFile-importing-file .ouiFile-import-ing {
+	display: none;
+}
+
+.import-file .step-three .fail .ouiFile-importing-file .ouiFile-import-fail {
+	display: inline-block;
+	color: #F65C78;
+	margin-bottom: 30px;
+}
+
+.import-file .step-three .fail .ouiFile-import-failData {
+	display: block;
+}
+
+.import-file .step-three .ouiFile-upload-ing {
+	font-size: 0;
+	text-align: center;
+}
+
+.import-file .step-three .ouiFile-upload-ing .icon {
+	display: inline-block;
+	width: 110px;
+	height: 100px;
+	margin-top: 50px;
+	background: url("../images/import-file.png") 0 0 no-repeat;
+}
+
+.import-file .step-three .ouiFile-upload-fail {
+	font-size: 0;
+	text-align: center;
+}
+
+.import-file .step-three .ouiFile-upload-fail .icon {
+	display: inline-block;
+	width: 110px;
+	height: 100px;
+	margin-top: 50px;
+	background: url("../images/import-file.png") -110px 0 no-repeat;
+}
+
+.import-file .submit-button {
+	vertical-align: middle;
+}
+
+.import-file .ouiFile-btn {
+	margin-left: 10px;
+}
+
+.oui-dialog-ft .import-success,
+.oui-dialog-ft .import-fail,
+.import-success .oui-dialog-ft .oui-dialog-ok,
+.import-fail .oui-dialog-ft .oui-dialog-ok{
+	display: none;
+}
+.import-success .oui-dialog-ft .oui-dialog-ok.import-success,
+.import-fail .oui-dialog-ft .oui-dialog-ok.import-fail{
+	display: inline-block;
+}
+.import-default .oui-dialog-ft .oui-dialog-ok,
+.import-default .oui-dialog-ft .oui-dialog-ok:hover{
+	background: #D8E1E6;
+	color: #9CB0BB;
+	border-color: #D8E1E6;
+	cursor: default;
+}
+
+
+
+
+

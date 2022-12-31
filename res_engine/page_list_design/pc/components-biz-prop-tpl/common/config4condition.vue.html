@@ -1,0 +1,440 @@
+
+<template >
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <div class="design-field "  :curr-control-id="config.id">
+
+                    <div class="fieldname">业务id</div>
+                    <div class="fieldblock">
+                        <el-input type="text" placeholder="自定义业务id" v-model="config.bizId" @change="_controlOnUpdate('bizId',config)" />
+                    </div>
+                </div>
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field "  :curr-control-id="config.id">
+
+                    <div class="fieldname">业务描述</div>
+                    <div class="fieldblock">
+                        <el-input type="textarea" placeholder="业务描述"
+                                  placeholder="业务描述"
+                                  v-model="config.otherAttrs.bizDes" @change="_controlOnUpdate('otherAttrs.bizDes',config)" />
+                    </div>
+                </div>
+                <div class="design-field "  >
+                    <div class="fieldname">是否必填</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                on-text ="是"
+                                off-text = "否"
+                                on-color="#5B7BFA"
+                                off-color="#dadde5"
+                                v-model="config.otherAttrs.required"
+                                @change="_controlOnUpdate('otherAttrs.required',config)"
+                                ></el-switch>
+                    </div>
+                </div>
+
+
+                <div class="design-field "  >
+                    <div class="fieldname">值改变事件</div>
+                    <div class="fieldblock">
+                        <el-button type="primary" @click="event2setOnValueUpdateScript">设置值改变事件</el-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                relation:{
+                    //样式相关
+                    loading4targetForms:false,
+                    loading4targetFields:false,
+                    loading4targetDisplayFields:false,
+
+                    targetForms:[],//目标表单列表加载
+                    targetFields:[],//目标表单级联的字段列表
+
+                    //业务字段相关
+                    formId:'',//本表表单id
+                    fieldId:'',//本表字段id
+                    targetFormId:'',//目标表单id
+                    targetFieldId:'',//目标字段id
+                    targetDisplayFieldId:''//关联目标表内容显示对应的字段
+                },
+
+                config:{
+                    id:'',
+                    bizId:'',
+                    otherAttrs:{
+                        relationShowType:1,//1.下拉回填，2.表格行回填
+                        useRelation:false,
+                        targetLines:[],
+                        bizDes:''
+                    },
+                    events:{}
+                }
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if(currentControl&&currentControl.id&&currentControl.controlType){
+
+                if(!currentControl.otherAttrs){
+                    currentControl.otherAttrs = {
+                        bizDes:''
+                    };
+                }
+                if(!currentControl.events){
+                    currentControl.events = {};
+                }
+                if(!currentControl.otherAttrs.bizDes){
+                    currentControl.otherAttrs.bizDes ='';
+                }
+                if(!currentControl.otherAttrs.useRelation){
+                    currentControl.otherAttrs.useRelation = false;
+                }
+                if(!currentControl.otherAttrs.targetLines){
+                    currentControl.otherAttrs.targetLines = [];
+                }
+                if( typeof  currentControl.otherAttrs.relationShowType =='undefined'){
+                    currentControl.otherAttrs.relationShowType=1;
+                }
+
+                this.config.bizId = currentControl.bizId;
+                this.config.id = currentControl.id;
+                this.config.otherAttrs = oui.parseJson(oui.parseString(currentControl.otherAttrs));
+                this.config.events = oui.parseJson(oui.parseString(currentControl.events));
+                var relation =this.findRelationByControl(currentControl);
+                if(relation){
+                    for(var k in relation){
+                        this.relation[k] = relation[k];
+                    }
+                }
+            }
+            this.initRemoteTargetForms(); //初始化表单下拉
+            this.initRemoteTargetFields(); //初始化表单字段下拉
+
+        },
+        methods:{
+            //设置值改变事件脚本
+            event2setOnValueUpdateScript:function(){
+                var me = this;
+                var title = '值改变事件'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符"
+                 oui-e-click="event2showCodeDialog"
+                */
+
+                var errorMsgMax = '控件值改变事件脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '控件值改变事件脚本编译失败';//脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                var eventType = 'script4onChange';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.valueChange||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="";
+                if(currentControl.detailId){
+                    inputParams = 'key,value,options,rowIndex,detailId';
+                }else{
+                    inputParams ='key,value,options';
+                }
+
+                //key,v,ov,options,this.rowIndex,this.detailId
+                //值改变事件默认脚本在这里
+
+
+                var defaultParams = {"params":["key","value","options"],"startCode":"","bodyCode":"//key 属性\n//value 改变后的值\n//options 对象结构 {value,display,data4DB}\n//rowIndex 如果在明细表中则有行索引参数\n//detailId //如果在明细表中则有明细id参数\nvar pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\n// var someValue = oui.JsonPathUtil.getJsonByPath('mainData.finishRule.value',pageData);//获取某个对象 path下的值\n// oui.JsonPathUtil.setObjByPath(path,obj,value,notArray); //设置某个对象path下的值，path:路径,obj:对象,value:具体值或者指定对象,notArray:true对象kv,false:数组\n","endCode":"","returnType":"string"};
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.valueChange = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+            },
+            //是否显示关联字段
+            isShowRelationField:function(field){
+                if(this.relation.formId == this.relation.targetFormId){
+                    if(this.relation.fieldId == field.id){
+                        //同表单，不能关联同一个字段
+                        return false;
+                    }
+                }
+                return true;
+            },
+            findRelationByControl:function(currentControl){
+                if(currentControl&&currentControl.otherAttrs && currentControl.otherAttrs.targetLines){
+                    var relation = oui.findOneFromArrayBy(currentControl.otherAttrs.targetLines,function(item){
+                        if((item.lineType+'') == '1'){ //1 关联 ，2 推送
+                            return true;
+                        }
+                    });
+                    return relation;
+                }
+                return null;
+            },
+            initRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                var me = this;
+                if(!com.oui.absolute.AbsoluteDesign.forms){
+                    query = query ||'';
+                    var url = com.oui.absolute.AbsoluteDesign.paramCfg.params.queryPageModelsUrl;//查询页面资源列表url
+                    oui.postData(url,{//ajax获取数据
+                        name:query
+                    },function(res){
+                        var pages =res.pages ||[];
+                        me.relation.targetFormsJson =oui.parseString(pages);
+                        me.relation.targetForms = pages;
+                        com.oui.absolute.AbsoluteDesign.forms = oui.parseJson(me.relation.targetFormsJson);
+                    },function(res){},'加载中...');
+                }else{
+
+                    me.relation.targetFormsJson = oui.parseString(com.oui.absolute.AbsoluteDesign.forms);
+                    me.relation.targetForms = oui.parseJson(me.relation.targetFormsJson);
+
+                }
+
+            },
+            initRemoteTargetFields:function(){
+                var me = this;
+                if(this.relation.targetFormId){
+                    if(com.oui.absolute.AbsoluteDesign.tempFields &&(com.oui.absolute.AbsoluteDesign.tempFields.formId ==this.relation.targetFormId)){
+                        me.relation.targetFieldsJson =oui.parseString(com.oui.absolute.AbsoluteDesign.tempFields.fields);
+                        me.relation.targetFields = oui.parseJson(me.relation.targetFieldsJson);
+                    }else{
+                        var url = com.oui.absolute.AbsoluteDesign.paramCfg.params.queryPageFieldsUrl;//查询页面资源列表url
+                        oui.postData(url,{//ajax获取数据,根据目标表单查询字段,如果有名字过滤，则进行过滤
+                            formId:this.relation.targetFormId
+                        },function(res){
+                            var fields =res.fields ||[];
+                            me.relation.targetFieldsJson =oui.parseString(fields);
+                            me.relation.targetFields = fields;
+                            com.oui.absolute.AbsoluteDesign.tempFields = {
+                                formId:me.relation.targetFormId,
+                                fields:oui.parseJson(me.relation.targetFieldsJson)
+                            };
+                        },function(res){},'加载中...');
+                    }
+                }
+
+            },
+            clear4loadRemoteTargetForms:function(){
+                var me = this;
+                var temp = oui.parseJson(me.relation.targetFormsJson);
+                me.relation.targetForms = temp;
+            },
+            clear4loadRemoteTargetFields:function(){
+                var me = this;
+                var temp = oui.parseJson(me.relation.targetFieldsJson);
+                me.relation.targetFields = temp;
+            },
+            loadRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                query = query ||'';
+                var me = this;
+                //根据输入参数模糊匹配
+                if(query){
+                    var temp = oui.parseJson(me.relation.targetFormsJson);
+                    var arr = oui.findManyFromArrayBy(temp,function(item){
+                        if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                            return true;
+                        }
+                    });
+                    me.relation.targetForms = arr;
+                }else{
+                    me.relation.targetForms = oui.parseJson(me.relation.targetFormsJson);
+                }
+            },
+            loadRemoteTargetFields:function(query){
+                //根据表单加载字段列表
+                query = query ||'';
+                var me = this;
+                if(me.relation.targetFormId){
+                    //根据输入参数模糊匹配
+                    if(query){
+                        var temp = oui.parseJson(me.relation.targetFieldsJson);
+                        var arr = oui.findManyFromArrayBy(temp,function(item){
+                            if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                                return true;
+                            }
+                        });
+                        me.relation.targetFields = arr;
+                    }else{
+                        me.relation.targetFields = oui.parseJson(me.relation.targetFieldsJson);
+                    }
+                }else{
+                    me.relation.targetFields =[];
+                }
+
+            },
+            loadRemoteTargetDisplayFields:function(query){
+                //根据表单加载字段列表
+                this.loadRemoteTargetFields(query);
+            },
+            hasLine:function(){
+                if(this.config&&this.config.otherAttrs&&this.config.otherAttrs.targetLines&&this.config.otherAttrs.targetLines.length){
+                    return true;
+                }
+                return false;
+            },
+            findCurrentControl:function(){
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(currentControl&&currentControl.id&&currentControl.controlType){
+                    return currentControl;
+                }
+                return {};
+            },
+            findLineId:function(relation){
+                var tpl = '{{formId}}_{{fieldId}}_{{targetFormId}}_{{targetFieldId}}_{{lineType}}';
+                if(!com.oui.absolute.AbsoluteDesign.renderLineId){
+                    com.oui.absolute.AbsoluteDesign.renderLineId = template.compile(tpl);
+                }
+                var lineId = com.oui.absolute.AbsoluteDesign.renderLineId(relation);
+                return lineId;
+            },
+            _controlOnUpdate4relation:function(bindProp,relation,config){ //更新关联信息
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    /*
+                     formId:'',//本表表单id
+                     fieldId:'',//本表字段id
+                     targetFormId:'',//目标表单id
+                     targetFieldId:'',//目标字段id
+                     targetDisplayFieldId:''//关联目标表内容显示对应的字段
+                         */
+                    var relation =this.findRelationByControl(currentControl);
+                    var formId = com.oui.absolute.AbsoluteDesign.data.id;
+                    if(bindProp =='targetFormId'){ //关联表单变更，清除字段
+                        this.relation.targetFieldId ='';
+                        this.relation.targetDisplayFieldId ='';
+                    }
+                    if(!relation){
+                        relation = {
+                            lineType:1, //关联类型
+                            formId:formId,//本表表单id
+                            fieldId:currentControl.id,//本表字段id
+                            targetFormId:this.relation.targetFormId,//目标表单id
+                            targetFieldId:this.relation.targetFieldId,//目标字段id
+                            targetDisplayFieldId:this.relation.targetDisplayFieldId //关联目标表内容显示对应的字段
+                        };
+                        relation.lineId = this.findLineId(relation);
+                        currentControl.otherAttrs.targetLines.push(relation);
+                    }else{
+                        relation.formId = formId;
+                        relation.fieldId = currentControl.id;
+                        relation.targetFormId = this.relation.targetFormId;
+                        relation.targetFieldId = this.relation.targetFieldId;
+                        relation.targetDisplayFieldId = this.relation.targetDisplayFieldId;
+                        relation.lineId = this.findLineId(relation);
+                    }
+
+                    me.initRemoteTargetFields();
+                }
+            },
+            _controlOnUpdate4clearRelation:function(bindProp,config,currentControl){
+                if(bindProp =='otherAttrs.useRelation'){
+                    if(!config.otherAttrs.useRelation){//取消关联，要删除连线
+                        oui.removeFromArrayBy(config.otherAttrs.targetLines||[],function(item){
+                            if((item.lineType+'') =='1'){
+                                return true;
+                            }
+                        });
+                        oui.removeFromArrayBy(currentControl.otherAttrs.targetLines||[],function(item){
+                            if((item.lineType+'') =='1'){
+                                return true;
+                            }
+                        });
+                    }
+                }
+            },
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                    //清除关系连线
+                    me._controlOnUpdate4clearRelation(bindProp,config,currentControl);
+
+                }
+
+//                this.$nextTick(function(){
+//
+//                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

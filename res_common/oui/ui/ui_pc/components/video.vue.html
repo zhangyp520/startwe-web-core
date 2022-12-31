@@ -1,0 +1,183 @@
+<template>
+    <div class="oui-class-video" >
+      
+        <!-- 宽度:{{videoWidth}}  高度:{{videoHeight}} 45646464 -->
+        <video :id="videoId"  :width="videoWidth" style="width: 100%;height: 100%;"  :height="videoHeight" class="video-js vjs-big-play-centered" controls data-setup="{}"  preload="auto">
+        </video>
+     
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                videoWidth: '',
+                videoHeight: '',
+                videoId: 'video_' + oui.getUUIDLong(),
+                options: {
+                    muted: true,
+                    controls: true,
+                    loop: true,
+                    autoplay: false,
+                    playbackRates: [0.5, 1, 1.5, 2, 3],
+                    sources: [{
+                        src: 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8',
+                        type: 'application/x-mpegURL'
+                    }],
+                }
+            }
+        },
+        computed: {
+         
+        },
+        mounted() {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            let me = this
+            oui.require4notSort([oui.getContextPath() + 'res_common/third/videojs/video-js.css']);
+            oui.require([oui.getContextPath() + 'res_common/third/videojs/video.min.js'], function () {
+                me.init();
+            }, function () {});
+            console.log(this.control.style.width)
+            console.log(this.control.style.height)
+        },
+        methods: {
+            ImageURL(){
+              return  'https://placeholder.pics/svg/782x362/FF2030/FFF/分享'
+             
+          },
+            init() {
+                var me = this;
+                this.$nextTick(function () {
+                    me.videPlayer();
+                    if (this.control.style.width && this.control.style.height) {
+                        this.videoWidth = this.control.style.width + 'px'
+                        this.videoHeight = this.control.style.height + 'px'
+                    }
+
+                });
+            },
+            videPlayer: function () {
+                var myvideo = document.getElementById(this.videoId)
+                var player = videojs(myvideo, this.options);
+                window.player = player
+
+                player.on('mouseout', function () {
+                    console.log('video.js-mouseout')
+                    player.userActive(false)
+                });
+
+                player.on('mouseover', function () {
+                    console.log('video.js-mouseover')
+                    player.userActive(true)
+                });
+                player.on('fullscreenchange', function () {
+                    console.log('video.js-fullscreenchange', player.isFullscreen())
+                });
+                player.on('useractive', function (e) {
+                    window.console.log('videoJS: useractive');
+                });
+                player.on('userinactive', function (e) {
+                    window.console.log('videoJS: userinactive');
+                });
+
+                player.on('durationchange', function (e) {
+                    window.console.log('videoJS: durationchange');
+                });
+                player.on('ended', function (e) {
+                    window.console.log('videoJS: ended');
+                });
+                player.on('ready', function (e) {
+                    window.console.log('videoJS: ready');
+                });
+                player.on('error', function (e) {
+                    window.console.log('videoJS: error');
+                });
+                player.on('firstplay', function (e) {
+                    window.console.log('videoJS: firstplay');
+                });
+                player.on('loadedalldata', function (e) {
+                    window.console.log('videoJS: loadedalldata');
+                });
+                player.on('loadeddata', function (e) {
+                    window.console.log('videoJS: loadeddata');
+                });
+                player.on('loadedmetadata', function (e) {
+                    window.console.log('videoJS: loadedmetadata');
+                });
+                player.on('loadstart', function (e) {
+                    window.console.log('videoJS: loadstart');
+                });
+                player.on('pause', function (e) {
+                    window.console.log('videoJS: pause', player.readyState());
+                });
+                player.on('play', function (e) {
+                    window.console.log('videoJS: play', player.readyState());
+                });
+                player.on('seeked', function (e) {
+                    window.console.log('videoJS: seeked');
+                });
+                player.on('seeking', function (e) {
+                    window.console.log('videoJS: seeking');
+                });
+                player.on('waiting', function (e) {
+                    window.console.log('videoJS: waiting');
+                });
+
+                player.on('contentplayback', function (e) {
+                    window.console.log('videoJS: contentplayback');
+                });
+                player.on('ended', function (e) {
+                        window.console.log('videoJS: ended');
+                    }),
+
+                    player.on('ima3error', function (e) {
+                        window.console.log('videoJS/IMA3: ima3error');
+                    });
+                player.on('ima3-ad-error', function (e) {
+                    window.console.log('videoJS/IMA3: ima3-ad-error');
+                });
+                player.on('ima3-ready', function (e) {
+                    window.console.log('videoJS/IMA3: ima3-ready');
+                });
+
+                player.on('ads-request', function (e) {
+                    window.console.log('videoJS/Ads: ads-request');
+                });
+                player.on('ads-load', function (e) {
+                    window.console.log('videoJS/Ads: ads-load');
+                });
+                player.on('ads-ad-started', function (e) {
+                    window.console.log('videoJS/Ads: ads-ad-started');
+                });
+                player.on('ads-ad-ended', function (e) {
+                    window.console.log('videoJS/Ads: ads-ad-ended');
+                });
+                player.on('ads-first-quartile', function (e) {
+                    window.console.log('videoJS/Ads: ads-first-quartile');
+                });
+            },
+            changeSrc: function () {
+
+
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    .oui-class-video {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        background-color: hotpink;
+    }
+</style>

@@ -1,0 +1,367 @@
+<!--评分 组件 -->
+<template>
+    <div class="comp-search-wrap">
+        <!-- toolbar -->
+        <div class="pg-toolbar">
+            <el-row>
+                <el-col :span="16">
+                    <el-button-group>
+                        <el-button type="success" size="small">新增</el-button>
+                        <el-button type="primary" size="small">编辑</el-button>
+                        <el-button type="danger" size="small">删除</el-button>
+                    </el-button-group>
+                </el-col>
+                <el-col :span="8">
+                    <el-input size="small" placeholder="请输入内容" class="input-with-select" style="width: 350px;">
+                        <el-select slot="prepend" placeholder="请选择" v-model="searchSelect">
+                            <el-option label="姓名" value="1"></el-option>
+                            <el-option label="年龄" value="2"></el-option>
+                            <el-option label="性别" value="3"></el-option>
+                            <el-option label="电话" value="4"></el-option>
+                        </el-select>
+                        <el-button slot="append" type="primary">搜索</el-button>
+                    </el-input>
+                </el-col>
+            </el-row>
+        </div>
+
+        <!-- table -->
+        <div class="pg-table">
+            <el-table
+                    :data="tableData"
+                    style="width: 100%">
+                <el-table-column
+                        type="selection"
+                        width="55">
+                </el-table-column>
+                <el-table-column
+                        prop="name"
+                        label="姓名"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="age"
+                        label="年龄"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="sex"
+                        label="性别"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="tel"
+                        label="电话"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="address"
+                        label="地址">
+                </el-table-column>
+            </el-table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pg-pagination">
+            <el-pagination
+                    background
+                    :hide-on-single-page="true"
+                    layout="total, prev, pager, next"
+                    :page-size="10"
+                    :total="200">
+            </el-pagination>
+        </div>
+
+        <!-- card 列表 -->
+        <div class="pg-card">
+            <el-row :gutter="15">
+                <el-col :xs="12" :sm="8" :md="6" :lg="4" v-for="(item, index) in 8">
+                    <el-card shadow="hover">
+                        <div class="card-cont">
+                            关于张三
+                        </div>
+                        <div class="card-footer">
+                            <el-row>
+                                <el-col :span="12">
+                                    <div>2020.7.25</div>
+                                </el-col>
+                                <el-col :span="12" style="text-align: right">
+                                    <el-dropdown size="medium" trigger="click">
+                                        <span class="el-dropdown-link">
+                                            <span>操作</span>
+                                            <i class="el-icon-arrow-down el-icon--right"></i>
+                                        </span>
+                                        <el-dropdown-menu slot="dropdown">
+                                            <el-dropdown-item>编辑</el-dropdown-item>
+                                            <el-dropdown-item>删除</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </div>
+
+        <!-- 左右布局 -->
+        <el-container style="height: 500px; border: 1px solid #eee">
+            <el-aside width="200px">
+                <el-menu :default-openeds="['1', '2']">
+                    <el-submenu index="1">
+                        <template slot="title">导航一</template>
+                        <el-menu-item index="1-1">选项1</el-menu-item>
+                        <el-menu-item index="1-2">选项2</el-menu-item>
+                    </el-submenu>
+                    <el-submenu index="2">
+                        <template slot="title">导航二</template>
+                        <el-menu-item index="2-1">选项1</el-menu-item>
+                        <el-menu-item index="2-2">选项2</el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
+
+            <el-container>
+                <el-main>
+                    <el-tabs v-model="curTabIndex" @tab-click="handleTabChange">
+                        <el-tab-pane label="选项菜单1" name="0">
+                            <div>
+                                <!-- table -->
+                                <div class="pg-table">
+                                    <el-table :data="tableData" style="width: 100%">
+                                        <el-table-column
+                                                type="selection"
+                                                width="55">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="name"
+                                                label="姓名"
+                                                width="180">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="age"
+                                                label="年龄"
+                                                width="180">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="sex"
+                                                label="性别"
+                                                width="180">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="tel"
+                                                label="电话"
+                                                width="180">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="address"
+                                                label="地址">
+                                        </el-table-column>
+                                    </el-table>
+                                </div>
+
+                                <!-- 分页 -->
+                                <div class="pg-pagination">
+                                    <el-pagination
+                                            background
+                                            :hide-on-single-page="true"
+                                            layout="total, prev, pager, next"
+                                            :page-size="10"
+                                            :total="50">
+                                    </el-pagination>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="选项菜单2" name="1">选项菜单2</el-tab-pane>
+                        <el-tab-pane label="选项菜单3" name="2">选项菜单3</el-tab-pane>
+                        <el-tab-pane label="选项菜单4" name="3">选项菜单4</el-tab-pane>
+                    </el-tabs>
+                </el-main>
+            </el-container>
+        </el-container>
+
+        <div style="height: 30px">
+            <!-- 占位，无实际作用 -->
+        </div>
+
+        <!-- 上下布局 -->
+        <el-container style="border: 1px solid #eee">
+            <el-main>
+                <el-tabs type="card" tab-position="bottom">
+                    <el-tab-pane label="选项菜单1">
+                        <div class="pg-tab-panel">
+                            <!-- table -->
+                            <div class="pg-table">
+                                <el-table :data="tableData" style="width: 100%">
+                                    <el-table-column
+                                            type="selection"
+                                            width="55">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="name"
+                                            label="姓名"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="age"
+                                            label="年龄"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="sex"
+                                            label="性别"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="tel"
+                                            label="电话"
+                                            width="180">
+                                    </el-table-column>
+                                    <el-table-column
+                                            prop="address"
+                                            label="地址">
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+
+                            <!-- 分页 -->
+                            <div class="pg-pagination">
+                                <el-pagination
+                                        background
+                                        :hide-on-single-page="true"
+                                        layout="total, prev, pager, next"
+                                        :page-size="10"
+                                        :total="30">
+                                </el-pagination>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="选项菜单2">
+                        <div class="pg-tab-panel">
+                            选项菜单2222222
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="选项菜单3">
+                        <div class="pg-tab-panel">
+                            选项菜单选项菜单3333333
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+        </el-container>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                searchSelect: '',
+                tableData: [
+                    {
+                        name: '张三',
+                        age: '28',
+                        sex: '男',
+                        tel: '13612345678',
+                        address: '成都市天府软件园'
+                    },
+                    {
+                        name: '李四',
+                        age: '30',
+                        sex: '女',
+                        tel: '13612345678',
+                        address: '成都市天府软件园'
+                    },
+                    {
+                        name: '王五',
+                        age: '29',
+                        sex: '男',
+                        tel: '13612345678',
+                        address: '成都市天府软件园'
+                    }, {
+                        name: '赵六',
+                        age: '32',
+                        sex: '女',
+                        tel: '13612345678',
+                        address: '成都市天府软件园'
+                    },
+                    {
+                        name: '李子柒',
+                        age: '32',
+                        sex: '女',
+                        tel: '13612345678',
+                        address: '成都市天府软件园'
+                    }
+                ],
+
+                //左右布局
+                curTabIndex: '0'
+            }
+        },
+        mounted: function()
+        {
+
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            },
+
+            /****** 左右布局 *******/
+            handleTabChange: function(tab, event)
+            {
+                console.log(tab, event);
+            }
+        }
+    }
+</script>
+
+<style>
+    .comp-search-wrap {
+        padding: 15px;
+    }
+
+    .pg-toolbar {
+        margin-bottom: 20px;
+    }
+
+    .pg-table {
+        margin-bottom: 20px;
+    }
+
+    .pg-pagination {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    .pg-card .el-card {
+        margin-bottom: 20px;
+    }
+
+    .pg-card .card-cont {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .pg-card .card-footer {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .el-submenu {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* 上下布局，设置内容高度 */
+    .pg-tab-panel {
+        height: 400px;
+    }
+</style>

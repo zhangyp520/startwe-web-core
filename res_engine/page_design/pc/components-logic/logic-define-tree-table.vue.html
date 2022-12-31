@@ -1,0 +1,613 @@
+<!--逻辑接口定义-->
+<template >
+    <div class="api-setting-form">
+        <header>
+            <div class="title">{{title}}</div>
+            <div class="tool-btn">
+                <span class="s-icon s-icon-16 s-icon-add" title="添加定义" @click="onAddRow()"></span>
+                <span class="s-icon s-icon-16 s-icon-delete4" title="清空" @click="onRemoveAll()"></span>
+            </div>
+        </header>
+        <el-table
+                ref="treeTable"
+                :data="treeData"
+                style="width: 100%; margin-bottom: 10px;"
+                row-key="id"
+                :expand-row-keys="expandIds"
+                :load="load"
+                lazy
+                :tree-props="{children: 'children',hasChildren:'hasChildren'}"
+                :header-cell-style="{background:'#3A3B3F' }" >
+            <el-table-column
+                    type="selection"
+                    width="45">
+            </el-table-column>
+
+            <el-table-column
+                    prop="name"
+                    label="变量名称"
+                    width="260">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="常用变量"
+                    width="260">
+                <template slot-scope="scope">
+                    <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                        <el-select
+                                :disabled="!scope.row.canEdit"
+                                v-model="scope.row.varNameType"
+                                placeholder="请选择"
+                                size="mini"
+                                style="width:100px"
+                                @change="nameChangeByInnerVar($event,scope)" >
+                            <el-option
+                                    v-for="item in innerVars"
+                                    :key="item.value"
+                                    :label="item.display"
+                                    :value="item.value" >
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="display: inline-block;width: 130px; ">
+                        <el-input :disabled="!scope.row.canEdit" style="width:130px"  size="mini" @change="nameChange($event,scope)" v-model="scope.row.name" placeholder="变量名称"></el-input>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="fieldType"
+                    label="变量类型"
+                    width="280">
+                <template slot-scope="scope">
+                    <div style="margin-right: 5px;width: 120px;display: inline-block;">
+                        <el-select :disabled="!scope.row.canEdit"  @change="fieldTypeChange($event,scope)" v-model="scope.row.fieldType" placeholder="请选择" size="mini" style="width:120px"  >
+                            <el-option
+                                    v-for="item in fieldTypes"
+                                    :key="item.value"
+                                    :label="item.display"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="display: inline-block;width: 120px; " v-if="scope.row.fieldType=='table_type' || scope.row.fieldType=='tableData_type' ">
+
+                        <oui-include
+                                id="pageTreeSelect4select"
+                                type="module"
+                                ref="pageTree4select"
+                                :data="getTableModelTreeData4TableType(scope.row)"
+                                url="res_engine/page_design/pc/components-vue/tree-select.vue.html"  >
+                        </oui-include>
+                    </div>
+                </template>
+
+            </el-table-column>
+
+
+            <el-table-column
+                    prop="defaultValue"
+                    width="100"
+                    label="默认值">
+                <template   slot-scope="scope">
+                    <el-input :disabled="!scope.row.canEdit" size="mini" v-model="scope.row.defaultValue" @change="defaultValueChange($event,scope)"   placeholder="默认值"></el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="display"
+                    label="变量中文名称">
+                <template  slot-scope="scope">
+                    <el-input :disabled="!scope.row.canEdit" size="mini" type="textfield" v-model="scope.row.display" @change="displayChange($event,scope)" placeholder="变量中文名称，与变量名称对应"></el-input>
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="desc"
+                    label="描述">
+                <template  slot-scope="scope">
+                    <el-input :disabled="!scope.row.canEdit" size="mini" type="textarea" v-model="scope.row.desc" @change="descChange($event,scope)" placeholder="变量描述，用于生成文档"></el-input>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column
+                    prop="array"
+                    width="67"
+                    align="center"
+                    label="数组">
+                <template  slot-scope="scope">
+                    <el-switch :disabled="!scope.row.canEdit"
+                            v-model="scope.row.array" title="是否是数组" @change="arrayChange($event,scope)">
+                    </el-switch>
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="required"
+                    width="80"
+                    align="center"
+                    label="是否必填">
+                <template slot-scope="scope">
+
+                    <el-switch :disabled="!scope.row.canEdit"
+                            v-model="scope.row.required" title="是否必填"  @change="requiredChange($event,scope)">
+                    </el-switch>
+
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="urlEncodeKey"
+                    width="80"
+                    align="center"
+                    label="加密参数" >
+                <template   slot-scope="scope">
+                    <el-switch :disabled="!scope.row.canEdit" v-model="scope.row.urlEncodeKey" title="是否是加密参数"  @change="urlEncodeKeyChange($event,scope)" >
+                    </el-switch>
+                </template>
+
+            </el-table-column>
+
+            <el-table-column
+                    label="操作"
+                    align="right"
+                    width="100"
+            >
+                <template slot-scope="scope" v-if="scope.row.canEdit">
+                    <span class="s-icon s-icon-18 s-icon-child-node s-icon-btn" v-if="scope.row.fieldType == 'object_type'"  @click="onAddChildProp(scope)"  title="添加子级"></span>
+                    <span class="s-icon s-icon-18 s-icon-add-node s-icon-btn"   title="添加兄弟级" @click="onAddRow(scope)"    ></span>
+                    <span class="s-icon s-icon-18 s-icon-delete s-icon-btn" title="删除" @click="onRemoveRow(scope)" ></span>
+                </template>
+            </el-table-column>
+        </el-table>
+
+
+
+
+        <el-dialog
+                title="成功提示"
+                :visible.sync="tipsDialog"
+                width="400px"
+                custom-class="s-dialog-box"
+                top="35vh"
+                :modal="false" >
+            <span>保存成功</span>
+            <span slot="footer" class="s-dialog-foote">
+                <el-button @click="delItem = false"  size="small">取 消</el-button>
+                <el-button type="primary" @click="tipsDialog = false"  size="small">确 定</el-button>
+            </span>
+        </el-dialog>
+
+
+    </div>
+</template>
+
+<script>
+
+    exports = {
+        templateType:'vue',
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                varNamePrefix:'',
+                expandIds:[],
+                title:'',
+                tipsDialog:false,
+                treeData:[],
+                expandRowIds:[],
+                LogicGraph:com.startwe.models.project.web.LogicDesignController,
+                fieldTypes:com.startwe.models.project.web.LogicDesignController.findFieldTypes(),
+                innerVars:com.startwe.models.project.web.LogicDesignController.findInnerVars(),
+                tableModelTreeData:this.getTableModelTreeData()
+            }
+        },
+        watch: {
+
+        },
+        mounted:function(){
+            var me = this;
+        },
+        methods:{
+            getTableModelTreeData:function (){
+                return com.oui.absolute.AbsoluteDesign.tableModelTreeData
+            },
+            getCache:oui.getCache4include,
+            getTableModelTreeData4TableType:function (row){
+                var me = this;
+                return this.getCache(this.bindProp+'_tableModelTreeData4TableType_'+row.id,{
+                  data : this.tableModelTreeData  ,disabled: false,optionData:{value:row.tableModelId,display:row.tableModelName},rowId:row.id,
+                  onUpdate:function(key,v){
+                      console.info('logic-define-tree-table.vue.html 中 引入的子组件变更了',arguments);
+                      var oldData = oui.clone(me.getData());
+                      var rowId = v.rowId;
+                      var one = oui.findOneFromTreeArrayBy(me.treeData,function (item){
+                        if(item.id == rowId){
+                            return true;
+                        }
+                      });
+
+                      one.tableModelId = v.optionData.value;
+                      one.tableModelName = v.optionData.display;
+                      if(one.tableModelId){
+                          //处理children
+                          // ajax 获取业务模型对应的 属性定义信息
+                          me.findTableModelFields(one.tableModelId,function (fields){
+                              oui.eachArray(fields,function (temp){
+                                  temp.parentId = one.id;
+                              });
+                              one.children = fields;
+                              me.$set(one,'children',fields);
+                              me.onUpdate&&me.onUpdate(me.bindProp,oui.clone(me.getData()),oldData,{
+                                  operate:'changeTableModelId',
+                                  rowId:rowId
+                              });
+                          });
+                      }else{
+                          one.children = [];
+                          me.$set(one,'children',[]);
+                      }
+
+
+
+                  }
+              });
+            },
+            findTableModelFields:function (pageId,callback){
+                var url = com.oui.absolute.AbsoluteDesign.findTableModelFieldsUrl;
+                var me = this;
+                oui.postData(url,{
+                    pageId:pageId
+                },function (res){
+                    callback&&callback(res.propDefineBeans||[]);
+                },function (res){
+
+                },'加载中...');
+
+            },
+            load:function (row,treeNode,resolve){
+                setTimeout(function (){
+                    resolve(row.children);
+                },20);
+            },
+            newVarName:function (){
+                var idx =0;
+                oui.eachTreeArray(this.treeData||[],function (item){
+                    idx++;
+                });
+                return (this.varNamePrefix||'var')+(idx+1);
+            },
+            newDisplayName:function (){
+                var idx =0;
+                oui.eachTreeArray(this.treeData||[],function (item){
+                    idx++;
+                });
+                return (this.title||'参数')+(idx+1);
+            },
+
+            /*
+            private String idPath; //id属性链
+            private String namePath; //name属性链
+            private List<ValidateBean> validates;//校验列表
+            private ClassDefineBean define;
+             */
+            newRow:function (){
+                var row =  {
+                    "id":'r_'+oui.getUUIDLong(),
+                    "name":this.newVarName(), //变量名
+                    "display":this.newDisplayName(),//中文名与 name对应
+                    "parentId":'',
+                    "varNameType":"", //快捷变量名 类型
+                    "fieldType":"string_type", //字段类型
+                    "varSourceType":"",//默认值来源类型
+                    "defaultValue":'',//默认值
+                    "urlEncodeKey":false, //是否加密参数组成部分
+                    "desc":'', // 描述说明，用于生成api文档
+                    "array":false, //是否是数组
+                    "tableModelId":"",//表模型id
+                    "tableModelName":"", //表模型名称
+                    "dynamic":false,//是否动态参数
+                    "required":false, //是否必填
+                    "children":[], //子属性列表
+                    "canEdit":true,//设计态是否可编辑该属性;默认预制的和表单业务字段不能编辑，只能查看
+                    "idPath":"",
+                    "namePath":"",
+                    "displayPath":"",
+                    "otherAttrs":{},
+                    "validates": {} //配置属性校验规则
+                };
+                row.key = row.id
+                return row;
+            },
+            getData:function (){
+                var keys = 'title,treeData'.split(',');
+                var cfg = {};
+                var me = this;
+                oui.eachArray(keys,function (key){
+                    cfg[key] = me[key];
+                });
+                return cfg;
+            },
+            //添加行
+            onAddRow:function (scope){
+                var me = this;
+                var oldData =  oui.clone(this.getData());
+                var idx =this.treeData.length-1;
+                if(scope){
+                    if(scope.row.parentId){
+                        var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                            if(item.id ==scope.row.parentId){
+                                return true;
+                            }
+                        });
+                        if(one && one.children && one.children.length){
+                            idx = -1;
+                            oui.findOneFromArrayBy(one.children,function (item,index){
+                                if(item.id == scope.row.id){
+                                    idx = index;
+                                    return true;
+                                }
+                            });
+                            if(idx>-1){
+                                var row = this.newRow();
+                                row.parentId = scope.row.parentId;
+                                one.children.splice(idx+1,0,row);
+                            }
+                            this.$set(one.children,idx+1,one.children[idx+1]);
+                        }
+                    }else{
+                        //指定行后追加
+                        var one = oui.findOneFromArrayBy(this.treeData,function (item,index){
+                            if(item.id == scope.row.id){
+                                idx = index;
+                                return true;
+                            }
+                        });
+                        this.treeData.splice(idx+1,0,this.newRow());
+                        this.$set(this.treeData,idx+1,this.treeData[idx+1]);
+                    }
+                }else{ //追加到最后
+                    this.treeData.splice(idx+1,0,this.newRow());
+                    this.$set(this.treeData,idx+1,this.treeData[idx+1]);
+                }
+                this.onUpdate&&this.onUpdate(this.bindProp,oui.clone(this.getData()),oldData,{
+                    operate:'addRow',
+                    index:idx,
+                    scope:scope
+                });
+                this.$nextTick(function (){
+                    me.$refs.treeTable.toggleRowExpansion(scope.row,false);//展开此行
+                })
+            },
+            onRemoveRow:function (scope){
+                var oldData = oui.clone(this.getData());
+
+                var idx=-1;
+                var parentId = scope.row.parentId;
+                if(parentId){
+                    var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                        if(item.id == parentId){
+                            return true;
+                        }
+                    });
+                    if(one && one.children && one.children.length){
+                        oui.findOneFromArrayBy(one.children,function (item,index){
+                            if(item.id == scope.row.id){
+                                idx = index;
+                                return true;
+                            }
+                        });
+                        if(idx>-1){
+                            one.children.splice(idx,1);
+                        }
+                    }
+                }else{
+                    oui.findOneFromArrayBy(this.treeData,function (item,index){
+                        if(item.id == scope.row.id){
+                            idx = index;
+                            return true;
+                        }
+                    });
+                    if(idx>-1){
+                        this.treeData.splice(idx,1);
+                    }
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp,oui.clone(this.getData()),oldData,{
+                    operate:'removeRow',
+                    index:idx,
+                    scope:scope
+                });
+            },
+            onAddChildProp:function (scope){
+                var me = this;
+                var oldData = oui.clone(this.getData());
+                var curr = scope.row;
+                var newRow = this.newRow();
+                newRow.parentId = curr.id;
+                curr.children.splice(0,0,newRow);//开始处追加子元素
+                this.$set(curr.children,0,curr.children[0]);
+                this.onUpdate&&this.onUpdate(this.bindProp,oui.clone(this.getData()),oldData,{
+                    operate:'addChildProp',
+                    index:0,
+                    scope:scope
+                });
+
+                this.$nextTick(function (){
+                    me.$refs.treeTable.toggleRowExpansion(scope.row,true);//展开此行
+                })
+
+
+            },
+            //清空所有行
+            onRemoveAll:function (){
+                var oldData = oui.clone(this.getData());
+                this.treeData = [];
+                this.$set(this,'treeData',this.treeData);
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'removeAll'
+                });
+            },
+            //变量名改变事件
+            nameChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.name = scope.row.name;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'nameChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            defaultValueChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.defaultValue = scope.row.defaultValue;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'defaultValueChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            displayChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.display = scope.row.display;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'displayChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            descChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.desc = scope.row.desc;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'descChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            arrayChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.array = scope.row.array;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'arrayChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            requiredChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.required = scope.row.required;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'requiredChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            urlEncodeKeyChange:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.urlEncodeKey = scope.row.urlEncodeKey;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'urlEncodeKeyChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            nameChangeByInnerVar:function ($events,scope){
+                var oldData =  oui.clone(this.getData());
+                scope.row.name  = scope.row.varNameType;
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.name = scope.row.name;
+                    one.varNameType = scope.row.varNameType;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'nameChangeByInnerVar',
+                    index:scope.$index,
+                    scope:scope
+                });
+            },
+            //变量类型改变事件
+            fieldTypeChange($event,scope){
+                var oldData = oui.clone(this.getData());
+                var one = oui.findOneFromTreeArrayBy(this.treeData,function (item){
+                    if(item.id == scope.row.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    one.fieldType = scope.row.fieldType;
+                }
+
+                this.onUpdate&&this.onUpdate(this.bindProp, oui.clone(this.getData()),oldData,{
+                    operate:'fieldTypeChange',
+                    index:scope.$index,
+                    scope:scope
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,357 @@
+
+<template >
+
+    <div class="el-datepicker-outer">
+        <el-date-picker
+                v-model="targetValue"
+                :type="type"
+                :id="id"
+                :size="size"
+                :name="name"
+                :style="style"
+                :bindProp="bindProp"
+                :class="cls"
+                :placeholder="placeholder"
+                :format="format" :value-format="format"
+                @change="_controlOnUpdate"
+                :picker-options="pickerOptions"
+                :range-separator="rangeSeparator"
+                :start-placeholder="startPlaceholder"
+                :end-placeholder="endPlaceholder"
+        >
+        </el-date-picker>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                format:'yyyy-MM-dd',
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                targetValue:'',
+                style:'',
+                cls:'',
+                size:'',
+                type:'date',
+                showType:-1,
+                isRange:undefined,
+                placeholder:'请选择日期',
+                rangeSeparator:'至',
+                startPlaceholder:'开始日期',
+                endPlaceholder:'结束日期',
+                pickerOptions:{},
+
+                showTypes:[{
+                    showType:0,
+                    type:'date',
+                    format:'yyyy-MM-dd',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '昨天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }, {
+                            text: '一周前',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                    }
+                },{
+                    showType: 1,
+                    type:'month',
+                    format: 'yyyy-MM'
+                },{
+                    showType: 2,
+                    type:'year',
+                    format: 'yyyy'
+                },{
+                    showType: 3,
+                    type:'week',
+                    format: 'yyyy 第 WW 周'
+                },{
+                    showType: 4,
+                    type:'dates', //选择多个日期
+                    format:'yyyy-MM-dd'
+                },{
+                    showType:5,
+                    type:'daterange',
+                    format:'yyyy-MM-dd',
+                    rangeSeparator:'至',
+                    startPlaceholder:'开始日期',
+                    endPlaceholder:'结束日期',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '最近一周',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近一个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近三个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }]
+                    }
+                },{
+                    showType:6,
+                    type:'monthrange',
+                    rangeSeparator:'至',
+                    startPlaceholder:'开始月份',
+                    endPlaceholder:'结束月份',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '本月',
+                            onClick(picker) {
+                                picker.$emit('pick', [new Date(), new Date()]);
+                            }
+                        }, {
+                            text: '今年至今',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date(new Date().getFullYear(), 0);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近六个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setMonth(start.getMonth() - 6);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }]
+                    }
+                },{
+                    showType:7,
+                    type:'datetime',
+                    format:'yyyy-MM-dd HH:mm',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '昨天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }, {
+                            text: '一周前',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                    }
+                },{
+                    showType:8,
+                    type:'datetimerange',
+                    format: 'yyyy-MM-dd HH:mm',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '最近一周',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近一个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近三个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        computed:{
+            type:function (){
+                var showTypes = this.showTypes;
+                var me = this;
+                var one = oui.findOneFromArrayBy(showTypes,function (item){
+                    if(item.showType ==me.showType){
+                        return true;
+                    }
+                });
+                if(one){
+                    return one.type;
+                }
+                console.log('没有找到日期类型',this.showTypes,this.showType);
+                return 'date';
+            }
+
+        },
+        watch:{
+            value:function (val){
+                if(val){
+                    if(this.isRange){
+                        this.targetValue = this.value.split(',');
+                    }else{
+                        this.targetValue =val;
+                    }
+                }else{
+                    if(this.isRange){
+                        this.targetValue = [];
+                    }else{
+                        this.targetValue =val;
+                    }
+                }
+            },
+            showType:function (val){
+                var me = this;
+                var showTypes = this.showTypes;
+                var one = oui.findOneFromArrayBy(showTypes,function (item){
+                    if(item.showType ==val){
+                        return true;
+                    }
+                });
+                if(one){
+                    var showType = one.showType;
+                    for(var k in one){
+                        this.$set(this,k,one[k]);
+                    }
+                    if(this.isRange){
+                        if(this.type =='date' || this.type =='month' || this.type =='datetime'){
+                            var one = oui.findOneFromArrayBy(this.showTypes,function (item){
+                                if(item.type == (me.type+'range')){
+                                    return true;
+                                }
+                            });
+                            showType = one.showType;
+                        }
+                    }else{
+                        if(this.type =='daterange' || this.type =='monthrange' || this.type =='datetimerange'){
+                            var temp =this.type.replace('range','');
+                            var one = oui.findOneFromArrayBy(this.showTypes,function (item){
+                                if(item.type == (temp)){
+                                    return true;
+                                }
+                            });
+                            showType = one.showType;
+                        }
+                    }
+                }
+                this.showType = showType;
+                return showType;
+            },
+            isRange:function (val){
+                var me = this;
+                if(val){
+                    if(this.type =='date' || this.type =='month' || this.type =='datetime'){
+                        var one = oui.findOneFromArrayBy(this.showTypes,function (item){
+                            if(item.type == (me.type+'range')){
+                                return true;
+                            }
+                        });
+                        this.showType = one.showType;
+                    }
+                }else{
+                    if(this.type =='daterange' || this.type =='monthrange' || this.type =='datetimerange'){
+                        var temp =this.type.replace('range','');
+                        var one = oui.findOneFromArrayBy(this.showTypes,function (item){
+                            if(item.type == (temp)){
+                                return true;
+                            }
+                        });
+                        this.showType = one.showType;
+                    }
+                }
+                if(val){
+                    if(this.value){
+                        this.targetValue = this.value.split(',');
+                    }else{
+                        this.targetValue =[];
+                    }
+                }else{
+                    this.targetValue = this.value;
+                }
+            }
+        },
+        methods:{
+            mounted:function (){
+                if((typeof this.showType =='undefined') || this.showType==-1){
+                    this.showType = 0;
+                }
+                if(typeof this.isRange =='undefined' || this.isRange ==''){
+                    this.isRange = false;
+                }
+                if(this.isRange){
+                    if(this.value){
+                        this.targetValue = this.value.split(',');
+                    }else{
+                        this.targetValue =[];
+                    }
+                }else{
+                    this.targetValue = this.value;
+                }
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                var lastValue = this.value;
+                if(this.isRange){
+                    this.value = this.targetValue.join(',');
+                }else{
+                    this.value = this.targetValue;
+                }
+                console.log('on update in datepicker',this);
+                this.onUpdate&&this.onUpdate(key,this.value,lastValue,{value:this.value, data4DB:this.value, display:this.value }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-datepicker-outer .el-date-editor.el-input, .el-datepicker-outer .el-date-editor.el-input__inner{
+        width: 100%;
+    }
+</style>

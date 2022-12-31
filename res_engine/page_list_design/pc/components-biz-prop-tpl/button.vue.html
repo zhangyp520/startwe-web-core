@@ -1,0 +1,537 @@
+<template>
+    <div>
+      <el-tabs v-model="activeName" @tab-click="handleTabsChange">
+        <el-tab-pane v-for="(item,index) in DataList" :key="index" :label="item.label" :name="item.name">
+        </el-tab-pane>
+      </el-tabs>
+      <div class="design-attribute-item" v-show='tabActive=="first"'>
+        <oui-include :data="getData4ProjectsFC()" type="module" ref="projectRbacModels"
+          url="res_engine/page_list_design/pc/component-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="reg"'>
+  
+        <oui-include :data="getData4ProjectsFCReg()" type="module" ref="projectRbacModelsReg"
+          url="res_engine/page_list_design/pc/component-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="event"'>
+  
+        <oui-include :data="getData4ProjectsFCAnimate()" type="module" ref="projectRbacModelsAnimate"
+          url="res_engine/page_list_design/pc/component-tpl/property.tpl.vue.html"></oui-include>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+    exports = {
+      data: function () {
+        return {
+          getData4ProjectsFC: this.getData4ProjectsFC,
+          getData4ProjectsFCReg: this.getData4ProjectsFCReg,
+          getData4ProjectsFCAnimate: this.getData4ProjectsFCAnimate,
+          projectRbacModels: "",
+          projectRbacModelsReg: "",
+          projectRbacModelsAnimate: "",
+          cache4vue: {},
+          cache4vueReg: {},
+          cache4vueAnimate: {}, 
+          propertyAnimation: [ ],
+          projects: ["999"], 
+          tabActive: "first",
+          activeName: "first",
+          DataList: [{
+              label: "基础属性",
+              name: "first",
+              content: "first",
+            },
+            {
+              label: "业务配置",
+              name: "reg",
+              content: "reg",
+            }, 
+          ],
+          property: [{
+              type: "string",
+              name: "id",
+              zhName: "控件id",
+              group: "基础设置",
+              required: false,
+              disabled:true,
+              placeholder: "我是占位符",
+              default: "button1212121",
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "string",
+              name: "bizId",
+              zhName: "业务id",
+              group: "基础设置",
+              required: false,
+              disabled: false,
+              placeholder: "业务id",
+              default: "",
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            
+            {
+              type: "inputandcheckbox",
+              name:  "name" ,
+              checkboxname:  "otherAttrs.titleShow" ,
+              zhName: "标题名称",
+              group: "基础设置",
+              required: false,
+              placeholder: "请输入标题名称",
+              default: "按钮",
+              checkboxdefault: true,
+              suffix: "",
+              checkboxtitle: "显示标题",
+              max: 20,
+              prepend: "",
+            },
+             
+            {
+              type: "arrayandinput",
+              name: "otherAttrs.desc" ,
+              selectname: "otherAttrs.descType" ,
+              zhName: "描述信息",
+              group: "基础设置",
+              required: false, 
+              placeholderInput: "",
+              defaultArray: "不展示",
+              defaultInput: "",
+              data:[{
+                  value:'notShow',
+                  display:'不显示'
+              },{
+                  value:'showAtRight',
+                  display:'右侧显示'
+              },{
+                  value:'showAtNextLine',
+                  display:'换行显示'
+              }],
+              suffix: "",
+              max: 50,
+              prepend: "",
+            },
+
+            {
+              type: "array",
+              name: "otherAttrs.buttonShowType" ,
+              zhName: "按钮类型",
+              group: "基础设置",
+              required: false,
+              placeholder: "",
+              default: "主要按钮", 
+              data:[
+                  {"value":"primary","display":"主要按钮"},
+                  {"value":"success","display":"成功按钮"},
+                  {"value":"info","display":"信息按钮"},
+                  {"value":"warning","display":"警告按钮"},
+                  {"value":"danger","display":"危险按钮"}]
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.buttonAlign",
+              zhName: "按钮位置",
+              group: "样式设置",
+              required: false, 
+              default: "left",
+              data:[{"value":"left","display":"左"},{"value":"center","display":"中"},{"value":"right","display":"右"}],
+
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.inputWidth",
+              zhName: "布局宽度%",
+              group: "样式设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: "100",
+              data:[{
+                  value:'25',
+                  display:'25'
+              },{
+                  value:'50',
+                  display:'50'
+              },{
+                  value:'75',
+                  display:'75'
+              },{
+                  value:'100',
+                  display:'100'
+              } ],
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.fontColor",
+              zhName: "文字颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#000000",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.borderColor",
+              zhName: "边框颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#EDEDED",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.bgColor",
+              zhName: "填充颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#FFFFFF",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "slider",
+              name: "otherAttrs.id",
+              zhName: "圆角",
+              group: "样式设置", 
+              required: false,
+              placeholder: "我是占位符",
+              default: 0,
+              dangwei:"px",
+              suffix: "",
+              max: 0,
+              num:0,
+              prepend: "",
+            },   
+          ],
+          propertyReg: [ 
+              {
+                type: "switch",
+                name: "otherAttrs.disabled",
+                zhName: "是否禁用",
+                group: "基础设置", 
+                default: false,
+                // 其他属性
+              },
+              {
+                type: "switch",
+                name: "otherAttrs.hidden",
+                zhName: "是否隐藏",
+                group: "基础设置",
+                radio: false, 
+                default: false,
+                // 其他属性
+              }, 
+              {
+                type: "radiogroupselect",
+                name: "otherAttrs.bjkd",
+                zhName: "显示设备",
+                group: "基础设置",
+                required: false,
+                placeholder: "我是占位符",
+                default: "pc", 
+                data:[
+                  {value:'pc',display:'电脑'},
+                  {value:'mobile',display:'手机'},
+              ],
+                labelsicon: ["el-icon-s-platform","el-icon-mobile"],
+                max: 10,
+                prepend: "",
+              },
+              {
+                type: "radiogroupselect",
+                name: "otherAttrs.bjkd",
+                zhName: "数据体检",
+                group: "基础设置",
+                required: false,
+                placeholder: "我是占位符",
+                default: "commit4onlyShow",
+                data:[{
+                    value:'commit4onlyShow',display:'仅显示时提交'
+                },{
+                    value:'commit4ever',display:'始终提交'
+                }],max: 10,
+                prepend: "",
+              },
+              {
+                type: "button",
+                name: "otherAttrs.id",
+                zhName: "动作设置",
+                btnText: "新建动作",
+                group: "基础设置", 
+                size: "small", 
+                default: "",   
+              }
+          ], 
+  
+         
+          switchvalue: true,
+          currentControl: {
+            webPageSrc: "https://www.baidu.com",
+          },
+          webPageSrc: "选项19999999999",
+          webPageSrcs: "",
+        };
+      },
+      mounted: function () {
+        this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+       if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrc
+        ) {
+          this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+        }
+  
+        if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrcs
+        ) {
+          this.webPageSrcs = this.currentControl.otherAttrs.webPageSrcs;
+        }
+      },
+      methods: {
+        getData4ProjectsFC: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vue);
+          var bindKey = "projectRbacModels";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModels",
+              name: "projectRbacModels",
+              bindProp: "projectRbacModels",
+              value: {
+                name: "1",
+              },
+              property: this.property,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        getCacheReg: function (v) {
+          if (!v) {
+            v = {};
+            v = v;
+          }
+          return v;
+        },
+  
+        getData4ProjectsFCReg: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueReg);
+          var bindKey = "projectRbacModelsReg";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModelsReg",
+              name: "projectRbacModelsReg",
+              bindProp: "projectRbacModelsReg",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyReg,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            // me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+  
+          return cache4vue[bindKey];
+        },
+        getData4ProjectsFCAnimate: function () {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueAnimate);
+          var bindKey = "projectRbacModelsAnimate";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModelsAnimate",
+              name: "projectRbacModelsAnimate",
+              bindProp: "projectRbacModelsAnimate",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyAnimation,
+              webPageSrc: this.webPageSrc,
+              data: this.projects || [],
+              onUpdate: function (key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        onUpdate: function (key, v) {
+          var me = this;
+          if (key == "projectRbacModels") {
+            me.projectRbacModels = v;
+            if (v) {
+              var one = oui.findOneFromArrayBy(me.projects, function (temp) {
+                if (temp.value == v) {
+                  return true;
+                }
+              });
+              if (one) {
+                me.queryPageFieldsByFormIdUrl = one.queryPageFieldsByFormIdUrl;
+              }
+  
+              oui.getData(
+                me.queryPagesByProjectIdUrl, {
+                  projectId: v,
+                },
+                function (res) {
+                  var pages = res.pages || [];
+                  //组织模型所属项目变更后，更新控件数据项
+                  oui.eachArray(me.options || [], function (item) {
+                    var data4tableModels = me.findData4tableModels(item);
+  
+                    data4tableModels.queryParams = {
+                      projectId: v,
+                    };
+                    var refKey = "tableModelId_" + item.id;
+                    if (me.$refs[refKey]) {
+                      me.$refs[refKey][0].comp.value = "";
+                      me.$refs[refKey][0].comp.data = oui.parseJson(
+                        oui.parseString(pages)
+                      );
+                      me.$refs[refKey][0].comp.queryParams.projectId = v;
+                    }
+                    //idKey
+                    var refKey4bindId = "tableModelId_id_" + item.id;
+                    if (me.$refs[refKey4bindId]) {
+                      me.$refs[refKey4bindId][0].comp.value = "";
+                      me.$refs[refKey4bindId][0].comp.data = [];
+                    }
+  
+                    //nameKey
+                    var refKey4bindNameId = "tableModelId_name_" + item.id;
+                    if (me.$refs[refKey4bindNameId]) {
+                      me.$refs[refKey4bindNameId][0].comp.value = "";
+                      me.$refs[refKey4bindNameId][0].comp.data = [];
+                    }
+                  });
+                }
+              );
+            } else {
+              me.queryPageFieldsByFormIdUrl = "";
+            }
+          }
+          this.$set(this, key, v);
+        },
+  
+        handleTabsChange(tab, event) {
+          this.tabActive = tab.name;
+          if (tab.name === "frist") {
+            this.property = this.property
+          } else if (tab.name === "reg") {
+            this.property = this.propertyReg
+  
+          } else if (tab.name === "event") {
+            this.property = this.propertyAnimation
+          }
+  
+        },
+        handleWebPageSrcChange: function (val) {
+          this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc =
+            this.currentControl.otherAttrs.webPageSrc;
+        },
+        handleWebPageSrcChangeText: function (val) {
+          this.currentControl.otherAttrs.webPageSrcs = this.webPageSrcs;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrcs =
+            this.currentControl.otherAttrs.webPageSrcs;
+  
+          com.oui.absolute.AbsoluteDesign.changed4props(
+            this.currentControl,
+            function () {}
+          );
+        },
+        _controlOnUpdate: function (bindProp, config) {
+          console.log(config.id);
+          var me = this;
+          if (!config.id) {
+            return;
+          }
+          //获取当前配置变更的对象
+          var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(
+            config.id
+          );
+  
+          if (
+            bindProp &&
+            config &&
+            currentControl &&
+            currentControl.id === config.id
+          ) {
+            //根据当前配置的值改变 更新当前控件的值
+            oui.JsonPathUtil.setObjByPath(
+              bindProp,
+              currentControl,
+              oui.JsonPathUtil.getJsonByPath(bindProp, config),
+              true
+            );
+            //清除关系连线
+            me._controlOnUpdate4clearRelation(bindProp, config, currentControl);
+          }
+        },
+      },
+    };
+  </script>
+  
+  <style>
+    .ghost {
+      border: 1px dashed indianred;
+    }
+  
+    .item {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      /*height: 30px;*/
+      /*font-size: 14px;*/
+    }
+  
+    .item-move {
+      cursor: move;
+    }
+  
+    .item-delete {
+      padding-left: 5px;
+      color: red;
+    }
+  
+    .item-add {
+      padding-left: 5px;
+      color: blue;
+    }
+  </style>

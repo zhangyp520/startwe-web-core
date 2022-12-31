@@ -1,0 +1,370 @@
+<!--审批页面组件-->
+<template >
+    <div>
+        <link type="text/css" rel="stylesheet" href="/res_engine/page_design/pc/css/page-common-runtime.css"/>
+        <div :id="formUUID">
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+
+        data: function () {
+            return {
+                formUUID:'formId_'+oui.getUUIDLong(),
+                data:{
+                    content:''
+                },
+                renderContent:'',
+                formData:{},
+                content:{},
+                api:{}
+            }
+        },
+
+        mounted:function(){
+            var me = this;
+            var query = this.$router.query ||{};
+            if(!query.loadFormUrl){
+                return;
+            }
+            me.requireUrls(function(){
+                me.$nextTick(function(){
+                    me.query4loadData();
+                });
+            });
+        },
+        methods:{
+            requireUrls:function(callback){
+                var requireUrls = [];
+                requireUrls.push(oui.getContextPath()+'res_engine/page_design/common/js/page-design-runtime.js');
+                requireUrls.push(oui.getContextPath()+'res_engine/page-runtime/js/page-runtime.tpl.js');
+                oui.require(requireUrls,function(){
+                    callback&&callback();
+                });
+            },
+            __data:function(){
+                return this;
+            },
+            bindEvents:function(){
+
+            },
+            //url变更后触发
+            onUpdate:function(){
+                var me = this;
+                var query = this.$router.query ||{};
+                console.log(query);
+                me.query4loadData();
+            },
+            buildPageData:function(){
+                var me = this;
+                var query = this.$router.query ||{};
+                if(query.dataId){ //edit
+                    var formData = me.formData;
+                    var controls = me.content.controls||[];
+                    var mainData = {
+                    };
+                    var detailData ={};
+                    /*** 循环处理数据绑定****/
+                    oui.findManyFromArrayBy(controls,function(item){
+                        var bizId =item.bizId||item.id||'';
+                        //主表数据
+                        if((!item.detailId) &&(item.formField) ){
+                            //显示值处理
+                            var display = oui.util.findDisplayByControlAndFormData(item,formData);
+                            mainData[bizId]= {
+                                value:formData[bizId]||"",
+                                display:display
+                            };
+                        }
+                    });
+
+                    var pageData = oui.util.createPageData({
+                        refresh:function(){
+                            me.refresh&&me.refresh();
+                        },
+                        save:function(success,error){
+                            me.saveFormData(success,error);
+                        },
+                        submit:function(success,error){
+                            me.commitProcess(success,error);
+                        },
+                        rollback:function(success,error){
+                            me.rollback(success,error);
+                        },
+                        reassignment:function(success,error){
+                            me.reassignment(success,error);
+                        },
+                        logics:{
+                            logic4update : me.api.logic4update ||"",
+                            logic4query : me.api.logic4query||'',
+                            logic4new : me.api.logic4new||''
+                        },
+                        dataId:formData.id,
+                        designer:me.content,
+                        mainData:mainData||{},//主表数据
+                        detailData:detailData||{}//子表数据
+                    });
+                    pageData.beforeInit(function(){
+                        me.data.content = pageData.render(); //渲染
+                        var logic4update = me.api.logic4update ||"";
+                        me.data.pageData = pageData;
+                        me.data.dataId = formData.id;
+                        me.data.saveUrl = logic4update;
+                        me.data.commitProcessUrl = me.api.commitProcessUrl;
+                        me.data.logic4query = me.api.logic4query||'';
+                        me.data.logic4new = me.api.logic4new||'';
+                        $('#'+me.formUUID).html(me.data.content);
+                        oui.parse({
+                            callback:function(){
+                                me.bindEvents();
+                                pageData.afterInit();//渲染完成
+                                oui.parse(function(){
+
+                                });
+                            }
+                        });
+                    }); //初始化前
+                }else{//new
+
+                    var pageData = oui.util.createPageData({
+                        refresh:function(){
+                            me.refresh&&me.refresh();
+                        },
+                        save:function(success,error){
+                            me.saveFormData(success,error);
+                        },
+                        submit:function(success,error){
+                            me.commitProcess(success,error);
+                        },
+                        rollback:function(success,error){
+                            me.rollback(success,error);
+                        },
+                        reassignment:function(success,error){
+                            me.reassignment(success,error);
+                        },
+                        logics:{
+                            logic4query : me.api.logic4query||'',
+                            logic4new : me.api.logic4new||''
+                        },
+                        designer:me.content,
+                        mainData:{},//主表数据
+                        detailData:{}//子表数据
+                    });
+                    pageData.beforeInit(function(){
+                        me.data.content = pageData.render(); //渲染
+
+                        var logic4new = me.api.logic4new ||"";
+                        me.data.dataId='';
+                        me.data.pageData = pageData;
+                        me.data.saveUrl = logic4new;
+                        me.data.commitProcessUrl = me.api.commitProcessUrl;
+                        me.data.logic4new = logic4new;
+                        me.data.logic4query = me.api.logic4query||'';
+                        $('#'+me.formUUID).html(me.data.content);
+                        oui.parse({
+                            callback:function(){
+                                me.bindEvents();
+                                pageData.afterInit();//渲染完成
+                                oui.parse(function(){
+                                });
+                            }
+                        });
+                    }); //初始化前
+
+                }
+            },
+            rollback:function(success,error){
+                alert('回退 开发中...');
+            },
+            reassignment:function(success,error){
+                alert('改派 开发中...');
+            },
+            commitProcess:function(success,error){
+                var me = this;
+                var saveUrl =  me.data.commitProcessUrl;
+                //保存 数据
+                var container = $('#'+this.formUUID)[0];
+                var flag = oui.checkForm(container);
+                if(!flag){
+                    return;
+                }
+                var dataValue =  me.data.pageData.getFormValue();
+
+                dataValue.id  = me.data.dataId;
+                var query = me.$router.query ||{};
+                /*
+                 activityDefineId: "manualActivity"
+                 activityInstId: "262"
+                 approvalFormUUID: "approval_934182817123123038"
+                 currentNodeIds: "manualActivity"
+                 dataId: "453927708397666304"
+                 flowId: "p_420520291509207040.m_420520629683355648.u_435714987793580032"
+                 formId: "page_435695479813046272"
+                 loadFlowUrl: "/Jz2eum.biz?flowId=p_420520291509207040.m_420520629683355648.u_435714987793580032&o_as=82bb42c03993b471d935993f37d5c43a3697f868"
+                 loadFormDataUrl: "/uayMJ3.biz?nodeId=page_435695479813046272&nodeType=pageList&projectId=420520291509207040&circleId=420141952592248832&o_as=668b2d8bd0a022041e6711e3e7906b58266b7081"
+                 loadFormUrl: "/uayMJ3.biz?nodeId=page_435695479813046272&nodeType=page&projectId=420520291509207040&circleId=420141952592248832&o_as=806b09326c5d914b800a34a2922303375a3b4bb5"
+                 ouiInWindowDialog: "true"
+                 processInstId: "221"
+                 projectId: "420520291509207040"
+                 userId: "13808071246"
+                 userName: "13808071246"
+                 windowId: "win_272027132537520910"
+                 workItemId: "221"
+                 */
+                oui.postData(saveUrl,{
+                    formData:dataValue,
+                    userId:query.userId,
+                    userName:query.userName,
+                    workItemId:query.workItemId,
+                    flowId:query.flowId,
+                    processInstId:query.processInstId
+
+                },function(res){
+                    //保存成功后 刷新列表页面
+                    if(res.success){
+                        me.$message({
+                            message:'保存成功',
+                            type:'success'
+                        });
+                        var data = res.entity||res.dataObject;
+                        if(data){
+                            if(!me.data.dataId){
+                                me.data.dataId = data.id;
+                                query.dataId = data.id;
+                                var baseUrl = location.href.substring(0,location.href.indexOf('#'));
+                                var url =  location.href.substring(location.href.indexOf('#')+1);
+                                url = oui.delParam(url,'dataId');
+                                url = oui.setParam(url,'dataId',data.id);
+                                success&&success(dataValue,res);
+                                setTimeout(function(){
+                                    oui.go4replace(baseUrl+'#'+url);
+                                },300);
+                                return;
+                            }
+                        }
+                        success&&success(dataValue,res);
+                    }else{
+                        error&&error(dataValue,res);
+                        oui.getTop().oui.alert(res.msg||'保存失败');
+                    }
+                });
+            },
+            saveFormData:function(success,error){
+                var me = this;
+                var saveUrl =  me.data.saveUrl;
+                //保存 数据
+                var container = $('#'+this.formUUID)[0];
+                var flag = oui.checkForm(container);
+                if(!flag){
+                    return;
+                }
+
+
+                var dataValue =  me.data.pageData.getFormValue();
+
+                dataValue.id  = me.data.dataId;
+                var query = me.$router.query ||{};
+                oui.postData(saveUrl,{
+                    formData:dataValue
+                },function(res){
+                    //保存成功后 刷新列表页面
+                    if(res.success){
+                        me.$message({
+                            message:'保存成功',
+                            type:'success'
+                        });
+                        var data = res.entity||res.dataObject;
+                        if(data){
+                            if(!me.data.dataId){
+                                me.data.dataId = data.id;
+                                query.dataId = data.id;
+                                var baseUrl = location.href.substring(0,location.href.indexOf('#'));
+                                var url =  location.href.substring(location.href.indexOf('#')+1);
+                                url = oui.delParam(url,'dataId');
+                                url = oui.setParam(url,'dataId',data.id);
+                                success&&success(dataValue,res);
+                                setTimeout(function(){
+                                    oui.go4replace(baseUrl+'#'+url);
+                                },300);
+                                return;
+                            }
+                        }
+                        success&&success(dataValue,res);
+                    }else{
+                        error&&error(dataValue,res);
+                        oui.getTop().oui.alert(res.msg||'保存失败');
+                    }
+                });
+            },
+            loadForm:function(){
+                var me = this;
+                var query= me.$router.query ||{};
+                var loadFormUrl = query.loadFormUrl;
+                if(!loadFormUrl){
+                    return;
+                }
+                oui.getData(loadFormUrl,{},function(res){
+                    //nodeType,nodeId,content
+                    if(res.success){
+                        var content = res.content;
+                        content.events = oui.parseJson(content.events);
+                        me.content = content;
+                        me.buildPageData();
+                    }else{
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                },'加载中...');
+            },
+            query4loadData:function(){
+                var me = this;
+                var query = this.$router.query||{};
+                var loadFormUrl = query.loadFormUrl;
+                var loadFormDataUrl = query.loadFormDataUrl;
+                //加载表单定义
+                if(!loadFormUrl){
+                    return;
+                }
+                //加载表单定义
+                oui.getData(loadFormDataUrl,{},function(res){
+                    console.log('runtime:');
+                    console.log(res);
+                    //nodeType,nodeId,content
+                    if(res.success){
+                        var content = res.content;
+                        content.events = oui.parseJson(content.events);//处理字符串属性
+                        me.api.logic4query = content.logic4query;
+                        oui.getData(content.logic4query,{
+                            queryParam:oui.parseString([{
+                                field:'id',//把id传入作为查询条件
+                                value:query.dataId||'new4query' //如果存在则加载，如果不存在数据Id 则传入空 用于加载api
+                            }])
+                        },function(res){
+                            me.api.logic4new = res.logic4new;
+                            me.api.commitProcessUrl = oui.addParam(me.api.logic4new,'bindProcess',true);
+                            var one ={};
+                            if(res.success && res.dataList&&res.dataList.length){
+                                one = res.dataList[0];
+                                me.formData = one;
+                            }
+                            if(one&&one.extraAttrs&&one.extraAttrs.logic4load){
+                                me.api.logic4load = one.extraAttrs.logic4load;
+                                me.api.logic4update = one.extraAttrs.logic4update;
+                                me.api.commitProcessUrl = oui.addParam(me.api.logic4update,'bindProcess',true);
+                            }
+                            me.loadForm();
+                        });
+                    }else{
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

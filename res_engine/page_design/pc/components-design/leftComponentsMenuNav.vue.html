@@ -1,0 +1,133 @@
+<template>
+    <div class="menuNav_box">
+
+        <el-collapse v-model="activeNames" @change="handleChange" accordion="true">
+            <el-collapse-item :key='index' :title="item.display" :name="index"  v-for='(item,index) in listControls' >
+                <div  class="components-list"  >
+                    <div class="design-item components-children-item"
+                        v-for='(i,key) in item.controls' 
+                        :control-abs-name="i.name"
+                        :control-abs-htmltype="i.htmlType"
+                        :control-abs-controltype="i.controlType"
+                        :control-abs-formfield="i.formField"
+                        :control-abs-style="oui.parseString(i.style)"
+                        :control-abs-innerstyle="oui.parseString(i.innerStyle)"
+                        :control-abs-otherattrs="oui.parseString(i.otherAttrs)"
+                        :control-abs-events="oui.parseString(i.events)"
+                        drag-status="" :control-abs-description="i.description">
+                        <div :class="['assembly-icon','s-icon-'+i.controlType]" :style=" findControlType(i.controlType) ?'width:45px': ''"> 
+                        </div>
+                        <div class="label">{{i.name}}</div>
+                    </div>
+                </div> 
+            </el-collapse-item>
+          </el-collapse>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                activeNames: [0],
+                listControls:[]
+            }
+        },
+        mounted: function () {
+            var _this = this 
+            let controlsListHtmlTypes = com.oui.absolute.AbsoluteDesign.controlsListHtmlTypes
+            let pageListControls = com.oui.absolute.AbsoluteDesign.pageListControls
+            _this.listControls = _this.findControls(controlsListHtmlTypes, pageListControls)
+
+         },
+        methods: {
+            findControlType(controlType){
+                return  ['button','switch','select'].indexOf(controlType) >-1
+            },
+            findControls: function (controlsListHtmlTypes, pageListControls) {
+                var map = {};
+                for (var k in controlsListHtmlTypes) {
+                    map[k] = {
+                        name: controlsListHtmlTypes[k].name,
+                        display: controlsListHtmlTypes[k].display,
+                        controls: []
+                    };
+                }
+                oui.eachArray(pageListControls, function (item) {
+                    map[item.htmlType] && map[item.htmlType].controls.push(item);
+                });
+                var arr = [];
+                for (var k in map) {
+                    arr.push(map[k]);
+                }
+                return arr
+            },
+            handleChange(val) {
+                console.log(val);
+            }
+        }
+    }
+</script>
+
+<style>
+
+.el-collapse-item__header{
+    background:none;
+    color:#7F7F7F;
+    border-bottom:none
+}
+.el-collapse{
+    border-top: none;
+    border-bottom: none;
+}
+.menuNav_box{
+    width: 95%;
+    margin: 0 auto;
+}
+.el-collapse-item__wrap{
+    background: none;
+    border-bottom: none;
+}
+.el-collapse-item__content{
+    color: #7F7F7F;
+}
+
+.menuNav_box .components-children-item .label{
+    font-size: 12px;
+    text-align: center;
+    color: #7F7F7F;
+}
+.menuNav_box .components-list{
+    display: flex; 
+    flex-wrap:   wrap; 
+ 
+}
+.menuNav_box .components-children-item {
+    width: calc(100%/3);
+    text-align: center;
+    padding: 10px 0 ;
+    border:1px rgba(0, 0, 0, 0) solid;
+}
+
+
+.menuNav_box .components-children-item:hover{ 
+    border:1px #3491FA solid;
+    cursor: pointer;
+    color: #ffffff;
+}
+.menuNav_box .components-children-item:hover .label{ 
+  
+    color: #ffffff;
+}
+.el-collapse-item__header{
+    width: 90%;
+    margin: 0 auto;
+    font-size: 14px;
+}
+.el-collapse-item__header.is-active{
+     color: #ffffff;
+}
+
+
+</style>

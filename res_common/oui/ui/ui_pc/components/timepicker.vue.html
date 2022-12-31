@@ -1,0 +1,189 @@
+
+<template >
+
+   <div class="oui-timepicker" :style="style">
+       <div class="timepick-width-prepend">
+           <el-button type="default" class="prepend-text" v-if="prepend">{{prepend}}</el-button>
+
+           <el-time-picker
+                   v-model="value"
+                   :isRange="isRange"
+                   :id="id"
+                   :name="name"
+                   :size="size"
+                   :bindProp="bindProp"
+                   :class="cls"
+                   :prefixIcon="prefixIcon"
+                   :placeholder="placeholder"
+                   :disabled="disabled"
+                   :readonly="readonly"
+                   :format="format" :value-format="format"
+                   :style="{'width':inputWidth + '%', textAlign:'left', color:'#009900' }"
+                   @change="_controlOnUpdate"
+                   :range-separator="rangeSeparator"
+                   :start-placeholder="startPlaceholder"
+                   :end-placeholder="endPlaceholder"
+
+           >
+           </el-time-picker>
+           <el-button type="default" class="append-text" v-if="append">{{append}}</el-button>
+       </div>
+   </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                format:'HH:mm:ss',
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                type:'date',
+                rangeSeparator:'至',
+                startPlaceholder:'开始时间',
+                endPlaceholder:'结束时间',
+                placeholder:'请选择时间',
+                isRange:false,
+                size:'',
+                prefixIcon: '', //头部图标
+                prepend: '', //前置内容
+                append: '', //后置内容
+                inputWidth:'', //输入框宽度
+                status:'',
+                disabled:false,
+                readonly:false,
+                showType:-1,
+
+                showTypes:[{
+                    showType:0,
+                    isRange:false,
+                    format:'HH:mm:ss'
+                },{
+                    showType: 1,
+                    isRange: true,
+                    format:'HH:mm:ss'
+                }]
+            }
+        },
+        watch:{
+            showType:function (val){
+                if(typeof val != 'undefined'){
+                    var one = oui.findOneFromArrayBy(val,function (item){
+                        if(item.showType === val){
+                            return true;
+                        }
+                    });
+                    if(one){
+                        for(var k in one){
+                            this[k] = one [k];
+                        }
+                    }
+                }
+            }
+        },
+        mounted() {
+            if((typeof this.showType =='undefined' )|| this.showType ==-1){
+                this.showType = 0;
+            }
+
+            if (this.otherAttrs.defaultText) { //默认内容
+                this.value = this.otherAttrs.defaultText;
+            }
+            if (this.otherAttrs.timeType) { //日期类型
+                if (this.otherAttrs.timeType == 'time') {
+                    this.isRange = false
+                }
+                if (this.otherAttrs.timeType == 'timerange') {
+                    this.isRange = true
+                }
+            } 
+            if (this.otherAttrs.headIcon) {
+                this.prefixIcon = this.otherAttrs.headIcon;
+            }
+            if (this.otherAttrs.prepend) {
+                this.prepend = this.otherAttrs.prepend;
+            }
+            if (this.otherAttrs.append) {
+                this.append = this.otherAttrs.append;
+            }
+
+            if( this.otherAttrs.status ){
+ 
+                if(this.otherAttrs.status == '禁用'){
+                    this.disabled = true;
+                }
+                if(this.otherAttrs.status == '只读'){
+                    this.readonly = true;
+                } 
+                if(this.otherAttrs.status == '隐藏'){
+                    this.inputtype = "hidden";
+                }
+
+            }
+        },
+        methods:{
+
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .timepick-width-prepend {
+        display: flex;
+        align-items: center;
+    }
+
+    .prepend-text{
+        background: #F5F7FA;
+        color: #909399;
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        cursor: default; 
+
+    } 
+    .append-text {
+        background: #F5F7FA;
+        color: #909399;
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        cursor: default; 
+
+    } 
+    .prepend-text:focus,
+    .prepend-text:hover,
+    .append-text:focus,
+    .append-text:hover {
+        border-color: #DCDFE6 !important;
+    }
+
+    .prepend-text:focus,
+    .prepend-text:hover,
+    .append-text:focus,
+    .append-text:hover {
+        border-color: #DCDFE6 !important;
+    }
+
+    .el-input__inner {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+   
+</style>

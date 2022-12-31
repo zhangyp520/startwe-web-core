@@ -1,0 +1,52 @@
+<!--多选组 TODO -->
+<template >
+    <el-switch
+            v-model="value"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            @change="_controlOnUpdate"
+            :active-color="activeColor"
+            :inactive-color="inactiveColor"
+            :active-text="activeText"
+            :inactive-text="inactiveText">
+    </el-switch>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                activeValue:true,
+                inactiveValue:false,
+                id:'',
+                name:'',
+                bindProp:'',
+                value: false,
+                style:'',
+                cls:'',
+                placeholder:'',
+                activeColor:'',
+                inactiveColor:'',
+                activeText:'',
+                inactiveText:''
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:(v&&((v+'')=='true')?'是':'否') }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

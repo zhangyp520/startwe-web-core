@@ -1,0 +1,75 @@
+<style type="text/css">
+    .outercontrol-condition{
+        display: block;
+        padding-bottom: 10px;
+        text-align: right;
+    }
+    .outercontrol-condition .oui-class-condition{
+        width: 360px;
+    }
+    .outercontrol-table{
+        display: block;
+    }
+    .outercontrol-real-time{
+        background: url("{{oui.getContextPath()}}res_common/oui/ui/ui_pc/images/outercontrol-real-time.png") center no-repeat;
+        background-size: 24px 24px;
+        width: 40px;
+        height: 30px;
+        display:inline-block;
+        cursor: pointer;
+    }
+    @media screen and (max-width: 720px) {
+        .outercontrol-condition{
+            padding-bottom: 0;
+            text-align: inherit;
+            width: 100%;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: flex;
+        }
+        .outercontrol-condition .oui-class-condition{
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1;
+            -webkit-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
+        .outercontrol-table{
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+            overflow: hidden;
+        }
+        .outercontrol-real-time{
+            background: url("{{oui.getContextPath()}}res_common/oui/ui/ui_phone/images/outercontrol-real-time.png") center no-repeat;
+            background-size: 24px 24px;
+            height: 44px;
+        }
+
+    }
+</style>
+<div class="outercontrol-condition">
+    <oui-condition id="{{conditionId}}"
+                    searchTitle="根据输入条件，在当前表格数据中检索"
+                    showType="0" type="condition"
+                    callback="oui.getTop().oui.getPageParam('{{conditionId}}_callback')"
+                    selectedFieldId="-1" selectedFieldValue="">
+        {{each conditionFields as item index}}
+        <oui-field title="{{item.header}}" placeholder="{{item.header}}" showType="0" dataType="STRING"
+                    opt="like" controlType="textfield" name="{{item.fieldName}}"></oui-field>
+        {{/each}}
+    </oui-condition>
+    <div class="outercontrol-real-time" title="根据条件在第三方服务器中检索数据" condition-id="{{conditionId}}" {{clickName}}="oui.getByOuiId({{outerOuiId}}).loadData4RealSearch();"></div>
+</div>
+
+
+<div class="outercontrol-table">
+    {{=table.getHtml()}}
+</div>
+
+
+
+
+

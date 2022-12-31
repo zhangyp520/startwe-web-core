@@ -1,0 +1,111 @@
+<template>
+    <div class="body-background">
+        <div>
+            <oui-include type="module" url="/res_startwe/html/components/header.vue.html">
+            </oui-include>
+        </div>
+        <div>
+            <el-container :style="containerHeight">
+                <el-aside class="aside" width="200px">
+                    <el-menu :default-active="currentPage" @select="menuSelect">
+                        <template v-for="(menu,index) in menus">
+                            <el-menu-item v-if="menu.submenus.length == 0" :index="menu.pageurl">
+                                <i :class="menu.icon"></i>
+                                <span slot="title">{{menu.title}}</span>
+                            </el-menu-item>
+                            <el-submenu v-else :index="menu.pageurl">
+                                <template slot="title">
+                                    <i :class="menu.icon"></i>
+                                    <span>{{menu.title}}</span>
+                                </template>
+                                <el-menu-item v-for="(submenu,subindex) in menu.submenus" :index="submenu.pageurl">{{submenu.title}}</el-menu-item>
+                            </el-submenu>
+                        </template>
+                    </el-menu>
+                </el-aside>
+                <el-main>
+                    <div v-show="currentPage == 'works'">
+                        <oui-include  type="module" url="res_startwe/html/workArea/works.vue.html">
+                        </oui-include>
+                    </div>
+                    <div v-show="currentPage == 'recovery'">
+                        <oui-include  type="module" url="res_startwe/html/workArea/recovery.vue.html">
+                        </oui-include>
+                    </div>
+                </el-main>
+            </el-container>
+        </div>
+    </div>
+</template>
+<script>
+    export default{
+        templateType:"vue",
+        el:"home",
+        data:function(){
+            return {
+                    currentPage:"works",
+                    containerHeight:"",
+                    menus:[{
+                        icon:"el-icon-monitor",
+                        title:"工作台",
+                        pageurl:"works",
+                        submenus:[]
+                    },{
+                        icon:"el-icon-delete",
+                        title:"回收站",
+                        pageurl:"recovery",
+                        submenus:[]
+                    }]
+                }
+        },
+        methods:{
+            menuSelect:function(index, indexarray){
+                let [url] = [...indexarray].reverse();
+                console.log('menuSelect', url)
+                this.currentPage = url;
+            }
+            
+        },
+        mounted: function(){
+            this.containerHeight = `height:${document.documentElement.clientHeight - 48}px`;
+            let that = this;
+            window.onresize = function () {
+                that.containerHeight = `height:${document.documentElement.clientHeight - 48}px`;
+            }
+        },
+        watch:{
+            containerHeight(val){
+                console.log('containerHeight', val);
+            }
+        }
+    }
+</script>
+<style>
+    .el-menu{
+        background-color: unset;
+        border-right:none;
+    }
+    .blue-color{
+        color:aqua
+    }
+
+    .el-aside{
+        height:100%;
+        box-shadow: 0px 2px 6px 0px rgba(0, 21, 41, 0.12);
+        overflow: hidden;
+        position: relative;
+        z-index:99;
+    }
+    .body-background{
+        background: #F5F5F5;
+    }
+
+    .aside{
+        background-color:#fff;
+    }
+
+    .el-menu-item.is-active{
+        border-right: 2px solid #409EFF;
+        background-color:#ecf5ff;
+    }
+</style>

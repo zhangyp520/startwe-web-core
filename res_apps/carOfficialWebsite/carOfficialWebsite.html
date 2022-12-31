@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>startwe汽车官网</title>
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/carOfficialWebsite.css">
+    <script src="./js/jquery.js"></script>
+    <script src="./js/index.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=cSvp2a6Db11ojNS4kVOId58GNlq73lxX"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- 头部图片 -->
+        <div class="header">
+            <!-- 头部顶层盒子 -->
+            <div class="headerTopBox">
+                <!-- logo -->
+                <div class="headerLogo">
+                    <img src="./images/logo.png" alt="">
+                </div>
+                <!-- 菜单栏 -->
+                <ul class="headerMenus">
+                    <li class="active">首页</li>
+                    <li>特色功能</li>
+                    <li>实战案列</li>
+                    <li>供应链交易</li>
+                    <li>联系我们</li>
+                </ul>
+            </div>
+            <!-- 简介信息盒子 -->
+            <div class="headerMsg">
+                <div>起微汽车行业</div>
+                <div>超级4s门店智能系统</div>
+            </div>
+        </div>
+        <!-- 中间内容 -->
+        <div class="content">
+            <!-- 内容小盒子 -->
+            <!-- 特色功能 -->
+            <div class="characteristic">
+                <div class="title">
+                    <span>特色功能</span>
+                    <img src="./images/bar.png" alt="">
+                    </image>
+                </div>
+                <div>
+                    <img src="./images/img1.png" alt="" class="inContentImg">
+                </div>
+            </div>
+            <!-- 实战案例 -->
+            <div class="actualCombat">
+                <div class="title">
+                    <span>实战案例</span>
+                    <img src="./images/bar.png" alt="">
+                    </image>
+                </div>
+                <div>
+                    <img src="./images/img2.png" alt="" class="inContentImg">
+                </div>
+            </div>
+            <!-- 供应链交易 -->
+            <div class="transaction">
+                <div class="title">
+                    <span>供应链交易</span>
+                    <img src="./images/bar.png" alt="">
+                    </image>
+                </div>
+                <div class="inContentBox">
+                    <div>
+                        <img src="./images/1.png" alt="">
+                        <div class="inContentMsg">零部件</div>
+                    </div>
+                    <div>
+                        <img src="./images/2.png" alt="">
+                        <div class="inContentMsg">汽车用品</div>
+                    </div>
+                    <div>
+                        <img src="./images/3.png" alt="">
+                        <div class="inContentMsg">汽车金融</div>
+                    </div>
+                    <div>
+                        <img src="./images/4.png" alt="">
+                        <div class="inContentMsg">保险</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 联系我们 -->
+            <div class="contactUsBox">
+                <div class="title">
+                    <span>联系我们</span>
+                    <img src="./images/bar.png" alt="">
+                    </image>
+                </div>
+                <div class="contactUs">
+                    <!-- 基本信息 -->
+                    <div>
+                        <div class="company">
+                            <img src="./images/logo2.png" alt="">
+                            <span>成都起微网络科技有限公司</span>
+                        </div>
+                        <div class="contactUsMsg">
+                            <div>
+                                <div>地址：高新区金地天地天府城1栋1414</div>
+                                <div>邮编：610000</div>
+                                <div>电话：028-8733 5679</div>
+                                <div class="followUs">
+                                    <div>关注我们：</div>
+                                    <img src="./images/111.png" alt="">
+                                </div>
+                            </div>
+                            <div>
+                                <div>手机：199 8004 9673</div>
+                                <div>邮箱：startwe@126.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 地址 -->
+                    <div class="address">
+                        <div id="footerMap">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 备案号 -->
+            <div class="pg-footer">
+                <div class="pg-ft-wrap">
+                    <span>版权所有 Powered by StartWE&nbsp;&nbsp;蜀ICP备18031704号</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    //创建和初始化地图函数：
+    function initMap() {
+        createMap();//创建地图
+        setMapEvent();//设置地图事件
+        addMapControl();//向地图添加控件
+        addMapOverlay();//向地图添加覆盖物
+    }
+    function createMap() {
+        map = new BMap.Map("footerMap");
+        map.centerAndZoom(new BMap.Point(104.081675, 30.5069), 16);
+    }
+    function setMapEvent() {
+        map.enableScrollWheelZoom();
+        map.enableKeyboard();
+        map.enableDragging();
+        map.enableDoubleClickZoom()
+    }
+    function addClickHandler(target, window) {
+        target.addEventListener("click", function () {
+            target.openInfoWindow(window);
+        });
+    }
+    function addMapOverlay() {
+        var markers = [
+            { content: "高新区金地天地天府城1栋1414", title: "成都起微网络科技有限公司", imageOffset: { width: 0, height: 3 }, position: { lat: 30.505854, lng: 104.0799 } }
+        ];
+        for (var index = 0; index < markers.length; index++) {
+            var point = new BMap.Point(markers[index].position.lng, markers[index].position.lat);
+            var marker = new BMap.Marker(point, {
+                icon: new BMap.Icon("http://api.map.baidu.com/lbsapi/createmap/images/icon.png", new BMap.Size(20, 25), {
+                    imageOffset: new BMap.Size(markers[index].imageOffset.width, markers[index].imageOffset.height)
+                })
+            });
+            var label = new BMap.Label(markers[index].title, { offset: new BMap.Size(25, 5) });
+            var opts = {
+                width: 200,
+                title: markers[index].title,
+                enableMessage: false
+            };
+            var infoWindow = new BMap.InfoWindow(markers[index].content, opts);
+            marker.setLabel(label);
+            addClickHandler(marker, infoWindow);
+            map.addOverlay(marker);
+        };
+        var labels = [
+        ];
+        for (var index = 0; index < labels.length; index++) {
+            var opt = { position: new BMap.Point(labels[index].position.lng, labels[index].position.lat) };
+            var label = new BMap.Label(labels[index].content, opt);
+            map.addOverlay(label);
+        };
+    }
+    //向地图添加控件
+    function addMapControl() {
+        var scaleControl = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_BOTTOM_LEFT });
+        scaleControl.setUnit(BMAP_UNIT_IMPERIAL);
+        map.addControl(scaleControl);
+        var navControl = new BMap.NavigationControl({ anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE });
+        map.addControl(navControl);
+        var overviewControl = new BMap.OverviewMapControl({ anchor: BMAP_ANCHOR_BOTTOM_RIGHT, isOpen: true });
+        map.addControl(overviewControl);
+    }
+    var map;
+    initMap();
+</script>
+
+</html>

@@ -1,0 +1,143 @@
+{
+  "msg": [
+    {
+      "id": "uuid-1",
+      "display": "杨海",
+      "type": "1",
+      "post": {
+        "id": "puuid-1",
+        "name": "前端架构师"
+      },
+      "team": {
+        "id": "tuuid-1",
+        "name": "积木云开发组"
+      },
+      "level": {
+        "id": "luuid-1",
+        "name": "架构师"
+      },
+      "role": {
+        "id": "ruuid-1",
+        "name": "员工"
+      },
+      "department": {
+        "id": "duuid-1",
+        "pid": "duuid-2",
+        "name": "云智慧事业部"
+      }
+    },
+    {
+      "id": "uuid-2",
+      "pId": "",
+      "display": "联系人2",
+      "type": "1",
+      "post": {
+        "id": "puuid-1",
+        "name": "前端架构师"
+      },
+      "team": {
+        "id": "tuuid-1",
+        "name": "积木云开发组"
+      },
+      "level": {
+        "id": "luuid-1",
+        "name": "架构师"
+      },
+      "role": {
+        "id": "ruuid-1",
+        "name": "员工"
+      },
+      "department": {
+        "id": "duuid-1",
+        "pid": "duuid-2",
+        "name": "云智慧事业部"
+      }
+    },
+    {
+      "id": "uuid-3",
+      "pId": "",
+      "display": "联系人3",
+      "type": "1",
+      "post": {
+        "id": "puuid-1",
+        "name": "前端架构师"
+      },
+      "team": {
+        "id": "tuuid-1",
+        "name": "积木云开发组"
+      },
+      "level": {
+        "id": "luuid-1",
+        "name": "架构师"
+      },
+      "role": {
+        "id": "ruuid-1",
+        "name": "员工"
+      },
+      "department": {
+        "id": "duuid-1",
+        "pid": "duuid-2",
+        "name": "云智慧事业部"
+      }
+    },
+    {
+      "id": "uuid-4",
+      "pId": "",
+      "display": "联系人4",
+      "type": "1",
+      "post": {
+        "id": "puuid-1",
+        "name": "前端架构师"
+      },
+      "team": {
+        "id": "tuuid-1",
+        "name": "积木云开发组"
+      },
+      "level": {
+        "id": "luuid-1",
+        "name": "架构师"
+      },
+      "role": {
+        "id": "ruuid-1",
+        "name": "员工"
+      },
+      "department": {
+        "id": "duuid-1",
+        "pid": "duuid-2",
+        "name": "云智慧事业部"
+      }
+    },
+    {
+      "id": "uuid-5",
+      "pId": "",
+      "display": "联系人5",
+      "type": "1",
+      "post": {
+        "id": "puuid-1",
+        "name": "前端架构师"
+      },
+      "team": {
+        "id": "tuuid-1",
+        "name": "积木云开发组"
+      },
+      "level": {
+        "id": "luuid-1",
+        "name": "架构师"
+      },
+      "role": {
+        "id": "ruuid-1",
+        "name": "员工"
+      },
+      "department": {
+        "id": "duuid-1",
+        "pid": "duuid-2",
+        "name": "云智慧事业部"
+      }
+    }
+  ]
+}
+
+
+
+
+

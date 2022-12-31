@@ -1,0 +1,418 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Json 对象比对</title>
+
+    <style type="text/css">
+        *{
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+            margin: 20px;
+            background: #f9f9f9;
+        }
+        #left_json{
+            width:100%;
+            height:100px;
+        }
+        #right_json{
+            width:100%;
+            height:100px;
+        }
+        button.comparison-btn{
+            font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+            display: block;
+            background: #5990cf;
+            height: 30px;
+            color: #ffffff;
+            font-size: 14px;
+            padding: 0 18px;
+            border: 0;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            outline: none;
+        }
+        button.comparison-btn:hover{
+            background: #63a4ed;
+        }
+        .left-json,.right-json{
+            width: 49%;
+            line-height: 30px;
+            font-family: arial, helvetica, sans-serif;
+        }
+        .left-json{
+            float: left;
+        }
+        .right-json{
+            float: right;
+        }
+        .left-json textarea,.right-json textarea{
+            font-size: 14px;
+            outline: none;
+            font-family: arial, helvetica, sans-serif;
+            resize: vertical;
+        }
+        textarea:focus{
+            border-color: #5990cf;
+
+        }
+        .tree{
+            width: 100%;
+            display: block;
+            float: left;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table tr{
+            width: 100%;
+            background: #ffffff;
+        }
+        table tr:first-child{
+            background: #dee9f5 !important;
+            height: 40px;
+            line-height: 40px;
+        }
+        table tr:nth-child(2n+1){
+            background: #f6f6f6;
+        }
+        table tr td{
+            border-spacing: 5px;
+            font-size: 14px;
+            line-height: 32px;
+            min-width: 200px;
+            max-width: 1024px;
+            word-wrap:break-word;
+            word-break:break-all;
+            padding-left:20px;
+        }
+        table tr:first-child td{
+            padding: 0 10px !important;
+        }
+        table tr td:last-child{
+            padding: 0;
+        }
+        table tr td span{
+            width: 100%;
+            display: block;
+            text-align: center;
+            color: #fff;
+        }
+        .treegrid-expander {
+            vertical-align: sub;
+            margin-right: 3px;
+        }
+    </style>
+</head>
+<body>
+<script type="text/html" id="json_container_tpl">
+    <button onclick="updateJson();" class="comparison-btn">比对数据</button>
+    <div class="left-json">Left Json <textarea id="left_json">{{leftJson}}</textarea></div>
+
+    <div class="right-json">Right Json <textarea id="right_json">{{rightJson}}</textarea></div>
+
+    <table  class="tree">
+        <tr class="treegrid-0 treegrid-expanded">
+            <td style="width: 50px;min-width: 50px;max-width: 50px">序号</td><td>jsonPath</td><td>leftJson</td><td>rightJson</td><td>是否相等</td>
+        </tr>
+        {{each pathArr as item index}}
+        <tr class="treegrid-{{item.id}} treegrid-parent-{{item.parentId}} treegrid-expanded">
+            <td>{{index+1}}</td>
+            <td>
+                {{each item.path.split('.') as treeSpace treeSpaceIndex }}
+                    &nbsp;&nbsp;&nbsp;
+                {{/each}}
+                {{=
+                (getJsonValueType(leftJsonObj,item.path)!='object'&&  getJsonValueType(leftJsonObj,item.path)!='function')?item.path.replace(item.parentPath+'.',''):
+                item.path
+
+                }}</td>
+            <td>
+                {{if  getJsonValueType(leftJsonObj,item.path)=='undefined'}}
+                undefined
+                {{else}}
+                {{=
+                getJsonValueType(leftJsonObj,item.path)=='object'?'': oui.biz.Tool.encode(getJsonValue(leftJsonObj,item.path))
+                }}
+                {{/if}}
+
+            </td>
+            <td>
+
+                {{if  getJsonValueType(rightJsonObj,item.path)=='undefined'}}
+                undefined
+                {{else}}
+                {{=
+                getJsonValueType(rightJsonObj,item.path)=='object'?'':oui.biz.Tool.encode(getJsonValue(rightJsonObj,item.path))
+                }}
+                {{/if}}
+
+            </td>
+            <td>
+                {{= getJsonValueType(rightJsonObj,item.path)=='object'?'':
+                (isEqual(leftJsonObj,rightJsonObj,item.path)?'<span style="background-color: green">相等</span>':'<span style="background-color: red">不相等</span>')
+                }}
+            </td>
+        </tr>
+        {{/each}}
+    </table>
+
+</script>
+
+<div id="json_container">
+
+</div>
+<script type="text/javascript">
+
+
+    var oui_context={
+        debug:true,
+        contextPath:"../../../",
+        bizPackage:"oui",
+        prefix:"oui-",
+        controlPrefix:"oui-c-",
+        eventPrefix:"oui-e-",
+        validatePrefix:"oui-v-",
+        beforePrifix:"oui-c-before-",
+        afterPrifix:"oui-c-after-",
+        controller:"oui-controller",
+        ownControll:"oui-c-own"
+    };
+</script>
+<script type="text/javascript"	src="js/buildJs.js" ></script>
+<script type="text/javascript"	src="js/jsonpath.js" ></script>
+
+<script type="text/javascript">
+    oui_context.contextPath = getContextPath();
+    loadArr(['res_common/third/jquery/jquery-2.1.4.min.js','res_common/third/template/template_debug_3_0_0.js'],function(){
+        load4sort(['res_common/oui/system/oui.js','res_common/oui/system/oui-jsclazz.js',
+            'res_common/oui/system/oui-biz-ext.js'
+        ],function(){
+            require4init();
+        });
+    });
+    function require4init(){
+        var Tool = oui.biz.Tool;
+        Tool.require(['res_common/third/jquery-treegrid/css/jquery.treegrid.css','res_common/third/jquery-treegrid/js/jquery.treegrid.js'],function(){
+            init();
+        });
+    }
+    function pathCfg2Array(pathCfg,arr){
+        var root = pathCfg['$'];
+        var items = root.childrenPaths;
+        var arr = arr ||[];
+        arr = getChildrenByParentId(0,pathCfg);
+        return arr;
+    }
+    function getChildrenByParentId(parentId,pathCfg){
+        var arr = [];
+        for(var i in pathCfg){
+            if(typeof pathCfg[i].parentId =='undefined'){
+                continue;
+            }
+            if(pathCfg[i].parentId ==parentId){
+
+                arr.push(pathCfg[i]);
+                arr = arr.concat(getChildrenByParentId(pathCfg[i].id,pathCfg));
+            }
+        }
+        return arr;
+    }
+    /**
+     * 更新json数据
+     */
+    function updateJson(){
+        var Tool = oui.biz.Tool;
+        var leftJsonStr = $.trim($("#left_json").val());
+        var rightJsonStr = $.trim($("#right_json").val());
+        try{
+
+            var jsonCompareDialog =window.parent.oui.$.ctrl.dialog.compareJsonDialog;
+            leftJsonStr = leftJsonStr ||  jsonCompareDialog.attr('leftJson');
+            rightJsonStr = rightJsonStr || jsonCompareDialog.attr('rightJson');
+        }catch(e){
+        }
+
+        var leftJson = Tool.decode(leftJsonStr ||'{"a":{"b":{"c":[{"d":1,"e":2},{"f":3,"g":4,"x":[1,2,3]}]}}}');
+        var rightJson = Tool.decode(rightJsonStr||'{"a":{"b":{"c":[{"d":1,"e":2},{"f":3,"g":4,"x":[1,2,3]}]}}}');
+        oui.json.Tool.leftJson = leftJson;
+        oui.json.Tool.rightJson = rightJson;
+        var pathCfg = {};
+        oui.json.Tool.clearJsonPaths();
+        pathCfg =oui.json.Tool.getJsonPaths(leftJson);
+        pathCfg =oui.json.Tool.getJsonPaths(rightJson); //合并最后的jsonpath
+        var pathArr = pathCfg2Array(pathCfg);
+        var data = {
+            leftJson:oui.biz.Tool.encode(leftJson),
+            rightJson:oui.biz.Tool.encode(rightJson),
+            leftJsonObj:leftJson,
+            rightJsonObj:rightJson,
+            pathCfg:pathCfg,
+            pathArr:pathArr
+        };
+
+        var html = template('json_container_tpl',data);
+        $("#json_container").html(html);
+
+//        $('.tree').treegrid();
+
+//        console.log(leftJson);
+//        console.log(rightJson);
+    }
+
+    /**
+     * 初始化创建 oui.json.Tool工具
+     */
+    function init(){
+        oui.createClass({
+            pkg:"oui.json",
+            "class":"Tool",
+            pathCfg:{},
+            getJsonPaths:function(json){
+                var _self = this;
+                if(!json){
+                    return _self.pathCfg ;
+                }
+                if(typeof json =='string'){
+                    return _self.pathCfg;
+                }
+                _self.buildJsonPaths(json);
+                return _self.pathCfg;
+            },
+            clearJsonPaths:function(){
+                var _self = this;
+                _self.pathCfg ={};
+            },
+            /**
+             * 判断两个对象 jsonPath对应的值是否相等，如果是对象判断则 判断对象下的所有键值对的值是否相等
+             */
+            isEqual:function(leftJson,rightJson,jsonPath){
+                var _self = this;
+                var isEqual = true;
+                if(typeof leftJson !='object' && (typeof rightJson !='object')){
+                    isEqual =leftJson ===rightJson;
+                }
+                if(!isEqual){
+                    return false;
+                }
+                var leftValue = oui.json.Tool.getJsonValue(leftJson,jsonPath);
+                var rightValue =oui.json.Tool.getJsonValue(rightJson,jsonPath);
+                if( (typeof leftValue =='object' && typeof rightValue=='object') || (typeof leftValue=='function' && typeof rightValue=='function')){
+                   for(var i in leftValue){
+                        if(typeof leftValue[i] =='object' || typeof leftValue[i] =='function'){
+
+                            isEqual =oui.json.Tool.isEqual(leftValue[i],rightValue[i],jsonPath+'.'+i);
+
+                        }else{
+                            isEqual = leftValue[i] ===rightValue[i];
+                        }
+                        if(!isEqual){
+                            return false;
+                        }
+                    }
+                    for(var k in rightValue){
+                        if(typeof rightValue[k] =='object' || typeof rightValue[k] =='function'){
+
+                            isEqual =oui.json.Tool.isEqual(leftValue[k],rightValue[k],jsonPath+'.'+k);
+
+                        }else{
+                            isEqual = leftValue[k] ===rightValue[k];
+                        }
+                        if(!isEqual){
+                            return false;
+                        }
+                    }
+                    return true;
+                }else{
+                    return leftValue === rightValue;
+                }
+
+            },
+            /**
+             *
+             * 获取 json value的值类型
+             */
+            getJsonValueType:function(json,path){
+                var varr = jsonPath(json,path);
+                if(!varr){
+                    return (typeof undefined);
+                }
+                return (typeof varr[0]);
+            },
+            /**
+             *
+             * 根据 path获取json数据
+             */
+            getJsonValue:function(json,path){
+                var varr = jsonPath(json,path);
+                if(!varr){
+                    return undefined;
+                }
+                return varr[0];
+            },
+            pathId:0,
+            createNewId:function(){
+                var _self = this;
+                _self.pathId++;
+                return _self.pathId;
+            },
+            /**
+             * 根据json对象 和 对象path 创建对象中所有的xpath路径
+             * @param json
+             * @param rootPath
+             */
+            buildJsonPaths:function(json,rootPath){
+                var _self = this;
+                var cfg = _self.pathCfg;
+                if(!rootPath){
+                    rootPath = '$';
+                }
+                for(var i in json){
+                    var parentId = cfg[rootPath]?cfg[rootPath].id:0;
+                    if(typeof parentId =='undefined'){
+                       parentId =0;
+                    }
+//                    console.log(parentId);
+                    var id ='';
+                    if(cfg[rootPath+'.'+i]){
+                        id =cfg[rootPath+'.'+i].id;
+                    }else{
+                        id=_self.createNewId();
+                    }
+                    cfg[rootPath+'.'+i] = {key:i,id:id,parentId:parentId,path:rootPath+'.'+i,parentPath:rootPath,childrenPaths:[]};
+
+                    if(!cfg[rootPath]){
+                        cfg[rootPath] ={childrenPaths:[]};
+                    }
+                    cfg[rootPath].childrenPaths.push(cfg[rootPath+'.'+i]);
+//                    console.log('key类型:');
+//                    console.log(typeof i);
+//                    console.log('值类型类型:');
+//                    console.log(typeof json[i]);
+                    if((typeof json[i] =='object') || (typeof json[i] =='function')){
+                        _self.buildJsonPaths(json[i],rootPath+'.'+i);
+                    }
+                }
+            }
+        });
+
+        template.helper('oui',oui);
+        template.helper('console',console);
+        template.helper('getJsonValue',oui.json.Tool.getJsonValue);
+        template.helper('getJsonValueType',oui.json.Tool.getJsonValueType);
+        template.helper('isEqual',oui.json.Tool.isEqual);
+
+        updateJson();
+
+    }
+</script>
+</body>
+</html>

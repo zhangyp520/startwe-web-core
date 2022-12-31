@@ -1,0 +1,17 @@
+{
+  "menus":[
+    {
+      "id": "join-tree",
+      "menuPath": "join-tree",
+      "parentId": "",
+      "icon": "",
+      "defaultNotShow": false,
+      "url": "res_engine/join-tree/join-tree.tpl.html",
+      "scripts": [
+        "/res_engine/join-tree/js/join-tree-require.js"
+      ],
+      "openType": "inner",
+      "display": "交互设计"
+    }
+  ]
+}

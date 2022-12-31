@@ -1,0 +1,319 @@
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar{width: 0px;height: 12px;background-color: #FFFFFF; border-radius: 5px}
+/*::-webkit-scrollbar{width: 7px;height: 12px;background-color: #FFFFFF; border-radius: 5px}*/
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(234, 244, 255,0.8);background-color: #FFFFFF;}
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb{-webkit-box-shadow: inset 0 0 6px rgba(193, 193, 193,0.5);background-color: #e8e8e8;border-radius: 10px}
+
+.tabContainer{
+    width:100%;
+    position:relative;
+
+}
+.tabContainer .tabList{
+    width: 100000px;
+    overflow: hidden;
+    background-color:#e6e9f0;
+}
+@media all and (-ms-high-contrast:none)
+{
+    .tabContainer .tabList{ top: -1px } /* IE10 */
+    *::-ms-backdrop, .tabContainer .tabList{ top: -1px} /* IE11 */
+}
+.tabContainer .tabList .tabListContainer{
+    background-color: #e6e9f0;
+    list-style: none;
+    padding: 0;
+    margin:0;
+}
+.tabContainer .tabList .tabListContainer li{
+    float:left;
+    position:relative;
+    display:block;
+    height: 25px;
+    line-height: 26px;
+    cursor: pointer;
+}
+.tabContainer .tabList .tabListContainer li.active a{
+    color: white;
+    background-color: #42b983;
+    cursor: default;
+}
+.tabContainer .tabList .tabListContainer li.active .refresh{
+    background: url("../../img/refresh-white.png") no-repeat;
+}
+.tabContainer .tabList .tabListContainer li.active .tabClose{
+    background: url("../../img/close-white.png") no-repeat center center;
+}
+.tabContainer .tabList .tabListContainer li a{
+    height: 24px;
+    margin: 0px 5px 0 0;
+    padding: 5px 7px;
+    font-size: 12px;
+    text-decoration:none;
+    color: white;
+    background-color: #dadce8;
+}
+.tabContainer .tabList .tabListContainer li a .refresh{
+    margin-right: 8px;
+    -webkit-transition: -webkit-transform 0.3s ease;
+    -moz-transition: -moz-transform 0.3s ease;
+    -o-transition:  -o-transform 0.3s ease;
+    transition:  transform 0.3s ease;
+}
+.tabContainer .tabList .tabListContainer li a .getRefresh{
+    animation: refresh .5s;
+    -moz-animation: refresh .5s;	/* Firefox */
+    -webkit-animation: refresh .5s;	/* Safari 和 Chrome */
+    -o-animation: refresh .5s;	/* Opera */
+}
+@keyframes refresh
+{
+    from {transform: rotate(0deg);
+
+        -webkit-transform: rotate(0deg);
+
+        -moz-transform: rotate(0deg);
+
+        -ms-transform: rotate(0deg);
+
+        -o-transform: rotate(0deg);}
+    to {transform: rotate(360deg);
+
+        -webkit-transform: rotate(360deg);
+
+        -moz-transform: rotate(360deg);
+
+        -ms-transform: rotate(360deg);
+
+        -o-transform: rotate(360deg);}
+}
+
+@-moz-keyframes myfirst /* Firefox */
+{
+    from {transform: rotate(0deg);
+
+        -webkit-transform: rotate(0deg);
+
+        -moz-transform: rotate(0deg);
+
+        -ms-transform: rotate(0deg);
+
+        -o-transform: rotate(0deg);}
+    to {transform: rotate(360deg);
+
+        -webkit-transform: rotate(360deg);
+
+        -moz-transform: rotate(360deg);
+
+        -ms-transform: rotate(360deg);
+
+        -o-transform: rotate(360deg);}
+}
+
+@-webkit-keyframes myfirst /* Safari 和 Chrome */
+{
+    from {transform: rotate(0deg);
+
+        -webkit-transform: rotate(0deg);
+
+        -moz-transform: rotate(0deg);
+
+        -ms-transform: rotate(0deg);
+
+        -o-transform: rotate(0deg);}
+    to {transform: rotate(360deg);
+
+        -webkit-transform: rotate(360deg);
+
+        -moz-transform: rotate(360deg);
+
+        -ms-transform: rotate(360deg);
+
+        -o-transform: rotate(360deg);}
+}
+
+@-o-keyframes myfirst /* Opera */
+{
+    from {transform: rotate(0deg);
+
+        -webkit-transform: rotate(0deg);
+
+        -moz-transform: rotate(0deg);
+
+        -ms-transform: rotate(0deg);
+
+        -o-transform: rotate(0deg);}
+    to {transform: rotate(360deg);
+
+        -webkit-transform: rotate(360deg);
+
+        -moz-transform: rotate(360deg);
+
+        -ms-transform: rotate(360deg);
+
+        -o-transform: rotate(360deg);}
+}
+.tabContainer .tabList .tabListContainer li a .refresh:hover{
+    cursor: pointer;
+}
+.tabContainer .tabList .tabListContainer li a .tabClose{
+    display: inline-block;
+    height: 12px;
+    width: 7px;
+    background: url("../../img/close.png") no-repeat center center;
+    vertical-align: -2px;
+    margin-left: 8px;
+}
+.tabContainer .tabList .tabListContainer li a .tabClose:hover{
+    cursor: pointer;
+}
+.tabMenu{
+    position: absolute;
+    right: 0px;
+    text-align: center;
+    padding: 6px 12px;
+    z-index: 2;
+    background-color: #e6e9f0;
+    bottom: 10px;
+    cursor: pointer;
+    font-size: 12px;
+}
+#more_menu{
+    width: 200px;
+    background-color: #fff;
+    border-top:0 none;
+    position: absolute;
+    display: none;
+    z-index: 999;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0px 0px 10px #ababab;
+}
+#more_menu ul{
+    padding: 0;
+    margin: 0;
+}
+#more_menu li{
+    padding: 5px 10px;
+    list-style: none;
+    background-color: #fff;
+    font-size: 12px;
+    color:#333
+}
+#more_menu li:hover{
+    background-color: #eee;
+    color: #6e6e6e;
+    cursor: pointer;
+}
+#more_menu li i.icon{
+    margin-right: 5px;
+}
+#more_menu li .tabListClose{
+    float: right;
+    line-height: 21px;
+}
+#popup_menu{
+    display: none;
+    width: 70px;
+    background-color: #fff;
+    position: absolute;
+    left: -999px;
+    top: -9999px;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+    border-top:0 none;
+}
+#popup_menu ul{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+#popup_menu li{
+    padding: 5px 10px;
+    list-style: none;
+    font-size: 12px;
+    min-width: 95px;
+}
+#popup_menu li i{
+    display: inline-block;
+    width: 12px;
+    margin-right: 3px;
+}
+#popup_menu li:hover{
+    background-color: #eee;
+    cursor: pointer;
+}
+.refresh{
+    display: inline-block;
+    height: 12px;
+    width: 10px;
+    background: url("../../img/refresh.png") no-repeat;
+    vertical-align: -2px;
+}
+.moreCloseAll{
+    margin: 0;
+    padding: 5px 10px;
+    background-color: #fff;
+    font-size: 12px;
+    color: #333;
+}
+.moreCloseAll:hover{
+    background-color: #eee;
+    color: #6e6e6e;
+    cursor: pointer;
+}
+
+
+/*样式更改 2018.07.19*/
+.tabContainer .tabList .tabListContainer li a {
+    background-color: #fff;
+    border: 1px solid #d8dce5;
+    color: #333;
+}
+.tabContainer .tabList {
+    padding-bottom: 0;
+}
+.tabMenu,
+.tabContainer .tabList {
+    background-color: white;
+    border-bottom: 1px solid #d8dce5;
+    padding: 5px 0;
+
+}
+.tabMenu{
+    padding: 11.5px 12px;
+    bottom: 0;
+}
+
+
+
+.wrapper-menu .menu-opt {
+    display: block;
+    position: absolute;
+    top: 48%;
+    left: 190px;
+    width: 10px;
+    height: 60px;
+    background-image: url(../../img/menu_bg.png);
+    background-position: 0 0;
+    }
+
+.add-effect .menu-opt {
+    left: 200px;
+    background-position: -10px 0;
+    }
+.add-effect .faster-sidebar {
+    left: -188px;
+    }
+
+.add-effect .content-wrapper {
+    margin-left: 0px;
+    }
+.add-effect .sidebar-menu {
+    display:none;
+    }
+  .add-effect  .main-sidebar{
+    background-color: transparent;
+    left: -200px;
+    }

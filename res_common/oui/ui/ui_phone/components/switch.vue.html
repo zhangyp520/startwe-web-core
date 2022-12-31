@@ -1,0 +1,45 @@
+<!-- 开关按钮 -->
+<template >
+    <mt-switch v-model="value"
+               :id="id"
+               :name="name"
+               :bindProp="bindProp"
+               :tempStyle="style"
+               :class="cls"
+               :placeholder="placeholder"
+               @change="_controlOnUpdate">
+    </mt-switch>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                bindProp:'',
+                value: false,
+                style:'',
+                cls:'',
+                placeholder:'',
+                activeColor:'',
+                inactiveColor:'',
+                activeText:'',
+                inactiveText:''
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

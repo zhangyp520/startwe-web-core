@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>页面业务属性自定义扩展</title>
+</head>
+<body>
+<!--页面业务属性扩展 demo-->
+<div class="design-attribute-item">
+    <div class="design-set-attribute-tit attribute-tit-active">业务属性<i class="retract-arrow-icon"></i></div>
+    <div class="design-set-area">
+        <!--此处可以扩展多个配置项-->
+        <div class="design-field ">
+            <div class="fieldname">业务描述</div>
+            <div class="fieldblock">
+                <textarea bindPropAfter="changed4props" placeholder="业务描述"
+                          bindProp="otherAttrs.bizDes"
+                          value="{{otherAttrs.bizDes}}">{{otherAttrs.bizDes}}</textarea>
+            </div>
+            <div class="fielderror" id="check_controls_{{currentControl.id}}_otherAttrs_bizDes">
+                {{if AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}
+                <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}</div>
+                {{/if}}
+            </div>
+        </div>
+
+        <!--在这里扩展自定义业务设置-->
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,711 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item>
+                    <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>综合查询</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <div class="vehicle">
+                <!-- 综合查询区域 -->
+                <div class="vehicle">
+                    <div class="vehicle_content">
+                        <div>在库物资量共:
+                            <span>{{countMaterial}}</span>种;</div>
+                        <div>维修材料:
+                            <span>{{countRepair}}</span>种;</div>
+                        <div>保养材料:
+                            <span>{{countMaintenance}}</span>种;</div>
+                        <div>低值易耗品:
+                            <span>{{countTool}}</span>种;</div>
+                        <div>其他材料:
+                            <span>{{countOther}}</span>种;</div>
+                    </div>
+                </div>
+
+                <!-- 下拉选项 -->
+                <div class="Dropdown">
+                    <el-select v-model="queryInfo.inUserName" clearable placeholder="请选择录入人员" style="width: 160px;">
+                        <el-option v-for="item in inUserNames" :key="item.empName" :label="item.empName" :value="item.empName">
+                        </el-option>
+                    </el-select>
+
+                    <el-select v-model="queryInfo.materialType" clearable placeholder="请选择类型" style="width: 130px;">
+                        <el-option v-for="item in materialType" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="queryInfo.vendorName" clearable placeholder="请选择来源" style="width: 160px;">
+                        <el-option v-for="item in vendorNames" :key="item.vendorName" :label="item.vendorName" :value="item.vendorName">
+                        </el-option>
+                    </el-select>
+
+                </div>
+                <!-- 关键字区域 -->
+                <div class="keyword">
+
+                    <div class="keyword_content">关键字:</div>
+
+                    <el-select v-model="queryInfo.queryKey" clearable placeholder="请选择" style="width: 104px;">
+                        <el-option v-for="item in queryKey" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+
+
+                    <el-input v-model="queryInfo.queryParam" placeholder="请输入关键字，例如“美孚1号”" style="width: 314px; margin-left:8px">
+                    </el-input>
+                    <el-row class="Reset_button">
+                        <el-button @click="cleanValues" size="small" round>重置</el-button>
+                    </el-row>
+                    <el-row class="query_button1">
+                        <el-button @click='getMaterielData' type="primary" size="small" round>查询</el-button>
+                    </el-row>
+                </div>
+            </div>
+
+            <div class="table_box">
+                <!-- 我的工单区域开始 -->
+                <div class="work_order_box" style="position: relative">
+                    <el-button id="underStockBtn" @click='underStock' style="padding: 0 20px;width: 150px;height: 30px; color: #fff; background-color: #FF7878; border: 1px solid #FF7878; display: none">
+                        库存不足物料</el-button>
+                    <el-button type="primary" @click="deriveFromClick" style="padding: 0 20px;width: 150px;height: 30px; color: #fff; background-color: #DDB148; border: 1px solid #DDB148; position: absolute;right: 10px">
+                        导出当前盘点表</el-button>
+                </div>
+
+                <!-- 我的工单区域结束 -->
+                <div class="Table_head">
+                    <!-- 表格头部 -->
+                    <template>
+                        <el-table :data="queryInfo.tableData" style="width: 100%;margin-top: 20px" v-loading="loading">
+                            <el-table-column prop="materialName" label="物料名称" align="center"></el-table-column>
+                            <el-table-column prop="materialBrand" label="物料品牌" align="center"></el-table-column>
+                            <el-table-column prop="materialModel" label="物料型号" align="center"></el-table-column>
+                            <el-table-column prop="materialSpec" label="单品规格" align="center"></el-table-column>
+                            <el-table-column prop="onHandQty" label="库存量" align="center">
+                                <template slot-scope="scope">
+                                    <span :class="scope.row.isShowDanger?' on-hand-qty  on-hand-qty-danger':'on-hand-qty'">
+                                        {{scope.row.onHandQty}}
+                                    </span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="materialCost" label="成本单价(元)" align="center"></el-table-column>
+                            <el-table-column prop="materialCode" label="编号" align="center"></el-table-column>
+                            <el-table-column prop="vendorName" label="厂商 " align="center"></el-table-column>
+                            <el-table-column prop="status" label="状态 " align="center" :formatter="formatStatus"></el-table-column>
+                            <el-table-column prop="inUserName" label="创建人员 " align="center"></el-table-column>
+                            <el-table-column prop="inTime" label="创建时间 " align="center" width="160%"></el-table-column>
+                            <el-table-column prop="materialType" label="类别 " align="center" :formatter="formatType"></el-table-column>
+                            <el-table-column label="操作 " align="center">
+                                <template slot-scope="scope">
+                                    <el-button type="text" @click='handleClick(scope.row)'>查看</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </div>
+                <!-- 分页 -->
+                <div class="page">
+                    <div class="block">
+                        <el-pagination @size-change="handleSizeChange" @current-change='handleCurrentChange' :current-page="queryInfo.currentPage"
+                            :page-sizes="[10, 20, 30, 50]" :page-size="queryInfo.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                            :total="queryInfo.total">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </el-main>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading: true,
+                countMaterial: 0,
+                countMaintenance: 0,
+                countRepair: 0,
+                countTool: 0,
+                countOther: 0,
+                newTableData: [],
+                isShowDanger: false,
+                onHandQty4max: 100, //最低库存量 少于次数进行提醒；
+                inUserNames: [],
+                vendorNames: [],
+                queryInfo: {
+                    // 查询信息数据
+                    tableData: [],
+                    //总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                    inUserName: "",
+                    materialType: "",
+                    vendorName: "",
+                    queryKey: "",
+                    queryParam: ""
+                },
+                //查询列表
+                inquireList: [],
+                queryKey: [{
+                    value: 'materialBrand',
+                    label: '材料品牌'
+                }, {
+                    value: 'materialName',
+                    label: '物资名称 '
+                }],
+                //材料类型
+                materialType: [{
+                    value: 1,
+                    label: '维修材料'
+                }, {
+                    value: 2,
+                    label: '保养材料'
+                }, {
+                    value: 3,
+                    label: '其他材料'
+                }, {
+                    value: 4,
+                    label: '低值易耗品'
+                }],
+                // 内容区
+            };
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            //调用接口函数
+            this.getMaterielData();
+            this.grtEmpName();
+            this.getVendorName();
+            this.countMaterials();
+        },
+        methods: {
+            formatType: function (row) {
+                if (row.materialType == 1) {
+                    return "维修材料";
+                } else if (row.materialType == 2) {
+                    return "保养材料";
+                } else if (row.materialType == 3) {
+                    return "其他材料";
+                } else if (row.materialType == 4) {
+                    return "低值易耗品";
+                }
+            },
+            formatStatus: function (row) {
+                if (row.status == 1) {
+                    return "启用";
+                } else if (row.status == 2) {
+                    return "禁用";
+                }
+            },
+            getMaterielData: function () {
+                var me = this;
+                oui.ajaxPost('material/warehouseCenter/queryStockMaterial', {
+                    "pager": {
+                        // 第几页
+                        "page": me.queryInfo.currentPage,
+                        // 每页显示多少行
+                        "rows": me.queryInfo.pageSize
+                    },
+                    "inUserName": me.queryInfo.inUserName || '',
+                    "materialType": me.queryInfo.materialType || '',
+                    "queryKey": me.queryInfo.queryKey || '',
+                    "queryParam": me.queryInfo.queryParam || '',
+                    "vendorName": me.queryInfo.vendorName || ''
+                },
+                    function (res) {
+                        me.queryInfo.total = res.resultObj.total;
+                        me.queryInfo.tableData = res.resultObj.stockMaterials || [];
+                        //库存有不足解开点击
+                        var isShowDanger = false;
+                        //遍历数组拿到子项
+                        oui.eachArray(me.queryInfo.tableData, function (item) {
+                            // 拿到需要控制的元素
+                            var currentBtn = document.getElementById("underStockBtn");
+                            //判断子项的值
+                            if (item.onHandQty < me.onHandQty4max) {
+                                // 隐藏
+                                currentBtn.style.display = "block";
+                                // me.isShow = true;
+                                item.isShowDanger = true;
+                            }
+                        });
+                        me.isShowDanger = true;
+                        me.loading = false;
+                        me.$forceUpdate();
+                    },
+                    function (res) {
+                        me.$message.error(res.message)
+                    }
+                )
+            },
+            deriveFromClick: function () {
+                let me = this;
+                this.$confirm('是否要导出物料盘点表?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    debugger;
+                    oui.downloadFile(oui.baseUrl + "material/excel/download", {});
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消导出'
+                    });
+                });
+            },
+            //操作人员
+            grtEmpName: function () {
+                var me = this;
+                oui.ajaxPost('company/employeeInfo/queryWarehouseManager', {
+                },
+                    function (res) {
+                        me.inUserNames = res.resultObj || [];
+                    },
+                    function (res) {
+                        me.$message.error(res.message)
+                    });
+            },
+            //选择厂商
+            getVendorName: function () {
+                var me = this;
+                oui.ajaxPost('material/warehouseCenter/queryVendorName', {
+
+                },
+                    function (res) {
+                        me.vendorNames = res.resultObj || [];
+                    },
+                    function (res) {
+                        me.$message.error(res.message)
+                    })
+
+            },
+            // 数据统计
+            countMaterials: function () {
+                var me = this;
+                const loginUser = window.localStorage.getItem("loginUser");
+                let currentUserId = JSON.parse(loginUser).id;
+                let currentUserName = JSON.parse(loginUser).empName;
+                oui.ajaxPost('material/warehouseCenter/countMaterials', {
+                    "currentUserId": currentUserId,
+                    "currentUserName": currentUserName
+                }, function (res) {
+                    for (k in res.resultObj) {
+                        if (res.resultObj[k].materialType == 1) {
+                            me.countRepair = res.resultObj[k].materialNumber;
+                        } else if (res.resultObj[k].materialType == 2) {
+                            me.countMaintenance = res.resultObj[k].materialNumber;
+                        } else if (res.resultObj[k].materialType == 3) {
+                            me.countOther = res.resultObj[k].materialNumber;
+                        } else if (res.resultObj[k].materialType == 4) {
+                            me.countTool = res.resultObj[k].materialNumber;
+                        }
+                        me.countMaterial += res.resultObj[k].materialNumber;
+                    }
+                }, function (res) {
+                    me.$message.error(res.message)
+                });
+            },
+            //关键字重置
+            cleanValues: function () {
+                this.queryInfo.inUserName = "";
+                this.queryInfo.materialType = "";
+                this.queryInfo.vendorName = "";
+                this.queryInfo.queryKey = "";
+                this.queryInfo.queryParam = "";
+                this.getMaterielData();
+            },
+
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.queryInfo.currentPage = val;
+                this.getMaterielData();
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.queryInfo.pageSize = val;
+                this.getMaterielData();
+            },
+
+            // 点击按钮跳转地砖
+            handleClick: function (row) {
+                oui.router.push("res_apps/car/html/warehousecenter/viewstockin.vue.html", {
+                    materialId: row.materialId
+                })
+            },
+            //库存不足跳转
+            underStock: function () {
+                oui.router.push('res_apps/car/html/warehousecenter/insufficientStock.vue.html');
+
+
+            }
+
+        }
+    }
+</script>
+<style>
+    .on-hand-qty {
+        display: block;
+        width: 50px;
+        height: 24px;
+        /* border: 1px solid black; */
+        border-radius: 2px;
+        text-align: center;
+        line-height: 24px;
+        margin: auto;
+    }
+
+    .on-hand-qty.on-hand-qty-danger {
+        width: 50px;
+        height: 24px;
+        padding: 0;
+        background: rgba(245, 34, 45, 0.05);
+        border: 1px solid rgba(245, 34, 45, 0.30);
+        text-align: center;
+        border-radius: 2px;
+        line-height: 24px;
+        display: block;
+        margin: auto;
+        /* width: 80px;
+        height: 40px;
+        border-radius: 5px;
+        text-align: center;
+        line-height: 40px;
+
+        border: 1px solid red;
+        color: red; */
+    }
+
+    .w {
+        background-color: rgb(13, 190, 137);
+    }
+
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+
+    /* 侧边栏 */
+
+    /* 侧边栏log图片 */
+
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+    /* 文字盒子span */
+
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 在厂车辆数量情况 */
+
+    /* 综合查询 */
+
+    .vehicle_content {
+        width: 100%;
+        height: 30px;
+        padding-top: 20px;
+    }
+
+    .vehicle_content>div {
+        display: inline;
+        margin-right: 16px;
+        line-height: 30px;
+    }
+
+    .vehicle_content>div>span {
+        color: #1890FF;
+        margin: 0 5px;
+    }
+
+    .vehicle {
+        background-color: #fff;
+        padding: 0 20px;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+
+    /* 下拉框外边距 */
+
+    .Dropdown {
+        margin-top: 20px;
+    }
+
+    .el-input__inner {
+        /* width: 160px; */
+        height: 32px;
+        margin: 0 3px;
+    }
+
+    /* 关键字区域 */
+
+    .keyword {
+        height: 46px;
+        font-weight: 700;
+        line-height: 46px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+
+    }
+
+    .keyword_content {
+        display: inline;
+        height: 30px;
+
+    }
+
+    .Reset_button>.el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+
+    .Reset_button>.el-button>span {
+        font-size: 14px;
+    }
+
+    .query_button1>.el-button {
+        border-radius: 0;
+    }
+
+    .query_button1>.el-button>span {
+        font-size: 14px;
+    }
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+    /* 表单单独的按钮 */
+
+    /* .Workorder_button {
+      margin: 15px 0px;
+  
+    } */
+
+    /* 改变加号和文字之间的距离 */
+
+    .el-icon-plus:before {
+        margin-right: 8px;
+    }
+
+    /* 工单表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+    /* 我的工单区域结束 */
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+
+    /* 表格数据 居中对齐*/
+
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+
+    .page {
+        width: 100%;
+        height: 35px;
+        margin: 20px 0;
+    }
+
+    .block {
+        float: right;
+    }
+
+
+    /* 分页区域位置放置区域 ----------------*/
+
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+
+    /* 分页区域结束----- */
+</style>

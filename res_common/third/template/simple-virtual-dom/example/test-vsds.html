@@ -1,0 +1,74 @@
+<!doctype html>
+
+<html>
+<head>
+    <title>simple virtual dom example</title>
+</head>
+
+<body>
+</body>
+
+<script src="../dist/bundle.js"></script>
+<script type="text/javascript">
+
+    var parseString2Dom = function (str) {
+        var objE = document.createElement("div");
+        objE.innerHTML = str;
+        return objE.childNodes[0];
+    };
+    var parseDom2VDom = function(node){
+        var Element = svd.el;
+        var props = {};
+        var children = [];
+        //判断是否是元素节点
+        if(node.nodeType == 1){
+            var props= {};
+            var attributes = node.attributes||[];
+            for(var i = 0; i < attributes.length; i++){
+                props[attributes[i].nodeName] = attributes[i].nodeValue;
+            }
+            var sonnodes = node.childNodes ||[];
+            //遍历所哟的子节点
+            for (var i = 0; i < sonnodes.length; i++) {
+                //得到具体的某个子节点
+                var sonnode = sonnodes.item(i);
+                //递归遍历
+                var son = parseDom2VDom(sonnode);
+                children.push(son);
+            }
+        }else{
+            return node.nodeValue;
+        }
+        var vdom = Element(node.tagName,props,children);
+        return vdom;
+    };
+    var parseString2VDom =function(str){
+        var dom = parseString2Dom(str);
+        var vd = parseDom2VDom(dom);
+        return vd;
+    };
+    var Diff = svd.diff ;
+    var Patch = svd.patch ;
+
+    var vd = parseString2VDom('<div id="hh" onclick="go();"> hello<div>1</div>hello2<div>hhh3<span>span1</span></div> </div>');
+    var vdRender = vd.render();
+    document.body.appendChild(vdRender);
+    console.log(vdRender.outerHTML);
+    var vd2 = parseString2VDom('<div id="hh" onclick="go();" style="color:red;"> hello<div data-prop="i v good">1</div>hello2<div>hhh3<span>span1</span></div> </div>');
+    var patches = Diff(vd, vd2);
+    console.log(patches);
+
+    Patch(vdRender, patches);
+    console.log(vdRender.outerHTML);
+
+</script>
+
+</html>
+
+
+
+
+
+
+
+

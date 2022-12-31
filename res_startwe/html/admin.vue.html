@@ -1,0 +1,134 @@
+<template>
+    <div class="out-box" :style="{'height':Height+'px'}">
+        <img src="/res_startwe/assets/bg-admin.png" :style="{'height':Height+'px', float:'right'}"/>
+        <div class="login-box">
+            <img src="/res_startwe/assets/logo2.png" />
+            <div class="title">
+                销售人员管理后台
+            </div>
+            <el-form :model="loginByPasswordForm" :rules="loginByPasswordRules" ref="loginByPasswordForm" class="demo-loginByPasswordForm">
+                <el-form-item prop="username">
+                    <el-input v-model="loginByPasswordForm.username" placeholder="账号" prefix-icon="el-icon-user"></el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input v-model="loginByPasswordForm.password" placeholder="密码" show-password prefix-icon="el-icon-lock"></el-input>
+                </el-form-item>
+                <el-button type="primary" round @click="loginByPassword">登录</el-button>
+            </el-form>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data() {
+            return {
+                Height:0,
+                loginByPasswordForm:{
+                    username:"",
+                    password:""
+                },
+                loginByPasswordRules: {
+                    username: [
+                        { required: true, message: '请输入手机或者邮箱号码', trigger: 'blur' },
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: "blur" }
+                    ]
+                },
+            };
+        },
+        mounted(){
+            this.Height = document.documentElement.clientHeight;
+            window.onresize = () => {
+                this.Height = document.documentElement.clientHeight;
+            }
+        },
+        methods: {
+            loginByPassword: function () {
+                var that = this;
+                this.$refs["loginByPasswordForm"].validate((valid, error) => {
+                    console.log(valid, error);
+                    if (valid) {
+                        oui.ajaxPost('login/account/loginByPassword', {
+                            "username": this.loginByPasswordForm.username,
+                            "password": this.loginByPasswordForm.password,
+                            "projectId": "startwe",
+                            "loginType": "admin"
+                        }, function (res) {
+                            oui.cookie('tokenId', res.resultObj.loginToken, 30);
+                            oui.cookie('userId', res.resultObj.loginUser.id);
+                            oui.cookie('loginType', 'admin');
+                            oui.storage.set("startwe_user_info", oui.parseString(res.resultObj.loginUser));
+                            that.loadMenus();
+                        }, function (res) {
+                            that.$message.error(res.message);
+                        })
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            loadMenus: function () {
+                //var path = oui_context.checkUrl;
+                var me = this;
+                var path = oui_context.checkUrl;
+                var userId = oui.cookie("userId");
+                var tokenId = oui.cookie("tokenId");
+                var loadMenusUrl = this.$router.query.loadMenusUrl;
+
+                var iframeId = oui.getParam('iframeId');
+                oui.getData(path, {
+                    userId: userId,
+                    tokenId: tokenId,
+                    loginType:'admin',
+                }, function (res) {
+                    oui.storage.set('startwe_menus', oui.parseString(res.menus));
+                    oui.router.push('res_startwe/html/workAdmin/index.vue.html');
+                });
+
+            },
+            
+        },
+    };
+</script>
+<style>
+    .out-box{
+        position: relative;
+    }
+
+    .login-box{
+        position: absolute;
+        margin:200px;
+    }
+
+    .admin-page{
+        background:url(/res_startwe/assets/bg-admin.png) no-repeat;
+        background-position:right; 
+        padding:236px 144px;
+    }
+
+    .login-box{
+        font-size:26px;
+        width:400px;
+    }
+
+    .title{
+        margin-bottom:60px;
+        font-size:26px;
+    }
+
+    .el-input__inner,.el-input{
+    }
+
+    .el-input--prefix .el-input__inner{
+        padding-left: 50px;
+        border-radius: 33px;
+    }
+    .el-input__prefix{
+        left:20px;
+    }
+
+    .el-button.is-round {
+    }
+</style>

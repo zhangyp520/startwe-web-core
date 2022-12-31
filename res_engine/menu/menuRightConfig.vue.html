@@ -1,0 +1,654 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : rightHeight } " style="padding: 10px;" :node-id="nodeId">
+        <el-scrollbar style="height: 100%;" class="scrollbar">
+            <div>
+                <div class="menu-config-title">
+                    <div class="right_title">外观设置</div>
+                    <el-button>全局设置</el-button>
+                </div>
+
+                <div>
+                    <div class="fillTitle">
+                        <span class="inner-title">填充</span>
+                    </div>
+                    <div class="fillBox">
+                        <div>
+                            <el-color-picker v-model="configData.otherAttrs.backgroundColor" class="colorPicker">
+                            </el-color-picker>
+                        </div>
+                        <el-input v-model="configData.otherAttrs.backgroundColor" class="fillInput"></el-input>
+                        <el-input v-model="configData.otherAttrs.opacity" class="alphaInput"></el-input>
+                    </div>
+                </div>
+                <div class="publicBox">
+                    <div>
+                        <span class="inner-title">边框</span>
+                    </div>
+                    <div class="borderInnerBox">
+                        <el-checkbox v-model="configData.otherAttrs.borderChecked" class="borderCheck" @change="borderStyleCheck"></el-checkbox>
+                        <div>
+                            <el-color-picker v-model="configData.otherAttrs.borderColor" class="colorPicker" :disabled="configData.otherAttrs.borderStyleDisabled">
+                            </el-color-picker>
+                        </div>
+                        <el-select v-model="configData.otherAttrs.borderStyle" placeholder="请选择" class="borderSelect" :disabled="configData.otherAttrs.borderStyleDisabled">
+                            <el-option v-for="item in borderStyleData" :key="item.value" :label="item.label" :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-input v-model="configData.otherAttrs.borderWidth" class="borderWidthInput" :disabled="configData.otherAttrs.borderStyleDisabled"></el-input>
+                    </div>
+                </div>
+                <div class="publicBox">
+                    <div>
+                        <span class="inner-title">图标上传</span>
+                        <el-button type="danger" icon="el-icon-close" circle @click="deleteIcon" v-if="configData.otherAttrs.imgDelTips"></el-button>
+                        <div class="uploadBox">
+                            <el-upload class="avatar-uploader" :action="uploadIconUrl" :show-file-list="false" :on-success="iconUploadSuccess" :on-remove="handleIconRemove"
+                                :before-upload="beforeIconUpload">
+                                <img v-if="configData.otherAttrs.iconUrl" :src="configData.otherAttrs.iconUrl" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="right_title">文本设置</div>
+                <div class="publicBox">
+                    <div class="inner-title">
+                        菜单名称
+                    </div>
+                    <el-input type="textarea" :rows="2" v-model="configData.otherAttrs.menuName" class="menu-public-box">
+                    </el-input>
+                </div>
+                <div class="publicBox">
+                    <div class="inner-title">
+                        字体颜色
+                    </div>
+                    <div class="text-color">
+                        <div>
+                            <el-color-picker v-model="configData.otherAttrs.textColor" class="colorPicker">
+                            </el-color-picker>
+                        </div>
+                        <el-input v-model="configData.otherAttrs.textColor" class="textColor"></el-input>
+                    </div>
+                </div>
+                <div class="publicBox">
+                    <div class="inner-title">
+                        字体粗细
+                    </div>
+                    <el-select v-model="configData.otherAttrs.fontWeight" class="menu-public-box fontWeight">
+                        <el-option v-for="item in fontWeightData" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="publicBox">
+                    <div class="inner-title">
+                        字体大小
+                    </div>
+                    <div class="sliderBox">
+                        <el-slider v-model="configData.otherAttrs.fontSize" show-input>
+                        </el-slider>
+                    </div>
+                </div>
+            </div>
+        </el-scrollbar>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+
+        data: function () {
+            return {
+                configData: {
+                    appId: "",
+                    children: [],
+                    circleId: "",
+                    enName: "",
+                    id: "",
+                    moduleId: "",
+                    name: "",
+                    nodeType: "",
+                    parentId: "",
+                    projectId: "",
+                    sourceNodeId: "",
+                    otherAttrs: {
+                        //边框样式调整是否启用状态
+                        borderStyleDisabled: true,
+                        //是否启用边框修改的勾选框
+                        borderChecked: false,
+                        imgDelTips: false,
+                        backgroundColor: "",
+                        opacity: "100%",
+                        //选择的边框颜色
+                        borderColor:'',
+                        //边框宽度
+                        borderWidth: '1',
+                        //边框样式
+                        borderStyle: 'solid',
+                        //图标图片
+                        iconUrl: '',
+                        //菜单项名字
+                        menuName: "",
+                        // 文本字体大小
+                        fontSize: '',
+                        // 文本粗细
+                        fontWeight: '',
+                        //文本颜色
+                        textColor: '',
+                        iconData: []
+                        // //背景图片大小
+                        // backgroundSize: '100% 100%',
+                        // //背景图片重复
+                        // backgroundRepeat: 'no-repeat',
+                    }
+                },
+                //上传图标信息保存
+                iconData: [],
+                uploadIconUrl: '',
+                fontWeightData: [{
+                    value: 400,
+                    label: '400'
+                }, {
+                    value: 500,
+                    label: '500'
+                }, {
+                    value: 600,
+                    label: '600'
+                }, {
+                    value: 700,
+                    label: '700'
+                }, {
+                    value: 900,
+                    label: '900'
+                }],
+                //浏览器可视区域高度
+                clientHeight: '',
+                rightHeight: '',
+                //边框样式下拉选项
+                borderStyleData: [{
+                    value: 'solid',
+                    label: 'solid 实线'
+                }, {
+                    value: 'dotted',
+                    label: 'dotted 点线'
+                }, {
+                    value: 'double',
+                    label: 'double 双线'
+                }, {
+                    value: 'none',
+                    label: 'none 无边框'
+                }],
+            }
+        },
+        created() {
+        },
+        watch: {
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            },
+            'configData.otherAttrs': {
+                handler(newData, oldData) {
+                    var timer = oui.getPageParam('_timer4rightConfigUpdate');
+                    if(timer){
+                    clearTimeout(timer);
+                    }
+                    var me = this;
+                    timer= setTimeout(function () {
+                         me.postMessage();
+                         oui.removePageParam('_timer4rightConfigUpdate');
+                    },1);
+                    oui.setPageParam('_timer4rightConfigUpdate',timer);
+                },
+                immediate: true,
+                deep: true
+            }
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload4Enable.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+            this.uploadIconUrl = url;
+            this.clientHeight = `${document.documentElement.clientHeight}`;//获取浏览器可视区域高度
+            let that = this;
+            var currentDataStr = oui.getPageParam('menu_design_currentNode');
+            $.extend(this.configData,oui.parseJson(currentDataStr));
+
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.rightHeight = this.clientHeight - 85 + 'px';
+            };
+            var query = this.$router.query;
+        },
+        methods: {
+            postMessage:function(){
+                window.postMessage({
+                    cmd:'cmd4currentNodeDataChange',
+                    params:{
+                        configData:oui.parseString(this.configData)
+                    }
+                },'*');
+            },
+            beforeIconUpload(file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true && isLt2M;
+            },
+            handleIconRemove: function (res, file) {
+
+            },
+            //图标上传成功
+            iconUploadSuccess: function (res, file) {
+                let me = this;
+                if (res.success) {
+                    var id = res.ids[0];//上传成功
+                    //回显
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    me.configData.otherAttrs.iconUrl = imgUrl;
+                    // me.configData.iconUrl = 'url(' + me.iconUrl + ')';
+                    // currentControl.innerStyle.styleField.backgroundSize = this.backgroundSize;
+                    // currentControl.innerStyle.styleField.backgroundRepeat = this.backgroundRepeat;
+                    if (me.iconData.length >= 1) {
+                        oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                            userId: oui.cookie('userId'),
+                            tokenId: oui.cookie('tokenId'),
+                            targetUserId: oui.cookie('userId'),
+                            files: me.iconData,
+                            projectId: me.configData.projectId
+                        }, function (res) {
+                        }, function (res) {
+                        });
+                        me.iconData.splice(0, 1);
+                        me.iconData.push({ id: res.ids[0], imgUrl: me.iconUrl });
+                    } else {
+                        me.iconData.push({ id: res.ids[0], imgUrl: me.iconUrl });
+                    }
+                    me.configData.otherAttrs.iconData = oui.parseJson(oui.parseString(me.iconData));
+                    // this.saveDesign(function () {
+                    //     me.updateCurrentControl();
+                    // });
+                    me.configData.otherAttrs.imgDelTips = true;
+                }
+            },
+            // 删除图标
+            deleteIcon: function () {
+                let that = this;
+                oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId'),
+                    files: that.iconData,
+                    projectId: that.configData.projectId
+                }, function (res) {
+                    that.configData.otherAttrs.iconUrl = '';
+                    // that.saveDesign(function () {
+                    //     that.updateCurrentControl();
+                    // });
+                    that.config.otherAttrs.imgDelTips = false;
+                }, function (res) {
+                    console.log(res);
+                });
+            },
+            //边框样式是否改变勾选
+            borderStyleCheck: function (val) {
+                if (val == true) {
+                    this.configData.otherAttrs.borderStyleDisabled = false;
+                    // this.configData.otherAttrs.borderWidth = this.borderWidth;
+                } else {
+                    this.configData.otherAttrs.borderStyleDisabled = true;
+                    this.configData.otherAttrs.borderWidth = 0;
+                }
+            },
+            // 滚动条
+            changeFixed: function (clientHeight) {
+                this.rightHeight = clientHeight - 85 + 'px';
+            },
+            //保存设计
+            saveDesign: function (callback) {
+                var me = com.oui.absolute.AbsoluteDesign;
+                var data = me.getDesignData();
+                me.paramCfg.page = data;
+                me.updateParamCfgSource(me.paramCfg);//更新调用处参数
+                var plugin = me.plugin || {};
+                me.hasChange = false;
+                var param = oui.getParam();
+                if (param.portalId) {
+                    oui.postData(me.updateProjectPortalUrl, {
+                        projectPortal: data
+                    }, function (res) {
+                        callback && callback();
+                    }, function (res) {
+                    }, '保存中...');
+                }
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+    .menu-config-title{
+        display: flex;
+    }
+
+    .menu-public-box {
+        margin-top: 10px;
+    }
+
+    .text-color {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .textColor .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderCheck .el-icon-close:before {
+        content: " ";
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px !important;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .fontWeight {
+        width: 100%;
+    }
+
+    /* .fontWeight .el-input {
+        width: 100%;
+    } */
+
+    .fontWeight .el-input__inner {
+        height: 26px !important;
+        line-height: 26px;
+        padding: 0 5px;
+    }
+
+    .fontWeight .el-input__icon {
+        line-height: 22px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .textColor .el-input__inner {
+        height: 24px;
+        width: 96%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 30px;
+        height: 22px;
+        border-radius: 1px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        width: 28px;
+        height: 20px;
+        border-radius: 1px;
+    }
+
+    .colorPicker .el-color-picker__mask {
+        height: 22px;
+        width: 30px;
+        border-radius: 0;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+
+    .el-slider__bar {
+        background: #FF7D82;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 100%;
+        margin-left: 10px;
+    }
+
+    .sliderBox .el-slider__input {
+        width: 104px;
+    }
+
+    .sliderBox .el-slider__runway.show-input {
+        margin-right: 120px;
+    }
+
+    /* .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    } */
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        /* display: flex;
+        justify-content: space-between;
+        align-items: center; */
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .scrollbar .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+</style>

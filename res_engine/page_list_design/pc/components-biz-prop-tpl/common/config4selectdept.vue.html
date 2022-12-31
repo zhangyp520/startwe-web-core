@@ -1,0 +1,469 @@
+
+<template >
+    <div>
+        <div class="design-set-area" >
+            <!--节点范围用于回填 showAtAreaNodeTypeCode,showAtAreaNodeId -->
+            <div class="design-field " >
+                <div class="fieldname">是否多选</div>
+                <div class="fieldblock">
+                    <el-switch
+                            on-text ="是"
+                            off-text = "否"
+                            on-color="#5B7BFA"
+                            off-color="#dadde5"
+                            v-model="config.otherAttrs.isMulti"
+                            @change="_controlOnUpdate('otherAttrs.isMulti',config)"
+                            ></el-switch>
+                </div>
+            </div>
+
+            <div class="design-field " >
+                <div class="fieldname">不可选的节点参与者类型</div>
+                <div class="fieldblock">
+                    <oui-include type="module" ref="ref4canNotSelectTypeCode" data="findCanNotSelectTypeCodeData()" url="res_common/oui/ui/ui_pc/components/multiselect.vue.html"></oui-include>
+                </div>
+            </div>
+            <div class="design-field "  v-for="(tab,index) in rootTypeCodes" >
+                <div class="fieldname" :ref="'tab_title_'+tab.value" v-model="config.otherAttrs.tabMap[tab.value].notShow"  >
+                    根参与者{{index+1}}:{{tab.display}} [ <span :class="config.otherAttrs.tabMap[tab.value].notShow?'span-h':'span-s'">{{config.otherAttrs.tabMap[tab.value].notShow?'不显示':'显示'}}</span>]
+                </div>
+                <div class="fieldblock">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-input type="textarea" rows="3" :ref="'display_'+tab.value" readOnly="readOnly" v-model="display4tabMap[tab.value]"></el-input>
+                        </el-col>
+
+                        <el-col :span="12">
+
+                            <el-button-group>
+                                <el-button type="primary" size="medium" icon="el-icon-setting" class="item-setting" @click="setOption(tab.value,index)" draggable="false">范围设置</el-button>
+                            </el-button-group>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                count:0,
+                display4tabMap:{},
+                targetAreaShowTypeEnum:{
+                    selectAndChildrenAll:{
+                        value:1,
+                        display:'子孙参与者节点(含指定节点)'
+                    },
+                    childrenAll:{
+                        value:2,
+                        display:'子孙参与者节点(不含指定节点)'
+                    },
+                    selectAndChildren:{
+                        value:3,
+                        display:'子参与者节点(含指定节点)'
+                    },
+                    select:{
+                        value:4,
+                        display:'固定节点(指定节点)'
+                    },
+                    parentsAll:{
+                        value:5,
+                        display:'所有父参与者节点(不含指定节点,不递归找父节点的父节点)'
+                    },
+                    selectAndParentsAll:{
+                        value:6,
+                        display:'所有父参与者节点(含指定节点,递归到根节点)'
+                    }
+                },
+                participantTypes:[],
+                typeCodes:[],
+                rootTypeCodes:[],
+                targetAreaShowTypeData:{},
+                targetAreaContainTypeCodeData:{},
+
+                config:{
+                    otherAttrs:{
+                        tabs:[],
+                        isMulti:true,
+                        projectId:'',
+                        url:''
+                    },
+                    events:{
+                        targetAreaShowRule:''//目标节点区域显示规则
+                    }
+                }
+            }
+        },
+        mounted:function(){
+            var me = this;
+            this.count++;
+            console.log('config size:'+this.count);
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+
+            if(currentControl&&currentControl.id&&currentControl.controlType){
+                var otherAttrs = currentControl.otherAttrs ||{};
+                if(!otherAttrs.projectId){
+                    otherAttrs.projectId  = com.oui.absolute.AbsoluteDesign.data.projectId;
+                }
+                me.projectId = otherAttrs.projectId;
+                if(!otherAttrs.url){
+                    otherAttrs.url = null;// todo//
+                }
+                if(!otherAttrs.tabs){
+                    //加载根参与者类型页签
+                }
+                currentControl.otherAttrs =otherAttrs;
+                var tempOtherAttrs =  oui.parseJson(oui.parseString(otherAttrs));
+                for(var k in tempOtherAttrs){
+                    this.config.otherAttrs[k] = tempOtherAttrs[k];
+                }
+                this.config.bizId = currentControl.bizId;
+                this.config.id = currentControl.id;
+                this.config.showType = currentControl.showType;
+
+                //参与者类型查询 与默认填充
+                me.buildTypeCodes(tempOtherAttrs.projectId,function(){
+                    me.config.otherAttrs.tabMap = me.config.otherAttrs.tabMap||{};
+                    var tabMap = me.config.otherAttrs.tabMap;
+                    var rIds = [];
+                    var rootTypeCodes = oui.findManyFromArrayBy(me.typeCodes,function(tc){
+                        if(tc.showAtRootArea){
+                            rIds.push(tc.value);
+                            return true;
+                        }
+                    });
+                    for(var k in tabMap){
+                        if(rIds.indexOf[k]<0){
+                            tabMap[k] = null;
+                            delete  tabMap[k];
+                        }
+                    }
+                    oui.eachArray(rIds,function(rId){
+                       if(!tabMap[rId]){
+                           tabMap[rId] = {
+                               typeCode:rId,
+                               showAtAreaNodeTypeCode:'',//选择节点参与者类型
+                               showAtAreaNodeId:'',// 选择节点参与者Id
+                               targetAreaShowType:'',//目标节点区域显示规则类型
+                               targetAreaContainTypeCode:''//目标节点区域参与者类型
+                           };
+                       }
+                       me.display4tabMap[rId] = me.findDisplay4setting(tabMap[rId]);
+                       me.$set(me.display4tabMap,rId,me.display4tabMap[rId]);
+                    });
+
+                    me.$refs.ref4canNotSelectTypeCode.comp.data= me.typeCodes;
+                    me.$refs.ref4canNotSelectTypeCode.comp.value = me.config.otherAttrs.canNotSelectTypeCode;
+                    me.rootTypeCodes= rootTypeCodes;
+                    me.buildTabs(tempOtherAttrs.projectId,function(){
+                    });
+                });
+            }
+        },
+        methods:{
+            getOption:function(tabValue,index){
+                var me =this;
+                if(!me.config.otherAttrs.tabMap[tabValue]){
+                    me.config.otherAttrs.tabMap[tabValue].projectId = tabValue;
+                    me.config.otherAttrs.tabMap[tabValue].typeCode = tabValue;
+                }
+                return me.config.otherAttrs.tabMap[tabValue];
+            },
+            setOption:function(tabValue,index){
+                var me = this;
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                var html ='<oui-include url="res_engine/page_design/pc/components-biz-prop-tpl/common/dialog4selectdept.vue.html" ref="dialog4selectdept" data="" type="module"></oui-include>';
+                var dialog = oui.showHTMLDialog({
+                    title:'根参与者显示范围设置',
+                    contentStyle:'width:600px;min-height:400px',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+                                me.config.otherAttrs.tabMap[tabValue]  = oui.parseJson(oui.parseString(dialog.attr('configJson')));
+                                me.config.otherAttrs.tabMap[tabValue].projectId= me.projectId;
+                                me._controlOnUpdate('otherAttrs.tabMap',me.config);
+                                me.display4tabMap[tabValue] = me.findDisplay4setting(me.config.otherAttrs.tabMap[tabValue]);
+
+                                me.$refs['display_'+tabValue][0].value =me.display4tabMap[tabValue];
+                                me.$refs['tab_title_'+tabValue][0].value = me.config.otherAttrs.tabMap[tabValue].notShow;
+                                for(var k in  me.config.otherAttrs.tabMap){
+                                    me.config.otherAttrs.tabMap[k].projectId = me.projectId;
+                                    me.config.otherAttrs.tabMap[k].typeCode = k;
+                                }
+                                me.$forceUpdate();
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'清空',
+                            action:function(){
+
+                                var cfg = {
+                                    showAtAreaNodeTypeCode:'',//选择节点参与者类型
+                                    showAtAreaNodeId:'',// 选择节点参与者Id
+                                    targetAreaShowType:'',//目标节点区域显示规则类型
+                                    targetAreaContainTypeCode:''//目标节点区域参与者类型
+                                };
+                                me.config.otherAttrs.tabMap[tabValue]= me.config.otherAttrs.tabMap[tabValue]||{};
+                                me.config.otherAttrs.tabMap[tabValue].projectId= me.projectId;
+                                for( var k in cfg){
+                                    me.config.otherAttrs.tabMap[tabValue][k]=cfg[k];
+                                }
+                                for(var k in  me.config.otherAttrs.tabMap){
+                                    me.config.otherAttrs.tabMap[k].projectId = me.projectId
+                                    me.config.otherAttrs.tabMap[k].typeCode = k;
+                                }
+                                me._controlOnUpdate('otherAttrs.tabMap',me.config);
+                                me.display4tabMap[tabValue] = me.findDisplay4setting(me.config.otherAttrs.tabMap[tabValue]);
+                                me.$refs['display_'+tabValue][0].value =me.display4tabMap[tabValue];
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-cancel',
+                            text:'取消',
+                            action:function(){
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        }]
+                });
+                var config4selectdept = oui.parseJson(oui.parseString(me.config.otherAttrs.tabMap[tabValue]));
+                config4selectdept.projectId = me.projectId;
+                dialog.attr('configJson',oui.parseString(config4selectdept));
+                dialog.attr('typeCodes',me.typeCodes);
+                dialog.attr('tabsData',me.tabsData);
+                dialog.attr('currentControlId',AbsoluteDesign.data.currentControl.id);
+                AbsoluteDesign.dialog4selectDept= dialog;
+                oui.parse({
+                    container:dialog.getEl(),
+                    callback:function(){
+
+                    }
+                });
+            },
+            findDisplay4setting:function(tab){
+                var me = this;
+                var tabMap = oui.JsonPathUtil.getJsonByPath('otherAttrs.tabMap',this.config);
+                if(tabMap[tab.typeCode]){
+                    var currMap = tabMap[tab.typeCode];
+                    var keys = 'showAtAreaNodeTypeCode,showAtAreaNodeId,targetAreaShowType,targetAreaContainTypeCode';
+                    var keyArr = keys.split(',');
+                    var arr = [];
+                    oui.eachArray(keyArr,function(k){
+                        arr.push(currMap[k]);
+                    });
+                    return arr.join("\n");
+                }
+            },
+            buildTypeCodes:function(projectId,callback){
+                var me = this;
+                var url4typeCodes = com.oui.absolute.AbsoluteDesign.paramCfg.params.omUrlMap.getParticipantTypesUrl;
+                url4typeCodes = oui.addParam(url4typeCodes,'projectId',projectId);
+
+                var arr = oui.parseJson(com.oui.absolute.AbsoluteDesign.typeCodes4orgJson);
+                if((!arr) ||(!arr.length)){
+                    oui.postData(url4typeCodes,{},function(res){
+                        var typeCodes = [];
+                        var valuesAll=[];
+                        oui.eachArray(res.participantTypes||[],function(pt){
+                            typeCodes.push({
+                                value:pt.code,
+                                showAtRootArea:pt.showAtRootArea,
+                                display:pt.displayName
+                            });
+                            valuesAll.push(pt.code);
+                        });
+                        me.typeCodes = typeCodes;
+                        com.oui.absolute.AbsoluteDesign.typeCodes4orgJson = oui.parseString(typeCodes);
+                        callback&&callback(typeCodes);
+                    },function(res){},'加载中。。。');
+                    return ;
+                }else{
+                    var typeCodes=  oui.parseJson(com.oui.absolute.AbsoluteDesign.typeCodes4orgJson);
+                    me.typeCodes = typeCodes;
+                    callback&&callback(typeCodes);
+                }
+            },
+            findCanNotSelectTypeCodeData:function(){
+                var me = this;
+                if(!this.canNotSelectTypeCodeData ||(!this.canNotSelectTypeCodeData.data) || (!this.canNotSelectTypeCodeData.data.length) ){
+                    this.canNotSelectTypeCodeData = {
+                        ref:'canNotSelectTypeCodeData_'+this.currentControlId,
+                        bindProp:'canNotSelectTypeCodeData_'+this.currentControlId,
+                        id:'canNotSelectTypeCodeData_'+this.currentControlId,
+                        name:'canNotSelectTypeCodeData_'+this.currentControlId,
+//                        notClone4Component:true,
+                        value:this.config.otherAttrs.canNotSelectTypeCode,
+                        data:this.typeCodes||[],
+                        onUpdate:function(k,v){
+                            me.config.otherAttrs.canNotSelectTypeCode = v;
+                            me._controlOnUpdate('otherAttrs.canNotSelectTypeCode',me.config);
+                        }
+                    };
+
+                }
+                return this.canNotSelectTypeCodeData;
+            },
+            buildTabs:function(projectId,callback){
+                var me =this;
+                var url = com.oui.absolute.AbsoluteDesign.paramCfg.params.omUrlMap.getRootParticipantTypeTabs4treeUrl;
+                url = oui.addParam(url,'projectId',projectId);
+                var arr = oui.parseJson(com.oui.absolute.AbsoluteDesign.tabsData4orgJson);
+                if((!arr) || (!arr.length)){
+                    oui.postData(url,{},function(res){
+                        var tabs = res.tabs ||[];
+                        oui.eachArray(tabs,function(item){
+                            //根据应用场景 处理参数  projectId={0}&typeCode={1}&participantID={2}&childTypeCodes
+                            var loadTreeUrl = com.oui.absolute.AbsoluteDesign.paramCfg.params.omUrlMap.getCurrentAndChildrenAll4treeNotLasyUrl;
+                            loadTreeUrl = oui.addParam(loadTreeUrl,"projectId",projectId);
+                            loadTreeUrl = oui.addParam(loadTreeUrl,"typeCode",item.typeCode);
+                            loadTreeUrl = oui.addParam(loadTreeUrl,"tabId",item.id);
+                            item.url = loadTreeUrl;
+                        });
+
+                        com.oui.absolute.AbsoluteDesign.tabsData4orgJson= oui.parseString(tabs);
+                        me.tabsData = tabs;
+                        callback&&callback(tabs);
+                    },function(res){},'加载中。。。');
+                }else{
+                    var tabsData = oui.parseJson(com.oui.absolute.AbsoluteDesign.tabsData4orgJson);
+                    me.tabsData = tabsData;
+                    callback&&callback(tabsData);
+                }
+
+            },
+
+
+            //设置值改变事件脚本
+            event2setOnValueUpdateScript:function(){
+                var me = this;
+                var title = '值改变事件'; //扫码结果处理脚本
+                /*
+                 eventType="script4beforeInit"
+                 code-max-length="5000"
+                 error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                 error-msg-max="设置页面加载前事件脚本，长度不能超过5000个字符"
+                 oui-e-click="event2showCodeDialog"
+                 */
+
+                var errorMsgMax = '控件值改变事件脚本不能超过10000个字符';
+
+                var codeMaxLength = 10000;//脚本最大长度，默认code-max-length
+                var compileErrorMsg = '控件值改变事件脚本编译失败';//脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                var eventType = 'script4onChange';
+
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(!currentControl){
+                    return;
+                }
+                if(!currentControl.id){
+                    return;
+                }
+                if(!currentControl.controlType){
+                    return;
+                }
+
+                var scriptJson = currentControl.events.valueChange||{};
+                scriptJson.eventType=eventType;
+                var inputParams ="";
+                if(currentControl.detailId){
+                    inputParams = 'key,value,options,rowIndex,detailId';
+                }else{
+                    inputParams ='key,value,options';
+                }
+
+                //key,v,ov,options,this.rowIndex,this.detailId
+                //值改变事件默认脚本在这里
+
+
+                var defaultParams = {"params":["key","value","options"],"startCode":"","bodyCode":"//key 属性\n//value 改变后的值\n//options 对象结构 {value,display,data4DB}\n//rowIndex 如果在明细表中则有行索引参数\n//detailId //如果在明细表中则有明细id参数\nvar pageData = this.getPageData(); //页面对象\nvar designer = pageData.getDesigner();//页面定义\nvar controls = designer.controls||[];//页面控件\n// var someValue = oui.JsonPathUtil.getJsonByPath('mainData.finishRule.value',pageData);//获取某个对象 path下的值\n// oui.JsonPathUtil.setObjByPath(path,obj,value,notArray); //设置某个对象path下的值，path:路径,obj:对象,value:具体值或者指定对象,notArray:true对象kv,false:数组\n","endCode":"","returnType":"string"};
+                var json = $.extend({},defaultParams,scriptJson,true);
+                json.params = inputParams.split(',');//根据主明细情况控制入参
+                oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    currentControl.events.valueChange = jsonResult;
+                },{
+                    title:title,
+                    bodyCodeRows:30,
+                    contentStyle:'width:60%'//dialog样式相关
+                });
+            },
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    com.oui.absolute.AbsoluteDesign.bizPropsUpdate();
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                    if(bindProp =='showType'){
+                        com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                        });
+                    }
+                }
+
+
+            }
+        }
+    }
+</script>
+
+<style>
+    .span-s{
+        color: green;
+    }
+    .span-h{
+        color: red;
+    }
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

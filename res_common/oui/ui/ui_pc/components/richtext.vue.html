@@ -1,0 +1,78 @@
+<template>
+    <div class="textContent"  >  
+        {{content}}
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                content:"",
+                //自动切换
+                autoSwitch: false,
+                rollingSpeed: "",
+                rollingContent:'',
+                richList:[],
+                index:0,
+                time:2,
+                setTimeFun:null,
+                placeholder:'',
+                height:300,
+                maxHeight:500, 
+
+            }
+        },
+        
+        mounted:function(){
+
+            if(this.otherAttrs && this.otherAttrs.defaulttext){ //默认内容 
+                this.content = this.otherAttrs.defaulttext;
+            }
+            if(this.otherAttrs && this.otherAttrs.placeholder){
+                this.placeholder = this.otherAttrs.placeholder
+            }
+            if(this.otherAttrs && this.otherAttrs.height){
+                this.height = this.otherAttrs.height
+            }
+            if(this.otherAttrs && this.otherAttrs.maxHeight){
+                this.maxHeight = this.otherAttrs.maxHeight
+            }
+             
+            this.textContent() 
+        },
+        beforeDestroy() {   
+        },
+        methods: {
+          
+            getContent :function(){
+                tinyMCE.editors[0].setContent("需要设置的编辑器内容")
+            },
+            textContent: function () { 
+                let   me = this; 
+                oui.require([
+                    oui.getContextPath() + "res_common/third/tinymce/tinymce.min.js", 
+                ], function () { 
+ 
+                    me.$nextTick(function () {   
+                        tinymce.init({
+                            selector: "#" + this.id.replace("field-","")  + ' .textContent', 
+                            debug:true,
+                            language:'zh_CN', 
+                            placeholder:this.placeholder  ,
+                            max_height:this.maxHeight,
+                            min_height:this.height,
+                            height:this.height
+                         });  
+ 
+                    });
+                });
+            },
+        }
+    }
+</script>
+
+<style>
+ 
+</style>

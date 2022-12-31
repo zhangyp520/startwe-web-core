@@ -1,0 +1,780 @@
+<!-- ce shi  页面 -->
+<!-- <el-container>
+    <el-aside width="200px">Aside</el-aside>
+    <el-main>Main</el-main>
+</el-container> -->
+
+<template>
+    <div id="customer">
+        <el-breadcrumb separator="/">
+            <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>客户中心</el-breadcrumb-item>
+            <el-breadcrumb-item>查看中心</el-breadcrumb-item>
+
+        </el-breadcrumb>
+        <el-container >
+            <el-aside    width="140px">
+                <!-- 侧边栏 -->
+                <oui-include id='main_include' type="module" url="res_apps/car/html/customer/publicSidebar.vue.html">
+                </oui-include>
+            </el-aside>
+            <el-main style="background-color: #fff;">
+                <!-- <div style="width: 300px; height: 600px;">内容主体</div> -->
+                <!-- 客户信息表格单区域结束 -->
+
+                <!-- 右侧内容区域主要内容区域结束 -->
+                <div class="crumbs">
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                        </el-breadcrumb-item>
+                        <el-breadcrumb-item>客户中心</el-breadcrumb-item>
+                        <el-breadcrumb-item>查看中心</el-breadcrumb-item>
+        
+                    </el-breadcrumb>
+                    <div class="conduct_box">
+                        <!-- 客户信息表格单区域开始 -->
+                        <div class="state">
+                            <i>状态：</i>
+                            <div></div> <span>进行中</span>
+                        </div>
+                        <!-- 开单时间第一行 -->
+
+                        <div class="billing_time_box">
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>开单时间：</div>
+                                    <span>2020-11-12 11：22</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>接待人：</div>
+                                    <span>小马</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 进厂第二行 -->
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>进厂时间：</div>
+                                    <span>2020-11-12 11：22</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>预计完工时间：</div>
+                                    <span>2020-11-12 11：22</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 进厂第三行 -->
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>客户名称：</div>
+                                    <span>付小小</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>联系电话：</div>
+                                    <span>135 4896 5422</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>业务类型：</div>
+                                    <span>维修</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 车载油量第四行 -->
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>车载油量：</div>
+                                    <span>1/2</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>车辆品牌：</div>
+                                    <span>保时捷911</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>车牌号码：</div>
+                                    <span>川A 66666</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 客户来源第五行 -->
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>客户来源：</div>
+                                    <span>自主到店</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>进厂里程：</div>
+                                    <span>100000</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 客户备注第六行 -->
+                            <el-row>
+                                <el-col :span="8">
+                                    <div>客户备注：</div>
+                                    <span>保险杠剐蹭</span>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div>随车物品：</div>
+                                    <span>皮包，钥匙，纸巾，水杯</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 维修定价第七行 -->
+                            <el-row class="repair">
+                                <el-col :span="8">
+                                    <div>维修订金：</div>
+                                    <span>￥</span>
+                                    <span>121231</span>
+                                    <span>元</span>
+                                </el-col>
+                            </el-row>
+                            <!-- 缴纳定价第八行 -->
+                            <el-row class="repair">
+                                <el-col :span="8">
+                                    <div>缴纳定金：</div>
+                                    <span>￥</span>
+                                    <span>123121</span>
+                                    <span>元</span>
+                                </el-col>
+                            </el-row>
+                        </div>
+                        <div class="maintenance_progress">
+                            <div class="progress_content">维修进度</div>
+                            <div class="progress_bar">
+                                <el-steps :active="3">
+                                    <el-step title="接待" icon="el-icon-success"></el-step>
+                                    <el-step title="跟进" icon="el-icon-success"></el-step>
+                                    <el-step title="进行" icon="el-icon-success"></el-step>
+                                    <el-step title="待付款" icon="el-icon-success"></el-step>
+                                    <el-step title="已完成" icon="el-icon-success"></el-step>
+                                </el-steps>
+                            </div>
+                            <div class="view_work_order">
+                                <el-button type="primary" @click="goProjectWorkOrder">查看工单</el-button>
+                            </div>
+                            <div class="maintenance_details">
+                                <div class="maintenance_details_centent">
+                                    维修细节
+                                </div>
+                                <div maintenance_details_time>
+
+                                    <div class="block">
+                                        <el-timeline>
+                                            <el-timeline-item timestamp="2018/4/12" placement="top">
+                                                <template slot="">
+
+                                                </template>
+                                                <el-card>
+                                                    <h4>进度</h4>
+                                                    <p>王小虎 提交于 2018/4/12 20:46</p>
+                                                </el-card>
+                                            </el-timeline-item>
+                                            <el-timeline-item timestamp="2018/4/3" placement="top">
+                                                <el-card>
+                                                    <h4>更新 Github 模板</h4>
+                                                    <p>王小虎 提交于 2018/4/3 20:46</p>
+                                                </el-card>
+                                            </el-timeline-item>
+                                            <el-timeline-item timestamp="2018/4/2" placement="top">
+                                                <el-card>
+                                                    <h4>更新 Github 模板</h4>
+                                                    <p>王小虎 提交于 2018/4/2 20:46</p>
+                                                </el-card>
+                                            </el-timeline-item>
+                                        </el-timeline>
+                                    </div>
+
+                                </div>
+                                <div class="button_box">
+                                    <el-button style="width: 180px; padding: 0;">返回</el-button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>  
+
+
+                <!-- 右侧内容最大element区域开始 -->
+
+                <!-- 右侧内部表单布局容器结束 -->
+            </el-main>
+
+        </el-container>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 侧边栏数据开始----
+                // 自己配置的url作为跳转路径
+                sidebarList: [
+                    {
+                        title: '产品功能',
+                        list: [
+                            {
+                                name: '项目工单',
+                                icon: '/res_apps/car-1/image management_1.png',
+                                url: '/res_apps/car-1/html/product.vue.html'
+                            },
+                            {
+                                name: '客户中心',
+                                icon: '/res_apps/car-1/image/Customer Center_1.png',
+                                url: '/res_apps/car-1/html/customer/customer.vue.html'
+                            },
+                            {
+                                name: '仓库中心',
+                                icon: '/res_apps/car-1/image/Warehouse Center_1.png',
+                                url: '/res_apps/car-1/html/warehouse.vue.html'
+                            }
+                        ]
+                    },
+                    {
+                        title: '系统设置',
+                        list: [
+                            {
+                                name: '基础信息',
+                                icon: '/res_apps/car-1/image/Basic information_1.png',
+                                url: '/res_apps/car-1/html/basicinformation.vue.html'
+                            },
+                            {
+                                name: '部门管理',
+                                icon: '/res_apps/car-1/image management_1.png',
+                                url: '/res_apps/car-1/image management_1.png'
+                            },
+                            {
+                                name: '员工管理',
+                                icon: '/res_apps/car-1/image/staff Administration_1.png',
+                                url: '/res_apps/car-1/html/staff.vue.html'
+                            },
+                            {
+                                name: '权限设置',
+                                icon: '/res_apps/car-1/image/Permission setting_1.png',
+                                url: '/res_apps/car-1/image management_1.png'
+                            },
+                            {
+                                name: '业务设置',
+                                icon: '/res_apps/car-1/image management_1.png',
+                                url: '/res_apps/car-1/image management_1.png'
+                            },
+                            {
+                                name: '套餐设置',
+                                icon: '/res_apps/car-1/image/Package settings_1.png',
+                                url: '/res_apps/car-1/image management_1.png'
+                            }
+                        ]
+                    }
+                ],
+                // 侧边栏数据结束
+
+                // 内部侧边栏 左侧客户区域的数据开始
+                Internal_customers: [
+                    { name: "已完成" },
+                    { name: "进行中" },
+                    { name: "待付款" },
+
+                ],
+
+                // 内部侧边栏 左侧客户区域的数据结束
+
+
+
+
+                //关键字区域开始
+                // 下拉选项的数据
+                options: [{
+                    value: '选项1',
+                    label: '黄金糕'
+                }, {
+                    value: '选项2',
+                    label: '双皮奶'
+                }, {
+                    value: '选项3',
+                    label: '蚵仔煎'
+                }, {
+                    value: '选项4',
+                    label: '龙须面'
+                }, {
+                    value: '选项5',
+                    label: '北京烤鸭'
+                }],
+                value: '',
+
+                // 关键字input框内容
+                input: '',
+                // 关键字区域结束
+
+                // 表格下方的 分页区域数据 开始
+
+                currentPage1: 5,
+                currentPage2: 5,
+                currentPage3: 5,
+                currentPage4: 4,
+                // 表格下方的 分页区域数据 结束
+
+
+
+                // 员工列表数据开始
+                tableData: [
+                    { lv: 1, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 2, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 3, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 4, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 5, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 6, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 7, name: '雷谊帮', water: '2234', profit: '5123' },
+                    { lv: 8, name: '雷谊帮', water: '2234', profit: '5123' }
+                ]
+                // 员工列表数据结束
+
+            }
+        },
+        created() {
+            // // 加载 css3布局样式和首页样式
+            // oui.require([
+            //     '/res_apps/car-1/home/css/css3-flex.css',
+            //     '/res_apps/car-1/home/css/home.css'
+            // ])
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            // 加载 echarts 进行图表渲染
+            // oui.require([
+            //     '/res_common/third/echarts/echarts.min.js'
+            // ], (res) => {
+            //     this.$nextTick(() => {
+            //         var myChart = echarts.init(document.getElementById('main'));
+            //         myChart.setOption(this.option);
+            //     })
+            // })
+        },
+        methods: {
+            // 点击按钮跳转地砖
+            handleClick: function (item) {
+                // this.$router.push(url,param||{});
+                debugger
+                oui.router.push(item.url)
+                // this.$router.push("www.baidu.com")
+                console.log(item.url);
+            },
+            // 跳转到项目工单
+            goProjectWorkOrder() {
+                oui.router.push('res_apps/car/html/product/product.vue.html')
+            }
+        }
+    }
+</script>
+<style>
+
+/* 测试时 侧边栏宽度设置开始 */
+    .el-aside{
+        width: 140px !important;
+        margin: 0 0 !important;
+        padding: 0 0 !important;
+    }
+/* 测试时 侧边栏宽度设置结束 */
+
+
+    .customer {
+        width: 1040px;
+        height: 700px;
+    }
+
+    html {
+        margin: 0 0px;
+        font-size: 14px;
+        /* width: 1040px; */
+        /* height: 700px; */
+        /* background-color: rgb(243, 228, 21); */
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* 设置侧边栏及右侧头部盒子的阴影部分 */
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        padding: 0 20px 0 2px;
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+          width: 39px;
+        }
+      
+        .tac.el-col.el-menu.el-menu-item{
+          width: 39px;
+        } */
+
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+        margin: 0 0;
+        padding: 0 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+        height: 50px;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+        box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        margin-bottom: 20px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+    /* 内容侧边栏每一项开始---- */
+    .all_customers {
+        width: 146px;
+        height: 40px;
+        background-color: #fff;
+    }
+
+    .cebain_bgc {
+        background-color: #fff;
+        /* height:780px; */
+    }
+
+    /* 侧边栏每一项的盒子 */
+    .all_customers li.el-menu-item.is-active {
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        background-color: #fff;
+
+    }
+
+    /* element组件伪类上标签span 调整文字的 */
+    .all_customers li.el-menu-item>span {
+        margin: 0;
+    }
+
+
+    /* 内容区域的头部为空白 */
+    /* 设置右侧头部盒子的边框阴影 */
+    .blank_head {
+        background-color: #fff;
+        height: 60px !important;
+        box-shadow: #fff 0px 0px 0px 0px;
+        line-height: 60px;
+
+    }
+
+    .blank_head>div>span {
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .el-checkbox-group {
+        display: inline;
+
+    }
+
+    /* 内容侧边栏每一项结束---- */
+    /* 内部盒子的内容主体区域 */
+    .inside_box {
+        background-color: #fff;
+        /* line-height: 160px; */
+        text-align: left !important;
+    }
+
+    /* 右侧头部区域基本信息开始 */
+    .keyword {
+        /* width: 1000px; */
+        height: 40px;
+        font-weight: 700;
+        line-height: 40px;
+        display: flex;
+        justify-content: left;
+        font-size: 16px;
+    }
+
+    /* 右侧头部区域基本信息结束 */
+
+    /* 右侧的内容区域 */
+    .conduct_box {
+        padding-bottom: 50px;
+    }
+
+    .state {
+        height: 30px;
+        line-height: 30px;
+        margin: 10px 0;
+    }
+
+    .state>i {
+        display: inline;
+        font-style: normal;
+    }
+
+    /* 设置红色点 */
+    .state>div {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: red;
+
+    }
+
+    .state>span {
+        color: #F5222D;
+    }
+
+    /* 开但时间第一行样式设置 */
+
+    .billing_time_box>ul {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .billing_time_box>ul>li>div {
+        display: inline-block;
+    }
+
+    .billing_time_box>ul>li>span {
+        font-size: 14px;
+        color: rgb(0, 0, 0, 0.5);
+
+    }
+
+    /* 栅格栏布局的样式 */
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .el-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #fff;
+    }
+
+    /* 栅格栏布局的样式结束 */
+
+
+    /* 这里是影响全局的input样式设置 */
+    .el-input__inner {
+        width: 300px;
+        border-radius: 0px;
+        margin-left: 8px;
+        height: 35px;
+    }
+
+
+
+    /* 开单时间第一行开始 */
+    .billing_time_box>.el-row>.el-col>div {
+        display: inline-block;
+    }
+
+    .billing_time_box>.el-row>.el-col>span {
+        color: rgb(0, 0, 0, 0.5);
+    }
+
+    /* 修改维修定价和缴纳定金样式修改 */
+    .repair>.el-col>span {
+        color: #1B96FF !important;
+    }
+
+    /* 维修进度文字的盒子 */
+    .progress_content {
+        margin: 20px 0;
+        font-weight: 700;
+        border-top: 1px solid #E9E9E9;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .view_work_order {
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        margin: 24px 0;
+    }
+
+    /* 查看工单的按钮 */
+    .view_work_order>button {
+        font-size: 14px;
+    }
+
+    .el-button--primary {
+        width: 180px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+    }
+
+    /* 维修进度上面文字的大小 */
+    .el-step__title {
+        font-size: 14px;
+    }
+
+    /* 维修细节盒子的背景 */
+    .maintenance_details_centent {
+        height: 35px;
+        background-color: #FAFAFA;
+        line-height: 35px;
+        font-weight: 700;
+        padding: 0 30px;
+
+    }
+
+    /* 维修细节的时间节点 */
+    .maintenance_details_time {
+        height: 80px;
+        background-color: rgb(18, 151, 14);
+    }
+
+    /* 返回按钮的盒子 */
+    .button_box {
+        text-align: center;
+
+    }
+
+    .button_box>button {
+        height: 30px;
+    }
+
+    /* 设置进度条线的颜色 */
+    /* .el-step__line{
+    color: #1890FF ;
+}
+.el-step__line-inner {
+    border-color: #1890FF;
+} */
+
+
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+      margin: 20px 0px 20px 220px;
+    } */
+
+    /* 分页区域结束----- */
+</style>

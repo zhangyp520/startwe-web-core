@@ -1,0 +1,518 @@
+<template>
+    <div class="default-setting">
+        <div v-if="showBusinessSettings">
+            <div class="default-setting-item">
+                <div class="label">业务设置</div>
+            </div>
+            <div class="default-setting-item">
+                <div class="label" >业务绑定策略</div>
+                <el-select size="mini" v-model="bissinessSettings.modelBindType" @change="bussinessSettingAction">
+                    <el-option label="从已有物理表绑定" value="1"></el-option>
+                    <el-option label="表单定义自动驱动物理表" value="2"></el-option>
+                    <el-option label="不绑定表模型" value="3"></el-option>
+                </el-select>
+            </div>
+            <div v-if="bissinessSettings.modelBindType == 1">
+                <div class="default-setting-item" >
+                    <div class="label">业务id(以项目唯一标识busness_aisen_作为前缀</div>
+                </div>
+                <div class="default-setting-item" >
+                    <el-input size="mini" placeholder="填写业务id" v-model="bissinessSettings.bizId" @change="bussinessIdAction"></el-input>
+                </div>
+            </div>
+        </div>
+        
+        <div class="default-setting-item">
+            <div class="label">页面加载事件</div>
+            <i class="el-icon-setting" @click="showLoaddingEvents()"></i>
+        </div>
+        <div class="default-setting-item">
+            <div class="label">设置变量</div>
+            <i class="el-icon-setting" @click="showValDialog()"></i>
+        </div>
+
+ 
+
+        <el-dialog :visible.sync="valSettingVisible" custom-class="s-dialog-box" width="980px"  center>
+            <div slot="title" class="title" style="text-align: left;">设置变量</div>
+
+
+            <el-form ref="form" :model="form" label-width="80px" size="mini" class="api-setting-form">
+                <el-table :data="tableDataVal" style="width: 100%; margin-bottom: 10px;"
+                    :header-cell-style="{background:'#3A3B3F' }">
+                    <el-table-column type="selection" width="45">
+                    </el-table-column>
+
+                    <el-table-column prop="valname" label="变量名称" width="200">
+                        <template slot-scope="scope">
+                            <div style="margin-right: 5px;width: 80px;display: inline-block;">
+                                <el-select v-model="tableDataVal[scope.$index].valnametype" placeholder="请选择" size="mini"
+                                    style="width:80px" @change="changevalnametype($event,scope,'')">
+                                    <el-option v-for="item in options_valname" :key="item.value" :label="item.label"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div style="display: inline-block;width: 90px; ">
+                                <el-input style="width:90px" size="mini" v-model="tableDataVal[scope.$index].valname"
+                                    placeholder="变量名称"></el-input>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="valtype" label="变量类型" width="250">
+ 
+                        <template slot-scope="scope">
+                            <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                                <el-select v-model="tableDataVal[scope.$index].valtype" placeholder="请选择" size="mini"
+                                    style="width:100px">
+                                    <el-option v-for="item in options_valtype" :key="item.value" :label="item.label"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                            <div style="display: inline-block;width: 100px; " v-if="tableDataVal[scope.$index].valtype == 'table_type'   ">
+ 
+                                <el-select class="treeselect" v-if="renderMethodData" ref="renderselect"
+                                    :value="renderMethodValue" placeholder="选择呈现页"
+                                    @visible-change="visibleRenderChange" clearable style="width: 100%;"
+                                    @clear="clear">
+                                    <el-option ref="renderoption" class="option"
+                                        :value="renderOptionData.id" :label="renderOptionData.name">
+                                        <el-tree ref="rendertree" class="tree" node-key="name"
+                                            :data="renderMethodData"
+                                            :props="{ label: 'name', children: 'children' } "
+                                            :default-expanded-keys='[renderMethodValue]' highlight-current
+                                            :expand-on-click-node="false"
+                                            @node-click="handleRenderNodeClick" default-expand-all>
+                                        </el-tree>
+                                    </el-option>
+                                </el-select> 
+                                    
+                           </div>
+
+                         </template>
+
+                    </el-table-column>
+
+
+                    <el-table-column prop="required" width="80" label="是否必填">
+                        <template slot-scope="scope">
+                            <el-switch v-model="tableDataVal[scope.$index].required">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column prop="array" width="80" align="center" label="数组">
+                        <template slot-scope="scope">
+                            <el-switch v-model="tableDataVal[scope.$index].array">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+
+
+                    <el-table-column prop="desc" label="描述">
+
+                        <template slot-scope="scope">
+                            <el-input size="mini" v-model="tableDataVal[scope.$index].desc" placeholder="变量描述">
+                            </el-input>
+                        </template>
+
+                    </el-table-column>
+
+                    <el-table-column label="操作" align="center" width="100">
+                        <template slot-scope="scope"> 
+                            <span class="s-icon s-icon-18 s-icon-child-node s-icon-btn" v-if="tableDataVal[scope.$index].valtype == 'object_type'  && !scope.row.isLeaf  "  @click="addnew_define_input('child',scope)"  title="添加子级"></span>
+                            <span class="s-icon s-icon-18 s-icon-add-node s-icon-btn" title="添加兄弟级"
+                                @click="addnew_define_input('node',scope)"></span>
+                            <span class="s-icon s-icon-18 s-icon-delete s-icon-btn" title="删除"
+                                @click="delModule(scope)"></span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+            </el-form>
+
+
+
+            <span slot="footer" class="dialog-footer"  > 
+                <el-button @click="handleValSettingClose"  >取 消</el-button> 
+                <el-button type="primary"   @click="saveValSettingData">保存</el-button> 
+            </span>
+  
+
+        </el-dialog>
+
+
+
+    </div>
+</template>
+
+<script>
+    
+    exports = {
+        templateType: 'vue',
+        mounted:function(){
+            var me = this;
+            this.bissinessSettings = {
+                modelBindType: com.oui.absolute.AbsoluteDesign.data.otherAttrs.modelBindType,
+                bizId: com.oui.absolute.AbsoluteDesign.data.bizId
+            }
+            window.setBusinessSetting = this.setBusinessSetting;
+            console.log('mounted123', com.oui.absolute.AbsoluteDesign.data)
+            setTimeout(function(){
+                me.loadPageDataSource()
+            },500) 
+            //this.tableDataVal = com.oui.absolute.AbsoluteDesign.data.events.varParams &&  JSON.parse(JSON.stringify(com.oui.absolute.AbsoluteDesign.data.events.varParams  )) || [{...this.from}];
+        },
+        data: function () {
+            return {
+                showBusinessSettings: window.showBusinessSettings === undefined ? true : window.showBusinessSettings,
+                bissinessSettings:{
+                    modelBindType:"1",
+                    bizId:""
+                },
+                valSettingVisible: false,
+                Design: com.oui.absolute.AbsoluteDesign,
+                form : {
+                    valname: "",
+                    valnametype:"",
+                    valtype: "",
+                    required: false,
+                    desc: "",
+                    array: false,
+                },
+                tableDataVal: [{
+                    valname: "",
+                    valnametype:"",
+                    valtype: "",
+                    required: false,
+                    desc: "",
+                    array: false,
+                    id:0
+                }], 
+                options_valname:[
+                    {
+                    value: '',
+                    label: '自定义'
+                    }, {
+                    value: 'formData',
+                    label: '单据数据(系统内置)'
+                    }, {
+                    value: 'formDataMulti',
+                    label: '单据列表数据(系统内置)'
+                    } 
+                ],
+                options_valtype: [{
+                        value: 'int_type',
+                        label: 'Int'
+                    },
+                    {
+                        value: 'double_type',
+                        label: 'Double'
+                    },
+                    {
+                        value: 'float_type',
+                        label: 'Float'
+                    },
+                    {
+                        value: 'long_type',
+                        label: 'Long'
+                    },
+                    {
+                        value: 'short_type',
+                        label: 'Short'
+                    },
+                    {
+                        value: 'byte_type',
+                        label: 'Byte'
+                    },
+                    {
+                        value: 'boolean_type',
+                        label: 'Boolean'
+                    },
+                    {
+                        value: 'char_type',
+                        label: 'Char'
+                    },
+                    {
+                        value: 'string_type',
+                        label: 'String'
+                    },
+                    {
+                        value: 'decimal_type',
+                        label: 'Decimal'
+                    },
+                    {
+                        value: 'date_type',
+                        label: 'Date'
+                    },
+                    {
+                        value: 'datetime_type',
+                        label: 'Datetime'
+                    },
+                    {
+                        value: 'time_type',
+                        label: 'Time'
+                    },
+                    {
+                        value: 'object_type',
+                        label: 'Object'
+                    },
+                    {
+                        value: 'table_type',
+                        label: '表模型'
+                    },
+                    {
+                        value: 'tableData_type',
+                        label: '数据模型'
+                    },
+                ],
+                renderMethodData: null,
+                renderMethodValue: '',
+                renderPage: '',
+                renderOptionData: {},
+            }
+        },
+        methods: {
+            handleRenderNodeClick(data) {
+                console.info('handleRenderNodeClick')
+                this.renderMethodValue = data.name
+                this.$emit('input', data['id'])
+                this.renderOptionData.id = data['id']
+                this.renderOptionData.name = data['name']
+                this.$refs.renderselect.visible = false
+            },
+            visibleRenderChange(e) {
+                if (e) {
+                    let selectDom = document.querySelector('.is-current')
+                    setTimeout(() => {
+                        this.$refs.renderselect.scrollToOption({
+                            $el: selectDom
+                        })
+                    }, 0)
+                }
+            },
+            //读取呈现页
+            loadPageDataSource() {
+
+                var param = oui.getParam()
+                var url = this.Design.findPageViewUrl
+
+                var me = this
+                if(this.Design.projectDesign){
+                    me.renderMethodData = oui.parseJson(oui.parseString(this.Design.projectDesign))
+                }else{
+                    oui.postData(url, {
+                            projectId: param.projectId
+                        },
+                        function (res) {
+                            me.Design.projectDesign = res.projectDesign;
+                            me.renderMethodData = oui.parseJson(oui.parseString(res.projectDesign))
+                        },
+                        function (res) {
+
+                        }, '加载中...');
+                }
+
+            },
+            clear() {
+                this.$emit('input', '')
+                console.info('clear')
+            },
+            showLoaddingEvents(){
+                //页面的加载事件处理
+                PubSub.publish("com.startwe.loadingevent.msg.show", {componentName: "页面",msgType:'page'})
+            },
+            setBusinessSetting(flag){
+                window.showBusinessSettings = this.showBusinessSettings = flag;
+            },
+            bussinessSettingAction(value){
+                // modelBindType: com.oui.absolute.AbsoluteDesign.data.otherAttrs.modelBindType,
+                // bizId: com.oui.absolute.AbsoluteDesign.data.bizId
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.modelBindType = value;
+            },
+            bussinessIdAction(value){
+                com.oui.absolute.AbsoluteDesign.data.bizId = value;
+            },
+            showValDialog() {
+                console.log('设置变量', com)
+                this.valSettingVisible = true
+            },
+            handleValSettingClose() {
+                this.valSettingVisible = false
+            },
+            changevalnametype(val,scope,type){
+                
+                let index = scope.$index
+        
+                this.tableDataVal[index].valname = val 
+                    
+            },
+            delModule(data){ 
+                //如果只有一条 不能删除
+                if(this.tableDataVal.length <=  1){
+                    return 
+                }
+
+                if (data) {
+                    index = data.$index;
+                }else{
+                    return
+                }
+
+               this.tableDataVal.splice(index,1);  
+           },
+            //添加输入定义
+            addnew_define_input(type, data) {
+                console.log('addnew_define_input', type, data);
+                console.log('this.form', this.form);
+
+
+                let index = 0 
+                if(data){
+                    index = data.$index; 
+                } 
+
+
+                try{
+                if(type == 'child'){
+                    this.form.isLeaf = true  
+                    this.form.pid = this.tableDataVal[index].id 
+                }else{
+                    this.form.isLeaf = false
+                }
+ 
+                this.tableDataVal.push({...this.form});
+                
+                }catch(e){
+                    console.info(e)
+                }
+                console.info(this.tableDataVal,'tableDataVal')
+                // console.info('11')
+                // let index = 0
+                // if (data) {
+                //     index = data.$index;
+                // }
+
+
+                // let newdata = {
+                //     valname: '',
+                //     valtype: '',
+                //     array: false,
+                //     desc: '',
+                //     bitian: false,
+                //     jiami: true,
+                //     default: 'new',
+                //     isLeaf: false,
+                //     pid: 0,
+                //     id: 12
+                // };
+                // if (type == 'node') //添加兄弟节点
+                // {
+                //     if (data.row.isLeaf) {
+                //         newdata.isLeaf = true
+                //         newdata.pid = this.tableDataVal[index].id
+                //         console.info(data, 'newdata')
+                //         this.tableDataVal[data.row.pid - 1].children.splice(newdata);
+
+                //     } else {
+              
+                //         this.tableDataVal.splice(index, 0, newdata);
+                //         this.form.valname.splice(index, 0, '')
+                //     }
+
+
+                // } else if (type == 'child') {
+
+
+                //     newdata.isLeaf = true
+
+                //     newdata.pid = this.tableDataVal[index].id
+
+                //     this.tableDataVal[index].children.push(newdata);
+
+
+
+                // } else {
+                //     this.tableDataVal.push(newdata);
+                // }
+
+        
+
+            },
+            //保存页面变量设置
+            saveValSettingData(){
+
+                var me = this
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pagedata = com.oui.absolute.AbsoluteDesign.data;
+                // var inputParams = []; 
+ 
+                // this.form.valname.forEach((item,index)=>{
+                     
+                //     var valitem = {
+                //         dynamic: false,
+                //         fieldType: this.form.valtype[index],
+                //         name: this.form.valname[index],
+                //         tableModelId: "",
+                //         tableModelName: "", 
+                //         array:this.form.array[index], 
+                //         desc:this.form.desc[index],  
+                //     } 
+                   
+                //     inputParams.push(valitem); 
+ 
+                // })   
+
+                var param = oui.getParam()  
+
+                var postdata = {
+                    pageId:param.pageId  ,
+                    id:Design.data.id,
+                    saveUrl:Design.createPageViewListUrl,
+                    valParams: this.tableDataVal, 
+                }
+                console.log('saveValSettingData', com);
+                oui.JsonPathUtil.setObjByPath('pageId', pagedata, postdata.pageId, true);
+                oui.JsonPathUtil.setObjByPath('id', pagedata, postdata.id, true);
+                oui.JsonPathUtil.setObjByPath('events.varParams', pagedata, postdata.valParams, true);
+
+                var d = oui.getTop().oui.alert('保存成功');
+                setTimeout(function () {
+                    d.hide();
+                    me.handleValSettingClose() 
+                }, 800);
+
+
+
+
+                // oui.JsonPathUtil.setObjByPath('otherAttrs.sourceDiyValues', currentControl, opt.sourceDiyValues, true);
+                // pageId:postdata.pageId,
+                // id:postdata.id,
+                // events:{
+                // varParams:postdata.valParams
+                // } 
+                // Design.saveValSettingData(postdata);
+            },
+        }
+    }
+</script>
+
+<style>
+    .default-setting {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .default-setting .default-setting-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin: 10px 0;
+        align-items: center;
+    }
+
+    .default-setting .default-setting-item i {
+        cursor: pointer;
+    }
+</style>

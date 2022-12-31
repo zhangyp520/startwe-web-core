@@ -1,0 +1,98 @@
+<!--默认渲染模板-->
+<template>
+    <div >
+        {{=content}}
+    </div>
+</template>
+<!--当前页面脚本配置-->
+<script>
+
+    exports = {
+        templateType:'art',
+        data: function () {
+            return {
+                data:{},
+                designData:null,
+                mainData:null,
+                detailData:null,
+                pageData:{getControlRenderDataById:function(){},getDesigner:function(){} },
+                content:''
+            }
+        },
+        mounted:function (){
+            var designData={};
+            var detailData = {};
+            var mainData ={};
+            var me = this;
+            var query = this.$router.query;
+            console.log(query);
+            var portalId = query.portalId;
+            var loadPortalUrl = query.loadPortalUrl;
+            if(!loadPortalUrl){
+                //如果没有url参数构造全路径
+                loadPortalUrl = oui_context.loadPortal4RuntimeUrl||'';
+                loadPortalUrl= oui.addParams(loadPortalUrl,{
+                    portalId:portalId
+                });
+            }
+
+            oui.postData(loadPortalUrl,{
+
+            },function(res){
+                designData = res.portal;
+
+                if(typeof designData.controls=='string'){
+                    designData.controls = oui.parseJson(designData.controls);
+                }
+                if(typeof designData.style=='string'){
+                    designData.style = oui.parseJson(designData.style);
+                }
+                if(typeof designData.innerStyle=='string'){
+                    designData.innerStyle = oui.parseJson(designData.innerStyle);
+                }
+                if(typeof designData.otherAttrs=='string'){
+                    designData.otherAttrs = oui.parseJson(designData.otherAttrs);
+                }
+                if(typeof designData.events=='string'){
+                    designData.events = oui.parseJson(designData.events);
+                }
+                var pageData = oui.util.createPageData({
+                    refresh:function(){
+                        me.refresh&&me.refresh();
+                    },
+                    designer:designData,
+                    mainData:mainData,//主表数据
+                    detailData:detailData//子表数据
+                });
+                pageData.beforeInit(function(){
+                    me.content = pageData.render(); //渲染
+                    me.pageData = pageData;
+                    if(!me.data){
+                        me.data={};
+                    }
+                    if(!me.__data){
+                        me.__data = function(){
+                            return this;
+                        };
+                    }
+                    me.data.pageData = pageData;
+                    pageData.afterInit();//渲染完成
+                    me.refresh();
+                }); //初始化前
+            },function(res){
+
+            },'加载中...');
+        },
+        methods:{
+
+            getPageData:function getPageData(){
+                return this.pageData;
+            }
+        }
+
+    }
+</script>
+
+<!--本页自定义样式处理-->
+<style>
+</style>

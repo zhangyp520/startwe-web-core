@@ -1,0 +1,167 @@
+<!-- 车辆信息搜索 -->
+<template>
+    <div class="tel_box">
+        <div class="Customer_search">
+            <!-- <el-input class="Customer_search_input" v-model="input" placeholder="搜索客户名/电话" suffix-icon="el-icon-search">
+            </el-input> -->
+            <div style=" position: relative; width: 100%; ">
+                <el-input style="width: 100%;" placeholder="搜索车辆信息" v-model="queryInfo.queryParam"></el-input>
+                <span style=" width:20px; height: 20px; display: inline-block;  cursor:pointer;                                      
+                border-radius: 50%; position: absolute; right: 2%; top: 30%;" @click="getCarList">
+                    <img src="/res_apps/car/image/sousu.png" style="width: 12px;height: 12px;">
+                </span>
+            </div>
+        </div>
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+                <el-table :data="tableData" style="width: 100%" :data="tableData" highlight-current-row  @current-change="clickData">
+                    <el-table-column class="newform_bgc" type="index" label="编号"></el-table-column>
+                    <el-table-column prop="yearCfg" label="年份及配置"></el-table-column>
+                    <el-table-column prop="carBrand" label="品牌"></el-table-column>
+                    <el-table-column prop="carMarque" label="车辆型号"></el-table-column>
+                    <el-table-column prop="deliveryCapacity" label="排量"></el-table-column>
+                </el-table>
+            </template>
+        </div>
+
+        <!-- 表格区域结束 -->
+
+        <!-- 分页开始 -->
+        <div class="page">
+            <div class="block">
+                <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                    :current-page="queryInfo.currentPage" :page-sizes="[1, 5, 10, 15, 20]"
+                    :page-size="queryInfo.pageSize" :total="queryInfo.total"
+                    layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </div>
+        </div>
+        <!-- 分页结束 -->
+
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 车辆信息
+                tableData: [],
+                queryInfo: {
+                    //车辆状态
+                    state: 1,
+                    // 车辆品牌
+                    carBrand: "",
+                    // 控制开关的开启和关闭 需要动态来改变他的值默认让他为true
+                    value: 2,
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                },
+            }
+        },
+        // 员工列表数据结束
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            // 渲染客户弹框列表数据
+            this.getCarList()
+        },
+        methods: {
+
+            // 渲染客户搜索页面的列表数据
+            getCarList: function () {
+                var that = this
+                oui.ajaxPost('company/carInfo/queryCarInfo', {
+                    "pager": {
+                        "page": this.queryInfo.currentPage,
+                        "rows": this.queryInfo.pageSize
+                    },
+                    "queryParam": this.queryInfo.queryParam,
+                    "state": this.queryInfo.state
+                }, function (res) {
+                    that.queryInfo.total = res.resultObj.total;
+                    that.tableData = res.resultObj.cars
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+
+            // 当前页
+            handleCurrentChange: function (val) {
+                this.queryInfo.currentPage = val;
+                this.getCarList();
+            },
+            // 一页几条数据
+            handleSizeChange: function (val) {
+                this.queryInfo.pageSize = val;
+                this.getCarList();
+            },
+            // 选中行后，把数据回填到data
+            clickData:function(val){
+                var str = oui.getTop().oui.setPageParam('selectCarData',oui.parseString(val));
+            }
+
+        }
+
+
+
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        /* width: 430px;
+        height: 240px; */
+        margin: 24px auto;
+        box-sizing: border-box;
+    }
+
+    .Customer_search {
+        width: 200px;
+        margin: 0 20px;
+
+    }
+
+    /* 搜索区 */
+    .Customer_search_input .el-input__icon {
+        color: #1890FF;
+    }
+
+    /* 类表的样式 */
+    /* 表格数据 居中对齐*/
+
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域结束----- */
+</style>

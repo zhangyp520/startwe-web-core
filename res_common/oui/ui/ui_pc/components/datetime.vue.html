@@ -1,0 +1,135 @@
+
+<template >
+
+    <div class="el-datepicker-outer">
+        <el-date-picker
+                v-model="value"
+                :type="type"
+                :id="id"
+                :name="name"
+                :bindProp="bindProp"
+                :tempStyle="style"
+                :class="cls"
+                :placeholder="placeholder"
+                :picker-options="pickerOptions"
+                :range-separator="rangeSeparator"
+                :start-placeholder="startPlaceholder"
+                :end-placeholder="endPlaceholder"
+                :format="format" :value-format="format"
+                @change="_controlOnUpdate"
+                >
+        </el-date-picker>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        watch:{
+            showType:function (val){
+                if(typeof val !='undefined'){
+                    var one = oui.findManyFromArrayBy(this.showTypes,function (item){
+                        if(item.showType == val){
+                            return true;
+                        }
+                    });
+                    if(one){
+                        for(var k in one ){
+                            this[k] = one [k];
+                        }
+                    }
+                }
+            }
+        },
+        data: function () {
+            return {
+                format:'yyyy-MM-dd HH:mm', //yyyy-MM-dd HH:mm:ss
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                type:'datetime',
+                pickerOptions:{},
+                rangeSeparator:'至',startPlaceholder:'开始日期',endPlaceholder:'结束日期',
+                placeholder:'请选择日期时间',
+                showType:-1,
+                showTypes:[{
+                    showType:0,
+                    type:'datetime',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '今天',
+                            onClick(picker) {
+                                picker.$emit('pick', new Date());
+                            }
+                        }, {
+                            text: '昨天',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        }, {
+                            text: '一周前',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', date);
+                            }
+                        }]
+                    }
+                },{
+                    showType:1,
+                    type:'datetimerange',
+                    pickerOptions: {
+                        shortcuts: [{
+                            text: '最近一周',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近一个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近三个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }]
+                    }
+                }]
+            }
+        },
+        mounted:function (){
+            if(typeof this.showType=='undefined' || (this.showType ==-1)){
+                this.showType = 0;
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-datepicker-outer .el-date-editor.el-input, .el-datepicker-outer .el-date-editor.el-input__inner{
+        width: 100%;
+    }
+</style>

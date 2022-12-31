@@ -1,0 +1,848 @@
+<!--多选组 TODO -->
+<template style="height: 100%;">
+    <div>
+        <div class="" style="display: flex;">
+            <!-- <div class="list_box_left" style="background-color: #545c64;">
+                <el-row class="tac">
+                    <el-col :span="24">
+                        <h5>默认颜色</h5>
+                        <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#545c64"
+                            :default-openeds="openeds" text-color="#fff" @open="handleOpen" @close="handleClose">
+
+                            <el-submenu index="1">
+                                <template slot="title">
+                                    <i class="el-icon-location"></i>
+                                    <span>页面设计</span>
+                                </template>
+                                <el-menu-item-group>
+                                    <el-menu-item index="1-1">设计表单</el-menu-item>
+                                    <el-menu-item index="1-2">列表页</el-menu-item>
+                                    <el-menu-item index="1-3">详情页</el-menu-item>
+                                    <el-menu-item index="1-4">报表页</el-menu-item>
+                                    <el-menu-item index="1-5">打印页</el-menu-item>
+                                </el-menu-item-group> 
+                            </el-submenu>
+
+
+                            <el-submenu index="2">
+                                <template slot="title">
+                                    <i class="el-icon-location"></i>
+                                    <span>逻辑设计</span>
+                                </template>
+                                <el-menu-item-group>
+                                    <el-menu-item index="2-1">简单逻辑</el-menu-item>
+                                    <el-menu-item index="2-2">高级逻辑</el-menu-item>
+                                </el-menu-item-group>
+                            </el-submenu>
+
+                        </el-menu>
+                    </el-col>
+
+
+                </el-row>
+
+            </div> -->
+            <div class="list_box_left background_color" style="left: 220px;padding-top: 17px;padding-left: 18px;">
+                <!-- <div>
+                    <div class="list_title_s" style="margin-top: 0;margin-bottom: 17px;">字段选择</div>
+                    <el-tree  :data="data" :props="defaultProps"></el-tree>
+                    <div v-else style="font-size:14px;">请选择模板类型</div>
+                </div> -->
+
+                <!-- <div class="list_assembly">
+                    <div class="list_title_s" style="margin-top: 0;margin-bottom: 17px;">通用组件</div>
+                    <div class="zujian_flex">
+                        <div class="list_zujian design-item components-children-item"  v-for='(item,index) in tabList' :key='index' 
+                        :control-abs-name="item.name"
+                        :control-abs-htmltype="item.htmlType"
+                        :control-abs-controltype="item.controlType"
+                        control-abs-formfield="true" control-abs-style="{layoutType:'hideTitle'}" control-abs-innerstyle="{}" control-abs-otherattrs="{}"
+                        control-abs-events="{}" drag-status=""
+                        control-abs-description="插入文本" 
+                        >{{item.name}}</div>
+                    </div>
+                </div> -->
+                <el-tabs v-model="activeName" @tab-click="handleClick" class="box">
+                    <el-tab-pane label="已有业务字段" name="first"><template>
+                            <div>用户管理</div>
+                        </template></el-tab-pane>
+                    <el-tab-pane label="组件库" name="second">配置管理</el-tab-pane>
+
+                </el-tabs>
+                <el-autocomplete v-model="state" :fetch-suggestions="querySearchAsync" placeholder="搜索组件..." clearable
+                    @select="handleSelect"><i class="el-icon-search el-input__icon" slot="suffix"
+                        @click="handleIconClick">
+                    </i></el-autocomplete>
+                <div class="list_assembly background_color">
+                    <div class="" v-for='(item,index) in listControls' :key='index'>
+                        <div class="list_title_s color_fff" style="margin-top: 0;margin-bottom: 17px;">{{item.display}}</div>
+
+                        <div style="display:flex;flex-wrap: wrap;justify-content: space-between;"  >
+                            <div class="list_zujian design-item components-children-item color_fff"
+                                v-for='(i,key) in item.controls' 
+                                :control-abs-name="i.name"
+                                :control-abs-htmltype="i.htmlType" 
+                                :control-abs-controltype="i.controlType"
+                                :control-abs-formfield="i.formField"
+                                :control-abs-style="i.style"
+                                :control-abs-innerstyle="i.innerStyle"
+                                :control-abs-otherattrs="i.otherAttrs" 
+                                :control-abs-events="i.events"
+                                drag-status="" :control-abs-description="i.description">{{i.name}}</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+       
+        <div class="module_box" v-if='addModule'>
+            <div class="list_dialog" v-if='addModule'>
+                <div class="list_dialog_title">新建模板</div>
+                <div class="list_center_input">
+                    <div>
+                        模板名称：
+                        <el-select v-model="value" placeholder="请选择" size='mini'
+                            style="width:320px;margin-left: 4px;margin-bottom: 20px;">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    模板名称：<input class="list_input" v-model="modelValue" type="text">
+                </div>
+                <div class="list_dialog_but">
+                    <div class="list_but_bgl" @click='addModule = false'>取消</div>
+                    <div class="list_but_bgr" @click='addModulePage'>确定</div>
+                </div>
+            </div>
+        </div>
+       </div>
+</template>
+
+<script>
+    
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                restaurants: [],
+                state: '',
+                timeout: null,
+                activeName: 'second',
+                openeds: ['1', '2'],
+                options: [
+                    {
+                        value: 1,
+                        label: '列表模板'
+                    }, {
+                        value: 2,
+                        label: '编辑模板'
+                    }, {
+                        value: 3,
+                        label: '详情模板'
+                    }, {
+                        value: 4,
+                        label: '报表模板'
+                    }, {
+                        value: 5,
+                        label: '原型模板'
+                    }, {
+                        value: 6,
+                        label: '打印模板'
+                    }
+                ],
+                fieldShow: false,
+                value: "",
+                modelValue: '',
+                addModule: false,
+
+                tabList: [
+                ],
+                templateList: [
+                    {
+                        label: '列表呈现设计',
+                        value: 0,
+                        children: [{
+                            label: '暂无'
+                        }]
+                    },
+                    {
+                        label: '编辑呈现设计',
+                        value: 1,
+                        children: [{ label: '暂无' }]
+                    },
+                    {
+                        label: '详情呈现设计',
+                        value: 2,
+                        children: [{ label: '暂无' }]
+                    },
+                    {
+                        label: '报表呈现设计',
+                        value: 3,
+                        children: [{ label: '暂无' }]
+                    },
+                    {
+                        label: '原型呈现设计',
+                        value: 4,
+                        children: [{ label: '暂无' }]
+                    },
+                    {
+                        label: '打印呈现设计',
+                        value: 5,
+                        children: [{ label: '暂无' }]
+                    },
+                ],
+
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                createPageViewListUrl: '', //新增列表模板接口
+                createPageViewEditUrl: '', //新增编辑接口
+                createPageViewDetailUrl: '', //新增详情模板接口
+                circleId: '',
+                projectId: '',
+                pageId: '',
+                selectList: [],
+                index: 0,
+                data: [],
+
+
+                listControls:[]
+
+            }
+        },
+        mounted: function () {
+            var _this = this
+         let  controlsListHtmlTypes =  com.oui.absolute.AbsoluteDesign.controlsListHtmlTypes
+         let  pageListControls =  com.oui.absolute.AbsoluteDesign.pageListControls
+         _this.listControls  =_this.findControls(controlsListHtmlTypes,pageListControls)
+        },
+        methods: {
+            findControls: function(controlsListHtmlTypes,pageListControls){
+                var map= {};
+                for(var k in controlsListHtmlTypes){
+                    map[k]= {
+                        name:controlsListHtmlTypes[k].name,
+                        display:controlsListHtmlTypes[k].display,
+                        controls:[]
+                    };    
+                }
+                oui.eachArray(pageListControls,function(item){
+                     map[item.htmlType] && map[item.htmlType].controls.push(item);
+                }); 
+                var arr = [];
+                for(var k in map){
+                    arr.push(map[k]);
+                }
+                console.log("=======>",arr)
+                return arr
+            },
+
+ 
+
+            addModulePage:function() {
+                if (!this.modelValue) {
+                    return this.$message.error('请输入模板名称');
+                }
+                this.addModule = false
+                var url = ''
+                var me = this
+                var paramObj = {}
+                var obj = com.oui.absolute.AbsoluteDesign.data
+                obj.id = ''
+                obj.controls = []
+                obj.name = me.modelValue
+                obj.circleId = me.circleId
+                obj.projectId = me.projectId
+                obj.pageId = me.pageId
+                if (me.value == 1) {
+                    url = me.createPageViewListUrl
+                    paramObj = {
+                        projectListTemplate: obj
+                    }
+                } else if (me.value == 2) {
+                    url = me.createPageViewEditUrl
+                    paramObj = {
+                        projectEditTemplate: obj
+                    }
+                } else if (me.value == 3) {
+                    url = me.createPageViewDetailUrl
+                    paramObj = {
+                        projectDetailTemplate: obj
+                    }
+                }
+                oui.postData(url, paramObj, function (res) {
+                    me.$message.success('添加成功');
+                    me.value = ''
+                    let data = {
+                        value: 0
+                    }
+                    me.handleNodeClick(data)
+                }, function (res) {
+                    me.$message.error('添加失败');
+                }, '加载中...');
+            },
+            newPage(node, data) {
+                if (node.data.index) {
+                    var me = this
+                    var url = oui.getContextPath() + 'res_apps/project/project-page-design.html';
+                    var param = oui.getParam()
+                    url = oui.addParams(url, {
+                        pageid: param.pageId,
+                        queryPageViewsByProjectIdUrl: param.queryPageViewsByProjectIdUrl,
+                        projectId: param.projectId,
+                        pageDesignType: "listForm",
+                        circleId: param.circleId,
+                        type: me.index ? me.index : 1,
+                        num: Number(node.data.index)
+                    });
+                    oui.go4replace(url);
+                }
+
+
+
+            },
+            handleNodeClick(data) {
+
+
+                var me = this
+                var param = oui.getParam()
+                me.index = data.value + 1
+                var url = oui.getContextPath() + 'res_apps/project/project-page-design.html';
+                url = oui.addParams(url, {
+                    pageid: param.pageId,
+                    queryPageViewsByProjectIdUrl: param.queryPageViewsByProjectIdUrl,
+                    projectId: param.projectId,
+                    pageDesignType: "listForm",
+                    circleId: param.circleId,
+                    type: me.index ? me.index : 1,
+                    num: 0
+                });
+                console.log(url)
+                oui.go4replace(url);
+
+                return
+
+                var me = this
+                var url = oui.getParam().queryPageViewsByProjectIdUrl
+
+                oui.postData(url, {
+                    pageId: me.pageId,
+                    templateType: data.value + 1
+                }, function (res) {
+
+
+                    oui.postData(res.queryCurrentPageFieldsUrl, {
+                        pageId: me.pageId
+                    }, function (res) {
+                        me.fieldShow = true
+                        for (const item of res.currentPageFields) {
+                            item.label = item.name
+
+                        }
+                        me.data = res.currentPageFields
+                    }, function (res) {
+                        console.log(res);
+                    }, '加载中...');
+
+
+
+                    if (res.pageViews.length > 0) {
+
+                        for (const index in res.pageViews) {
+                            res.pageViews[index].label = res.pageViews[index].name
+                            res.pageViews[index].show = true
+                            res.pageViews[index].index = index
+                            me.templateList[Number(param.type) - 1].children.push(res.pageViews[index])
+                        }
+
+                        console.log(me.templateList)
+                    } else {
+                        me.templateList[data.value].children = [
+                            {
+                                label: '暂无数据'
+                            }
+                        ]
+                    }
+
+
+                    me.createPageViewListUrl = res.createPageViewListUrl
+
+
+
+
+
+
+                }, function (res) {
+                    console.log(res);
+                }, '加载中...');
+            },
+            updateCurrentControl: function () {
+
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            remove(node, data) {//删除模板
+                console.log(data.extraAttrs.removeProjectListTemplateUrl)
+                let me = this
+                oui.postData(data.extraAttrs.removeProjectListTemplateUrl, {
+                    pageId: data.pageId
+                }, function (res) {
+                    me.$message.success('删除成功');
+                    let data = {
+                        value: 0
+                    }
+                    me.handleNodeClick(data)
+                }, function (res) {
+                    console.log(res);
+                }, '加载中...');
+
+            },
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClick(tab, event) {
+                console.log(tab, event);
+            },
+            //   搜索模块
+            loadAll() {
+                return [
+                    { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
+                    { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
+                    { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
+                    { "value": "泷千家(天山西路店)", "address": "天山西路438号" },
+                    { "value": "胖仙女纸杯蛋糕（上海凌空店）", "address": "上海市长宁区金钟路968号1幢18号楼一层商铺18-101" },
+                    { "value": "贡茶", "address": "上海市长宁区金钟路633号" },
+                    { "value": "豪大大香鸡排超级奶爸", "address": "上海市嘉定区曹安公路曹安路1685号" },
+                    { "value": "茶芝兰（奶茶，手抓饼）", "address": "上海市普陀区同普路1435号" },
+                    { "value": "十二泷町", "address": "上海市北翟路1444弄81号B幢-107" },
+                    { "value": "星移浓缩咖啡", "address": "上海市嘉定区新郁路817号" },
+                    { "value": "阿姨奶茶/豪大大", "address": "嘉定区曹安路1611号" },
+                    { "value": "新麦甜四季甜品炸鸡", "address": "嘉定区曹安公路2383弄55号" },
+                    { "value": "Monica摩托主题咖啡店", "address": "嘉定区江桥镇曹安公路2409号1F，2383弄62号1F" },
+                    { "value": "浮生若茶（凌空soho店）", "address": "上海长宁区金钟路968号9号楼地下一层" },
+                    { "value": "NONO JUICE  鲜榨果汁", "address": "上海市长宁区天山西路119号" },
+                    { "value": "CoCo都可(北新泾店）", "address": "上海市长宁区仙霞西路" },
+                    { "value": "快乐柠檬（神州智慧店）", "address": "上海市长宁区天山西路567号1层R117号店铺" },
+                    { "value": "Merci Paul cafe", "address": "上海市普陀区光复西路丹巴路28弄6号楼819" },
+                    { "value": "猫山王（西郊百联店）", "address": "上海市长宁区仙霞西路88号第一层G05-F01-1-306" },
+                    { "value": "枪会山", "address": "上海市普陀区棕榈路" },
+                    { "value": "纵食", "address": "元丰天山花园(东门) 双流路267号" },
+                    { "value": "钱记", "address": "上海市长宁区天山西路" },
+                    { "value": "壹杯加", "address": "上海市长宁区通协路" },
+                    { "value": "唦哇嘀咖", "address": "上海市长宁区新泾镇金钟路999号2幢（B幢）第01层第1-02A单元" },
+                    { "value": "爱茜茜里(西郊百联)", "address": "长宁区仙霞西路88号1305室" },
+                    { "value": "爱茜茜里(近铁广场)", "address": "上海市普陀区真北路818号近铁城市广场北区地下二楼N-B2-O2-C商铺" },
+                    { "value": "鲜果榨汁（金沙江路和美广店）", "address": "普陀区金沙江路2239号金沙和美广场B1-10-6" },
+                    { "value": "开心丽果（缤谷店）", "address": "上海市长宁区威宁路天山路341号" },
+                    { "value": "超级鸡车（丰庄路店）", "address": "上海市嘉定区丰庄路240号" },
+                    { "value": "妙生活果园（北新泾店）", "address": "长宁区新渔路144号" },
+                    { "value": "香宜度麻辣香锅", "address": "长宁区淞虹路148号" },
+                    { "value": "凡仔汉堡（老真北路店）", "address": "上海市普陀区老真北路160号" },
+                    { "value": "港式小铺", "address": "上海市长宁区金钟路968号15楼15-105室" },
+                    { "value": "蜀香源麻辣香锅（剑河路店）", "address": "剑河路443-1" },
+                    { "value": "北京饺子馆", "address": "长宁区北新泾街道天山西路490-1号" },
+                    { "value": "饭典*新简餐（凌空SOHO店）", "address": "上海市长宁区金钟路968号9号楼地下一层9-83室" },
+                    { "value": "焦耳·川式快餐（金钟路店）", "address": "上海市金钟路633号地下一层甲部" },
+                    { "value": "动力鸡车", "address": "长宁区仙霞西路299弄3号101B" },
+                    { "value": "浏阳蒸菜", "address": "天山西路430号" },
+                    { "value": "四海游龙（天山西路店）", "address": "上海市长宁区天山西路" },
+                    { "value": "樱花食堂（凌空店）", "address": "上海市长宁区金钟路968号15楼15-105室" },
+                    { "value": "壹分米客家传统调制米粉(天山店)", "address": "天山西路428号" },
+                    { "value": "福荣祥烧腊（平溪路店）", "address": "上海市长宁区协和路福泉路255弄57-73号" },
+                    { "value": "速记黄焖鸡米饭", "address": "上海市长宁区北新泾街道金钟路180号1层01号摊位" },
+                    { "value": "红辣椒麻辣烫", "address": "上海市长宁区天山西路492号" },
+                    { "value": "(小杨生煎)西郊百联餐厅", "address": "长宁区仙霞西路88号百联2楼" },
+                    { "value": "阳阳麻辣烫", "address": "天山西路389号" },
+                    { "value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13" }
+                ];
+            },
+            querySearchAsync(queryString, cb) {
+                var restaurants = this.restaurants;
+                var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
+
+                clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => {
+                    cb(results);
+                }, 3000 * Math.random());
+            },
+            createStateFilter(queryString) {
+                return (state) => {
+                    return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+            handleSelect(item) {
+                console.log(item);
+            },
+            handleIconClick(item) {
+                console.log(item);
+            },
+        }
+    }
+</script>
+
+<style scoped>
+     @import url('../../../../../static/css/index.css');
+    .list_header {
+        width: 1920px;
+        height: 60px;
+        border-bottom: 1px solid rgba(187, 187, 187, 100);
+        color: rgba(91, 107, 114, 100);
+        font-size: 18px;
+        line-height: 60px;
+        padding-left: 50px;
+    }
+
+    .list_box {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+    }
+
+    .list_title_s {
+        /* color: rgba(16, 16, 16, 100); */
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .list_box_left {
+        width: 220px;
+        /* background-color: #fff; */
+        padding: 30px 10px;
+        position: absolute;
+
+        bottom: 0;
+        top: 0;
+        /* border-right: 1px solid rgba(187, 187, 187, 100); */
+    }
+
+    .list_box_right {
+        background-color: #f2f2f2;
+        position: absolute;
+        left: 220px;
+        top: 0px;
+        right: 0;
+        bottom: 0;
+    }
+
+    .list-search {
+        width: 150px;
+        height: 30px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        border-radius: 5px;
+        color: rgba(136, 136, 136, 100);
+        font-size: 14px;
+        line-height: 30px;
+        padding-left: 10px;
+        outline: none;
+    }
+
+    .list_title {
+        color: rgba(91, 107, 114, 100);
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+
+    .list_content {
+        width: 150px;
+        height: 100px;
+        margin: auto;
+        border: 1px solid rgba(187, 187, 187, 100);
+        border-radius: 10px;
+        margin-top: 15px;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .list_content_name {
+        position: absolute;
+        top: 13px;
+        left: 13px;
+        color: rgba(16, 16, 16, 100);
+        font-size: 14px;
+
+    }
+
+    .list_content_time {
+        position: absolute;
+        bottom: 13px;
+        left: 13px;
+        color: rgba(153, 153, 153, 100);
+        font-size: 12px;
+    }
+
+    .list_dialog {
+        width: 450px;
+        height: 250px;
+        border-radius: 10px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        margin: auto;
+        background-color: #fff;
+        z-index: 101;
+    }
+
+    .list_dialog_title {
+        font-size: 16px;
+        color: rgba(91, 107, 114, 100);
+        margin-top: 13px;
+        margin-left: 17px;
+    }
+
+    .list_dialog_but {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        bottom: 26px;
+        right: 33px;
+        cursor: pointer;
+    }
+
+    .list_dialog_but>div {
+        width: 80px;
+        height: 30px;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 30px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        margin-left: 10px;
+        font-size: 14px;
+    }
+
+    .list_but_bgr {
+        background-color: rgba(56, 148, 255, 100);
+        color: rgba(255, 255, 255, 100);
+    }
+
+    .list_but_bgl {
+        color: rgba(16, 16, 16, 100);
+    }
+
+    .list_input {
+        width: 320px;
+        height: 30px;
+        padding-left: 10px;
+        margin-left: 8px;
+        outline: none;
+        border: 1px solid rgba(187, 187, 187, 100);
+        border-radius: 5px;
+    }
+
+    .list_center_input {
+        position: absolute;
+        right: 30px;
+        top: 64px;
+        font-size: 14px;
+    }
+
+    .list_add {
+        text-align: center;
+        line-height: 100px;
+        font-size: 40px;
+        color: rgba(153, 153, 153, 100);
+    }
+
+    .zujian_flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .list_zujian {
+        width: 85px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 5px;
+        /* color: rgba(91, 107, 114, 100); */
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 10px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        cursor: pointer;
+    }
+
+    .hide_box {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        height: 40px;
+        border-top: 1px solid rgba(187, 187, 187, 100)
+    }
+
+    .list_assembly {
+        font-size: 14px;
+        position: absolute;
+        top: 120px;
+        /* border-top: 1px solid rgba(187, 187, 187, 100); */
+        left: 0;
+        right: 0;
+        padding: 17px 18px 0 18px;
+        overflow: auto;
+        bottom: 0;
+
+    }
+
+    .module_box {
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(170, 170, 170, 0.757);
+
+    }
+
+    /*滚动条样式*/
+    .list_assembly::-webkit-scrollbar {
+        width: 4px;
+        /*height: 4px;*/
+    }
+
+    .list_assembly::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .list_assembly::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px #fff;
+        box-shadow: inset 0 0 5px #fff;
+        border-radius: 0;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .el-menu-vertical-demo.el-menu {
+        border-right: none;
+    }
+   
+
+
+
+
+   /*导航条下方边框*/
+   .list_box_left  .el-tabs__nav-scroll{
+      border-bottom: 1px solid #000000;
+      box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.15);
+  }
+  /* 导航条下方边框阴影*/
+  .list_box_left   .el-tabs__nav-wrap {
+     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.15) ;
+  }
+  /*切换项下面的长条，控制其长度*/
+    /* 不加important  不会生效，important会覆盖行内样式权限级别*/
+    /* 控制位置*/
+     /* 根据实际情设置，尽量居中就行*/
+    /* .box .el-tabs__active-bar.is-top{
+     text-align: center;
+      width: 0px !important;     
+      padding: 0 50px !important;  
+      left:8.5%;                  
+      box-sizing: border-box;
+      background-clip: content-box;
+
+   } */
+   .list_box_left  .el-tabs__item{    
+       /* //切换活动项的文字颜色 */
+       color:#ccc !important;
+   }
+   .list_box_left  .el-tabs__item.is-active{    
+       /* //切换活动项的文字颜色 */
+       color:#fff !important;
+   }
+   /* //切换活动项的长条颜色 */
+   /* .list_box_left   .el-tabs__active-bar{
+          background-color: #fff !important;  
+            
+   } */
+     /* //设置修改默认蚊子颜色，背景颜色，等 */
+    /* #tab-first,
+    #tab-video,
+     #tab-courseWare,
+    #tab-testPaper{
+      background-color: #fff;   
+        
+      font-weight: 550;
+      font-size: 20px;
+      opacity: 1;
+      box-shadow: 0 0 0 0;
+    } */
+
+
+   /* .box > div:first-child {
+    position: fixed;
+    top: 120px;
+    right: 0;
+    left: 0;
+    z-index: 99;
+    width: 88%;
+    height: 60px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+   .box > div:first-child > div > div > div {
+    display: flex;
+    width: 100%;
+    width: 100%;
+  } */
+
+  /* #tab-first,
+   #tab-video,
+   #tab-courseWare,
+   #tab-testPaper {
+    flex: 1;
+    height: 60px;
+    padding: 0 20px;
+    font-size: 24px;
+    line-height: 60px;
+    color: rgba(51, 51, 51, 0.8);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.15);
+    border-right: 1px solid rgba(255, 255, 255, 1) !important;
+    border-left: 1px solid rgba(255, 255, 255, 1) !important;
+    box-shadow: 0px 2px 12px 0px rgba(45, 88, 0, 0.1);
+    opacity: 0.51;
+  } */
+
+    /* #tab-first {
+    border-left: 0;
+  }
+   #tab-testPaper {
+    border-right: 0;
+  } */
+
+ 
+
+   /* .box > div:first-child > div > div > div > div:first-child {
+    
+    height: 4px;
+    margin: 0 auto;
+    background: #84a0ea;
+    box-shadow: 0 -1px 8px 0 rgba(100, 137, 237, 0.14);
+  }  */
+</style>

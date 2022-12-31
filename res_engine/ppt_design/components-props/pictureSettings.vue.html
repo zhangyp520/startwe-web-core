@@ -1,0 +1,522 @@
+<template>
+    <div class="img-right-control" style="width: 300px;">
+        <el-collapse v-model="activeNames" class="property-collapse">
+            <el-collapse-item title="图片" name="1">
+                <div>
+                    <!-- 填充 -->
+                    <div class="img-public-box">
+                        <span class="img-public-title">填充样式</span>
+                        <div>
+                            <el-select v-model="pictureFillStyle" placeholder="请选择" class="fill-patterns">
+                                <el-option v-for="item in fillPatterns" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <!-- 切换 -->
+                    <div class="img-public-box">
+                        <span class="img-public-title">自动切换</span>
+                        <div class="picture-switch">
+                            <el-switch v-model="pictureSwitch">
+                            </el-switch>
+                        </div>
+                    </div>
+                    <!-- 音量 -->
+                    <div class="img-public-box">
+                        <span class="img-public-title">音量&emsp;&emsp;</span>
+                        <div style="display: flex;">
+                            <div class="volume-slider">
+                                <el-slider v-model="volume"></el-slider>
+                            </div>
+                            <div>
+                                <el-input v-model="volume" class="volume-input"></el-input>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 视频 -->
+                    <div>
+                        <div class="video-public-box">
+                            <div class="video-box" style="width: 80px;height: 80px;">
+                                <img src="res_engine/ppt_design/images/back.png" alt="" style="width: 80px;height: 80px;border-radius: 4px;">
+                                <!-- <video width="320" height="240">
+                            <source :src="" type="video/mp4">
+                        </video> -->
+                            </div>
+                            <div>
+                                <div class="video-title">title</div>
+                                <div class="video-title video-size">2.0M</div>
+                                <div class="video-icon-box">
+                                    <img src="res_engine/ppt_design/images/arrow-up.png" alt="">
+                                    <img src="res_engine/ppt_design/images/arrow-down.png" alt="">
+                                    <img src="res_engine/ppt_design/images/trash.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-public-box">
+                            <div class="video-box" style="width: 80px;height: 80px;">
+                                <img src="res_engine/ppt_design/images/back.png" alt="" style="width: 80px;height: 80px;border-radius: 4px;">
+                                <!-- <video width="320" height="240">
+                                <source :src="" type="video/mp4">
+                            </video> -->
+                            </div>
+                            <div>
+                                <div class="video-title">title</div>
+                                <div class="video-title video-size">2.0M</div>
+                                <div class="video-icon-box">
+                                    <img src="res_engine/ppt_design/images/arrow-up.png" alt="">
+                                    <img src="res_engine/ppt_design/images/arrow-down.png" alt="">
+                                    <img src="res_engine/ppt_design/images/trash.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-collapse-item>
+            <el-collapse-item title="基础" name="2">
+                <!-- 名称 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">名称&emsp;&emsp;</span>
+                    <div>
+                        <el-input v-model="imageName" class="basics-input"></el-input>
+                    </div>
+                </div>
+                <!-- 透明度 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">透明度&emsp;</span>
+                    <div>
+                        <el-input v-model="imgOpacity" class="basics-input"></el-input>
+                    </div>
+                </div>
+                <!-- 旋转 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">旋转&emsp;&emsp;</span>
+                    <div>
+                        <el-input v-model="imgTransform" class="basics-input"></el-input>
+                    </div>
+                </div>
+                <!-- 层级 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">层级&emsp;&emsp;</span>
+                    <div class="basics-icon">
+                        <img src="res_engine/ppt_design/images/arrow-up.png" alt="">
+                        <img src="res_engine/ppt_design/images/arrow-top.png" alt="">
+                        <img src="res_engine/ppt_design/images/arrow-down.png" alt="">
+                        <img src="res_engine/ppt_design/images/arrow-bottom.png" alt="">
+                    </div>
+                </div>
+                <!-- 分隔线 -->
+                <hr style="margin: 10px 10px 0;background-color: rgb(153, 153, 153);border: none;height: 1px;">
+                <!-- 大小及位置 -->
+                <div class="basics-title">大小及位置</div>
+                <div>
+                    <div class="img-public-box ">
+                        <div class="basics-public-box ">
+                            <span class="basic-public-title-css">W</span>
+                            <el-input v-model="imgaeWidth" class="basics-width-input"></el-input>
+                        </div>
+                        <img src="res_engine/ppt_design/images/link.png" alt="" class="icon-public-css">
+                        <div class="basics-public-box">
+                            <span>H</span>
+                            <el-input v-model="imgaeHeight" class=" basics-height-input"></el-input>
+                        </div>
+                        <img src="res_engine/ppt_design/images/enlarge.png" alt="" class="icon-public-css">
+                    </div>
+                    <div class="img-public-box">
+                        <div class="basics-public-box ">
+                            <span class="basic-public-title-css">X</span>
+                            <el-input v-model="imgaeX" class="basics-X-input"></el-input>
+                        </div>
+                        <div class="basics-public-box ">
+                            <span>Y</span>
+                            <el-input v-model="imgaeY" class="basics-Y-input"></el-input>
+                        </div>
+                    </div>
+                </div>
+                <!-- 分隔线 -->
+                <hr style="margin: 10px 10px 0;background-color: rgb(153, 153, 153);border: none;height: 1px;">
+                <!-- 外观 -->
+                <div class="basics-title">外观</div>
+                <!-- 描边 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">描边&emsp;&emsp;</span>
+                    <div style="display: flex;flex: 1;">
+                        <div style="margin-right: 10px;">
+                            <el-input v-model="borderWidth" class="border-width-input"></el-input>
+                        </div>
+                        <div class="border-color-piker">
+                            <el-color-picker v-model="borderColor"></el-color-picker>
+                        </div>
+                    </div>
+                </div>
+                <!-- 圆角 -->
+                <div class="img-public-box">
+                    <span class="img-public-title">圆角&emsp;&emsp;</span>
+                    <div>
+                        <el-input v-model="borderRadius" class="border-radius-input"></el-input>
+                    </div>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                activeNames: '1', //展开的选项
+                // 自动切换
+                pictureSwitch: true,
+                // 音量
+                volume: 0,
+                // 填充类型
+                fillPatterns: [{
+                    value: '1',
+                    label: '原始比例'
+                }, {
+                    value: '2',
+                    label: '100%'
+                }],
+                pictureFillStyle: '',
+                // 图片基础图片名称
+                imageName: '',
+                // 透明度
+                imgOpacity: '100%',
+                // 旋转
+                imgTransform: 0,
+                // 图片宽度
+                imgaeWidth: 1080,
+                // 图片高度
+                imgaeHeight: 300,
+                // 图片X轴
+                imgaeX: 0,
+                // 图片Y轴
+                imgaeY: 0,
+                // 描边宽度
+                borderWidth: 0,
+                // 描边颜色
+                borderColor: '',
+                // 圆角
+                borderRadius: '',
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+
+<style>
+    body {
+        background: #666;
+    }
+
+    .img-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .img-right-control .el-collapse-item__wrap {
+        background: none;
+        /* border: none; */
+        margin-top: 10px;
+    }
+
+    .img-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .img-right-control .el-collapse {
+        /* border: none; */
+    }
+
+    .img-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .img-public-box>div {
+        flex: 1;
+        margin-right: 10px;
+    }
+
+    .img-public-title {
+        margin-right: 10px;
+        color: #fff;
+        margin-left: 10px;
+    }
+
+    /* 填充下拉 */
+
+    .fill-patterns .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .fill-patterns .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 音量 */
+
+    .volume-slider {
+        width: 100%;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    /* .volume-input {
+        width: 80%;
+    } */
+
+    .volume-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .volume-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .volume-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+    /* 视频 */
+
+    .video-public-box {
+        padding: 5px;
+        background: #777;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        position: relative;
+        display: flex;
+    }
+
+    .video-box {
+        margin-right: 10px;
+
+    }
+
+    .video-title {
+        color: #fff;
+    }
+
+    .video-size {
+        font-size: 12px;
+        color: rgb(167, 167, 167);
+    }
+
+    .video-icon-box {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        bottom: 5px;
+    }
+
+    .video-icon-box>img {
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    .basics-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .basics-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .basics-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+    .basics-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    .basics-icon>img {
+        margin-right: 5px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+    }
+
+    /* 大小及位置 */
+
+    .basics-public-box {
+        display: flex;
+        align-items: center;
+    }
+
+    .basic-public-title-css {
+        margin-left: 10px;
+    }
+
+    .basics-public-box>span {
+        margin-right: 10px;
+        width: 14px;
+    }
+
+    .basics-title {
+        color: #999;
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    .basics-width-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .basics-width-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .basics-width-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+
+    .basics-height-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .basics-height-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .basics-height-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+
+    .basics-X-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .basics-X-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .basics-X-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+        width: 70%;
+    }
+
+
+    .basics-Y-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .basics-Y-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .basics-Y-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+        width: 70%;
+    }
+
+    .icon-public-css {
+        margin: 0 10px;
+    }
+
+    /* 描边 */
+
+    .border-width-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .border-width-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .border-width-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+    .border-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .border-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 100px;
+        border: 1px solid #999;
+    }
+
+    .border-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .border-color-piker .el-icon-arrow-down:before {
+        content: none;
+    }
+
+    /* 圆角 */
+
+    .border-radius-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .border-radius-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .border-radius-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+</style>

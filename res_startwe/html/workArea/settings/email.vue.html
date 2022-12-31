@@ -1,0 +1,198 @@
+<template>
+    <div class="email-setting">
+        <div class="email-content">
+            <el-form ref="emailSettingForm" :model="emailSettingForm" :rules="rules" label-width="140px">
+                <el-form-item label="是否打开">
+                    <el-switch 
+                    v-model="emailSettingForm.open"
+                    ></el-switch>
+                </el-form-item>
+                <el-form-item label="发信邮箱">
+                    <el-input v-model="emailSettingForm.sendEmail"></el-input>
+                    <div class="warning">为防止邮件被屏蔽，请在邮件服务器里面将发信箱设为白名单</div>
+                </el-form-item>
+                <el-form-item label="发信人" prop="userName">
+                    <el-input v-model="emailSettingForm.userName"></el-input>
+                </el-form-item>
+                <el-form-item label="smtp服务器">
+                    <el-input v-model="emailSettingForm.host"></el-input>
+                </el-form-item>
+                <el-form-item label="smtp端口号">
+                    <el-input v-model="emailSettingForm.port"></el-input>
+                </el-form-item>
+                <el-form-item label="是否加密">
+                    <el-radio-group v-model="emailSettingForm.isSslTls">
+                        <el-radio label="0">不加密</el-radio>
+                        <el-radio label="1">SSL</el-radio>
+                        <el-radio label="2">TLS</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="异步发送">
+                    <el-switch 
+                    v-model="emailSettingForm.sync" 
+                    active-value="1"
+                    inactive-value="0"></el-switch>
+                </el-form-item>
+                <el-form-item label="是否需要验证">
+                    <el-switch 
+                    v-model="emailSettingForm.verification"
+                    active-value="1"
+                    inactive-value="0"></el-switch>
+                </el-form-item>
+                <el-form-item label="smtp账号">
+                    <el-input v-model="emailSettingForm.smtpAccount"></el-input>
+                </el-form-item>
+                <el-form-item label="smtp密码">
+                    <el-input type="password" v-model="emailSettingForm.password"></el-input>
+                </el-form-item>
+                <el-form-item label="调试级别">
+                    <el-radio-group v-model="emailSettingForm.debugging">
+                        <el-radio label="0">关闭</el-radio>
+                        <el-radio label="1">一般</el-radio>
+                        <el-radio label="2">较高</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="编码类型">
+                    <el-radio-group v-model="emailSettingForm.unicodeType">
+                        <el-radio label="1">UTF-8</el-radio>
+                        <el-radio label="2">GBK</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('emailSettingForm')">保存</el-button>
+                    <el-button @click="resetForm('emailSettingForm')">重置</el-button>
+                  </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        data:function(){
+            return {
+                saveid:"",
+                resetFields:{
+                    open:true,
+                    sendEmail:"",
+                    userName:"",
+                    host:"",
+                    port:"",
+                    isSslTls:"1",
+                    sync:"0",
+                    verification:"1",
+                    smtpAccount:"",
+                    password:"",
+                    debugging:"0",
+                    unicodeType:"1"
+                },
+                emailSettingForm:{
+                    open:false,
+                    sendEmail:"",
+                    userName:"",
+                    host:"",
+                    port:"",
+                    isSslTls:"1",
+                    sync:"0",
+                    verification:"1",
+                    smtpAccount:"",
+                    password:"",
+                    debugging:"0",
+                    unicodeType:"1"
+                },
+                rules:{
+                    userName:[{ required: true, message: '请输入发信人', trigger: 'blur' }]
+                }
+            }
+        },
+        mounted:function(){
+            console.log("邮件配置...")
+            window.emailConfigInit = this.initData;
+        },
+        methods:{
+            initData:function(data, id = ""){
+                console.log('initData', data);
+                this.emailSettingForm = {...data};
+                this.saveid = id;
+            },
+            submitForm:function(formName){
+                try{
+                    let {id, circleId} = com.startwe.models.portal.web.PortalController.data.project;
+                    let  emailConfig = {
+                        id:this.saveid,
+                        circleId,
+                        projectId:id,
+                        type:"2",
+                        name:"邮件配置",
+                        contentJson: JSON.stringify(this.emailSettingForm),
+                        description:"邮件配置"
+                    }
+                    let that = this;
+                    this.$refs['emailSettingForm'].validate((valid) => {
+                        if (valid) {
+                            oui.postData(com.startwe.models.project.web.ProjectController4Design.data.saveConfigUrl, emailConfig, function( res ){
+                                that.$message({
+                                    message: res.msg,
+                                    type: 'success'
+                                });
+                            }, function(err){
+                                that.$message({
+                                    message: err,
+                                    type: 'error'
+                                });
+                            })
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                } catch(err) {
+                    console.log("error------->", err)
+                }
+                
+            },
+            resetForm:function(formName){
+                this.emailSettingForm = { ...this.resetFields }
+            }
+        }
+    }
+</script>
+<style>
+    .warning{
+        font-size: 12px;
+        font-weight: 400;
+        color:rgba(0, 0, 0, 0.45);
+    }
+
+    .header{
+        font-size: 20px;
+        font-weight: 500;
+        height:60px;
+        background-color: #fff;
+        padding:16px 32px;
+    }
+
+    .email-setting{
+        font-family: PingFangSC-Medium, PingFang SC;
+    }
+
+    .el-main{
+        padding:0;
+    }
+
+    .email-content{
+        background-color: #fff;
+        padding:24px;
+    }
+
+    .el-form{
+        width:500px;
+        margin: 0 auto;
+    }
+
+    .el-form-item__label{
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+    }
+</style>

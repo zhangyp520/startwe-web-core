@@ -1,0 +1,856 @@
+@charset "UTF-8";
+* {
+    padding: 0;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+}
+
+input, button, select {
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+}
+
+i {
+    font-style: normal;
+}
+
+.selectPerson-cont-2 {
+    width: 808px;
+    height: 547px;
+    background: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 0%;
+    bottom: 0;
+    right: 0;
+}
+
+.selectPerson-cont-2 .selectPerson-head {
+    background: #e5e5e5;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 20px;
+    font-size: 14px;
+    position: relative;
+    text-align: left;
+    border-bottom: 1px solid #cecece;
+    /*    border-top-left-radius: 5px;
+        border-top-right-radius: 5px;*/
+}
+
+.selectPerson-cont-2 .selectPerson-footer {
+    width: 275px;
+    padding: 6px 0;
+    font-size: 14px;
+    position: absolute;
+    text-align: center;
+    bottom: 21px;
+    right: 51px;
+}
+
+.selectPerson-cont-2 .selectPerson-tabs {
+    width: 84px;
+    background: #e6e6e6;
+    color: #ffffff;
+    font-size: 12px;
+    text-align: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    /*border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;*/
+
+}
+
+.selectPerson-cont-2 .selectPerson-tabs ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.selectPerson-cont-2 .selectPerson-tabs ul li {
+    width: 100%;
+    line-height: 1.6;
+    color: #515151;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    padding: 16px 5px;
+    font-size: 14px;
+    position: relative;
+}
+
+.selectPerson-cont-2 .selectPerson-tabs ul li:hover {
+    color: #515151;
+    background: #d7d7d7;
+}
+
+.selectPerson-cont-2 .selectPerson-tabs ul li.liActive {
+    color: #ffffff;
+    background: #2C82FC;
+    cursor: pointer;
+}
+
+.selectriangle-left {
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #f9f9f9;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -8px;
+    display: none;
+}
+
+.selectPerson-cont-2 .selectPerson-tabs ul li.liActive i.selectriangle-left {
+    display: block;
+}
+
+.selectPerson-cont-2 .selectPerson-mid {
+    background: #f5f6f8;
+    position: absolute;
+    top: 0;
+    left: 84px;
+    bottom: 0;
+    right: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.selectPerson-cont-2 .selectPerson-close {
+    background: url(../images/list-newform-close.png) no-repeat;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 24px;
+    right: 22px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search {
+    width: 327px;
+    height: 30px;
+    font-size: 0;
+    text-align: left;
+    margin-top: 15px;
+    float: left;
+    margin-left: 24px;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search input {
+    width: 327px;
+    min-height: 30px;
+    line-height: 24px;
+    padding: 0 15px;
+    padding-right: 33px;
+    border: 1px solid #dedede;
+    outline: none;
+    font-size: 12px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    float: left;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search input[type="text"]:focus {
+    border: 1px solid #2C82FC;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search button.selectPerson-search-btn,
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search button.selectPerson-delete-btn{
+    min-height: 30px;
+    width: 30px;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    margin-left: -33px;
+}
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search button.selectPerson-search-btn {
+    background: url(../images/selectPerson-search-icon.jpg) center no-repeat;
+}
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-search button.selectPerson-delete-btn {
+    background: url(../images/selectPerson-delete-icon.jpg) center no-repeat;
+}
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l {
+    width: 327px;
+    height: 100%;
+    position: absolute;
+    left: 24px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-arrow {
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    display: table;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .arrow-middle {
+    left: 325px;
+    display: none;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .arrow-right {
+    right: 0;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-r {
+    background: #ffffff;
+    width: 327px;
+    position: absolute;
+    right: 24px;
+    border: 1px solid #cecece;
+    padding: 5px;
+    padding-bottom: 50px;
+    top: 0;
+    bottom: 0;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-top, .selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-footer {
+    background: #ffffff;
+    width: 327px;
+    height: 230px;
+    float: left;
+    padding: 5px;
+    border: 1px solid #cecece;
+    overflow: hidden;
+    position: absolute;
+}
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-top{
+    top: 0;
+}
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-footer{
+    bottom: 0;
+    padding-top: 13px;
+}
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-middle {
+    width: 100%;
+    height: 10%;
+    float: left;
+    vertical-align: middle;
+    display: table-cell;
+    line-height: 47px;
+}
+
+.selectPerson-cont-2 .person-item {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/*.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-top {
+    padding-bottom: 13px;
+}*/
+
+.selectPerson-cont-2 .selectPerson-mid .selectPerson-mid-item .selectPerson-mid-item-l .l-middle label, .selectPerson-cont-2 .selectPerson-footer label {
+    margin-right: 20px;
+    display: inline-block;
+}
+.selectPerson-cont-2 .person-item select {
+    background: #fdfdfd;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    border: 0;
+    outline: none;
+    font-size: 12px;
+    vertical-align: top;
+    color: #515151;
+}
+@media screen and (min-width:0\0) and (min-resolution: +72dpi) {
+    /*IE9+ CSS*/
+    .selectPerson-cont-2 .person-item select {
+        height: 95%;
+    }
+}
+
+.selectPerson-cont-2 .person-item select option {
+    padding: 4px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.selectPerson-cont-2 .person-item dl {
+    list-style: none;
+    overflow-y: auto;
+}
+
+.selectPerson-cont-2 .selectPerson-mid-item-r .person-item dl {
+    height: 100%;
+}
+
+.selectPerson-cont-2 .l-top .person-item dl {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.selectPerson-cont-2 .l-footer .person-item dl {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.selectPerson-cont-2 .person-item dl dd {
+    width: 100%;
+    padding: 0 5px;
+    height: 24px;
+    font-size: 0;
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+/*.selectPerson-cont-2 .person-item dl dd.personLi {
+    color: #ffffff !important;
+    background: #2C82FC !important;
+}*/
+
+.selectPerson-cont-2 .person-item dl dd span {
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+    overflow: hidden;
+
+}
+
+.selectPerson-cont-2 .person-item dl dd span {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 0;
+    -ms-flex: 1 1 0;
+    flex: 1 1 0;
+    /*display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.selectPerson-cont-2 .person-item dl dd:hover {
+    background-color: rgba(89,144,208,.1);
+    cursor: pointer;
+}
+
+.selectPerson-cont-2 .person-item dl dd i {
+    background: url(../images/selectdelete-icon.png) center no-repeat;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 18px;
+    text-align: center;
+    position: absolute;
+    font-style: normal;
+    top: 0;
+    right: 0;
+    display: none;
+}
+.selectPerson-cont-2 .person-item dl dd:hover i{
+    display: block;
+}
+.selectPerson-cont-2 .person-item dl dd.selected-fillback{
+    color: #A0B3BE;
+}
+/*.selectPerson-cont-2 .person-item dl dd.personLi:hover i {
+    display: block;
+}*/
+
+.selectPerson-cont-2 .selectPerson-footer .selectPerson-ok, .selectPerson-cont-2 .selectPerson-footer .selectPerson-cancel {
+    padding: 0 25px;
+    margin: 0 10px;
+}
+
+.selectPerson-cont-2 .select-option {
+    width: 220px;
+    height: 28px;
+    position: absolute;
+    top: 17px;
+    right: 89px;
+    border: 1px solid #2C82FC;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-size: 0;
+}
+
+.selectDepartment {
+    background: #eef4fa;
+    width: 290px;
+    height: 40px;
+    float: left;
+    font-size: 0;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+
+.selectDepartment div {
+    width: 50%;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+}
+
+.selectDepartment div.departmentActive {
+    background: #dfeaf6;
+}
+
+.director {
+    background: url(../images/director.png) center left no-repeat;
+    padding-left: 20px;
+    font-size: 14px;
+    height: 20px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.chargeOf {
+    background: url(../images/chargeOf.png) center left no-repeat;
+    padding-left: 20px;
+    font-size: 14px;
+    height: 20px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.selectPerson-arrow-down, .selectPerson-arrow-up {
+    background: url(../images/selectPerson-arrow.png) no-repeat;
+    width: 28px;
+    height: 10px;
+    position: absolute;
+    left: 50%;
+    margin-left: -14px;
+    z-index: 3;
+    cursor: pointer;
+}
+
+.selectPerson-arrow-down {
+    background-position: 0 0;
+    top: 0;
+}
+
+.selectPerson-arrow-up {
+    background-position: 0 -10px;
+    bottom: 0;
+}
+
+/*ͨ��*/
+
+.selectPerson-arrow {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.selectPerson-arrow span {
+    background: url(../images/selectPerson-move.png) no-repeat;
+    background-position: 0 0;
+    width: 32px;
+    height: 32px;
+    display: block;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.selectPerson-arrow span:hover {
+    background-position: 0 -32px;
+}
+
+.selectPerson-ok, .selectPerson-cancel {
+    width: 100px;
+    height: 30px;
+    margin: 0 20px;
+    line-height: 30px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    border: 0;
+    outline: none;
+    color: #ffffff;
+}
+
+.selectPerson-ok {
+    background: #2C82FC;
+}
+
+.selectPerson-ok:hover {
+    background: #63a4ed;
+}
+
+.selectPerson-cancel {
+    background: #e6e6e6;
+    color: #515151;
+}
+.selectPerson-cancel:hover{
+    background: #e1e1e1;
+}
+
+.oui-dialog-box {
+    font-size: 0;
+}
+
+.selectPerson-radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    width: 109px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+}
+
+.selectPerson-selected-icon {
+    cursor: pointer;
+}
+
+.selectPerson-radio-button-wrapper input[type=radio] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"] + .selectPerson-selected-icon {
+    display: inline-block;
+    color: #515151;
+    font-size: 14px;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"] + .selectPerson-selected-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"]:checked + .selectPerson-selected-icon {
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+    color: #ffffff;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"] + .selectPerson-selected-icon {
+    width: 109px;
+    height: 26px;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"] + .selectPerson-selected-icon:after {
+    background: #FFF;
+    width: 109px;
+    height: 26px;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"]:checked + .selectPerson-selected-icon:after {
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"] ~ i.select-question {
+    background: url(../images/question-icon.png) center no-repeat;
+    background-position: 0 -16px;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.selectPerson-radio-button-wrapper input[type="radio"]:checked ~ i.select-question {
+    background: url(../images/question-icon.png) center no-repeat;
+    background-position: 0 0;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.selectPerson-cont-2 .select-option label i.select-question div.triangle-up {
+    width: 8px;
+    height: 8px;
+    background-color: #b7b7b7;
+    border-top: solid 1px #b7b7b7;
+    border-right: solid 1px #b7b7b7;
+    position: absolute;
+    top: 21px;
+    left: 50%;
+    z-index: 3;
+    margin-left: -4px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    display: none;
+}
+
+.selectPerson-cont-2 .select-option label i.select-question div.select-info {
+    background: #b7b7b7;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    padding: 5px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #515151;
+    position: absolute;
+    text-align: left;
+    left: 50%;
+    margin-left: -65px;
+    top: 25px;
+    line-height: 1;
+    box-shadow:1px 1px 3px #ddd;
+    display: none;
+
+}
+
+.selectPerson-cont-2 .select-option label i.select-question:hover div {
+    display: block;
+}
+
+.sp-ui-state-highlight {
+    border: 1px dashed #2C82FC;
+}
+.no_sp_data{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 14px;
+    display: table;
+    color: #777777;
+}
+.no_sp_data i{
+    vertical-align:middle;
+    display:table-cell;
+    font-style: normal;
+}
+/*.ztree li span.button.pIcon01_ico_docu {
+    background: url(http://www.treejs.cn/v3/css/zTreeStyle/img/diy/1_open.png) no-repeat scroll center center transparent;
+    vertical-align: middle;
+    float: left;
+}*/
+.ztree li span.button.pIcon01_ico_open,
+.ztree li span.button.pIcon01_ico_close {
+    background-position:-78px -24px ;
+    vertical-align: middle;
+    float: left;
+}
+.ztree li span.button.icon01_ico_docu {
+    background-position: -54px -24px;
+    vertical-align: middle;
+    float: left;
+}
+.ztree li ul{
+    padding-left: 22px;
+}
+.ztree li a,.ztree li a:hover{
+    text-decoration: none;
+    height: 24px;
+    line-height: 24px;
+    padding-left: 16px;
+    display: block;
+    padding-top: 0;
+}
+.ztree{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 0;
+}
+.ztree *{
+    font-family: "Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB",STHeiti,"Microsoft YaHei",sans-serif;
+    color: #515151;
+}
+.ztree li a.curSelectedNode{
+    opacity: 1;
+    background-color: rgba(89,144,208,.1);
+    border: 0;
+    height: 24px;
+    line-height: 24px;
+}
+.ztree li span.button{
+    width: 14px;
+    height: 24px;
+}
+.ztree li span{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0;
+
+}
+.ztree li span.node_name{
+    height: 24px;
+    line-height: 24px;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-left: 2px;
+}
+.ztree li{
+    position: relative;
+}
+.ztree li span.button.switch{
+    position: absolute;
+    width: 14px;
+    height: 24px;
+    top: 0;
+    left: 2px;
+}
+.ztree li span.button.noline_close{
+    background-position: -6px -24px;
+}
+.ztree li span.button.noline_open{
+    background-position: -30px -24px;
+}
+.ztree li span.button.chk{
+    width: 14px;
+    height: 14px;
+    float: left;
+    margin-left: 16px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.ztree li span.button.chk.checkbox_false_full{
+    background-position: -102px -6px;
+}
+.ztree li span.button.chk.checkbox_false_full_focus {
+    background-position: -150px -6px;
+}
+.ztree li span.button.chk.checkbox_true_full,
+.ztree li span.button.chk.checkbox_true_full_focus{
+    background-position: -102px -29px;
+}
+.ztree li span.button.chk.checkbox_true_part,
+.ztree li span.button.chk.checkbox_true_part_focus{
+    background-position:-126px -29px;
+}
+.ztree li span.button.chk.checkbox_true_disable,
+.zree li span.button.chk.checkbox_false_disable{
+    background-position:-126px -6px
+}
+.ztree li span.button.chk.checkbox_false_part,
+.ztree li span.button.chk.checkbox_false_part_focus{
+    background-position: -150px -29px;
+}
+.selected-item-icon{
+    line-height: 0;
+    margin: 0;
+    width: 14px;
+    height: 24px;
+    vertical-align: middle;
+    border: 0 none;
+    cursor: pointer;
+    outline: none;
+    margin-right: 4px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-image: url(../images/zTreeStandard.png);
+    display: none;
+}
+
+.person-icon,
+.contact-icon{
+    background-position: -54px -24px;
+    display: inline-block;
+}
+.all-icon,
+.department-icon,
+.company-icon,
+.team-icon{
+    background-position:-78px -24px;
+    display: inline-block;
+}
+.selectPerson-info{
+    background: #DEE9F5;
+    display: block;
+    margin: -5px -5px 0 -5px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    color: #515151;
+    padding-left: 10px;
+}
+.selectPerson-info i.selectPerson-info-icon{
+    background: #2C82FC;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #ffffff;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 7px;
+    font-style: normal;
+}
+
+
+
+
+

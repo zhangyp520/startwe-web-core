@@ -1,0 +1,370 @@
+<!-- 页面设计>>>>>>>组织架构图设计弹窗>>>>>>>组织架构维护 -->
+<template>
+    <div class="container">
+        <!-- header -->
+        <div class="header">
+            <div>由您创建的《项目架构图》自动生成下图</div>
+        </div>
+        <!-- 画布 -->
+        <div>
+
+        </div>
+        <!-- 菜单栏 -->
+        <el-scrollbar class="menuBox">
+            <!-- 搜索框 -->
+            <div class="searchBox">
+                <div class="addInnerbox">
+                    <img src="/res_startwe/html/DesignPages/assets/add.png" alt="">
+                </div>
+                <div>
+                    <el-input type="text" v-model="input"></el-input>
+                </div>
+                <div class="searchIcon">
+                    <img src="/res_startwe/html/DesignPages/assets/sousuo.png" alt="">
+                </div>
+            </div>
+            <!-- 菜单栏 -->
+            <ul class="aside_menu">
+                <li v-for="(item,index) in menuList">
+                    <div @click="changeMenu(item,index)">
+                        <div class="children_menu">
+                            <img :src="checkClick==index?item.imgChange:item.imgUrl" alt="">
+                            <img :src="checkClick==index?item.imgIconChange:item.imgIcon" alt="">
+                            <div :class="checkClick==index?'menu_active':''">{{item.text}}</div>
+                        </div>
+                        <div>
+                            <img src="/res_startwe/html/DesignPages/assets/yingyong_grey.png" alt="">
+                        </div>
+                    </div>
+                    <ul class="inner_menu" v-if="item.isShow">
+                        <li v-for="sub in item.sub">
+                            <img :src="sub.imgIcon" alt="">
+                            <div>
+                                {{sub.text}}
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </el-scrollbar>
+        <!-- 底部 -->
+        <div class="footer">
+            <div class="subBtn">
+                <el-button class="cancelBtn">取消</el-button>
+                <el-button class="determineBtn">确定</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                input: '',
+                menuList: [{
+                    imgChange: '/res_startwe/html/DesignPages/assets/tri_red.png',
+                    imgUrl: '/res_startwe/assets/tri.png',
+                    imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    imgIconChange: '/res_startwe/html/DesignPages/assets/yemian1.png',
+                    text: '111111111111111111111111',
+                    isShow: true,
+                    sub: [{
+                        text: '二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }]
+                },
+                
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/tri_red.png',
+                    imgUrl: '/res_startwe/assets/tri.png',
+                    imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    imgIconChange: '/res_startwe/html/DesignPages/assets/yemian1.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }]
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/tri_red.png',
+                    imgUrl: '/res_startwe/assets/tri.png',
+                    imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    imgIconChange: '/res_startwe/html/DesignPages/assets/yemian1.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }]
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/tri_red.png',
+                    imgUrl: '/res_startwe/assets/tri.png',
+                    imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    imgIconChange: '/res_startwe/html/DesignPages/assets/yemian1.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }, {
+                        text: '二级菜单',
+                        imgIcon: '/res_startwe/html/DesignPages/assets/yemian2.png',
+                    }]
+                }],
+                checkClick: 0,
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            changeMenu: function (item, index) {
+                var that = this;
+                that.checkClick = index;
+                item.isShow = !item.isShow;
+            }
+
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .container {
+        position: relative;
+    }
+
+    /* element样式修改 */
+
+    .searchBox .el-input__inner {
+        border: none;
+    }
+
+    /* header */
+
+    .header {
+        height: 50px;
+        border-bottom: 1px solid rgba(151, 151, 151, 0.50);
+    }
+
+    .header>div {
+        line-height: 50px;
+        font-size: 16px;
+        color: #262626;
+        font-weight: bold;
+        margin-left: 30px;
+    }
+
+    /* 内容 */
+
+    .menuBox {
+        width: 208px;
+        height: 500px;
+        overflow: hidden;
+        border: 1px solid #CACACA;
+        position: fixed;
+        top: 110px;
+        left: 0;
+        background-color: #fff;
+    }
+
+    .searchBox {
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid rgba(151, 151, 151, 0.50);
+    }
+
+    .searchBox img {
+        cursor: pointer;
+    }
+
+    .addInnerbox {
+        margin-left: 10px;
+    }
+
+    .searchIcon {
+        margin-right: 10px;
+    }
+
+    /* 菜单栏 */
+
+    .aside_menu {
+        margin: auto;
+        color: #999;
+        font-size: 16px;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 10px;
+
+    }
+
+    .aside_menu>li {
+        font-weight: bold;
+        margin: 0 10px;
+
+    }
+
+    .aside_menu>li>div {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .children_menu {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .children_menu>img {
+        margin-right: 5px;
+    }
+
+    .children_menu>div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+
+    .inner_menu>li {
+        display: flex;
+        align-items: center;
+        margin: 0 10px 0 20px;
+    }
+
+    .inner_menu>li>img {
+        margin: 0 5px;
+    }
+
+    .inner_menu>li>div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+
+    .menu_active {
+        color: #FF7D82;
+        line-height: 22px;
+        font-weight: 400;
+    }
+
+    /* 底部 */
+
+    .footer {
+        width: 100%;
+        height: 100px;
+        border-top: 1px solid rgba(151, 151, 151, 0.50);
+        background-color: #fff;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineBtn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineBtn:focus,
+    .determineBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

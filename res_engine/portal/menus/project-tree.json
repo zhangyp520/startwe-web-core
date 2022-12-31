@@ -1,0 +1,17 @@
+{
+  "menus":[
+    {
+      "id": "project-design",
+      "menuPath": "circle-list/circle/project-list/project-design",
+      "parentId": "project-list",
+      "icon": "",
+      "defaultNotShow": true,
+      "url": "res_apps/project/project-design.tpl.html",
+      "scripts": [
+        "/res_apps/project/js/project-design-require.js"
+      ],
+      "openType": "inner",
+      "display": "项目设计"
+    }
+  ]
+}

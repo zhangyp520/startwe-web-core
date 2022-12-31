@@ -1,0 +1,59 @@
+<!-- 文本 -->
+<template >
+    <div class="oui-class-text curr">
+        {{textContent}}    
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                rowSpacing: "",
+                textPadding: "",
+                rollingSpeed: "",
+                textEffect: "",
+                textContent:""
+            }
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.rollingSpeed) {
+                this.rollingSpeed = this.control.otherAttrs.rollingSpeed
+            }
+            if (this.control.otherAttrs.textEffect) {
+                this.textEffect = this.control.otherAttrs.textEffect
+            }
+            if (this.control.otherAttrs.rowSpacing) {
+                this.rowSpacing = this.control.otherAttrs.rowSpacing + 'px'
+            }
+            if (this.control.otherAttrs.textPadding) {
+                this.textPadding = this.control.otherAttrs.textPadding + 'px'
+            }
+            if (this.control.otherAttrs.textContent) {
+                this.textContent = this.control.otherAttrs.textContent
+            }
+        },
+        methods:{
+
+        }
+    }
+</script>
+
+<style>
+    .oui-class-text{
+        font-size: 14px;
+    }
+    .oui-class-text.curr{
+        line-height: {{rowSpacing}};
+        letter-spacing:{{textPadding}};
+        {{style}}
+    }
+
+</style>

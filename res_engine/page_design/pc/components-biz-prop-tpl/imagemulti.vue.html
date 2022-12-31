@@ -1,0 +1,121 @@
+<!--多选组 TODO -->
+<template >
+    <el-checkbox-group v-model="checkedList"
+                       :tempStyle="style"
+                       :id="id"
+                       :name="name"
+                       :bindProp="bindProp"
+                       :class="cls"
+                       :placeholder="placeholder"
+                       @change="_controlOnUpdate"
+            >
+        <el-checkbox  v-for="item in data" :key="item.value" :label="item.value" :disabled="item.disabled">{{item.display}}</el-checkbox>
+    </el-checkbox-group>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:[],
+                checkedList:[],
+                bindProp:'',
+                value: '',
+                display:'',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        mounted:function(){
+              this.checkedList = this.getCheckedListByValue();
+        },
+        methods:{
+            /***
+             * 根据选中列表获取 逗号隔开的字符串值
+             * @param checkedList
+             * @returns {string}
+             */
+            getValueByCheckedList:function(checkedList){
+                var value = '';
+                if(checkedList&&checkedList.length){
+                    //第一个循环选择的列表,处理字符串值
+                    var arr = [];
+                    for(var k in checkedList){
+                        arr.push(checkedList[k].value+'');
+                    }
+                    var data = this.data||[];
+                    var result = [];
+                    //第二个循环，保证选择值的顺序，处理值顺序
+                    for(var k in data){
+                        if(arr.indexOf(data[k].value+'')>-1){
+                            result.push(data[k].value);
+                        }
+                    }
+                    value = result.join(',');//个号隔开值
+                }
+                return value;
+
+            },
+            /***
+             * 根据选中列表获取 逗号隔开的显示值
+             * @param checkedList
+             * @returns {string}
+             */
+            getDisplayByCheckedList:function(checkedList){
+                var display = '';
+                if(checkedList&&checkedList.length){
+                    //第一个循环选择的列表,处理字符串值
+                    var arr = [];
+                    for(var k in checkedList){
+                        arr.push(checkedList[k].value+'');
+                    }
+                    var data = this.data||[];
+                    var result = [];
+                    //第二个循环，保证选择值的顺序，处理显示值顺序
+                    for(var k in data){
+                        if(arr.indexOf(data[k].value+'')>-1){
+                            result.push(data[k].display);
+                        }
+                    }
+                    display = result.join(',');//个号隔开显示值
+                }
+                return display;
+            },
+            /***
+             * 根据value获取选中列表
+             * @returns {Array}
+             */
+            getCheckedListByValue:function(){
+                var result = [];
+                var value = this.value||'';
+                if(!value){
+                    return result;
+                }
+                var arr = value.split(',');
+                var data = this.data||[];
+                for(var k in data){
+                    if(arr.indexOf(data[k].value+'')>-1){
+                        result.push(data[k]);
+                    }
+                }
+                return result;
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                var value = this.getValueByCheckedList(v);
+                var oldValue = this.getValueByCheckedList(ov);
+                this.value = value;
+                this.display = this.getDisplayByCheckedList(this.checkedList);
+                this.onUpdate&&this.onUpdate(key,value,oldValue); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

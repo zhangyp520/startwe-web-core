@@ -1,0 +1,8 @@
+<oui-view id="editPropView" data="oui.getPageParam('tempNode')">
+    {{MyIdea.findTreeNodeEnum(nodeType).desc}}文件名
+    <oui-form type="textfield" id="viewFileName" bindProp="fileName" value="{{fileName}}" onUpdate="changeFullPathByFileName"></oui-form>
+    {{MyIdea.findTreeNodeEnum(nodeType).desc}}显示名称<oui-form type="textfield" id="viewName" bindProp="name" value="{{name}}" onUpdate="changeDisplayName"></oui-form>
+    {{MyIdea.findTreeNodeEnum(nodeType).desc}}描述 <oui-form type="textarea" id="viewDesc" bindProp="desc" value="{{desc}}"></oui-form>
+
+</oui-view>
+

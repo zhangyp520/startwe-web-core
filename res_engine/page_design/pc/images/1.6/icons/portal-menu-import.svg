@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>import</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="门户列表" transform="translate(-1175.000000, -466.000000)" stroke="#FFFFFF" stroke-width="0.777777778">
+            <g id="import" transform="translate(1176.000000, 467.000000)">
+                <path d="M14,7.68421053 C14,10.0526316 12.4444444,14 7,14 C1.55555556,14 0,10.0526316 0,7.68421053" id="路径"></path>
+                <line x1="7.00303333" y1="0" x2="7.00303333" y2="11.0129763" id="路径" transform="translate(7.003033, 5.506488) scale(1, -1) translate(-7.003033, -5.506488) "></line>
+                <polyline id="路径" transform="translate(7.000000, 8.684211) scale(1, -1) translate(-7.000000, -8.684211) " points="2.33333333 11.0526316 7 6.31578947 11.6666667 11.0526316"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

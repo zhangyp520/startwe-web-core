@@ -1,0 +1,1778 @@
+@charset "utf-8";
+*{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+input,select,button,textarea{
+    outline: none;
+}
+body {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-size: .14rem;
+    line-height: 1.5;
+}
+img{
+    border: 0;
+}
+.clear{
+    clear: both;
+}
+
+
+.flowhandle-content{
+    height: 100%;
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 400;
+    text-align: center;
+}
+
+.flowhandle-top{
+    background: #ffffff;
+    width: 100%;
+    height: .6rem;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 300;
+    font-size: 0;
+}
+.flowhandle-top button{
+    background: none;
+    width: 100px;
+    height: 34px;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 auto;
+    border: 1px solid #5990cf;
+    color: #5990cf;
+    margin-top: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.flowhandle-top button.form-btn{
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+.flowhandle-top button.workflow-btn{
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+.flowhandle-top button.active-btn{
+    background: #5990cf;
+    color: #ffffff;
+}
+
+/*底部处理按钮*/
+.workflow-buttons-content{
+    position: fixed;
+    background: #f7f7f7;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: .11rem 0 .12rem 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+    /* Safari、Opera 以及 Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+}
+.workflow-buttons-content:after{
+    content: '';
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-top: 1px solid #b7b7b7;
+}
+.workflow-buttons-content span.span-btn{
+    width: 1%;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: center;
+    padding: 0 .05rem;
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+
+    /* Safari、Opera 以及 Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+}
+.workflow-buttons-content span.span-btn button{
+    background: none;
+    width: 100%;
+    max-width: 1.2rem;
+    height: .34rem;
+    color: #ffffff;
+    margin: 0 auto;
+    font-size: .14rem;
+    text-align: center;
+    display: block;
+    border: 0;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+}
+.workflow-buttons-content span.span-btn button.btntype-1{
+    background: #5990cf;
+}
+.workflow-buttons-content span.span-btn button.btntype-2{
+    background: #e1e1e1;
+    color: #515151;
+}
+.workflow-buttons-content span.span-btn button.btntype-3,
+.workflow-buttons-content span.span-btn button.show-flow-button{
+    border: 1px solid #5990cf;
+    color: #5990cf;
+}
+
+/*�Ҳദ��*/
+.flowhandle-right{
+    background: #ffffff;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    top: 0;/*为了遮蔽移动端的表单和流程切换button*/
+    right: 0;
+    z-index: 400;
+    overflow-y: auto;
+
+}
+.flowhandle-right-item{
+    position: absolute;
+    padding: .1rem;
+    padding-top: .4rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+.handleRight-top{
+    width: 55px;
+    height: 34px;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: .1rem;
+}
+.flowMore-area{
+    width: 100%;
+}
+.flowMore-item{
+    background: #ffffff;
+    width: auto;
+    min-width: .86rem;
+    position: absolute;
+    right: -.15rem;
+    top: .35rem;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    padding: 0px .03rem .03rem .03rem;
+    z-index: 10;
+    box-shadow: 0 .03rem .08rem #eeeeee;
+    font-weight: 500;
+}
+.flowMore-item ul{
+    background: #ffffff;
+    width: 100%;
+    padding-top: .03rem;
+    position: relative;
+    z-index: 10;
+
+}
+.flowMore-item ul li{
+    width: 100%;
+    padding: .05rem 0;
+    font-size: .14rem;
+    color: #515151;
+}
+.flowMore-item ul li:hover{
+    background: #5990cf;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.flowhandle-arrowUp{
+    background: #ffffff;
+    width: .14rem;
+    height: .14rem;
+    border: 1px solid #e6e6e6;
+    position: absolute;
+    top: -.07rem;
+    left: 50%;
+    margin-left: -.07rem;
+    -moz-transform:rotate(45deg);
+    -webkit-transform:rotate(45deg);
+    -o-transform:rotate(45deg);
+    transform:rotate(45deg);
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+    z-index: 1;
+}
+
+.flowClose,
+.handleRight-cont-kind span,
+.reply-close span.reply-text i.icon-arrow,
+.reply-open span.reply-text i.icon-arrow,
+.handleRight-file ul.file-group li i.file-icon,
+.handleRight-file ul.file-group li i.file-down,
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-word,
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-Dzan i.zan-icon,
+.search-user .search-icon,
+.search-user .search-delete{
+    background: url("../img/flowhandle-icon.png") no-repeat;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-word{
+    background: url("../img/restore.png") no-repeat;
+}
+.flowClose-right{
+    background: #ffffff;
+    padding: .08rem .12rem;
+    position: absolute;
+    left: -.38rem;
+    top: 0;
+    border-top-left-radius: .04rem;
+    border-bottom-left-radius: .04rem;
+}
+.flowClose{
+    width: .14rem;
+    height: .14rem;
+    display: block;
+    cursor: pointer;
+}
+.flowClose{
+    background-position: 0 0;
+}
+.flowClose:hover{
+    background-position: 0 -.2rem;
+}
+.flowMore{
+    background: url("../../img/flowMore-more-icon.png") center no-repeat;
+    background-size: auto .04rem;
+    width: .55rem;
+    height: .34rem;
+    float: right;
+    display: inline-block;
+    border: 1px solid #5990CF;
+    color: #5990cf;
+    font-size: 0;
+    font-weight: bold;
+    font-style: normal;
+    white-space: nowrap;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    line-height: .18rem;
+}
+.flowMore:hover{
+    border-color: #5990cf;
+    color: #5990cf;
+    cursor: pointer;
+}
+.text-holder{
+    background: #ffffff;
+    width: 100%;
+    position: relative;
+    float: left;
+    border: 1px solid #c9c9c9;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    padding: .05rem .08rem;
+    margin-top: .12rem;
+    color: #ccc;
+    text-align: left;
+    font-size: .16rem;
+    margin-top: .2rem;
+}
+.comments-interactive{
+    width: 100%;
+    float: left;
+    margin-top: -.4rem;
+    margin-bottom: .2rem;
+    position: relative;
+}
+/*
+��������*/
+.oui-html-dialog-content{
+    background: #ffffff;
+}
+.oui-actionShare-dialog-item-area{
+    background: #f8f8f8;
+}
+.oui-actionSheet-dialog-item{
+    z-index: 1;
+}
+.reply-operations .handleRight-file{
+    width: 90%;
+    margin-left: 5%;
+}
+.handleRight-cont{
+    background: #ffffff;
+    width: 90%;
+    position: relative;
+    margin-left: 5%;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    padding: .08rem;
+    margin-top: .6rem;
+    float: left;
+}
+.comments-interactive .handleRight-cont,
+.comments-interactive .handleRight-btn{
+    width: 100%;
+    margin-left: 0;
+}
+/*.comments-interactive .handleRight-top{
+    width: 100%;
+    left: 0;
+}*/
+.handleRight-cont textarea{
+    background: none;
+    width: 100%;
+    height: 1.2rem;
+    float: left;
+    font-size: .14rem;
+    text-align: left;
+    border: 0;
+    position: relative;
+    z-index: 5;
+}
+.atuser{
+    background: #dee9f5;
+    padding: .04rem .1rem;
+    display: inline-block;
+    font-style: normal;
+    margin: 0 .03rem;
+    -webkit-border-radius: .2rem;
+    -moz-border-radius: .2rem;
+    border-radius: .2rem;
+    vertical-align: baseline;
+}
+.handleRight-cont-num{
+    font-family: Constantia, Georgia;
+    position: absolute;
+    right: .08rem;
+    bottom:.08rem;
+    font-size: .4rem;
+    color: #f0f0f1;
+    z-index: 1;
+}
+.handleRight-cont-kind{
+    width: 100%;
+    height: .2rem;
+    float: left;
+    font-size: 0;
+    text-align: left;
+}
+.handleRight-cont-kind span{
+    width: .16rem;
+    height: .16rem;
+    display: inline-block;
+    margin:.02rem .14rem;
+    margin-left: 0;
+    cursor: pointer;
+    position: relative;
+}
+.handleRight-cont-kind span.uploadFile{
+    background-position: 0 -.93rem;
+}
+.handleRight-cont-kind span.uploadImg{
+    background-position: -.16rem -.93rem;
+}
+.handleRight-cont-kind span.at{
+    background-position: -.32rem -.93rem;
+}
+.handleRight-cont-kind span.uploadFile:hover{
+    background-position: 0 -1.14rem;
+}
+.handleRight-cont-kind span.uploadImg:hover{
+    background-position: -.16rem -1.14rem;
+}
+.handleRight-cont-kind span.at:hover{
+    background-position: -.32rem -1.14rem;
+}
+.handleRight-cont-kind span input[type=file]{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    filter:alpha(opacity=0);
+}
+.btn button {
+    background: none;
+    width: auto;
+    height: .34rem;
+    font-size: .14rem;
+    color: #ffffff;
+    border: 0;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+.btn button.submit{
+    background: #5990cf;
+}
+.btn button.temporary{
+    border: 1px solid #5990cf;
+    color: #5990cf;
+}
+.btn button.cancel{
+    background: #e1e1e1;
+    color: #515151;
+}
+.handleRight-btn{
+    width: 95%;
+    float: left;
+    text-align: right;
+    margin-top: .2rem;
+    font-size: 0;
+}
+.handleRight-btn button{
+    width: 1rem;
+    margin-left: .1rem;
+}
+.handleRight-file{
+    width: 100%;
+    float: left;
+}
+.handleRight-file ul.file-group{
+    width: 90%;
+    margin-top: .08rem;
+    margin-left: 5%;
+ }
+.comments-content .handleRight-file ul.file-group{
+    width: 100%;
+    margin-left: 0;
+}
+.handleRight-file ul.file-group li{
+    background: rgba(0,0,0,.03);
+    width: 100%;
+    height: .3rem;
+    line-height: .3rem;
+    position: relative;
+    padding: 0 .2rem;
+    padding-right: .35rem;
+    color: #515151;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden;
+    font-size: .12rem;
+    text-align: left;
+    margin-top: .02rem;
+}
+.handleRight-file ul.file-group li i.file-icon{
+    width: .16rem;
+    height: .16rem;
+    background-position: 0 -.93rem;
+    position: absolute;
+    left: .02rem;
+    top: .07rem;
+}
+.handleRight-file ul.file-group li i.delete-icon{
+    /*background: rgba(0,0,0,.03);*/
+    width: .27rem;
+    height: .3rem;
+    color: #b7b7b7;
+    font-size: .18rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-style: normal;
+    text-align: center;
+}
+.handleRight-file ul.file-group li i:hover.delete-icon{
+    color: #d97367;
+    cursor: pointer;
+}
+.handleRight-file ul.file-group li i.file-size{
+    font-family: arial, helvetica, sans-serif;
+    height: .3rem;
+    text-align: center;
+    display: inline-block;
+    font-size: .12rem;
+    position: absolute;
+    right: .05rem;
+    top: 0;
+    color: #adaeb1;
+    z-index: 1;
+    font-style: normal;
+}
+.handleRight-file ul.file-group li i.file-down{
+    /*background-color: #e5e5e5;*/
+    background-position: -.64rem -.93rem;
+    width: .16rem;
+    height: .16rem;
+    display: inline-block;
+    font-size: .18rem;
+    position: absolute;
+    right: .07rem;
+    top: .07rem;
+    z-index: 5;
+    display: none;
+}
+.handleRight-file ul.file-group li i.file-down:hover{
+    background-position: -.64rem -1.14rem;
+    cursor: pointer;
+}
+.handleRight-file ul.file-group li:hover i.file-down{
+    display: none;
+}
+.handleRight-file ul.file-group li:hover i.file-size{
+    display: block;
+}
+.handleRight-file ul.img-group{
+    width: 100%;
+    font-size: 0;
+    text-align: left;
+}
+.handleRight-file ul.img-group li{
+    width: 32%;
+    display: inline-block;
+    margin-right: 2%;
+    margin-top: 10px;
+    position: relative;
+    vertical-align: top;
+}
+.handleRight-file ul.img-group li:nth-child(3n){
+    width: 32%;
+    display: inline-block;
+    margin-right: 0;
+    margin-top: 10px;
+    position: relative;
+    vertical-align: top;
+}
+.handleRight-file ul.img-group li img.uploadimg{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+
+}
+.handleRight-file ul.img-group .uploadimg-area{
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    width: 100%;
+    padding-bottom: 100%;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+.handleRight-file ul.img-group .uploadimg-info{
+    width: 100%;
+    font-size: 12px;
+    color: #515151;
+    padding: 0;
+    margin: 0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    padding-right: 1px;
+    margin-top: 6px;
+}
+.uploadimg-delete{
+    background: rgba(0,0,0,.5);
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-bottom-left-radius: 30px;
+    border-top-right-radius: 3px;
+    color: #ffffff;
+    font-size: 20px;
+    font-style: normal;
+    text-align: right;
+    line-height: 18px;
+    padding-right: 3px;
+    cursor: pointer;
+    z-index: 5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.uploadimg-delete:hover{
+    background: rgba(0,0,0,.7);
+    color: #5990cf;
+}
+.uploadimg-more{
+    width: 100%;
+    padding-bottom: 100%;
+    color: #fff;
+    background-color: #555;
+    background: rgba(0,0,0,.45);
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    text-align: center;
+}
+.uploadimg-more .more-num{
+    font-family: arial, helvetica, sans-serif;
+    font-size: 30px;
+    font-style: normal;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin-top: -23px;
+    vertical-align: top;
+}
+.uploadimg-more:hover{
+    background-color: #555;
+    background: rgba(0,0,0,.55);
+    cursor: pointer;
+}
+/*�ظ��رպ�����*/
+.reply-close,.reply-open{
+    width: 100%;
+    position: relative;
+    float: left;
+    margin-top: 25px;
+    border-bottom: 1px solid #e6e6e6;
+}
+.reply-close span.reply-text,.reply-open span.reply-text{
+    background: #ffffff;
+    height: 16px;
+    padding: 0 8px;
+    color: #515151;
+    font-size: 14px;
+    line-height: 16px;
+    color: #bbbbbb;
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    margin-left: -46px;
+}
+.reply-close span.reply-text:hover,.reply-open span.reply-text:hover{
+    color: #5990cf;
+}
+.reply-close span.reply-text i.icon-arrow{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+.reply-close span.reply-text i.icon-arrow{
+    background-position: -80px -93px;
+}
+.reply-close span.reply-text:hover i.icon-arrow{
+    background-position: -80px -114px;
+}
+.reply-open span.reply-text i.icon-arrow{
+    background-position: -96px -93px;
+}
+.reply-open span.reply-text:hover i.icon-arrow{
+    background-position: -96px -114px;
+}
+
+/*����*/
+.comments-item{
+    width: 100%;
+    float: left;
+    text-align: left;
+    padding-bottom: .2rem\9;
+}
+.comments-item ul{
+    list-style: none;
+}
+.comments-item .comments-list{
+    border: none;
+    padding-top: 0;
+    margin-top: 0;
+    position: relative;
+    padding-bottom: .1rem;
+}
+.comments-item .comments-list:after,.comments-reply .second-replies:after{
+    content: '';
+    height: 200%;
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-bottom: 1px solid #e6e6e6;
+}
+.comments-item .comments-list .comments-item-bd{
+    padding: .1rem 0 0 .5rem;
+    position: relative;
+    overflow: hidden;
+    min-height: .6rem;
+}
+.comments-item .comments-list .ui-avatar{
+    position: absolute;
+    left: 0;
+    top: .11rem;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    width: .4rem;
+    height: .4rem;
+    text-align: center;
+    line-height: .4rem;
+    color: #ffffff;
+    font-size: .2rem;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    overflow: hidden;
+    padding: 0;
+}
+.comments-item .comments-list .comments-content{
+    position: relative;
+    line-height: 1.5;
+}
+.comments-item .comments-list .comments-content .comments-name{
+    font-size: .14rem;
+    color: #adaeb1;
+    margin-bottom: .03rem;
+    position: relative;
+    min-height: .4rem;
+}
+.comments-item .comments-list .comments-content .comments-time{
+    font-size: .12rem;
+    color: #adaeb1;
+    font-style: normal;
+    font-family: arial, helvetica, sans-serif;
+    position: absolute;
+    left: 0;
+    top: .2rem;
+}
+.comments-item .comments-list .comments-content .node-attitude{
+    padding: 0 .06rem;
+    font-style: normal;
+    border: 1px solid;
+    -webkit-border-radius: .2rem;
+    -moz-border-radius: .2rem;
+    border-radius: .2rem;
+    margin-left: .13rem;
+    font-size: .12rem;
+}
+/*终止：#e07365
+提交：#fb8c00
+加签：#84c9ab
+回退：#84c9ab
+暂存：#5990cf*/
+.node-attitude-color-0{
+	display:none;
+}
+.node-attitude-color-6{
+    color: #e07365;
+    border-color: #e07365;
+}
+.node-attitude-color-4,
+.node-attitude-color-21{
+    color: #fb8c00;
+    border-color: #fb8c00;
+}
+.node-attitude-color-9,
+.node-attitude-color-11{
+    color: #84c9ab;
+    border-color: #84c9ab;
+}
+.node-attitude-color-3{
+    color: #5990cf;
+    border-color: #5990cf;
+}
+.comments-item .comments-list .comments-content  .comments-area{
+    font-size: .14rem;
+    color: #515151;
+    line-height: 1.5;
+}
+.comments-item .comments-list .comments-content .handleRight-file .file-group li{
+    padding-right: .5rem;
+}
+.comments-item .comments-list .comments-item-bd .comments-op{
+    width: auto;
+    position: absolute;
+    right: -10px;
+    top: 10px;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span{
+    display: inline-block;
+    margin-right: .1rem;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-word{
+    background-position: left top;
+    background-size: .16rem .16rem;
+    height: .3rem;
+    margin-top: .02rem;
+    float: left;
+    cursor: pointer;
+    padding-left: .2rem;
+    font-size: .14rem;
+    line-height: .16rem;
+    color: rgba(81,81,81,.8);
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-Dzan{
+    width: auto;
+    height: 18px;
+    line-height: 18px;
+    font-size: 15px;
+    color: #adb2ba;
+    font-family: arial, helvetica, sans-serif;
+    cursor: pointer;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.comments-op-Dzan i.zan-icon{
+    background-position: 0 -149px;
+    width: 18px;
+    height: 18px;
+    margin-right: 3px;
+    display: inline-block;
+    vertical-align: top;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.Dzan-active{
+    color: #5990cf;
+}
+.comments-item .comments-list .comments-item-bd .comments-op span.Dzan-active i.zan-icon{
+    background-position: 0 -171px;
+}
+/*�ظ�*/
+.comments-reply{
+    padding:0px 0 0 40px;
+    margin-top: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+}
+.comments-reply .reply-arrow{
+    background: url("../img/reply-arrow-icon.png") no-repeat;
+    width: 20px;
+    height: 10px;
+    position: absolute;
+    left: 47px;
+    top: -10px;
+    display: none;
+}
+
+.comments-reply .second-replies{
+    position: relative;
+}
+.comments-reply .second-replies:after{
+    border-bottom: 0;
+    border-top: 2px dashed #e6e6e6;
+}
+/*
+�û���ͷ�񱳾���ɫ���*/
+.userIcon-bgColor-1{
+    background-color: #FB8C00;
+}
+.userIcon-bgColor-2{
+    background-color: #4A90E2;
+}
+.userIcon-bgColor-3{
+    background-color: #F8CE0B;
+}
+.userIcon-bgColor-4{
+    background-color: #F06172;
+}
+.userIcon-bgColor-5{
+    background-color: #3EDADC;
+}
+.userIcon-bgColor-6{
+    background-color: #93D544;
+}
+.userIcon-bgColor-7{
+    background-color: #E24A99;
+}
+.userIcon-bgColor-8{
+    background-color: #723BDA;
+}
+
+/*
+����ѡ��ڵ㴦����*/
+.oui-dialog-bd{
+    padding-bottom: 0;
+}
+.workflow-choose-nodes{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: .64rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.workflow-handle{
+    width: 100%;
+}
+.workflow-handle dl dt{
+    background:rgba(44,130,252,.1);
+    padding: .12rem;
+    color: #5990cf;
+    font-size: .12rem;
+    line-height: 1.6;
+    text-align: left;
+    margin-bottom: .12rem;
+
+}
+.workflow-handle dl dd{
+    width: 100%;
+    font-size: 0;
+   /* display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;*/
+    padding: 6px 12px;
+    position: relative;
+    z-index: 3;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+.workflow-handle dl dd.disable{
+    background: #eeeeee;
+}
+.workflow-handle dl dd:after{
+    content: '';
+    height: 200%;
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-bottom: 1px solid #e6e6e6;
+}
+.workflow-handle dl dd:last-child:after{
+    content: '';
+    height: 200%;
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-bottom: 0px solid #e6e6e6;
+}
+
+.workflow-handle dl dd span.textName{
+    width: 100%;
+    text-align: left;
+    font-size: 15px;
+    display: block;
+    color: #515151;
+    padding: 5px;
+    position: relative;
+    padding-right: 80px;
+    padding-bottom: 8px;
+}
+.workflow-handle dl dd span.textName label{
+    display: inline-block;
+    vertical-align: middle;
+}
+.workflow-handle dl dd span.textName .textName-user{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding-left: .3rem;
+    padding-right: .85rem;
+    z-index: -1;
+    font-style: normal;
+}
+.workflow-handle dl dd span.textName b{
+    /*position: absolute;
+    top: .41rem;
+    left: 0;*/
+    display: block;
+    padding-left: .24rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: #FB8C00;
+    /*z-index: 10;*/
+}
+.workflow-handle dl dd span.inputarea{
+    min-height: .35rem;
+    text-align: right;
+    /*padding-left: 1rem;*//*因为存在手动选择分支*/
+    display: block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.workflow-handle dl dd span.textName i.textName-tag{
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1px solid #b7b7b7;
+    color: #b7b7b7;
+    font-size: 12px;
+    font-style: normal;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    position: absolute;
+    top: 50%;
+    margin-top: -13px;
+    right: 10px;
+}
+.workflow-handle dl dd span.inputarea input.inputarea-user{
+    width: 98%;
+    min-height: 36px;
+    line-height: 24px;
+    border: 1px solid #d6d6d6;
+    padding: 0 4px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/*.workflow-handle dl dd span.inputarea input.inputarea-user:focus{
+    border-color: #5990cf;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}*/
+
+.workflow-handle dl dd span.inputarea .oui-class-singleselect-5{
+    background: transparent;
+    border: 0;
+    padding-right: .25rem;
+}
+.workflow-handle dl dd span.inputarea .oui-class-singleselect-4{
+    background: transparent;
+    padding-right: .25rem;
+}
+.workflow-handle dl dd span.inputarea .oui-class-multiselect-4 input[type="text"],
+.workflow-handle dl dd span.inputarea .oui-class-singleselect-5 input[type="text"]{
+    background: transparent;
+    padding-right: 0;
+    text-align: right;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.workflow-handle dl dd span.inputarea .singleselect-arrow,
+.workflow-handle dl dd span.inputarea .multiselect-arrow{
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+}
+/*ѡ����Ա*/
+.flowSelect-user{
+    background-color: #f2f2f2;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 600;
+
+}
+.search-user{
+    background: #ffffff;
+    padding: 6px 30px;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+}
+.search-user input.searchInput-user{
+    width: 100%;
+    font-size: 14px;
+    color: #515151;
+    border: 0;
+}
+.search-user .search-icon{
+    background-position: -112px -93px;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top:8px;
+    left: 8px;
+}
+.search-user .search-delete{
+    background-position: -128px -93px;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top:8px;
+    right: 8px;
+}
+.search-user .search-delete:hover{
+    background-position: -128px -114px;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top:8px;
+    right: 8px;
+}
+.flowSelect-user-item{
+    width: 100%;
+    margin-top: 10px;
+}
+.flowSelect-user-item ul{
+    width: 100%;
+    list-style: none;
+}
+.flowSelect-user-item .flowSelect-user-list{
+    padding: 4px 4px 4px 50px;
+    line-height: 35px;
+    font-size: 0;
+    position: relative;
+}
+.flowSelect-user-item .flowSelect-user-list:hover{
+    background-color: #e0e0e0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.flowSelect-user-item .flowSelect-user-list .ui-avatar{
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    color: #ffffff;
+    font-size: 20px;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    overflow: hidden;
+    padding: 0;
+}
+.flowSelect-user-list .ui-name,.flowSelect-user-list .ui-job{
+    display: inline-block;
+    vertical-align: top;
+    height: 35px;
+    line-height: 35px;
+    font-size: 16px;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    overflow:hidden;
+}
+.flowSelect-user-list .ui-name{
+    width: 40%;
+    text-align: left;
+    color: #515151;
+}
+.flowSelect-user-list .ui-job{
+    width: 60%;
+    text-align: right;
+    color: #bfbfbf;
+    font-size: 14px;
+}
+.flowSelect-footer{
+    padding-top: 10px;
+    border-top: 1px solid #e6e6e6;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.flowSelect-footer .footer-btn-sub,.flowSelect-footer .footer-btn-cancel{
+    height: 34px;
+    line-height: 34px;
+    padding: 0 20px;
+    margin: 0 8px;
+    font-size: 15px;
+    color: #ffffff;
+    border: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.flowSelect-footer .footer-btn-sub{
+    background: #5990cf;
+}
+.flowSelect-footer .footer-btn-sub:hover{
+    background: #63a4ed;
+}
+.flowSelect-footer .footer-btn-cancel{
+    background: #e1e1e1;
+    color: #515151;
+}
+/*
+���̵ײ��̶�*/
+.flowFooter-fixed{
+    background: rgba(0,0,0,.4);
+    width: 640px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    margin-left: -320px;
+    padding-bottom: 20px;
+}
+.selectuser-num{
+    padding-bottom: 7px;
+    border-bottom: 1px solid #e6e6e6;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #a5a6a9;
+}
+/*流程表双Top特殊处理*/
+.flow-detail-top-tabs{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: .57rem;
+    overflow-y: auto;
+    padding-bottom: .1rem;
+    -webkit-overflow-scrolling: touch;
+/*    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);*/
+}
+/*.flow-detail-top-tabs>section {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: .44rem;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}*/
+.flow-detail-top-tabs.external-top{
+    top: 0;
+}
+.flow-detail-top-tabs .form-subform-tabs{
+    top: -.44rem;
+}
+.workflow-content{
+    position: absolute;
+    left: 0;
+    top: .6rem;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+/*
+表单显示名称和发起人*/
+.flow-header-bottom{
+    padding-bottom: .5rem;
+}
+.flow-form-info{
+    background: rgba(0,0,0,.1);
+    padding:.06rem .1rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.flow-form-info .flowname{
+    width: 100%;
+    display: block;
+    text-align: left;
+    color: #515151;
+    font-size: .18rem;
+    margin-bottom: .03rem;
+}
+.flow-form-info .flowuser-name{
+    width: 100%;
+    display: block;
+    font-size: .14rem;
+    color: rgba(81,81,81,.5);
+}
+.flow-form-info .flowuser-name i{
+    display: block;
+    font-style: normal;
+    margin-right: .15rem;
+    text-align: left;
+    color: #ffffff;
+    font-size: .13rem;
+}
+.flow-form-info-line{
+    width: 100%;
+    display: block;
+    margin-top: 10px;
+    position: relative;
+}
+.flow-form-info-line:after{
+    content: '';
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-bottom: 1px solid #e6e6e6;
+}
+.oui-dialog-content img.handle-tip-icon{
+    width: .48rem !important;
+    height: .48rem;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: .1rem;
+}
+.handle-dialog-message{
+    width: 100%;
+    display: block;
+    text-align:center;
+    position: relative;
+}
+.handle-dialog-message .dialog-textarea{
+    margin-top: .06rem;
+    height: .8rem;
+    background: none;
+}
+.handle-dialog-message .handleRight-cont-num{
+    z-index: -1;
+}
+
+/*
+添加按钮定位*/
+.add-btn{
+    bottom: .7rem;
+}
+
+/*
+关闭按钮*/
+.flow-full-screen-close {
+    background: rgba(0,0,0,.5);
+    width: .45rem;
+    height: .45rem;
+    border-bottom-left-radius: .45rem;
+    position: absolute;
+    text-align: center;
+    line-height: .4rem;
+    color: #ffffff;
+    font-size: .272rem;
+    right: 0;
+    top: 0;
+    z-index: 310;
+}
+.flow-full-screen-close:after{
+    content: "";
+    background: url("../../../../res_common/oui/ui/ui_phone/images/show-close-btn.png") no-repeat;
+    background-position: left .2rem top .1rem;
+    background-size: .16rem .16rem;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+
+/*加签*/
+.flowHandle-sigh{
+    padding: 0;
+    overflow: hidden;
+    margin-top: .4rem;
+}
+.flowHandle-sigh ul{
+    display: block;
+    padding-left: .15rem;
+    position: relative;
+}
+.flowHandle-sigh ul:before,
+.flowHandle-sigh ul:after{
+    color: #e6e6e6;
+    content: " ";
+    width: 100%;
+    height: 1;
+    left: 0;
+    position: absolute;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+.flowHandle-sigh ul:before{
+    border-top: 1px solid;
+    top: 0;
+}
+.flowHandle-sigh ul:after{
+    border-bottom: 1px solid;
+    bottom: 0;
+}
+.flowHandle-sigh ul li{
+    display: block;
+    padding: .1rem .2rem .1rem 0;
+    position: relative;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: .16rem;
+}
+.flowHandle-sigh ul li:after{
+    color: #e6e6e6;
+    content: " ";
+    width: 100%;
+    height: 1;
+    border-bottom: 1px solid;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+.flowHandle-sigh ul li:last-child:after{
+    border: 0;
+}
+.flowHandle-sigh ul li span.sigh-name{
+    width: 1.2rem;
+    display: block;
+    text-align: left;
+    font-size: .16rem;
+    color: #515151;
+}
+.flowHandle-sigh ul li.flow-urge-info{
+	background:none;
+	padding: .04rem .1rem .04rem 0;
+	display:block;
+}
+.flowHandle-sigh ul li.flow-urge-info .sigh-name{
+	width:100%;
+	display:block;
+	line-height:.32rem;
+}
+.flowHandle-sigh ul li.flow-urge-info .sigh-selectperson textarea{
+	height:1.2rem;
+	border:1px solid #e6e6e6;
+	padding:.06rem .03rem;
+	text-align:left;
+	white-space:normal;
+}
+.flowHandle-sigh ul li.flow-urge-info .sigh-selectperson textarea:focus{
+	border-color:#5990cf;
+}
+.sigh-selectperson{
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: right;
+    position: relative;
+    color: rgba(81,81,81,.8);
+}
+.sigh-selectperson .radio-button-wrapper{
+    display: none;
+}
+.sigh-selectperson input,
+.sigh-selectperson textarea{
+    width: 100%;
+    border: 0;
+    height: auto;
+    line-height: normal;
+    padding: 0;
+    outline: none;
+    font-size: .16rem;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: rgba(81,81,81,.8);
+    text-align: right;
+}
+.sigh-prew{
+    background: #e5e5e5;
+    width: 80px;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    min-height: 34px;
+    font-size: 14px;
+    color: #5990cf;
+    border: 0;
+    cursor: pointer;
+    display: none;
+}
+.sigh-prew:hover{
+    background: #ebebeb;
+}
+.sigh-active .sigh-prew{
+    display: block;
+}
+
+.sigh-selectperson span.select-sigh i{
+    width: 100%;
+    display: block;
+    font-style: normal;
+}
+.sigh-selectperson span.select-sigh img{
+    margin: 0 auto;
+    display: none;
+}
+/*.oui-html-dialog-btn{
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: .15rem 0;
+}*/
+/*回退流程*/
+
+.flowhandle-fallback{
+    padding: 0;
+    overflow: hidden;
+    margin-top: .4rem;
+}
+.flowhandle-fallback ul{
+    display: block;
+    padding-left: .15rem;
+    position: relative;
+}
+.flowhandle-fallback ul:before,
+.flowhandle-fallback ul:after{
+    color: #e6e6e6;
+    content: " ";
+    width: 100%;
+    height: 1;
+    left: 0;
+    position: absolute;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+.flowhandle-fallback ul:before{
+    border-top: 1px solid;
+    top: 0;
+}
+.flowhandle-fallback ul:after{
+    border-bottom: 1px solid;
+    bottom: 0;
+}
+.flowhandle-fallback ul li{
+    display: block;
+    padding: .1rem .2rem .1rem 0;
+    position: relative;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    font-size: .16rem;
+}
+.flowhandle-fallback ul li:nth-child(1){
+	display:none;
+}
+.flowhandle-fallback ul li:after{
+    color: #e6e6e6;
+    content: " ";
+    width: 100%;
+    height: 1;
+    border-bottom: 1px solid;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+.flowhandle-fallback ul li:last-child:after{
+    border: 0;
+}
+.flowhandle-fallback ul li:last-child{
+	background:none;
+}
+.flowhandle-fallback ul li span.sigh-name{
+    width: 1.2rem;
+    display: block;
+    text-align: left;
+    font-size: .16rem;
+    color: #515151;
+}
+.flowhandle-fallback ul li.flow-urge-info{
+	background:none;
+	padding: .04rem .1rem .04rem 0;
+	display:block;
+}
+.flowhandle-fallback ul li .sigh-name{
+	width:100%;
+	display:block;
+}
+.flowhandle-fallback ul li .sigh-selectperson textarea{
+	height:1.2rem;
+	border:1px solid #e6e6e6;
+	padding:.06rem .03rem;
+	text-align:left;
+	white-space:normal;
+}
+.flowhandle-fallback ul li.flow-urge-info .sigh-selectperson textarea:focus{
+	border-color:#5990cf;
+}
+/*发起流程上传的附件--开始*/
+.workflow-files-area{
+    display: block;
+    padding: 0 .1rem;
+}
+.workflow-files-area ul{
+    width: 100%;
+    list-style: none;
+    font-size: 0;
+    text-align: left;
+}
+.workflow-files-area ul li{
+    background: #f2f2f2;
+    width: 100%;
+    height: .3rem;
+    line-height: .3rem;
+    display: inline-block;
+    margin-top: .07rem;
+    font-size: .12rem;
+    color: #515151;
+}
+.workflow-files-area ul li .files-item{
+    padding:0 .5rem 0 .26rem;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.workflow-files-area ul li .files-item .files-size{
+    font-family: Arial, Helvetica, sans-serif;
+    width: .45rem;
+    height: .3rem;
+    line-height: .3rem;
+    text-align: right;
+    font-size: .12rem;
+    font-style: normal;
+    color: rgba(81,81,81,.7);
+    position: absolute;
+    top: 0;
+    right: .05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.workflow-files-area ul li .files-item .files-icon{
+    background: url(../img/flowhandle-icon.png) no-repeat;
+    width: .16rem;
+    height: .16rem;
+    display: inline-block;
+}
+.workflow-files-area ul li .files-item .files-info-icon{
+    background-position: 0 -.93rem;
+    position: absolute;
+    left: .05rem;
+    top: .07rem;
+    margin: 0;
+}
+.workflow-files-area ul li .files-item .files-down-icon{
+    background-position: -.64rem -.93rem;
+    position: absolute;
+    right: .05rem;
+    top: .07rem;
+    /*display: none;*/
+}
+.workflow-files-area ul li .files-item .files-down-icon{
+    background-position: -.64rem -1.14rem;
+    cursor: pointer;
+}
+/*发起流程上传的附件--结束*/
+
+/*新构url-dialog的tab页签*/
+.workflow-url-dialog-tabs{
+    background: #ffffff;
+    width: 100%;
+    height: .44rem;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.workflow-url-dialog-tabs div{
+    width: 1%;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    flex: 1;
+    height: .44rem;
+    line-height: .42rem;
+    text-align: center;
+    font-size: .16rem;
+    display: block;
+    position: relative;
+    color: rgb(199, 199, 204);
+    border-bottom: .02rem solid rgb(199, 199, 204);
+}
+.workflow-url-dialog-tabs div.active{
+    color: #5990cf;
+    border-bottom-color: #5990cf;
+}
+.oui-common-page .oui-common-content .flowList-content{
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: auto;
+}
+.comments-interactive-layout{
+    display: none;
+}
+
+
+
+
+
+
+
+

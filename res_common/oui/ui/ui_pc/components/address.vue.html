@@ -1,0 +1,57 @@
+<!--省市区 控件 TODO-->
+<template >
+    <div class="sw-address">
+        <el-input 
+            :tempStyle="style" 
+            :id="id" 
+            :name="name" 
+            :bindProp="bindProp" 
+            :class="cls" 
+            v-model="value" 
+            @change="_controlOnUpdate" 
+            :placeholder="placeholder">
+        </el-input> 
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                textarea:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                defaultAddress:''
+            }
+        },
+        mounted() {
+
+            this.title = this.control.name;
+            if( this.otherAttrs.placeholder ){
+                this.placeholder = this.otherAttrs.placeholder; 
+            } 
+            if( this.otherAttrs.default ){
+                this.value = this.otherAttrs.default; 
+            } 
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+.sw-address textarea{
+    margin-top: 5px;
+}
+</style>

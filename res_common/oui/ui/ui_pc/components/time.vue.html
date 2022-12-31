@@ -1,0 +1,117 @@
+
+<template >
+    <div class="oui-class-time curr">
+        <span>{{time}}</span>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                dateType:"date",
+                date:"",
+                dateTime:"",
+                dateFormat:"yy-MM-dd",
+                dateTimeFormat:"yyyy-MM-dd HH-mm-ss",
+                time:"",
+                fontFamily: "",
+                fontSize: "",
+                bold:'',
+                italic:'',
+                underline:'',
+                linethrough:'',
+                textstyle:''
+            }
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.dateType) {
+                this.dateType = this.control.otherAttrs.dateType;
+            }
+            if (this.control.otherAttrs.date) {
+                this.date = this.control.otherAttrs.date;
+            }
+            if (this.control.otherAttrs.dateTime) {
+                this.dateTime = this.control.otherAttrs.dateTime;
+            }
+            if (this.control.otherAttrs.dateFormat) {
+                this.dateFormat = this.control.otherAttrs.dateFormat;
+            }
+            if (this.control.otherAttrs.dateTimeFormat) {
+                this.dateTimeFormat = this.control.otherAttrs.dateTimeFormat;
+            }
+            if (this.dateType == "date") {
+                if (this.control.otherAttrs.date) {
+                    this.time = oui.dateStrByTime(this.date, this.dateFormat);
+                } else {
+                    this.time = oui.dateStrByTime(new Date(), this.dateFormat);
+                }
+            } else {
+                if (this.control.otherAttrs.dateTime) {
+                    this.time = oui.dateStrByTime(this.dateTime, this.dateTimeFormat);
+                }else {
+                    this.time = oui.dateStrByTime(new Date(), this.dateTimeFormat);
+                }
+            }
+            if(this.control.otherAttrs.bold) {
+                this.bold = 'font-weight: bold !important;'
+            }else{
+                this.bold = ''
+            }
+            if(this.control.otherAttrs.italic) {
+                this.italic = 'font-style:oblique !important;'
+            }else{
+                this.italic = ''
+            }
+            if(this.control.otherAttrs.underline) {
+                this.underline = 'text-decoration:underline !important;'
+            }else{
+                this.underline = ''
+            }
+            if(this.control.otherAttrs.linethrough) {
+                this.linethrough = 'text-decoration:line-through !important;'
+            }else{
+                this.linethrough = ''
+            }
+            if(this.control.otherAttrs.textstyle == 1) {
+                this.textstyle = 'text-align:left;'
+            }else if(this.control.otherAttrs.textstyle == 2) {
+                this.textstyle = 'text-align:center;'
+            }else{
+                this.textstyle = 'text-align:right;'
+            }
+        },
+        methods:{
+
+        }
+    }
+</script>
+
+<style>
+    .oui-class-time{
+        font-size: 14px;
+    }
+    .oui-class-time{
+        {{textstyle}}
+    }
+    .oui-class-time.curr span{
+    {{style}}
+    }
+    .oui-class-time.curr span{
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{linethrough}}
+    }
+</style>

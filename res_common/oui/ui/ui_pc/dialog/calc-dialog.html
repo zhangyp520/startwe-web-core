@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算设置dialog</title>
+    <link rel="stylesheet" type="text/css" href="/res_common/oui/ui/ui_pc/css/calc.css"/>
+</head>
+<body oui-controller="com.oui.calc.CalcBiz">
+<oui-view id="calc-content" data="getData()" class="ouiCalc-content"></oui-view>
+<script type="text/html" id="calc-textArea-tpl">
+    <textarea class="ouiCalc-preview-text" placeholder="" readonly="readonly">{{displayStr }}</textarea>
+</script>
+<script type="text/html" id="calc-content-tpl">
+    <div class="ouiCalc-content-preview {{if showCalcName}}ouiCalc-name{{/if}}">
+        {{if showCalcName}}
+            <div class="calc-name">
+                <label>计算式名称：</label>
+                <input id="calcName" class="calcName-input" type="text" value="{{calcName }}" oui-e-input="calcNameInput" oui-e-propertychange="calcNameInput" placeholder="请输入" />
+            </div>
+
+        {{/if}}
+        <div class="ouiCalc-title">
+            <span>公式预览</span>
+        </div>
+        <div class="ouiCalc-preview-area">
+            <oui-view id="calc-textArea" data="getData()"></oui-view>
+            <div class="clear-area">
+                <button class="clear-count" title="清除计算设置" oui-e-click="clearCalc">清除设置</button>
+            </div>
+        </div>
+    </div>
+    <div class="ouiCalc-content-operation">
+        <oui-view id="calc-tab" data="getData()" class="ouiCalc-content-operation-l"></oui-view>
+        <div class="ouiCalc-content-operation-r">
+            <div class="ouiCalc-title border-bottom">
+                <span>运算符</span>
+            </div>
+            <div class="ouiCalc-budget-symbol-area">
+                <ul>
+                    {{each operateList as item}}
+                    {{if item.support.indexOf(resultType) > -1}}
+                    <li sign="{{item.sign}}" oui-e-click="operateClick">
+                        <div class="budget-symbol-item">
+                        <span class="budget-symbol-item-area">
+                            <i class="operator-icon icon-{{item.icon}}"></i>
+                        </span>
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+            {{if useFunction}}
+            <div class="ouiCalc-title border-bottom">
+                <span>通用函数</span>
+            </div>
+            <div class="ouiCalc-budget-symbol-area">
+                <ul>
+                    {{each commonFunctionList as item}}
+                    {{if item.support.indexOf(resultType) > -1 && item.fieldSourceType.indexOf(resultSourceType) > -1}}
+                    <li func="{{item.func}}">
+                        <div class="budget-symbol-item">
+                        <span class="budget-symbol-item-area">
+                           {{item.title}}
+                        </span>
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="ouiCalc-title border-bottom">
+                <span>明细表函数</span>
+            </div>
+            <div class="ouiCalc-budget-symbol-area">
+                <ul>
+                    {{each subFunctionList as item}}
+                    {{if item.support.indexOf(resultType) > -1 && item.fieldSourceType.indexOf(resultSourceType) > -1}}
+                    <li func="{{item.func}}">
+                        <div class="budget-symbol-item">
+                        <span class="budget-symbol-item-area">
+                           {{item.title}}
+                        </span>
+                        </div>
+                    </li>
+                    {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</script>
+<script type="text/html" id="calc-tab-tpl">
+    <div class="ouiCalc-title border-bottom">
+        {{each fields as tabItem }}
+        <span class="{{if tab == tabItem.tab}}selected{{/if}}" tab="{{tabItem.tab }}" oui-e-click="tabChange">{{tabItem.title }}</span>
+        {{/each}}
+    </div>
+    <div class="calc-operation-item">
+        {{if tab != 'customInput'}}
+        <div class="calcSearch">
+            <input type="text" placeholder="请输入..." oui-e-input="searchInput" oui-e-propertychange="searchInput" class="calcSearch-input"/>
+            <button type="button" class="calcSearch-btn" oui-e-click="searchBtnClick"></button><!--删除清空追加  calcSearch-btn-del-->
+        </div>
+        <ul class="calc-info-list">
+            {{each tabFields as field}}
+            <li fieldId="{{field.fieldId }}" isSub="{{field.isSub }}" dataType="{{field.dataType }}" oui-e-click="fieldClick" oui-e-dblclick="fieldDblClick">{{field.name }}</li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <div class="customInput-area">
+            <input type="text" class="manual-input" oui-e-input="customInput" oui-e-propertychange="customInput" id="customInputControl" onkeyup="oui.clearNotNum4pc(event,this,false,true);" name="customInputControl" placeholder="请输入数字" value=""  />
+        </div>
+        <span class="error-light-tips" style="display: none;"></span>
+        {{/if}}
+    </div>
+</script>
+<script type="text/javascript" src="/res_common/third/jquery/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/res_common/third/template/template_debug_3_0_0.js"></script>
+<script type="text/javascript" src="/res_common/oui/system/oui.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        oui.require([
+            '/res_common/oui/system/oui-common.js',
+            '/res_common/oui/system/oui-checkform.js',
+            '/res_common/oui/ui/base-control.js',
+            '/res_common/oui/system/oui-jsclazz.js',
+            '/res_common/oui/system/oui-biz-ext.js',
+
+            // 'res_common/oui/ui/oui-form-control.js',
+            '/res_common/oui/ui/ui_pc/dialog/dialog.js',
+
+            '/res_common/oui/ui/ui_pc/dialog/calc-dialog.js'
+        ], function () {
+            var calcDialog = oui.getTop().oui.$.ctrl.dialog.calcDialog;
+            window.oui_context = calcDialog.attr("oui_context");
+            com.oui.calc.CalcBiz.init(calcDialog.attr("dialogOptions"));
+            oui.parse();
+        });
+    });
+</script>
+</body>
+</html>
+
+
+
+
+

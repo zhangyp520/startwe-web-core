@@ -1,0 +1,86 @@
+
+<template >
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">属性设置<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <div class="design-field ">
+                    <div class="fieldname">网页地址：</div>
+                    <div class="fieldblock">
+                        <el-input type="textarea" autosize v-model="webPageSrc" @change="handleWebPageSrcChange" ></el-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                currentControl: {},
+                webPageSrc: "https://www.baidu.com"
+            }
+        },
+        mounted:function(){
+            this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if (this.currentControl.otherAttrs.webPageSrc) {
+                this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+            }
+        },
+        methods:{
+            handleWebPageSrcChange: function (val) {
+                this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+            },
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                    //清除关系连线
+                    me._controlOnUpdate4clearRelation(bindProp,config,currentControl);
+
+                }
+
+//                this.$nextTick(function(){
+//
+//                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

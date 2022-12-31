@@ -1,0 +1,139 @@
+<!--单选组-->
+<template >
+    <div class="radio-group-outer"  >
+        <el-checkbox-group 
+                       v-model="selectValue"
+                       :tempStyle="style"
+                       :id="id"
+                       :name="name"
+                       :bindProp="bindProp"
+                       :class="cls"
+                       :placeholder="placeholder"
+                       @change="_controlOnUpdate"
+                       :disabled="disabled" 
+                       v-show="!hidden"
+                       :style="{flexDirection:direction,display:'flex'}"
+               >
+
+
+           <el-checkbox v-if="!isButton" v-for="item in data" :label="item.value" :key="item.key">{{item.display}}</el-checkbox>
+           <el-checkbox-button v-if="isButton" v-for="item in data" :label="item.value" :key="item.key">{{item.display}}</el-checkbox-button>
+       </el-checkbox-group>
+    </div>
+ </template>
+ 
+ <script>
+     exports = {
+         templateType:'vue',
+         data: function () {
+             return {
+                 id:'',
+                 name:'',
+                 data: [{label:"绑定数据",value:"绑定数据"}],
+                 bindProp:'',
+                 otherAttrs:{},
+                 value: '',
+                 selectValue:[],
+                 style:'',
+                 cls:'',
+                 placeholder:'',
+                 direction:'row',
+                isButton:false,
+                status:'',
+                disabled:false, 
+                hidden:false
+             }
+         },
+         watch:{
+            value:{
+                handler:function (val) {
+                    if(val){
+                        var arr = val.split(',');
+                        var values = [];
+                        oui.eachArray(this.data,function (item){
+                            if(arr.indexOf(item.value+'')>-1){
+                                values.push(item.value);
+                            }
+                        });
+                        this.selectValue = values;
+                    }else{
+                        this.selectValue = [];
+                    }
+                }
+            }
+         },
+         mounted:function(){
+            if(this.otherAttrs.sourceType == "diy"){
+                this.data = this.otherAttrs.sourceDiyValues.items;
+            } else if(!this.data.length){
+                 if(this.otherAttrs&&this.otherAttrs.data){
+                     this.data = this.otherAttrs.data;
+                 }
+             }
+
+             if(this.otherAttrs && this.otherAttrs.direction){
+                this.direction = this.otherAttrs.direction
+            }
+            if(this.otherAttrs && this.otherAttrs.isButton){
+                this.isButton = this.otherAttrs.isButton
+            }
+
+            if( this.otherAttrs.status ){
+
+
+                if(this.otherAttrs.status == 'disable'){
+                    this.disabled = true;
+                }
+                if(this.otherAttrs.status == 'readOnly'){
+                    this.readonly = true;
+                } 
+                if(this.otherAttrs.status == 'hidden'){
+                    this.hidden = true;
+                }
+            }
+             if(this.value){
+                 this.selectValue = this.value.split(',');
+             }else{
+                 this.selectValue=[];
+             }
+         },
+         methods:{
+ 
+             _controlOnUpdate:function(v){
+                 var key = this.bindProp;
+                 debugger;
+                 var lastValue = this.value;
+                 var data4db = {};
+                 if(v){
+                     var value = this.selectValue ||[];
+                     value =value.join(',').split(',');
+                     var display = [];
+                     var values=[];
+                     var some = oui.findManyFromArrayBy(this.data,function(item){
+                         if(value.indexOf(item.value+'')>-1){
+                             item.checked = true;
+                             display.push(item.display||item.value);
+                             values.push(item.value);
+                             return true;
+                         }else{
+                             item.checked = false;
+                         }
+                     });
+                     data4db = some;
+                 }
+                 this.value = values.join(',');
+                 this.onUpdate&&this.onUpdate(key,this.value,lastValue,{value:this.value, data4DB:data4db, display:display.join(',') }); //外部构造的方法调用
+             }
+         }
+         
+     }
+ </script>
+ 
+ <style>
+ .el-radio-group.control-field-value-abs{
+     line-height: 35px;
+ }
+ .radio-group-outer{
+     line-height: 35px
+ }
+ </style>

@@ -1,0 +1,52 @@
+.pg-api-design .pg-title {
+    margin: 0;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bolder;
+}
+.pg-api-design .panel-title {
+    text-align: left;
+}
+.pg-api-design .panel-title > span {
+    font-size: 14px;
+    font-weight: 500;
+}
+.panel-title-btn {
+    margin-top: -3px;
+}
+.pg-api-design  .panel-body {
+    padding: 18px 15px 0;
+}
+.pg-pb-item {
+    margin-bottom: 15px;
+}
+.pg-pb-item .form-control {
+    height: 30px;
+    font-size: 13px;
+}
+.pg-pb-item .control-label {
+    font-weight: normal;
+}
+.pg-pb-item .bootstrap-select .btn {
+    padding: 4px 12px;
+}
+
+.pg-pb-item-op {
+    text-align: right;
+    margin-top: 2px;
+}
+
+.pg-pb-header {
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+.pg-pb-header .desp-text,
+.pg-pb-header .btn {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+.title-left{
+    text-align: left;
+}

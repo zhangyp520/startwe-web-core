@@ -1,0 +1,87 @@
+<oui-view id="circle-list"
+          data="com.oursui.models.circle.web.CircleController4Query.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script id="circle-list-tpl" type="text/html" charset="utf-8">
+    <div class="row" oui-controller="com.oursui.models.circle.web.CircleController4Query">
+        <div class="col-sm-8 col-lg-12">
+            <div class="pg-block">
+                <div class="pg-block-header">
+                    {{include 'menu-path-tpl' ({menuId:'circle-list'})}}
+                </div>
+
+                <div class="pg-block-cont">
+                    <ul class="pg-list-group rmd-article-list">
+                        {{include 'circles-data-tpl'}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" charset="utf-8" id="circles-data-tpl">
+    {{if (!circles) ||(!circles.length)}}
+    <li class="pg-list-item">
+        <div class="row">
+            <div class="col-sm-8 col-md-9">
+                当前还没有圈子，<a href="#" oui-e-{{clickName}}="event2createCircle" >创建圈子</a>
+            </div>
+
+        </div>
+    </li>
+    {{/if}}
+    {{each circles as item index}}
+    <li class="pg-list-item">
+        <div class="pg-list-link">
+            <div class="row">
+                <div class="col-sm-8 col-md-9">
+                    <h3 class="article-title" circle-id="{{item.id}}"
+                        circle-load-url="{{item.extraAttrs.loadUrl}}"
+                        circle-save-url="{{item.extraAttrs.saveUrl}}"
+                        oui-e-{{clickName}}="event2loadCircle"><a href="#">{{item.name}}</a></h3>
+                    <div class="article-attr">
+                        <object>
+                            <a href="#">{{item.creatorName}}</a>
+                            <em>·</em>
+                            <span>{{item.createTime}}</span>
+                        </object>
+                        <span>|</span>
+                        <object>
+                            <a href="#" class="link-label">
+                                <i class="iconfont icon-huati"></i>
+                                <span>{{CircleController4Query.findCircleTypeName(item.circleType)}}</span>
+                                <i class="iconfont icon-huati"></i>
+                            </a>
+                        </object>
+                    </div>
+                    <div class="article-count">
+                        <ul>
+                            <li>
+                                <i class="iconfont icon-chakan"></i>
+                                <span>{{item.queryCount||0}}</span>
+                            </li>
+                            <li>
+                                <i class="iconfont icon-pinglun1"></i>
+                                <span>{{item.messageCount||0}}</span>
+                            </li>
+                            <li>
+                                <i class="iconfont icon-xihuan"></i>
+                                <span>{{item.starsCount||0}}</span>
+                            </li>
+                            <li class="pg-list-item-del show-xs"
+                                circle-remove-url="{{item.extraAttrs.removeUrl}}"
+                                circle-id="{{item.id}}" oui-e-{{clickName}}="event2removeCircle">
+                                <i></i>
+                                <span><a href="#">删除</a></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-3 text-right hidden-xs">
+                    <img src="/res_apps/common/image/img-default.png" data-src="{{item.circleLogo}}" alt="" class="pg-item-thumb">
+                </div>
+            </div>
+        </div>
+    </li>
+    {{/each}}
+</script>

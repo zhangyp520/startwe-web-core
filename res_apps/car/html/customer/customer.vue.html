@@ -1,0 +1,743 @@
+<template>
+  <!-- 全部1 客户中心页面 -->
+
+  <div id="customer">
+
+    <div class="crumbs">
+      <el-breadcrumb separator="/" style="margin-left: 20px;">
+        <el-breadcrumb-item>
+          <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>客户中心</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <el-container style="margin-left: 1px">
+      <!-- 侧边栏 -->
+      <el-aside width="140px">
+        <oui-include id='main_include' type="module" url="res_apps/car/html/customer/publicSidebar.vue.html">
+        </oui-include>
+      </el-aside>
+      <el-main>
+        <!-- 右侧内容头部区域开始 -->
+        <el-header class="blank_head">
+          <!-- 关键词开始 -->
+          <div class="keyword">
+            <div class="keyword_content">关键字:</div>
+            <template>
+              <el-select class="choice_box" v-model="formValue.queryKey" clearable placeholder="请选择">
+                <el-option v-for="item in queryKey" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </template>
+            <el-row :gutter="20">
+              <el-col :span="6">
+                <div class="grid-content bg-purple keyword_input">
+                  <el-input v-model="formValue.queryParam" size="medium" style="width: 314px; border-radius: 0px;  margin-left: 8px; height: 35px;  "
+                    placeholder="请输入关键字,例如:“宝马3系”"></el-input>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row class="Reset_button">
+              <el-button size="small" round @click="resetStart">重置</el-button>
+            </el-row>
+            <el-row class="query_button1">
+              <el-button type="primary" size="small" @click="queryCustomerInfo" round>查询</el-button>
+            </el-row>
+          </div>
+          <!-- 关键词结束 -->
+        </el-header>
+        <!-- 右侧内容头部区域结束 -->
+
+        <!-- 右侧内容区域主要内容区域开始 -->
+        <el-main class="inside_box">
+          <!-- 客户信息表格单区域开始 -->
+          <div class="table_box">
+            <el-row>
+              <el-button type="primary" class="el-icon-plus Workorder_button" @click='addCustomer'>新增客户</el-button>
+            </el-row>
+            <!-- 表格头部 -->
+            <div class="Table_head">
+              <!-- 表格头部 -->
+              <template>
+                <el-table :data="customerList" style="width: 100% ;" v-loading="loading">
+                  <!-- 编号的地方为索引 需要为<el-table-colum>标签添加:index="index"+"" -->
+                  <el-table-column type="index" class="newform_bgc" label="编号" align="center">
+                  </el-table-column>
+                  <el-table-column prop="custName" label="客户名称" align="center">
+                  </el-table-column>
+                  <el-table-column prop="custPhoneNo" label="联系方式" align="center"></el-table-column>
+                  <el-table-column prop="itemNames" label="项目内容 " align="center">
+                  </el-table-column>
+                  <el-table-column prop="custFromType" label="客户来源" :formatter="formatFromType" align="center">
+                  </el-table-column>
+                  <el-table-column prop="customerType" label="客户类型" :formatter="formatCustType" align="center">
+                  </el-table-column>
+                  <el-table-column label="状态" align="center">
+                    <template slot-scope='scope'>
+
+                        <div style="display: flex;align-items: center;">
+                            <div :class="scope.row.setColor">
+                            </div>
+                            <div style="margin-left: 20px;">{{scope.row.orderStatus}}</div>
+                        </div>
+                        <!-- <el-image class="" src="../../image/car.png" style="width: 100%;height: 100%"> -->
+
+                        </el-image>
+                    </template>
+
+                </el-table-column>
+                  <el-table-column prop="carComments" label="备注" align="center"></el-table-column>
+                  <el-table-column label="操作" align="center">
+                    <template slot-scope="scope">
+                      <el-button type="text" @click="completionSchedule(scope.row)">查看</el-button>
+                      <el-button type="text" style="color: red;" @click="deleteListData(scope.row)">删除</el-button>
+                    </template>
+                  </el-table-column>
+
+                </el-table>
+              </template>
+            </div>
+            <!-- 分页 -->
+            <div class="page">
+              <div class="block">
+                <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page="currentPage" :page-sizes="[1, 5, 10, 15, 20]"
+                  :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+              </div>
+            </div>
+          </div>
+        </el-main>
+    </el-container>
+
+  </div>
+</template>
+<script>
+  export default {
+    templateType: 'vue',
+    el: 'home',
+    data: function () {
+      return {
+        loading:true,
+        roleType: "",
+        empId: "",
+        //数据总条数 默认没有数据
+        total: 0,
+        //每页显示数据的条数
+        pageSize: 10,
+        //默认当前页为第一页
+        currentPage: 1,
+        //要展示的工单数据
+        customerList: [],
+        //高级查询关键字
+        formValue: {
+          workOrderStatus: "",
+          queryKey: "",
+          queryParam: ""
+        },
+        //高级查询关键字
+        queryKey: [{
+          value: 'custName',
+          label: '客户名称'
+        }, {
+          value: 'carNumber',
+          label: '车牌号码'
+        }, {
+          value: 'custPhoneNo',
+          label: '客户电话号码'
+        }]
+      }
+    },
+    created() {
+    },
+    mounted: function () {
+      if (this.isLoading) {
+        return;
+      }
+      this.isLoading = true;
+      let loginUser = window.localStorage.getItem("loginUser");
+      let loginUserInfo = oui.parseJson(loginUser);
+      this.roleType = loginUserInfo.roleType;
+      this.empId = loginUserInfo.id;
+      this.queryCustomerInfo();
+    },
+    methods: {
+      //工单状态显示格式化
+      // formatStatus: function (row, column) {
+      //   if (row.workOrderStatus == 5) {
+      //     return "等待用户确认";
+      //   } else if (row.workOrderStatus == 6) {
+      //     return "待材料出库";
+      //   } else if (row.workOrderStatus == 7) {
+      //     return "待维修员工确认";
+      //   } else if (row.workOrderStatus == 10) {
+      //     return "维修工单施工中";
+      //   } else if (row.workOrderStatus == 15) {
+      //     return "保养工单施工中";
+      //   } else if (row.workOrderStatus == 20) {
+      //     return "其他工单施工中";
+      //   } else if (row.workOrderStatus == 25) {
+      //     return "维修完成、待收款";
+      //   } else if (row.workOrderStatus == 30) {
+      //     return "已完成已收款";
+      //   } else if (row.workOrderStatus == 35) {
+      //     return "已取消订单";
+      //   }
+      // },
+      //客户来源显示格式化
+      formatFromType: function (row, column) {
+        if (row.custFromType == 1) {
+          return "自主到店";
+        } else if (row.custFromType == 2) {
+          return "车友会";
+        }
+      },
+      //客户状态显示格式化
+      formatCustType: function (row, column) {
+        if (row.customerType == 1) {
+          return "新客户";
+        } else if (row.customerType == 2) {
+          return "老客户";
+        }
+      },
+
+      handleCurrentChange: function (val) {
+        this.currentPage = val;
+        this.queryCustomerInfo();
+      },
+      handleSizeChange: function (val) {
+        this.pageSize = val;
+        this.queryCustomerInfo();
+      },
+      // 关键字查询功能
+      queryCustomerInfo: function () {
+        var me = this;
+        if (me.roleType == 5) {
+          oui.ajaxPost('customer/customerCenter/queryCustomersByEmpId', {
+            "empId": this.empId,
+            "queryKey": this.formValue.queryKey,
+            "pager": {
+              "page": this.currentPage,
+              "rows": this.pageSize
+            },
+            "queryParam": this.formValue.queryParam,
+            "workOrderStatus": this.formValue.workOrderStatus,
+          }, function (res) {
+            me.customerList = res.resultObj.customers;
+            // console.log(me.customerList);
+            me.total = res.resultObj.total;
+
+            oui.eachArray(me.customerList, function (item) {
+              if (item.workOrderStatus == 5) {
+                item.orderStatus = "等待用户确认";
+                item.setColor = "colorStatus3";
+              } else if (item.workOrderStatus == 6) {
+                item.orderStatus = "待材料出库";
+                item.setColor = "colorStatus4";
+              } else if (item.workOrderStatus == 7) {
+                item.orderStatus = "待维修员确认";
+                item.setColor = "colorStatus5";
+              } else if (item.workOrderStatus == 10) {
+                item.orderStatus = "维修工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 15) {
+                item.orderStatus = "保养工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 20) {
+                item.orderStatus = "其他工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 25) {
+                item.orderStatus = "待付款";
+                item.setColor = "colorStatus2";
+              } else if (item.workOrderStatus == 30) {
+                item.orderStatus = "订单已完成、收款";
+                item.setColor = "colorStatus1";
+              } else if (item.workOrderStatus == 35) {
+                item.orderStatus = "已取消订单";
+                item.setColor = "colorStatus6";
+              }
+            });
+            me.loading=false;
+          }, function (res) {
+            me.$message.error(res.message);
+          });
+        } else {
+          oui.ajaxPost('customer/customerCenter/queryCustomers', {
+            "queryKey": this.formValue.queryKey,
+            "pager": {
+              "page": this.currentPage,
+              "rows": this.pageSize
+            },
+            "queryParam": this.formValue.queryParam,
+            "workOrderStatus": this.formValue.workOrderStatus,
+          }, function (res) {
+            me.customerList = res.resultObj.customers;
+            // console.log(me.customerList);
+            me.total = res.resultObj.total;
+            oui.eachArray(me.customerList, function (item) {
+              if (item.workOrderStatus == 5) {
+                item.orderStatus = "等待用户确认";
+                item.setColor = "colorStatus3";
+              } else if (item.workOrderStatus == 6) {
+                item.orderStatus = "待材料出库";
+                item.setColor = "colorStatus4";
+              } else if (item.workOrderStatus == 7) {
+                item.orderStatus = "待维修员确认";
+                item.setColor = "colorStatus5";
+              } else if (item.workOrderStatus == 10) {
+                item.orderStatus = "维修工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 15) {
+                item.orderStatus = "保养工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 20) {
+                item.orderStatus = "其他工单施工中";
+                item.setColor = "colorStatus";
+              } else if (item.workOrderStatus == 25) {
+                item.orderStatus = "待付款";
+                item.setColor = "colorStatus2";
+              } else if (item.workOrderStatus == 30) {
+                item.orderStatus = "订单已完成、收款";
+                item.setColor = "colorStatus1";
+              } else if (item.workOrderStatus == 35) {
+                item.orderStatus = "已取消订单";
+                item.setColor = "colorStatus6";
+              }
+            });
+            me.loading=false;
+          }, function (res) {
+            me.$message.error(res.message);
+          });
+        }
+      },
+
+      // 重置功能
+      resetStart: function () {
+        this.formValue = {
+          workOrderStatus: "",
+          queryKey: "",
+          queryParam: ""
+        };
+        this.queryCustomerInfo()
+      },
+
+      // 跳转新增客户
+      addCustomer: function () {
+        oui.router.push('/res_apps/car/html/customer/addworkorder.vue.html')
+      },
+      // 跳转到已完成2 查看页面
+      completionSchedule: function (row) {
+        oui.router.push('/res_apps/car/html/customer/seeinformation.vue.html', {
+          custId: row.custId,
+          workOrderId: row.workOrderId
+        })
+      },
+      // 删除当前客户列表
+      deleteListData: function (row) {
+        let that = this;
+        this.$confirm('确认删除该客户信息吗？', '提示', {
+          type: 'warning'
+        }).then(() => {
+          oui.ajaxPost('customer/customerCenter/deleteCustomer', {
+            "custId": row.custId
+          },
+            function () {
+              that.$message({
+                message: '删除成功',
+                type: 'success'
+              });
+              // 删除成功后，在重新刷新页面数据
+              that.queryCustomerInfo()
+            },
+            function () {
+              that.$message.error('删除失败');
+            }
+          )
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      }
+    }
+  }
+</script>
+<style>
+  /* 施工中 */
+
+  .colorStatus {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #1890FF;
+  }
+
+  /* 订单已完成  */
+
+  .colorStatus1 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #4CA05E;
+  }
+
+  /* 待付款 */
+
+  .colorStatus2 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #E25555;
+  }
+
+  /* 等待用户确认 */
+
+  .colorStatus3 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #FFB30C;
+  }
+
+  /* 待材料出库 */
+
+  .colorStatus4 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #D40CFF;
+  }
+
+  /* 待维修员确认 */
+
+  .colorStatus5 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #6985FF;
+  }
+
+  /* 已取消订单 */
+
+  .colorStatus6 {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #A1A1A1;
+  }
+
+  /* 测试时 侧边栏宽度设置开始 */
+
+  .el-aside {
+    width: 140px !important;
+    margin: 0 0 !important;
+    padding: 0 0 !important;
+    box-shadow: #fff 0 0 0 !important;
+  }
+
+  /* 测试时 侧边栏宽度设置结束 */
+
+  .customer {
+    width: 1040px;
+    height: 700px;
+  }
+
+  html {
+    margin: 0 0px;
+    /* width: 1040px; */
+    /* height: 700px; */
+    /* background-color: rgb(243, 228, 21); */
+  }
+
+  * {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    list-style-type: none;
+  }
+
+  /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+  .el-header,
+  .el-footer {
+    /* background-color: #B3C0D1; */
+    /* background-color: #fff; */
+    /* color: #333; */
+    /* text-align: center; */
+    line-height: 48px;
+    height: 48px;
+    box-shadow: darkgrey 0px 1px 1px 1px
+  }
+
+  .el-aside {
+    background-color: #D3DCE6;
+    background-color: #fff;
+    color: #333;
+    /* text-align: center; */
+    /* line-height: 200px; */
+    box-shadow: red;
+    border: 1px soild red;
+    box-shadow: darkgrey 1px 1px 2px 1px
+  }
+
+  .el-main {
+    background-color: #f5f5f5;
+    color: #333;
+    padding: 0 20px 0 2px;
+  }
+
+  body>.el-container {
+    margin-bottom: 40px;
+  }
+
+  .el-container:nth-child(5) .el-aside,
+  .el-container:nth-child(6) .el-aside {
+    line-height: 260px;
+  }
+
+  .el-container:nth-child(7) .el-aside {
+    line-height: 320px;
+  }
+
+  /* 自己的样式 */
+
+  /* 侧边栏 */
+
+  /* 侧边栏log图片 */
+
+  img {
+    width: 204px;
+    height: 48px;
+    /* border: 1px solid red; */
+    /* background-color: #333; */
+  }
+
+  /* .el-menu-vertical-demo el-menu{
+        width: 39px;
+      }
+    
+      .tac.el-col.el-menu.el-menu-item{
+        width: 39px;
+      } */
+
+  /* 文字盒子span */
+
+  .el-icon-menu>span {
+    margin-left: 1px;
+  }
+
+  .product_text {
+    /* width: 208px; */
+    height: 60px;
+    line-height: 40px;
+    color: #1890FF;
+    padding-left: 8px;
+    /* background-color: rgb(151, 56, 56); */
+  }
+
+  .el-menu {
+    border: 0;
+    margin: 0 0;
+    padding: 0 0;
+  }
+
+  .el-menu-item>img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .el-menu-item>span {
+    margin-left: 10px;
+  }
+
+  /* 侧边栏样式结束 */
+
+  /* 右侧 头部区域个人信息区域 */
+
+  /* .navbar {
+      height: 50px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    } */
+
+  .navbar {
+    height: 48px;
+    float: right;
+    /* margin-right: 24px; */
+    line-height: 48px;
+    background-color: #fff;
+
+  }
+
+  .navbar>img {
+    width: 25px;
+    height: 25px;
+    margin: 14px 24px 14px 0;
+    /* line-height: 60px; */
+  }
+
+
+  /* 面包屑区域开始 -------*/
+
+  .crumbs {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    margin-bottom: 20px;
+    margin-top: 2px;
+  }
+
+  .el-breadcrumb {
+    line-height: 40px;
+  }
+
+  /* 面包屑区域结束------ */
+
+  /* 内容区域的头部为空白 */
+
+  /* 设置右侧头部盒子的边框阴影 */
+
+  .blank_head {
+    background-color: #fff;
+    height: 60px !important;
+    box-shadow: #fff 0px 0px 0px 0px;
+    line-height: 60px;
+
+  }
+
+  .blank_head>div>span {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .el-checkbox-group {
+    display: inline;
+
+  }
+
+  /* 内容侧边栏每一项结束---- */
+
+  /* 内部盒子的内容主体区域 */
+
+  .inside_box {
+    background-color: #fff;
+    /* line-height: 160px; */
+    text-align: left !important;
+  }
+
+  /* 关键字的样式设置开始 */
+
+  /* 关键字区域 */
+
+  .keyword {
+    /* width: 1000px; */
+    height: 60px;
+    font-weight: 700;
+    line-height: 60px;
+    display: flex;
+    justify-content: left;
+  }
+
+  .keyword_content {
+    display: inline;
+    height: 30px;
+    font-size: 14px;
+    margin-right: 24px;
+  }
+
+
+
+  .Reset_button>.el-button {
+    margin: 0px 8px;
+    border-radius: 0;
+  }
+
+  .Reset_button>.el-button>span {
+    font-size: 14px;
+  }
+
+  .query_button1>.el-button {
+    border-radius: 0;
+  }
+
+  .query_button1>.el-button>span {
+    font-size: 14px;
+  }
+
+  /* 下拉框样式调整 */
+
+  .el-select .el-input__inner {
+    width: 104px;
+    height: 35px;
+  }
+
+  /* 这里是影响全局的input样式设置 */
+
+  /* 关键字的样式设置结束 */
+
+  /* 新增员工工单表格处 */
+
+  /* 修改表格头部背景色 */
+
+  .el-table th {
+    background-color: #fafafa;
+  }
+
+  .table_box {
+    margin-bottom: 21px;
+    text-align: left;
+  }
+
+  .table_box>.el-row {
+    margin: 10px 0;
+  }
+
+  .Workorder_button {
+    margin: 0 0;
+  }
+
+  /* 改变加号和文字之间的距离 */
+
+  .el-icon-plus:before {
+    margin-right: 8px;
+  }
+
+
+  /* 表格数据 居中对齐*/
+
+  .cell {
+    /* text-align: center; */
+    color: rgb(0, 0, 0, 0.7);
+  }
+
+  /* 查看弹框的头部标题颜色 */
+
+  .oui-dialog-hd {
+    background-color: #1890FF !important;
+  }
+
+
+  /* 分页区域开始---- */
+
+  .page {
+    margin-top: 20px;
+    width: 100%;
+    height: 35px;
+  }
+
+  .block {
+    float: right;
+  }
+
+  /* 分页区域位置放置区域 ----------------*/
+
+  /* .block {
+    margin: 20px 0px 20px 220px;
+  } */
+
+  /* 分页区域结束----- */
+</style>

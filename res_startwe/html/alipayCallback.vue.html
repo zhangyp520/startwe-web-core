@@ -1,0 +1,66 @@
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            //后台获取到授权码后 将授权码一并带到前台的回调页面 然后通过getRequest方法获取到授权码
+            let param = this.getRequest(); //json格式的参数
+            let that = this;
+            oui.ajaxPost('login/alipayUser/getAccessToken', param, function (res) {
+                oui.cookie('tokenId', res.resultObj.loginToken, 30);
+                oui.cookie('userId', res.resultObj.loginUser.id);
+                oui.storage.set("startwe_user_info",oui.parseString(res.resultObj.loginUser));
+                that.loadMenus();
+            }, function (res) {
+                that.$message.error(res.message);
+            })
+        },
+        methods: {
+            getRequest:function() {
+                var url = location.href;
+                var theRequest = new Object();
+                var index = url.indexOf("?");
+                if (index != -1) {
+                    var str = url.substr(index + 1);
+                    strs = str.split("&");
+                    for(var i = 0; i < strs.length; i ++) {
+                        theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+                    }
+                    theRequest["projectId"] = "startwe";
+                }
+                return theRequest;
+            },
+            loadMenus: function () {
+                //var path = oui_context.checkUrl;
+                var me = this;
+                var path = oui_context.checkUrl;
+                var userId = oui.cookie("userId");
+                var tokenId = oui.cookie("tokenId");
+                var loadMenusUrl = this.$router.query.loadMenusUrl;
+
+                var iframeId = oui.getParam('iframeId');
+                oui.getData(path, {
+                    userId: userId,
+                    tokenId: tokenId
+                }, function (res) {
+                    // 缓存当前人的菜单数据
+                    oui.storage.set('startwe_menus', oui.parseString(res.menus));
+                    oui.router.push('res_startwe/html/index.vue.html');
+                });
+            }
+        }
+    }
+</script>

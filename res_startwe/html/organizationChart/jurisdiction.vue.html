@@ -1,0 +1,253 @@
+<!-- 页面设计>>>>>>>页面权限设计弹窗>>>>>>>>页面名称 -->
+<template>
+    <div>
+        <!-- 头部 -->
+        <div class="header">
+            <div>
+                <span :class="{'active':index==checkClick}" v-for="(item,index) in header_menu" @click="spanClick(index)">{{item.text}}</span>
+            </div>
+        </div>
+        <!-- 内容 -->
+        <!-- 页面名称 -->
+        <div v-if="checkClick==0">
+            <div class="tableBox">
+                <el-table :data="tableData" style="width: 100%" :header-cell-style="{background:'#FAFAFA'}">
+                    <el-table-column prop="controlType" label="控件类型" align="center">
+                    </el-table-column>
+                    <el-table-column prop="businessID" label="业务id" align="center">
+                    </el-table-column>
+                    <el-table-column prop="fieldName" label="字段名称" align="center" width="160%"></el-table-column>
+                    <el-table-column prop="edit" label="编辑" align="center">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.edit" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="browse" label="浏览" align="center">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.browse" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="hide" label="隐藏" align="center">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.hide" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="invisible" label="不可见" align="center">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.invisible" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box"
+                                inactive-color="#A2A2A2" @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="required" label="必填" align="center">
+                        <template slot-scope='scope'>
+                            <el-switch v-model="scope.row.required" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box" inactive-color="#A2A2A2"
+                                @change="changeStatus(scope.row)">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="defaultValue" label="默认值" align="center">
+                        <template slot-scope="scope">
+                            <el-input v-model="scope.row.defaultValue" clearable>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <!-- 按钮 -->
+            <div class="subBtn">
+                <el-button class="cancelBtn">取消</el-button>
+                <el-button class="determineBtn">确定</el-button>
+            </div>
+        </div>
+        <!-- 查询模板 -->
+        <div v-show="checkClick==1">
+            <oui-include type="module" url="res_startwe/html/organizationChart/queryTemplate.vue.html">
+            </oui-include>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                header_menu: [{
+                    text: '页面名称'
+                }, {
+                    text: '查询模板'
+                }],
+
+                checkClick: 0,
+                tableData: [{
+                    controlType: '123',
+                    businessID: '123',
+                    fieldName: '123',
+                    edit: '',
+                    browse: '',
+                    hide: '',
+                    invisible: '',
+                    required: '',
+                    defaultValue: ''
+                }, {
+                    controlType: '123',
+                    businessID: '123',
+                    fieldName: '123',
+                    edit: '',
+                    browse: '',
+                    hide: '',
+                    invisible: '',
+                    required: '',
+                    defaultValue: ''
+                }, {
+                    controlType: '123',
+                    businessID: '123',
+                    fieldName: '123',
+                    edit: '',
+                    browse: '',
+                    hide: '',
+                    invisible: '',
+                    required: '',
+                    defaultValue: ''
+                }],
+                Y: "Y",
+                N: "N",
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            // 导航切换
+            spanClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            //改变项目状态
+            changeStatus: function (row) {
+
+            },
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 头部 */
+
+    .header {
+        border-bottom: 1px solid rgba(151, 151, 151, 0.50);
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 22px;
+        font-weight: bold;
+    }
+
+    .header>div {
+        margin-left: 24px;
+    }
+
+    .header span {
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+        padding: 0 10px;
+        margin-right: 10px;
+        cursor: pointer;
+
+    }
+
+    .active {
+        font-size: 16px;
+        color: #FF7D82;
+        line-height: 22px;
+        font-weight: bold;
+        border-bottom: 3px solid #FF7D82;
+    }
+
+    /* 表格 */
+
+    .tableBox {
+        margin: 24px 24px 0 24px;
+    }
+
+    /* 按钮 */
+
+    .subBtn {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineBtn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineBtn:focus,
+    .determineBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

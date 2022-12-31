@@ -1,0 +1,322 @@
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="streamingMedia-right-control" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="流媒体" name="1">
+                    <div>
+                         <!-- 用户名 -->
+                        <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">地址</span>
+                            <div>
+                                <el-input v-model="websiteLink"  type="textarea" class="volume-input" @change="handleWebsiteLinkChange"></el-input>
+                            </div>
+                        </div>
+                        <!-- 填充 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">填充样式</span>
+                            <div>
+                                <el-select v-model="fillStyle" placeholder="请选择" class="fill-patterns" @change="handleFillStyleChange">
+                                    <el-option v-for="item in fillStyleOptions" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div> -->
+                        <!-- 音量 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">音量&emsp;&emsp;</span>
+                            <div style="display: flex;align-items: center;">
+                                <div class="volume-slider">
+                                    <el-slider v-model="volume" @change="handleVolumeChange"></el-slider>
+                                </div>
+                                <div>
+                                    <el-input v-model="volume" class="volume-input" @change="handleVolumeChange"></el-input>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- 协议 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">协议&emsp;</span>
+                            <div>
+                                <el-select v-model="protocol" placeholder="请选择" class="fill-patterns" @change="handleProtocolChange">
+                                    <el-option v-for="item in protocols" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div> -->
+                        <!-- 用户名 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">用户名</span>
+                            <div>
+                                <el-input v-model="username" class="volume-input" @change="handleUsernameChange"></el-input>
+                            </div>
+                        </div> -->
+                        <!-- 密码 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">密码&emsp;</span>
+                            <div>
+                                <el-input v-model="password" class="volume-input" @change="handlePasswordChange"></el-input>
+                            </div>
+                        </div> -->
+                        <!-- 服务器 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">服务器</span>
+                            <div>
+                                <el-input v-model="server" class="volume-input" @change="handleServerChange"></el-input>
+                            </div>
+                        </div> -->
+                        <!-- 端口 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">端口&emsp;</span>
+                            <div>
+                                <el-input v-model="port" class="volume-input" @change="handlePortChange"></el-input>
+                            </div>
+                        </div> -->
+                        <!-- 地址 -->
+                        <!-- <div class="streamingMedia-public-box">
+                            <span class="streamingMedia-public-title">地址&emsp;</span>
+                            <div>
+                                <el-input @change="handleWebsiteLinkChange" type="textarea" autosize v-model="websiteLink" class="volume-input"></el-input>
+                            </div>
+                        </div> -->
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                url:'',
+                slbHeight: '',
+                rightToolbarData: {},
+                //展开的选项
+                activeNames: '1', 
+                // 音量
+                volume: '',
+                // 填充类型
+                fillStyleOptions: [{
+                    value: '1',
+                    label: '原始比例'
+                }, {
+                    value: '2',
+                    label: '100%'
+                }],
+                //填充样式
+                fillStyle: '',
+                //协议
+                protocol: "",
+                protocols: [{
+                    value: 'http://',
+                    label: 'http://'
+                }, {
+                    value: 'https://',
+                    label: 'https://'
+                }],
+                //用户名
+                username: "",
+                //密码
+                password: "",
+                //服务器
+                server: "",
+                //端口
+                port: "",
+                //连接地址
+                websiteLink: ""
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.otherAttrs.fillStyle) {
+                this.fillStyle = this.currentControl.otherAttrs.fillStyle;
+            }
+            if (this.currentControl.otherAttrs.volume) {
+                this.volume = this.currentControl.otherAttrs.volume;
+            }
+            if (this.currentControl.otherAttrs.protocol) {
+                this.protocol = this.currentControl.otherAttrs.protocol;
+            }
+            if (this.currentControl.otherAttrs.username) {
+                this.username = this.currentControl.otherAttrs.username;
+            }
+            if (this.currentControl.otherAttrs.password) {
+                this.password = this.currentControl.otherAttrs.password;
+            }
+            if (this.currentControl.otherAttrs.server) {
+                this.server = this.currentControl.otherAttrs.server;
+            }
+            if (this.currentControl.otherAttrs.port) {
+                this.port = this.currentControl.otherAttrs.port;
+            }
+            if (this.currentControl.otherAttrs.websiteLink) {
+                this.websiteLink = this.currentControl.otherAttrs.websiteLink;
+            }
+        },
+        methods: {
+            urlChange : function(){
+
+            },
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                // Design.setCurrPropsData4page('props', 'down2selectPage');
+                if(pptControl&&pptControl.id&&pptControl.controlType){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //填充样式改变事件
+            handleFillStyleChange: function () {
+                this.currentControl.otherAttrs.fillStyle = this.fillStyle;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = this.currentControl.otherAttrs.fillStyle;
+                this.updateCurrentControl();
+            },
+            //音量改变事件
+            handleVolumeChange: function () {
+                this.currentControl.otherAttrs.volume = this.volume;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.volume = this.currentControl.otherAttrs.volume;
+                this.updateCurrentControl();
+            },
+            //协议改变事件
+            handleProtocolChange: function () {
+                this.currentControl.otherAttrs.protocol = this.protocol;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.protocol = this.currentControl.otherAttrs.protocol;
+                this.updateCurrentControl();
+            },
+            //用户名改变事件
+            handleUsernameChange: function () {
+                this.currentControl.otherAttrs.username = this.username;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.username = this.currentControl.otherAttrs.username;
+                this.updateCurrentControl();
+            },
+            //密码改变事件
+            handlePasswordChange: function () {
+                this.currentControl.otherAttrs.password = this.password;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.password = this.currentControl.otherAttrs.password;
+                this.updateCurrentControl();
+            },
+            //服务器改变事件
+            handleServerChange: function () {
+                this.currentControl.otherAttrs.server = this.server;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.server = this.currentControl.otherAttrs.server;
+                this.updateCurrentControl();
+            },
+            //端口改变事件
+            handlePortChange: function () {
+                this.currentControl.otherAttrs.port = this.port;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.port = this.currentControl.otherAttrs.port;
+                this.updateCurrentControl();
+            },
+            //连接地址改变事件
+            handleWebsiteLinkChange: function () {
+                this.currentControl.otherAttrs.websiteLink = this.websiteLink;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.websiteLink = this.currentControl.otherAttrs.websiteLink;
+                this.updateCurrentControl();
+            },
+        }
+    }
+
+</script>
+<style>
+    body {
+        background: #666;
+    }
+    .el-collapse{
+        border: none;
+    }
+    .streamingMedia-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .streamingMedia-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .streamingMedia-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .streamingMedia-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .streamingMedia-public-box>div {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .streamingMedia-public-title {
+        color: #fff;
+        width: 30%;
+        padding-left: 20px;
+    }
+
+    /* 填充下拉 */
+
+    .fill-patterns .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .fill-patterns .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 音量 */
+
+    .volume-slider {
+        width: 100%;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    /* .volume-input {
+        width: 80%;
+    } */
+
+    .volume-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .volume-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .volume-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+</style>

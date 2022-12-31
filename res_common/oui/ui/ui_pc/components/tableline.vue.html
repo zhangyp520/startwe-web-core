@@ -1,0 +1,372 @@
+<!--table 组件 -->
+<template>
+    <div class="table-outer">
+        <!-- toolbar -->
+        <div v-if="showToolbar">
+            <oui-include type="module" url="res_common/oui/ui/ui_pc/components/toolbar.vue.html" :ref="toolbarRef" :data="getToolbarData()" ></oui-include>
+        </div>
+        <!-- table -->
+        <div class="pg-table">
+            <el-table
+                    :data="tableData"
+                    style="width: 100%"
+                    highlight-current-row
+                    :ref="tableRef"
+                    @row-click="handleCurrentChange"
+                    >
+                <el-table-column v-if="selectType=='multiple'"
+                        type="selection"
+                        width="55">
+                </el-table-column>
+                <el-table-column v-if="selectType=='single'" label="" width="65">
+                    <template scope="scope">
+                        <el-radio @change.native="getCurrentRow(scope.$index)" :label="scope.$index" v-model="rowIndex" class="textRadio">&nbsp;</el-radio>
+                    </template>
+                </el-table-column>
+                <el-table-column label="序号" width="62px" type="index"></el-table-column>
+
+                <template v-for='(col) in selectFormFields'>
+                    <el-table-column
+                            :show-overflow-tooltip="true"
+                            :prop="col.bizId"
+                            :label="col.display"
+                            :key="col.id" >
+                    </el-table-column>
+                </template>
+                <!--扩展支持 对 行编辑 按钮的自定义-->
+            </el-table>
+        </div>
+
+        <!-- 分页 -->
+        <div v-if="showPagination">
+            <oui-include type="module" url="res_common/oui/ui/ui_pc/components/pagination.vue.html" :ref="paginationRef" :data="getPaginationData()" ></oui-include>
+        </div>
+
+        <div style="height: 30px">
+            <!-- 占位，无实际作用 -->
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                tableRef:'table_'+oui.getUUIDLong(),
+                toolbarRef:'toolbar_'+oui.getUUIDLong(),
+                paginationRef:'paginationRef_'+oui.getUUIDLong(),
+                rowIdKey:'id',
+                selectType:'',//多选 multiple,单选 single,不可选为空,
+                searchSelect: '',
+                rowIndex:-1,
+                selectFormFields:[],
+                tableData: [
+
+                ],
+                total:0,
+                pageSize:10,
+                pageIndex:0,
+
+                selects:[],
+                showToolbar:'',
+                showPagination:'',
+                //左右布局
+                curTabIndex: '0',
+                cache:{}
+            }
+        },
+        watch:{
+            //值改变处理
+            total:function(v){
+                var refId = this.paginationRef;
+                var ref = this.$refs[refId];
+                if(ref&&ref.comp){
+                    ref.comp.total = this.total;
+                }
+
+            },
+            pageIndex:function(v){
+                //页面跳转
+                var timer = this.timer4pageIndex;
+                if(timer){
+                    clearTimeout(timer);
+                }
+                var me = this;
+                this.timer4pageIndex = setTimeout(function(){
+                    me.loadData&&me.loadData(function(){
+                        me.timer4pageIndex = null;
+                    });
+                },1);
+            },
+            pageSize:function(v){
+                var refId = this.paginationRef;
+                var ref = this.$refs[refId];
+                if(ref&&ref.comp){
+                    ref.comp.pageSize = this.pageSize;
+                }
+            }
+
+        },
+        mounted: function()
+        {
+            var showToolbar = this.showToolbar || oui.JsonPathUtil.getJsonByPath('otherAttrs.showToolbar',this);
+            var showPagination = this.showPagination || oui.JsonPathUtil.getJsonByPath('otherAttrs.showPagination',this);
+            var selectType = this.selectType || oui.JsonPathUtil.getJsonByPath('otherAttrs.selectType',this);
+            var selectFormFields = this.selectFormFields||[];
+            if(!selectFormFields.length){
+                selectFormFields = oui.JsonPathUtil.getJsonByPath('otherAttrs.selectFormFields',this)||[];
+                this.selectFormFields = selectFormFields;
+            }
+            var tableData = this.tableData||[];
+            if(!tableData.length){
+                tableData = oui.JsonPathUtil.getJsonByPath('otherAttrs.tableData',this)||[];
+                this.tableData = tableData||[];
+            }
+            this.showToolbar = showToolbar;
+            this.showPagination = showPagination;
+            this.selectType = selectType;
+
+            /*
+             *dataSourceType:'none', //innerEncodeUrl,innerUrl,url,none
+             dataUrl:'',//dataUrl
+             dataKey:'', //数据key
+             totalKey:'total'
+             */
+            this.dataSourceType = this.dataSourceType || oui.JsonPathUtil.getJsonByPath("otherAttrs.dataSourceType",this)||'none'; //默认不绑定数据源
+            this.dataUrl = this.dataUrl || oui.JsonPathUtil.getJsonByPath('otherAttrs.dataUrl',this)||'';
+            this.dataKey = this.dataKey || oui.JsonPathUtil.getJsonByPath('otherAttrs.dataKey',this)||'dataList';
+            this.totalKey = this.totalKey||oui.JsonPathUtil.getJsonByPath('otherAttrs.totalKey',this)||'';
+            this.dataUrl4decode = this.dataUrl4decode || oui.JsonPathUtil.getJsonByPath('otherAttrs.dataUrl4decode',this)||'';
+            this.dataUrl4callback = this.dataUrl4callback || oui.JsonPathUtil.getJsonByPath('otherAttrs.dataUrl4callback',this)||'';
+
+            this.loadData();
+        },
+        methods: {
+            findRequstParams:function(){
+                //获取url参数
+                if(this.dataSourceType =='url'){
+                    //外部明文
+                    //默认返回
+                }else if(this.dataSourceType=='innerUrl') {
+
+                }else if(this.dataSourceType=='innerEncodeUrl'){
+
+                }
+                //自定义 url请求参数
+                if(this.onBuildReqParams){
+                    return this.onBuildReqParams()||{};
+                }
+                return {};
+            },
+            findResponseParams:function(result,success){
+                if(this.onBuildResponseParams){
+                    return this.onBuildResponseParams(result,success)||{};
+                }
+                return result;
+            },
+            //加载数据
+            loadData:function(callback){
+                var me = this;
+                if(this.dataSourceType =='none'){
+                    this.onLoadData&&this.onLoadData();
+                }else if(this.dataUrl4callback&& this.dataUrl4decode){
+                    //
+                    if(this.dataSourceType=='url'){//外部明文 url
+                        //提交第三方数据
+                        oui.postData(this.dataUrl4decode,me.findRequstParams(),function(res){
+                            //result,success
+                            var result = me.findResponseParams(res.result,res.success); //第三方ajax 访问请求结果
+                            var data =  result[me.dataKey] ||[];
+                            me.tableData = data; //表格数据回填
+                            if(me.totalKey){ //分页总数回填
+                                var total = result[me.totalKey]; // 统计计数
+                                me.total = total;
+                            }
+                            me.onLoadData&&me.onLoadData();
+                            callback&&callback();
+                        },function(res){
+                            oui.getTop().oui.alert('加载第三方url失败:'+me.dataUrl4decode+','+me.dataUrl);
+                        },'加载中...');
+                    }else if(this.dataSourceType =='innerUrl'){ //内部明文url,使用回调机制
+                        //提交内部明文url
+                        var reqParam = me.findRequstParams();
+
+                        oui.postData(me.dataUrl4callback,reqParam.param||{},function(res){
+
+                            if(res&&res.success&&res.url){
+                                oui.postData(res.url,reqParam.param4callback||{},function(res){
+
+                                    var result = me.findResponseParams(res,res.success); //第三方ajax 访问请求结果
+                                    var data =  result[me.dataKey] ||[];
+                                    me.tableData = data; //表格数据回填
+                                    if(me.totalKey){ //分页总数回填
+                                        var total = result[me.totalKey]; // 统计计数
+                                        me.total = total;
+                                    }
+                                    me.onLoadData&&me.onLoadData();
+                                    callback&&callback();
+                                },function(res){
+                                    oui.getTop().oui.alert('加载内部明文url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                                });
+                            }else{
+                                oui.getTop().oui.alert('加载内部明文url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                            }
+                        },function(res){
+                            oui.getTop().oui.alert('加载内部明文url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                        },'加载中...');
+                    }else if(this.dataSourceType =='innerEncodeUrl'){ //内部加密url
+                        var reqParam = me.findRequstParams();
+
+                        oui.postData(me.dataUrl4callback,reqParam.param||{},function(res){
+
+                            if(res&&res.success&&res.url){
+                                oui.postData(res.url,reqParam.param4callback||{},function(res){
+
+                                    var result = me.findResponseParams(res,res.success); //第三方ajax 访问请求结果
+                                    var data =  result[me.dataKey] ||[];
+                                    me.tableData = data; //表格数据回填
+                                    if(me.totalKey){ //分页总数回填
+                                        var total = result[me.totalKey]; // 统计计数
+                                        me.total = total;
+                                    }
+                                    me.onLoadData&&me.onLoadData();
+                                    callback&&callback();
+                                },function(res){
+                                    oui.getTop().oui.alert('加载内部加密url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                                },'加载中...');
+                            }else{
+                                oui.getTop().oui.alert('加载内部加密url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                            }
+                        },function(res){
+                            oui.getTop().oui.alert('加载内部加密url失败:'+me.dataUrl4callback+','+me.dataUrl);
+                        },'加载中...');
+                    }else{
+                        //未知的类型
+                    }
+                }else{
+                    //自定义加载数据脚本
+                    this.onLoadData&&this.onLoadData();
+                    callback&&callback();
+                }
+            },
+            handleCurrentChange:function(row,event,column){
+                //如果没有row,终止
+                if(!row) return;
+                //把当前行label绑定的值和v-model绑定的值相同时,单选按钮就可以选中
+                if(this.selectType=='multiple'){
+                    var index = this.selects.indexOf(row);
+                    //多选
+                    if (index == -1) {
+                        // 如果未存在，设置已选状态，并在list中添加这条数据
+                        this.$refs[this.tableRef].toggleRowSelection(row, true); //设置复选框为选中状态
+                        this.selects.push(row);
+                    } else {
+                        // 如果已存在，设置未选状态，并在list中删除这条数据
+                        this.$refs[this.tableRef].toggleRowSelection(row, false); //设置复选框为未选状态
+                        this.selects.splice(index, 1)
+                    }
+                }else if(this.selectType=='single'){
+                    //单选
+                    var rowIndex = this.tableData.indexOf(row);
+                    if(this.rowIndex == rowIndex){
+                        this.rowIndex = -1;
+                        this.selects=[];
+                    }else{
+                        this.rowIndex = this.tableData.indexOf(row);
+                        this.selects = [row];
+                    }
+                }else{
+
+                }
+                this.onRowClick&&this.onRowClick.call(this,row,event,column,this.selects); //自定义行点击事件
+            },
+            getToolbarData:function(){
+                if(!this.cache[this.toolbarRef]){
+                    this.cache[this.toolbarRef] ={
+                        //todo 处理工具栏
+                    };
+                }
+                return this.cache[this.toolbarRef];
+            },
+            getPaginationData:function(){
+                var me = this;
+                if(!this.cache[this.paginationRef]){
+                    this.cache[this.paginationRef] ={
+                        /**分页改变事件 */
+                        onUpdate:function(currentPage){
+                            me.onPaginationUpdate(currentPage);
+                        }
+                    };
+                }
+                return this.cache[this.paginationRef];
+            },
+            /** 分页事件处理*/
+            onPaginationUpdate:function(currentPage){
+                this.pageIndex = currentPage;
+            },
+            getCurrentRow:function(rowIndex){
+                return this.tableData[rowIndex]||{};
+            },
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            },
+
+            /****** 左右布局 *******/
+            handleTabChange: function(tab, event)
+            {
+                console.log(tab, event);
+            }
+        }
+    }
+</script>
+
+<style>
+    .table-outer {
+        padding: 15px;
+    }
+
+    .pg-toolbar {
+        margin-bottom: 20px;
+    }
+
+    .pg-table {
+        margin-bottom: 20px;
+    }
+
+    .pg-pagination {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    .pg-card .el-card {
+        margin-bottom: 20px;
+    }
+
+    .pg-card .card-cont {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .pg-card .card-footer {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .el-submenu {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* 上下布局，设置内容高度 */
+    .pg-tab-panel {
+        height: 400px;
+    }
+</style>

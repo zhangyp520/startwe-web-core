@@ -1,0 +1,341 @@
+<template>
+  <el-collapse accordion>
+    <el-collapse-item :title="g.name" v-for="g in table" :key="g.name">
+      <el-form size="mini" label-width="100px">
+        <el-form-item :label="item.zhName || item.name" v-for="item in g.items" :key="item.name" :rules="
+            item.required ? [{ required: item.required, trigger: 'blur' }] : []
+          ">
+          <template v-if="item.type === 'string'">
+            <!-- 未完，需要添加pattern支持 -->
+            <el-input v-model="item.default" :type="item.textarea ? 'textarea' : 'text'" :maxlength="item.max"
+              :minlength="item.min" @input="(val) => onChange(item.name, val, item.type, item)"
+              :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+              :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+              <template slot="prepend" v-if="item.prepend">{{
+                item.prepend
+              }}</template>
+              <template slot="append" v-if="item.append">{{
+                item.append
+              }}</template>
+            </el-input>
+          </template>
+          <template v-else-if="item.type === 'number'">
+            <!-- 未完，需要添加数据类型的pattern支持 -->
+            <el-input v-model="item.default" @input="(val) => onChange(item.name, val, item.type, item)"
+              :placeholder="item.placeholder" :clearable="item.clearable" :disabled="item.disabled"
+              :suffix-icon="item.suffix" :prefix-icon="item.prefix" :autosize="item.autosize" show-word-limit>
+              <template slot="prepend" v-if="item.prepend">{{
+                item.prepend
+              }}</template>
+              <template slot="append" v-if="item.append">{{
+                item.append
+              }}</template>
+            </el-input>
+          </template>
+          <template v-else-if="item.type === 'method'">
+            <!-- 未完，需要添加数据类型的pattern支持 -->
+            <el-input v-model="item.default" type="textarea"
+              @change="(val) => onChange(item.name, val, item.type, item)" :placeholder="item.placeholder"
+              :clearable="item.clearable" :disabled="item.disabled" :autosize="{ minRows: 3 }">
+            </el-input>
+          </template>
+          <template v-else-if="item.type === 'integer' || item.type === 'float'">
+            <el-slider v-model="item.default" :step="item.step" :min="item.min" :max="item.max" v-if="item.slider">
+            </el-slider>
+            <el-input-number v-model="item.default" :step="item.step" :min="item.min" :max="item.max"
+              :precision="item.type === 'float' ? 2 : undefined" v-else></el-input-number>
+          </template>
+          <template v-else-if="item.type === 'switch'  ">
+            <el-switch v-model="item.default" @change="(val) => onChange(item.name, val, item.type, item)">
+            </el-switch>
+          </template>
+          <template v-else-if="item.type === 'colorPicker'  ">
+            <el-color-picker v-model="item.default" @change="(val) => onChange(item.name, val, item.type, item)">
+            </el-color-picker>
+
+          </template>
+
+
+          <template v-else-if="item.type === 'array'">
+            <el-select v-model="item.default" :placeholder="item.placeholder" :clearable="item.clearable"
+              :disabled="item.disabled" :suffix-icon="item.suffix" :prefix-icon="item.prefix">
+              <el-option v-for="item in itemsformat(item.items, item.labels)" :key="item.value" :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+          <template v-else-if="item.type === 'enum'">
+            <el-checkbox-group v-model="item.default" :disabled="item.disabled" v-if="item.checkbox">
+              <el-checkbox-button v-for="item in itemsformat(item.items, item.labels)" :key="item.value"
+                :label="item.value">
+                {{ item.label }}</el-checkbox-button>
+            </el-checkbox-group>
+            <el-radio-group v-model="item.default" :disabled="item.disabled" v-else-if="item.radio">
+              <el-radio-button v-for="item in itemsformat(item.items, item.labels)" :key="item.value"
+                :label="item.value">
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </template>
+        </el-form-item>
+      </el-form>
+    </el-collapse-item>
+  </el-collapse>
+</template>
+
+<script>
+  export default {
+    templateType: "vue",
+    props: {
+      property: {
+        type: Array,
+        default: function () {
+          return [];
+        },
+        required: true,
+      },
+    },
+    data() {
+      return {
+        input: "111",
+        table: [],
+        queryKey: '',
+        url: "",
+        DataList: []
+      };
+    },
+    computed: {},
+    filters: {},
+    methods: {
+      /**
+       * 格式化 property
+       *
+       * [
+       *   "string", // 字符串，输入文本框
+       *   "number", // 数字，输入文本框
+       *   "method", // 方法，多行输入文本框
+       *   "regexp", // 正则表达式，输入文本框
+       *   "integer", // 整型数字，输入数字框、Slider 滑块
+       *   "float", // 浮点数，输入数字框、Slider 滑块
+       *   "array", // 普通数据，下拉列表
+       *   "enum", // 枚举项，按钮组（radio button 和 checkbox button）
+       *   "date", //日期时间，日期时间选择器
+       *   "color", // 颜色Hex，颜色选择器
+       *   "icon", // 图标，图标选择器
+       * ]
+       */
+      init() {
+        // 分组
+        var flag = {};
+        // 真实分组数据存储
+        var temp = [];
+        var parsing = function (prop) {
+          // 数据校验
+          if (!prop.type) throw "property.type is required";
+          if (!prop.name) throw "property.name is required";
+          var common = {
+            name: "",
+            zhName: "",
+            type: "string",
+            group: "未分组",
+            required: false,
+            disabled: false,
+            default: "",
+          };
+          /**
+           * 公共Schema
+           * {
+           *      name: "Name", // 字段名，必填
+           *      zhName: "字段名称", // 字段中文名，默认值 ""
+           *      type: "string", // 属性类型,默认值 "string",
+           *      group: "内容设置", // 字段组名，默认值 "未分组",
+           *      required: false, // 必须的，默认值 false
+           *      disabled: false, // 禁用的，默认值false
+           *      default: '', // 默认值，任意类型
+           * }
+           */
+          var definition = {
+            string: {
+              placeholder: "",
+              len: undefined,
+              min: undefined,
+              max: undefined,
+              pattern: undefined,
+              suffix: undefined,
+              prefix: undefined,
+              prepend: undefined,
+              append: undefined,
+              clearable: true,
+              textarea: false,
+              autosize: false,
+            },
+            number: {
+              placeholder: "",
+              min: undefined,
+              max: undefined,
+              suffix: undefined,
+              prefix: undefined,
+              prepend: undefined,
+              append: undefined,
+              clearable: true,
+            },
+            method: {
+              placeholder: "",
+              clearable: true,
+            },
+            regexp: {
+              placeholder: "",
+              len: undefined,
+              min: undefined,
+              max: undefined,
+              pattern: undefined,
+              suffix: undefined,
+              prefix: undefined,
+              prepend: undefined,
+              append: undefined,
+              clearable: true,
+            },
+            integer: {
+              placeholder: "",
+              slider: true,
+              step: 0.1,
+              min: undefined,
+              max: undefined,
+              pattern: undefined,
+              suffix: undefined,
+              prefix: undefined,
+              prepend: undefined,
+              append: undefined,
+              clearable: true,
+            },
+            float: {
+              placeholder: "",
+              slider: true,
+              step: 1,
+              min: undefined,
+              max: undefined,
+              pattern: undefined,
+              suffix: undefined,
+              prefix: undefined,
+              prepend: undefined,
+              append: undefined,
+              clearable: true,
+            },
+            array: {
+              data:[],
+              clearable: true,
+            },
+            enum: {
+              data:[],
+              radio: true,
+              checkbox: false,
+              clearable: true,
+            },
+            date: {
+              picker: "date",
+              "start-placeholder": undefined,
+              "end-placeholder": undefined,
+              "value-format": "timestamp",
+              "is-range": false,
+              "range-separator": "-",
+              clearable: true,
+            },
+            color: {
+              "show-alpha": false,
+              predefine: [],
+              "color-format": "hex",
+            },
+            icon: {
+              placeholder: "",
+              clearable: true,
+            },
+          };
+          var define = definition[prop.type];
+          return Object.assign(common, define, prop);
+        };
+        this.property.forEach((prop) => {
+          var group = prop.group;
+          if (!group) group = "未分组";
+          if (flag[group] === undefined) {
+            var index = Object.keys(flag).length;
+            flag[group] = index;
+            temp[index] = {
+              name: group,
+              items: [],
+            };
+          }
+          // 获取组数组索引，并添加数组对象
+          temp[flag[group]].items.push(parsing(prop));
+        });
+        this.table = temp;
+      },
+      /**
+       * 数据项格式化
+       */
+      itemsformat(items, labels) {
+        var temp = [];
+        for (var i = 0; i < items.length; i++) {
+          var o = labels[i] ? {
+            value: items[i],
+            label: labels[i],
+          } : {
+            value: items[i],
+            label: items[i],
+          };
+          temp.push(o);
+        }
+        return temp;
+      },
+      loadRemoteData: function (query) {
+        //加载远程地址
+        query = query || '';
+        var me = this;
+
+        me.loading = true;
+        //根据输入参数模糊匹配
+        //查询所有
+        var url = this.url;
+        if (url) {
+
+          var queryParams = oui.parseJson(oui.parseString(this.queryParams));
+          console.log('--query1---->', queryParams);
+          queryParams[this.queryKey] = query;
+          oui.postData(url, queryParams, function (res) {
+            if (res.success) {
+              console.log('--query2---->', res);
+              me.loadBack(res);
+            }
+            me.loading = false;
+          }, function (res) {
+
+            me.loading = false;
+          }, '加载中...');
+        }
+      },
+      // let  currentControl =  com.oui.absolute.AbsoluteDesign.data.currentControl
+      // true 是不是数组
+      // oui.JsonPathUtil.setObjByPath(key,currentControl,value,true); 
+      /**
+       * 触发 change 事件，通知对应的字段进行值更新
+       */
+      onChange(name, val, type, ref) {
+        console.log("change", name);
+        let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl
+        if (currentControl && currentControl.id) {
+          oui.JsonPathUtil.setObjByPath(name, currentControl, val, true);
+          console.log("change00000", val);
+        }
+        // this.$emit("change", name, val, type, ref);
+      },
+    },
+    mounted() { 
+      this.property = this.propertyReg
+      this.loadRemoteData();
+      this.init();
+
+    },
+  };
+</script>
+
+<style>
+</style>

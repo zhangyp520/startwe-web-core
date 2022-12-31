@@ -1,0 +1,526 @@
+<!-- 树状选择器 -->
+<template>
+    <div class="oui-class-treeselect">
+        <el-popover
+                ref="popover"
+                placement="bottom-start"
+                trigger="click"
+                @show="onShowPopover"
+                :height="400"
+                @hide="onHidePopover">
+
+            <el-table
+                    ref="tree"
+                    :data="data"
+                    :style="'min-width:'+treeWidth"
+                    :height="400"
+                    :row-class-name="rowClassName"
+                    border
+                    :default-expand-all="true"
+                    indent="20"
+                    :expand-row-keys="expandRow"
+                    class="select-tree"
+                    highlight-current-row
+                    :multiple="false"
+                    :props="props"
+                    empty-text="暂无数据"
+                    :row-key="props.value"
+                    :expand-on-click-node="false"
+                    :current-row-key="value"
+                    :filter-method="filterNode"
+                    @row-click="onClickNode"
+
+                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+
+                <el-table-column v-for="(column,index) in columns"
+                        :prop="column.name"
+                        :label="column.title"
+                        sortable
+                        :width="column.width||100">
+                    <template slot-scope="scope">
+                        {{getDisplay(column,scope.row)}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="序号" width="50">
+                    <template slot-scope="scope">
+                        {{getNum(scope.row.id)}}
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <el-input
+                    :size="size"
+                    slot="reference"
+                    ref="input"
+                    v-model="display"
+                    @clear="event2clear"
+                    clearable
+                    @input="event2input"
+                    :style="{'width':width+'px'}"
+                    :class="{ 'rotate': showStatus }"
+                    suffix-icon="el-icon-arrow-down"
+                    :placeholder="placeholder">
+            </el-input>
+        </el-popover>
+    </div>
+</template>
+<script>
+exports={
+    name: 'Pagination',
+    props: {
+        expandRow:{
+            default:[]
+        },
+        showSortNum:{
+            type:Boolean,
+            required:false,
+            default:true
+        },
+        filter:{
+            type:Function
+        },
+        filterUpdate:{
+            type:Function
+        },
+        size:{
+            type:String,
+            required:false,
+            default:'mini'
+        },
+        isFiler:{
+            type:Boolean,
+            default:false
+        },
+        disabledRow:{
+            type:Function
+        },
+        // 接收绑定参数
+        value: {
+            type:String,
+            default:''
+        },
+        display:String,
+        // 输入框宽度
+        width:String,
+        // 选项数据
+        options: {
+            type: Array,
+            required: true,
+        },
+        columns: {
+            type:Array,
+            required:false,
+            default:[]
+        },
+        // 输入框占位符
+        placeholder: {
+            type: String,
+            required: false,
+            default: '请选择',
+        },
+        // 树节点配置选项
+        props: {
+            type: Object,
+            required: false,
+            default: () => ({
+                parent: 'parentId',
+                value: 'id',
+                label: 'display',
+                children: 'children',
+            })
+        }
+    },
+    // 设置绑定参数
+    model: {
+        prop: 'value',
+        event: 'selected'
+    },
+    computed: {
+        // 是否为树状结构数据
+        dataType:function () {
+            const jsonStr = JSON.stringify(this.options);
+            return jsonStr.indexOf(this.props.children) !== -1;
+        },
+        // 若非树状结构，则转化为树状结构数据
+        data:function () {
+            return this.findData();
+        }
+    },
+    watch: {
+        // display:function (val) {
+        //     if (!val) {
+        //         if(this.value){
+        //             this.value = '';
+        //         }
+        //     }
+        // },
+        value:function(val) {
+            if(!val){
+                if(this.display){
+                    this.display ='';
+                }
+            }else{
+                this.display = this.queryTree(this.data, val);
+            }
+        },
+        options:function (val){
+            if(val){
+                this.display = this.display||this.queryTree(val, this.value);
+            }
+        }
+    },
+    data:function() {
+        return {
+            // 树状菜单显示状态
+            showStatus: false,
+            // 菜单宽度
+            treeWidth: 'auto',
+            // 输入框显示值
+            display: '',
+            // 实际请求传值
+            value: '0',
+            filterTableData:[]
+        };
+    },
+    created:function() {
+        // 检测输入框原有值并显示对应 label
+        if (this.value) {
+            this.selected = this.value;
+            this.$emit('selected', this.value);
+            this.display = this.queryTree(this.data, this.value);
+        }else{
+            this.selected ='';
+            this.display='';
+            this.$emit('selected', this.value);
+        }
+    },
+    mounted:function (){
+        var me = this;
+        //解决mounted多次的问题
+        if(this.timer4mounted){
+            clearTimeout(this.timer4mounted);
+        }
+        this.timer4mounted = setTimeout(()=>{
+            this.$nextTick(() => {
+                if (this.value) {
+                    this.selected = this.value;
+                    this.$emit('selected', this.value);
+                    this.display = this.display||this.queryTree(this.findData(), this.value);
+                    console.log(this.options,'options');
+                    console.log(this.findData(),'findData');
+                }else{
+                    this.selected ='';
+                    this.display='';
+                    this.$emit('selected', this.value);
+                }
+                this.$refs.input.value = this.display;
+                console.log('当前treetableselect 显示值:'+this.display+',实际值：'+this.value);
+                setTimeout(function (){
+                    me.treeWidth = `${(me.width || me.$refs.input.$refs.input.clientWidth) - 24}px`;
+                },5);
+                // me.$refs.tree.setCheckedKeys([me.value]);
+                console.log(this.treeWidth,'树宽度');
+                this.timer4mounted=null;
+            });
+        },1);
+
+
+    },
+    methods: {
+        findData:function (){
+            var data = this.dataType ? this.options : this.switchTree();
+            if(this.filter){
+                data = oui.filterTree(data,this.filter,this.filterUpdate);
+            }
+
+            if(!this.isFiler){
+                return  data;
+            }
+            var searchValue=this.display;
+            if(searchValue){
+                let treeData = data
+                let handleTreeData = this.handleTreeData(treeData, searchValue)
+                this.setExpandRow(handleTreeData)
+                this.expandRow = this.expandRow.join(",").split(",")
+                return handleTreeData
+            }
+            return data
+        },
+        rowClassName:function (scope){
+            if(scope.row.disabled || (this.disabledRow&&this.disabledRow(scope.row))){
+                return 'disabled'
+            }
+
+            return "ok-row";
+        },
+        event2input:function (){
+            this.isFiler = true;
+        },
+        handleTreeData(treeData, searchValue) {
+            if (!treeData || treeData.length === 0) {
+                return [];
+            }
+            const array = [];
+            for (let i = 0,len=treeData.length; i < len; i += 1) {
+                let match = false;
+                for(let pro in treeData[i]){
+                    if(typeof(treeData[i][pro])=='string'){
+                        match |= treeData[i][pro].includes(searchValue);
+                        if(match) break;
+                    }
+                }
+                if (this.handleTreeData(treeData[i].children, searchValue).length > 0 || match ) {
+                    var temp = {};
+                    for(var k in treeData[i]){
+                        if(k !='children'){
+                            temp[k] = treeData[i][k];
+                        }
+                    }
+                    temp.children = this.handleTreeData(treeData[i].children, searchValue);
+                    array.push(temp);
+                }
+            }
+            return array;
+        },
+        // 将过滤好的树形数据展开
+        setExpandRow:function(handleTreeData) {
+            if(handleTreeData.length) {
+                for (let i of handleTreeData) {
+                    this.expandRow.push(i.id)
+                    if(i.children.length) {
+                        this.setExpandRow(i.children)
+                    }
+                }
+            }
+        },
+        getData:function (){
+            return {
+                value:this.value,
+                display:this.display
+            };    
+        },
+
+        // 单击节点
+        onClickNode:function(node) {
+            if(node.disabled || (this.disabledRow&&this.disabledRow(node))){ //如果是禁用 则不允许选择
+                this.$refs.tree.setCurrentRow(null);
+                return ;
+            }
+            var lastData = oui.clone(this.getData());
+            this.display = node[this.props.label];
+            this.value = node[this.props.value];
+            this.$refs.tree.setCurrentRow(node);
+            this.onUpdate&&this.onUpdate(this.bindProp,this.getData(),lastData,{operate:'select',row:node});
+            this.onCloseTree();
+        },
+        event2clear:function (){
+
+            var lastData = oui.clone(this.getData());
+            if(this.value){
+                lastData.display = this.queryTree(this.data, this.value);
+            }
+            this.value ='';
+            this.display='';
+            this.$set(this,'value',this.value);
+            this.$set(this,'display',this.display);
+            this.$emit('selected',this.value);
+            this.onUpdate&&this.onUpdate(this.bindProp,this.getData(),lastData,{operate:'clear'});
+        },
+        clear:function (){
+            this.value ='';
+            this.display='';
+            this.$emit('selected',this.value);
+        },
+        // 偏平数组转化为树状层级结构
+        switchTree:function() {
+            return this.cleanChildren(this.buildTree(this.options, '0'));
+        },
+        // 隐藏树状菜单
+        onCloseTree:function() {
+            this.$refs.popover.showPopper = false;
+
+        },
+        // 显示时触发
+        onShowPopover:function() {
+            this.showStatus = true;
+            this.isFiler= false;
+            if(this.value){
+                var me = this;
+                var node = oui.findOneFromTreeArrayBy(this.data,function (item){
+                    if(me.value == item[me.props.value]){
+                        return true;
+                    }
+                });
+                if(node){
+                    this.$refs.tree.setCurrentRow(node);
+                    const Tbody = this.$refs.tree.$el.querySelector('.el-table__body-wrapper> table > tbody')
+                    setTimeout(() => {
+                        Tbody.querySelector('.el-table__row.current-row')?.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
+                    }, 300)
+                }
+            }
+        },
+        // 隐藏时触发
+        onHidePopover:function() {
+            this.showStatus = false;
+            this.$emit('selected', this.value);
+        },
+        // 树节点过滤方法
+        filterNode:function(query, data) {
+            if (!query) return true;
+            return data[this.props.label].indexOf(query) !== -1;
+        },
+        getNum:function (value){
+            var idx =0;
+            var me = this;
+            oui.findOneFromTreeArrayBy(this.data,function (item){
+               idx++;
+               if(item[me.props.value]==value){
+                   return true;
+               }
+            });
+            return idx;
+        },
+        getDisplay:function (column,row){
+            var display = oui.JsonPathUtil.getJsonByPath(column.name,row);
+            if(display===null){
+                return '';
+            }
+            return  display+'';
+        },
+        // 搜索树状数据中的 ID
+        queryTree:function(tree, id) {
+            let stark = [];
+            stark = stark.concat(tree);
+            while (stark.length) {
+                const temp = stark.shift();
+                if (temp[this.props.children]) {
+                    stark = stark.concat(temp[this.props.children]);
+                }
+                if (temp[this.props.value] === id) {
+                    return temp[this.props.label];
+                }
+            }
+            return '';
+        },
+        // 将一维的扁平数组转换为多层级对象
+        buildTree:function(data, id) {
+            id =id ||'0';
+            const fa = (parentId) => {
+                const temp = [];
+                for (let i = 0; i < data.length; i++) {
+                    const n = data[i];
+                    if (n[this.props.parent] === parentId) {
+                        n.children = fa(n[this.props.value]);
+                        temp.push(n);
+                    }
+                }
+                return temp;
+            };
+            return fa(id);
+        },
+        // 清除空 children项
+        cleanChildren:function (data) {
+            const fa = (list) => {
+                list.map((e) => {
+                    if (e.children.length) {
+                        fa(e.children);
+                    } else {
+                        delete e.children;
+                    }
+                    return e;
+                });
+                return list;
+            };
+            return fa(data);
+        }
+    }
+}
+</script>
+
+<style scoped>
+    .oui-class-treeselect {
+
+    }
+    .custom-tree-node {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        padding-right: 8px;
+    }
+    .tree-node-sort-num{
+        color:wheat;
+        text-align: center;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #3d2772;
+        background: #26a2ff;
+        border-radius: 24px;
+    }
+    .custom-tree-node-columns{
+        display: inline-flex;
+    }
+    .custom-tree-node-columns span{
+        padding-left: 2px;
+    }
+    .el-input.el-input--suffix {
+        cursor: pointer;
+        overflow: hidden;
+    }
+    .el-input.el-input--suffix.rotate .el-input__suffix {
+        transform: rotate(180deg);
+    }
+    .select-tree {
+        max-height: 350px;
+        overflow-y: scroll;
+    }
+    /* 菜单滚动条 */
+    .select-tree::-webkit-scrollbar {
+        z-index: 11;
+    }
+    .select-tree::-webkit-scrollbar-track,
+    .select-tree::-webkit-scrollbar-corner {
+        background: #fff;
+    }
+    .select-tree::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background: #b4bccc;
+    }
+    .select-tree::-webkit-scrollbar-track-piece {
+        background: #fff;
+    }
+    .el-popover.el-popper{
+        background: #3A3B3F!important
+    }
+
+    .el-row {
+        margin-bottom: 20px;
+    }
+    .el-row:last-child{
+        margin-bottom: 0;
+    }
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+    .bg-purple {
+        background: #d3dce6;
+    }
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+</style>

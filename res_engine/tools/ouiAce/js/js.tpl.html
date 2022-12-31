@@ -1,0 +1,33 @@
+!(function () {
+    var {{controllerName}} = {
+        "package": "{{pkg}}",
+        "class": "{{controllerName}}",
+        init: function () {
+            {{jsInitCode}}
+        },
+        /** 数据定义****/
+        data: {{oui.parseString(jsDataJson)}},
+        /** 数据返回***/
+        getData: function () {
+            return {{controllerName}}.data;
+        },
+        /** 方法处理方法开始......******/
+        {{each jsMethods as item index}}
+        {{item.funName}}: function () {
+            {{item.funContent}}
+        },
+        {{/each}}
+        /** 事件处理方法开始......******/
+        {{each jsEvents as item index}}
+        {{item.funName}}: function () {
+            {{item.funContent}}
+        },
+        {{/each}}
+        /** 这是方法****/
+        test: function () {
+            alert('hello test');
+        }
+    };
+    {{controllerName}} = oui.biz.Tool.crateOrUpdateClass({{controllerName}});
+}());
+

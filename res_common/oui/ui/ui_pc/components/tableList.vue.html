@@ -1,0 +1,479 @@
+<template>
+    <div class="oui-class-tableList" >
+        <div>
+
+
+            <div class="s-table-list-header">
+
+
+                <div class="s-table-list-search-simple" v-if="searchType=='simple'">
+                    <el-input placeholder="请输入内容" v-model="searchkey" class="input-with-select">
+                        <el-select v-model="searchFiled" slot="prepend" placeholder="请选择" style="width: 100px;">
+                            <el-option v-for="item in searchOptions" :key="item.value" :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-button slot="append" @click="dosearch()" icon="el-icon-search"></el-button>
+                    </el-input>
+                </div>
+
+
+                <div class="s-table-list-search-tile" v-if="searchType=='tile'">
+
+                    <div class="search-filed">
+                        <template v-for="item in searchOptions">
+                            <div class="search-filed-item">
+                                <div class="label">{{item.label}}</div>
+                                <div>
+                                    <el-input v-model="searchFiled" placeholder="请输入内容"></el-input>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="search-btn">
+                        <el-button type="primary" icon="el-icon-search" @click="dosearch()">查询</el-button>
+                        <el-link class="showfiled" @click="showfiled()" type="primary">展开</el-link>
+                    </div>
+
+                </div>
+
+
+                <div class="s-table-list-search-tile" v-if="searchType=='advanced'">
+
+
+                    <div>
+                        <span class="s-icon s-icon-16 s-icon-advanced-search"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="s-table-list-tool-btn">
+                <el-button type="primary" size="small" @click="newData">新增</el-button>
+                <el-button type="primary" size="small" @click="impExcel">导入</el-button>
+                <el-button type="primary" size="small" @click="expExcel">导出</el-button>
+            </div>
+
+            <div class="table-list">
+                <el-table :data="dataList" border :header-cell-style="{background:'#f5f7fa',color:'#606266'}"
+                          :span-method="arraySpanMethod" style="width: 100%">
+                    <el-table-column type="selection" align="center"> </el-table-column>
+                    <el-table-column  type="index" label="序号" width="50" align="center"></el-table-column>
+                    <el-table-column v-for="(th, key) in tableColumns" :key="key" :prop="th.prop" :label="th.label"
+                                     :fixed="th.fixed" :width="th.width" :align="th.align">
+                        <template slot-scope="scope">
+                            <div v-if="th.prop=='tools'">
+                                <el-link type="primary" @click="showData(scope.row)" >详情</el-link>
+                                <el-link type="primary" @click="editData(scope.row)" >编辑</el-link>
+                                <el-link type="primary" @click="deleteItem(scope)">删除</el-link>
+                            </div>
+                            <div v-else v-html="scope.row[th.prop]"></div>
+                        </template>
+                    </el-table-column>
+                    <div slot="empty">
+                        <span class="s-icon  s-icon-18  s-icon-binding"></span> 绑定数据源后即可预览
+                    </div>
+                </el-table>
+            </div>
+
+
+
+            <div class="s-table-footer-page">
+                <el-pagination
+                        background
+                        layout="prev, pager, next"
+                        :pageSize="pageSize"
+                        :total="total"
+                        @current-change="handleCurrentChange"
+                >
+                </el-pagination>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                id: '',
+                name: '',
+                topserarch: '',
+                searchkey: '',
+                searchFiled: '',
+                toolsTitle: '操作栏',
+                toolsAlign: "center",
+                searchOptions: [],
+                emptymsg: '<span class="s-icon  s-icon-18  s-icon-binding"></span> 暂无数据',
+                dataList: [{
+                    title1: this.emptymsg,
+                    title2: 1,
+                    title3: 1,
+                    title4: 1,
+                    title5: 1,
+                    tools: 1,
+
+                }],
+                tableColumns: [{
+                        prop: "title1",
+                        label: "标题1",
+                        align: 'center'
+                    },
+                    {
+                        prop: "title2",
+                        label: "标题2",
+                        align: 'center'
+                    },
+                    {
+                        prop: "title3",
+                        label: "标题3",
+                        align: 'center'
+                    },
+                    {
+                        prop: "title4",
+                        label: "标题4",
+                        align: 'center'
+                    }
+                    // {  prop: "tools", label: "操作", align: 'center' },  
+                ],
+                otherAttrs: null,
+                searchType: 'simple',
+                total:0,
+                pageSize:10,
+                editPageId:0,
+                detailPageId:0,
+                queryParam:[]
+
+            }
+        },
+        mounted() {
+
+            //找到绑定的编辑页id
+            if (this.otherAttrs && this.otherAttrs.toolsEditbtn) {
+                this.editPageId = this.otherAttrs.toolsEditbtn
+            }
+
+            //找到绑定的编辑页id
+            if (this.otherAttrs && this.otherAttrs.detailPagebtn) {
+                this.detailPageId = this.otherAttrs.detailPagebtn
+            }
+
+            
+            
+
+            //搜索类型
+            if (this.otherAttrs && this.otherAttrs.searchType) {
+
+                this.searchType = this.otherAttrs.searchType
+                if (this.searchType == 'simple') {
+
+                }
+                if (this.searchType == 'tile') {
+
+                }
+              
+                this.tableColumns.map((item, index) => {
+
+                    this.searchOptions.push({
+                        value: item.prop,
+                        label: item.label
+                    })
+
+                })
+
+            }
+
+            if (this.otherAttrs && this.otherAttrs.toolsAlign) {
+
+                this.toolsAlign = this.otherAttrs.toolsAlign
+            }
+
+
+            if (this.otherAttrs && this.otherAttrs.toolsTitle) {
+                this.toolsTitle = this.otherAttrs.toolsTitle
+            }
+            this.tableColumns.push({
+                prop: 'tools',
+                label: this.toolsTitle,
+                width: 280,
+                align: this.toolsAlign,
+            });
+
+            if (this.otherAttrs && this.otherAttrs.dataSource) {
+
+                let dataSourceLogicID = this.otherAttrs.dataSource
+ 
+                let param = oui.getParam()
+
+                if (param.windowId) { //设计页
+                    url = com.oui.absolute.AbsoluteDesign.excutedSelectedLogicUrl
+                } else {
+                    url = param.excutedSelectedLogicUrl
+                }
+
+                //读取绑定的字段
+                oui.postData(url, {
+                    logicId: dataSourceLogicID,
+                    pageId: param.pageId
+                }, (res) => {
+
+                    if (res.fieldList && res.fieldList.length > 0) {
+
+                        this.tableColumns = [];
+                        this.dataList = [];
+                        this.searchOptions = [];
+                        let dataListItem = {}
+
+                        res.fieldList.map((item, index) => {
+                            // 初始化 table columns
+                            this.tableColumns.push({
+                                prop:  item.fieldBizId,
+                                id: item.fieldBizId,
+                                label: item.fieldName,
+                                align: 'center'
+                            });
+
+                            //更新搜索字段
+                            this.searchOptions.push({
+                                value: item.fieldBizId,
+                                label: item.fieldName
+                            })
+                            //初始化数据  数据为空给出提示
+                            if (index === 0) {
+                                dataListItem[0] = this.emptymsg
+
+                            } else {
+                                dataListItem[index] = ''
+
+                            }
+                        })
+
+                        this.dataList = [dataListItem]
+
+                        //最后增加一列为操作
+                        if (this.otherAttrs && this.otherAttrs.toolsEnable != undefined && this.otherAttrs
+                            .toolsEnable) {
+                            this.tableColumns.push({
+                                prop: 'tools',
+                                label: this.toolsTitle,
+                                width: 280,
+                                align: this.toolsAlign,
+                            });
+                        }
+
+                    }
+                    this.loadListData(1)
+
+
+
+
+                }, function (res) {
+
+                }, '加载中...');
+
+
+            }
+
+
+
+            if (this.otherAttrs && this.otherAttrs.toolsEnable != undefined) {
+
+                if (this.otherAttrs.toolsEnable) {
+                    //this.tableColumns.push({  prop: 'tools', label: "操作", align: 'center' } )
+                } else {
+                    this.tableColumns.pop() //删除操作列 
+                }
+
+            } 
+
+
+
+
+        },
+        methods: {
+
+            //合并行
+            arraySpanMethod:function(options) {
+                var row= options.row,column=options.column,rowIndex=options.rowIndex,columnIndex = options.columnIndex;
+                //如果没有值才合并
+                if(this.dataList[0]['title0'] == this.emptymsg){
+
+                    if (columnIndex === 0) {
+                        return [1, this.tableColumns.length - 1];
+                    // } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4) {
+                    } else if (columnIndex >= 1 && columnIndex <= this.tableColumns.length - 2) {
+                        return [0, 0];
+                    }
+                }
+                
+
+            },
+
+            showfiled:function() {
+
+            },
+            dosearch:function(){
+                console.info('dosearch')
+                this.loadListData(1)
+            },
+            //加载列表
+            loadListData:function(page) {
+
+                var me = this
+                if(me.searchkey && me.searchFiled){
+                    this.queryParam = [{
+                        field:me.searchFiled,
+                        expression:'like',
+                        value:'%'+me.searchkey+'%',
+                    }];
+                }else{
+                    this.queryParam = [];
+                }
+                this.pageIndex = page || 1;
+                //控件数据参数 pageIndex,pageSize,queryParam,dataList,total
+
+                //由事件进行绑定处理
+                this.onLoadData&&this.onLoadData(); // pageIndex,queryParam
+            },
+            deleteItem:function(scope){
+                console.info(scope,'scope') 
+                var me = this
+                debugger;
+                window.parent.oui.app.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    me.onRemoveOne&&me.onRemoveOne(scope.row,function success(){
+                        //刷新列表页面
+
+                        window.parent.oui.app.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+
+
+                        var url = "list.html" + location.search
+                        location.href = url
+
+                    },function error(){
+
+                    });
+
+                }).catch(() => {
+                    window.parent.oui.app.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+            },
+            findControlerValue:function(item, ctrid) {
+
+                let ctrdata = '';
+
+                if (item[ctrid] != undefined) {
+                    ctrdata = item[ctrid]
+                }
+
+                return ctrdata
+
+
+            },
+            handleCurrentChange:function(val) {
+                console.log(`当前页: ${val}`);
+                this.loadListData(val)
+            },
+            //新增数据
+            newData:function() { //表单页就是新增页
+                this.onGo2add&&this.onGo2add();
+            },
+            //导入数据
+            impExcel:function (){
+                this.onImpExcel&&this.onImpExcel();
+            },
+            //导出数据
+            expExcel:function (){
+                this.onExpExcel&&this.onExpExcel();
+            },
+
+            //编辑数据
+            editData:function(row) {
+                this.onGo2edit&&this.onGo2edit(row);
+            },
+            //详情数据
+            showData:function(row) {
+                this.onGo2detail&&this.onGo2detail(row);
+            }
+
+        }
+    }
+</script>
+
+<style>
+    .s-table-list-header {
+        margin: 10px 0;
+        display: flex;
+        justify-content: right;
+    }
+
+    .s-table-footer-page {
+        margin: 10px 0;
+    }
+
+    .s-table-list-search-simple {
+        width: 300px;
+        margin: 0 10px;
+
+
+    }
+
+    .s-table-list-search-tile {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .s-table-list-search-tile .search-filed-item {
+        margin: 0 10px;
+        display: flex;
+    }
+
+    .s-table-list-search-tile .search-filed-item .label {
+        color: rgb(72, 72, 72);
+        width: 50px;
+        line-height: 40px;
+        font-size: 14px;
+    }
+
+    .s-table-list-search-tile .search-filed {
+        display: flex;
+        width: 80%;
+        overflow: hidden;
+        height: 40px;
+        line-height: 40px;
+
+    }
+
+    .s-table-list-search-tile .showfiled {
+        margin-left: 10px;
+        line-height: 40px;
+
+    }
+
+    .s-table-list-search-tile .search-btn {
+        justify-items: right;
+    }
+
+    .s-table-list-tool-btn {
+        margin: 5px 0;
+        display: inline-flex;
+    }
+    .s-table-list-tool-btn > *{
+        padding-left:10px;
+        padding-right:10px;
+    }
+</style>

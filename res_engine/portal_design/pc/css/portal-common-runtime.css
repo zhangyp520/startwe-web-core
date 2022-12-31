@@ -1,0 +1,460 @@
+@charset "UTF-8";
+*{
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB",STHeiti,"Microsoft YaHei",sans-serif;
+}
+html,body{
+    width: 100%;
+    font-size: 14px;
+}
+body{
+    /*background: url("../images/a10c046990dbf3523b67376a6fd34342.jpg") #fff  no-repeat;*/
+    background-attachment: fixed;
+    background-position: top center;
+    background-size: cover;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder{ /* WebKit browsers */
+    color:rgba(81,81,81,.4);
+}
+input:-moz-placeholder,
+textarea:-moz-placeholder{ /* Mozilla Firefox 4 to 18 */
+    color:rgba(81,81,81,.4);
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder{ /* Mozilla Firefox 19+ */
+    color:rgba(81,81,81,.4);
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder{
+    color:rgba(81,81,81,.4);
+}
+
+@media print {
+    body {
+        border: 0 !important;
+        margin: 0 !important;
+    }
+    .portal-paper-area{
+        box-shadow: none !important;
+        overflow: hidden !important;
+    }
+}
+/*复选&单选公用样式*/
+/*文字信息*/
+.button-wrapper-info{
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+.checkbox-wrapper,.radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    float: left;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 1px 3px 0 0;
+}
+.selected-icon{
+    cursor: pointer;
+}
+.radio-button-wrapper input[type=radio],.checkbox-wrapper input[type=checkbox]{
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon,.radio-button-wrapper input[type="radio"]+.selected-icon{
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #aab2bd;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="radio"]+.selected-icon:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon,.radio-button-wrapper input[type="radio"]:checked+.selected-icon{
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+}
+/*单选样式*/
+
+.radio-button-wrapper input[type="radio"]+.selected-icon {
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+.radio-button-wrapper input[type="radio"]+.selected-icon:after {
+    background: #FFF;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+.radio-button-wrapper input[type="radio"]:checked+.selected-icon:after {
+    -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
+    -o-transform: scale(0.4);
+    transform: scale(0.4);
+}
+
+/*复选*/
+.checkbox-wrapper input[type="checkbox"]+.selected-icon{
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]:checked+.selected-icon:after {
+    border-bottom-color: #FFF;
+    border-right-color: #FFF;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]+.selected-icon:after {
+    top: 1px;
+    left: -1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid transparent;
+    -webkit-transform: rotate(43deg);
+    -ms-transform: rotate(43deg);
+    -o-transform: rotate(43deg);
+    transform: rotate(43deg);
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+/*表格控件设计态处理*/
+.control-pabs-html-tableLine{
+    overflow: visible !important;
+}
+/*明细表*/
+.cell-detail-pabs{
+    font-size: 14px;
+    color: #515151;
+    /*text-align: center;*/
+    border: 0 !important;
+}
+/*明细表行*/
+.control-table-body-row{
+    height: 40px;
+}
+/*明细表 内容行高亮*/
+.control-table-body-row-active{
+    background: rgba(173, 216, 230, 0.4);
+}
+/*控件显示态*/
+.control-pabs-component{
+    /*background-color: rgba(255,255,255,.7);避免设置了控件背景为透明还是有半透明背景*/
+    width: 140px;
+    height: 42px;
+    padding: 5px;
+    font-size: 0;
+    display: inline-block;
+    /*position: absolute;*/
+    left: 0;
+    top: 0;
+    z-index: 1;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.control-inner-pabs{
+    width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.control-pabs-component.control-pabs-component-canvas{
+    padding: 0;
+}
+.control-pabs-component:after{
+    content: "";
+    width: 0;
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.control-pabs-component .design-text-content{
+    line-height: 1.6;
+    font-size: 14px;
+    color: #515151;
+    display: block;
+    overflow: hidden;
+    max-height: 100%;
+}
+/*控件版式--横向--换行--隐藏标题--只显示标题*/
+/*control-pabs-oneLine 横向
+control-pabs-twoLine 换行
+control-pabs-hideTitle 隐藏标题
+control-pabs-onlyTitle 只显示标题*/
+.control-pabs-oneLine .control-title-pabs,
+.control-pabs-oneLine .control-container-pabs{
+    display: inline-block;
+}
+.control-pabs-twoLine .control-title-pabs,
+.control-pabs-twoLine .control-container-pabs{
+    width: 100% !important;
+    display: block;
+}
+.control-pabs-hideTitle .control-title-pabs,
+.control-pabs-onlyTitle .control-container-pabs{
+    display: none;
+}
+.control-pabs-hideTitle .control-container-pabs,
+.control-pabs-onlyTitle .control-title-pabs{
+    width: 100% !important;
+    display: block;
+}
+/*控件-s*/
+.control-pabs{
+    overflow: hidden;
+    font-size: 0;
+}
+.control-title-pabs{
+    width: 40%;
+    min-height: 22px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    padding: 0 10px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.control-container-pabs{
+    width: 60%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.control-container-pabs input,
+.control-container-pabs textarea{
+    width: 100%;
+    padding: 0 10px;
+    border: 1px solid #e6e6e6;
+    min-height: 30px;
+    line-height: 24px;
+    font-size: 14px;
+    outline: none;
+}
+.control-container-pabs textarea{
+    height: 60px;
+    padding: 3px 10px;
+}
+.control-label-pabs{
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.6;
+    display: inline-block;
+    vertical-align: middle;
+}
+.control-field-value-pabs{
+    min-height: 22px;
+}
+/*插入图片--s*/
+.control-pabs-html-image{
+    padding: 0;
+}
+.control-pabs-html-image .control-container-pabs{
+    position: relative;
+}
+.control-pabs-html-image .control-inner-pabs,
+.control-pabs-html-image .control-inner-pabs .control-container-pabs,
+.control-pabs-html-image .control-field-value-pabs{
+    height: 100%;
+}
+.control-pabs-html-image .control-field-value-pabs .control-field-html-image,
+.control-pabs-html-image .control-field-value-pabs img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    max-width: 100%;
+    border: 0 !important;
+}
+
+/*插入图片--e*/
+/*条形码--s--*/
+.control-pabs-component.control-pabs-html-barcode{
+    padding: 0;
+}
+.control-pabs-html-barcode .control-inner-pabs,
+.control-pabs-html-barcode .control-inner-pabs .control-container-pabs{
+    height: 100%;
+}
+.control-pabs-html-barcode .control-field-code-default{
+    background-image: url("../images/barcode-default.svg");
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    border: 0 !important;
+}
+.control-pabs-html-barcode .control-container-pabs img{
+    width: 100%;
+    vertical-align: top;
+}
+/*条形码--e--*/
+/*二维码--s--*/
+.control-pabs-html-qrcode .control-inner-pabs,
+.control-pabs-html-qrcode .control-inner-pabs .control-container-pabs{
+    height: 100%;
+}
+.control-pabs-html-qrcode .control-container-pabs img{
+    width: 100%;
+    vertical-align: top;
+}
+/*二维码--e--*/
+/*控件-e*/
+/*选取区域底层-s*/
+.control-pabs-selection-area{
+    display: none;
+}
+.control-pabs-selection-box{
+    z-index: 0;
+    position: absolute;
+}
+/*选取区域底层-e*/
+/*背景属性-s*/
+.bg-center{
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.bg-repeat{
+    background-repeat: repeat;
+}
+.bg-cover{
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+/*背景属性-e*/
+/*
+纸张宽度*/
+.portal-paper-area,
+.portal-paper-area-canvas{
+    background-color: #ffffff;
+    z-index: 1;
+    position: relative;
+    margin: 0 auto;
+    /*overflow: hidden;控件移动到最左侧，操作按钮被隐藏*/
+    display: block;
+    /*box-shadow: rgba(0, 0, 0, 0.31) 0 0 13px;*/
+}
+/** 打印使用****/
+.portal-paper-area {
+    margin-bottom: 0mm;
+    page-break-after: always;
+}
+.portal-paper-area .portal-paper-area{
+    background-color: transparent;
+    margin: 0 auto;
+    z-index: 0;
+}
+.A2{
+    width: 420mm;
+    height: 594mm;
+}
+.A3{
+    width: 297mm;
+    height: 420mm;
+}
+.A4{
+    width: 210mm;
+    height: 297mm;
+}
+.A5{
+    width: 148mm;
+    height: 210mm;
+}
+.A6{
+    width: 105mm;
+    height: 148mm;
+}
+.B2{
+    width: 500mm;
+    height: 707mm;
+}
+.B3{
+    width: 353mm;
+    height: 500mm;
+}
+.B4{
+    width: 250mm;
+    height: 353mm;
+}
+.B5{
+    width: 176mm;
+    height: 250mm;
+}
+.B6{
+    width: 125mm;
+    height: 176mm;
+}
+.control-pabs-table-view{
+    width: 100%;
+    border-collapse:collapse;
+}
+/**表格布局 **/
+.control-pabs-table-view td{
+    border: 1px solid #e6e6e6;
+}
+
+/** 明细表 表头**/
+.control-table-head-row{
+    overflow: hidden;
+}
+.control-table-head-row th{
+    border: 1px solid #e6e6e6;
+}
+
+.control-table-head-row .control-detail-head-cell{
+    width: 100% !important;
+}
+.control-pabs-table-view .control-pabs{
+    position: static;
+    overflow: visible;
+    height: auto !important;
+}
+/*瀑布流*/
+.page-pabs-normalForm{
+    margin-top:10px;
+    margin-right: 10px;
+    width: auto !important;
+    height: auto !important;
+}
+.page-pabs-normalForm .control-pabs-component{
+    /*position: static;*/
+    left: auto !important;
+    /*top: auto !important;*/
+    height: auto !important;
+    /*margin-top:10px;*/
+    width:100%;
+    display: block;
+}
+

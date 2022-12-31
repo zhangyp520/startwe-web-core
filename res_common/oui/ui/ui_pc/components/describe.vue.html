@@ -1,0 +1,43 @@
+
+<template >
+    <div :style="{  color:fontColor, backgroundColor : bgColor  }" >
+        {{value}}
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '描述文字',
+                style:'',
+                cls:'',  
+                fontColor:'#000000',
+                bgColor:'#fff',
+            }
+        },
+        mounted() {
+            if(this.otherAttrs.defaultText){ 
+                this.value = this.otherAttrs.defaultText;
+            }
+            if(this.otherAttrs.fontColor){
+                this.fontColor = this.otherAttrs.fontColor;
+            }
+            if(  this.otherAttrs.bgColor){
+                this.bgColor = this.otherAttrs.bgColor;
+            }
+        },
+        methods:{
+           
+        }
+    }
+</script>
+
+<style>
+
+</style>

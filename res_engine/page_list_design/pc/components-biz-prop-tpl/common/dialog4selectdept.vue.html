@@ -1,0 +1,230 @@
+
+<template >
+    <div>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                全部不可见
+            </el-col>
+            <el-col :span="18"   >
+                <el-switch
+                        on-text ="是"
+                        off-text = "否"
+                        on-color="#5B7BFA"
+                        off-color="#dadde5"
+                        v-model="config.notShow"
+                        @change="_controlOnUpdate('notShow',config)"
+                ></el-switch>
+            </el-col>
+        </el-row>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                选择节点范围
+            </el-col>
+            <el-col :span="18"   >
+                <oui-include type="module" ref="ref4selectDeptArea" data="findSelectAreaData()" url="res_common/oui/ui/ui_pc/components/selectdept.vue.html" ></oui-include>
+            </el-col>
+        </el-row>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                目标节点范围规则
+            </el-col>
+            <el-col :span="18"   >
+                <oui-include type="module" ref="ref4targetAreaShowType" data="findTargetAreaShowTypeData()" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html"></oui-include>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                目标节点区域包含的参与者类型
+            </el-col>
+            <el-col :span="18"   >
+                <oui-include type="module" ref="ref4targetAreaContainTypeCode" data="findTargetAreaContainTypeCodeData()" url="res_common/oui/ui/ui_pc/components/multiselect.vue.html"></oui-include>
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                targetAreaShowTypeEnum:{
+                    selectAndChildrenAll:{
+                        value:1,
+                        display:'子孙参与者节点(含指定节点)'
+                    },
+                    childrenAll:{
+                        value:2,
+                        display:'子孙参与者节点(不含指定节点)'
+                    },
+                    selectAndChildren:{
+                        value:3,
+                        display:'子参与者节点(含指定节点)'
+                    },
+                    select:{
+                        value:4,
+                        display:'固定节点(指定节点)'
+                    },
+                    parentsAll:{
+                        value:5,
+                        display:'所有父参与者节点(不含指定节点,不递归找父节点的父节点)'
+                    },
+                    selectAndParentsAll:{
+                        value:6,
+                        display:'所有父参与者节点(含指定节点,递归到根节点)'
+                    }
+                },
+                config:{
+                    notShow:false
+                }
+            }
+        },
+        mounted:function(){
+            var me = this;
+            var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+            AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var temp  = AbsoluteDesign.dialog4selectDept.attr('configJson');
+            var  config = oui.parseJson(temp);
+            console.log('config');
+            console.log(config);
+            for(var k in config){
+                this.config[k] = config[k];
+            }
+            var url4value =  AbsoluteDesign.paramCfg.params.omUrlMap.findParticipants4treeByTreeValuesUrl;
+            url4value = oui.addParam(url4value,"projectId",this.config.projectId);
+            this.typeCodes = AbsoluteDesign.dialog4selectDept.attr('typeCodes');
+            this.tabsData = AbsoluteDesign.dialog4selectDept.attr('tabsData');
+            this.currentControlId = AbsoluteDesign.dialog4selectDept.attr('currentControlId');
+
+            me.$refs.ref4targetAreaShowType.comp.value = me.config.targetAreaShowType;
+            me.$refs.ref4targetAreaContainTypeCode.comp.data = me.typeCodes;
+            me.$refs.ref4targetAreaContainTypeCode.comp.value = me.config.targetAreaContainTypeCode;
+            me.$refs.ref4selectDeptArea.comp.url4value = url4value;
+            var tab = oui.findOneFromArrayBy(this.tabsData,function(item){
+                if(item.typeCode == me.config.typeCode){
+                    return true;
+                }
+            });
+            me.$refs.ref4selectDeptArea.comp.data.tabs= [tab];
+            me.$refs.ref4selectDeptArea.comp.value = me.config.showAtAreaNodeId;
+
+            this.$nextTick(function(){
+                me.refresh();
+            });
+        },
+        methods:{
+
+            findTargetAreaShowTypeData:function(){
+                var me = this;
+
+                if((!this.targetAreaShowTypeData) || (!this.targetAreaShowTypeData.data) || (!this.targetAreaShowTypeData.data.length)){
+                    var data4showType = [];
+                    for(var k in this.targetAreaShowTypeEnum){
+                        data4showType.push(this.targetAreaShowTypeEnum[k]);
+                    }
+                    this.targetAreaShowTypeData ={
+                        bindProp:'targetAreaShowType_'+this.currentControlId,
+                        id:'targetAreaShowType_'+this.currentControlId,
+                        name:'targetAreaShowType_'+this.currentControlId,
+//                        notClone4Component:true,
+                        value:this.config.targetAreaShowType,
+                        data:data4showType,
+                        onUpdate:function(k,v){
+                            me.config.targetAreaShowType = v;
+                            me._controlOnUpdate('targetAreaShowType',me.config);
+                        }
+                    };
+
+                }
+                return this.targetAreaShowTypeData;
+            },
+            //目标节点范围包含的参与者类型编码 对应的参与者列表
+            findTargetAreaContainTypeCodeData:function(){
+                var me = this;
+                if(!this.targetAreaContainTypeCodeData ||(!this.targetAreaContainTypeCodeData.data) || (!this.targetAreaContainTypeCodeData.data.length) ){
+                    this.targetAreaContainTypeCodeData = {
+                        ref:'targetAreaContainTypeCode_'+this.currentControlId,
+                        bindProp:'targetAreaContainTypeCode_'+this.currentControlId,
+                        id:'targetAreaContainTypeCode_'+this.currentControlId,
+                        name:'targetAreaContainTypeCode_'+this.currentControlId,
+//                        notClone4Component:true,
+                        value:this.config.targetAreaContainTypeCode,
+                        data:this.typeCodes||[],
+                        onUpdate:function(k,v){
+                            me.config.targetAreaContainTypeCode = v;
+                            me._controlOnUpdate('targetAreaContainTypeCode',me.config);
+                        }
+                    };
+
+                }
+                return this.targetAreaContainTypeCodeData;
+            },
+            findSelectAreaData:function(){
+                var me = this;
+                if(!this.selectAreaData){
+
+                    this.selectAreaData = {
+
+                        ref:'ref4selectDeptArea_'+this.currentControlId,
+                        bindProp:'showAtAreaNodeId_'+this.currentControlId,
+                        id:'showAtAreaNodeId_'+this.currentControlId,
+                        name:'showAtAreaNodeId_'+this.currentControlId,
+                        data:{
+                            tabs:this.tabsData||[]
+                        },
+                        isMulti:false,
+                        onUpdate:function(k,v,ov,options){
+                            me.config.showAtAreaNodeId = v;
+                            if(v){
+                                var item = options.data4DB.items[0];
+                                me.config.showAtAreaNodeTypeCode = item.typeCode;
+                            }else{
+                                me.config.showAtAreaNodeTypeCode = ''
+                            }
+                            me._controlOnUpdate('showAtAreaNodeTypeCode',me.config);
+                            me._controlOnUpdate('showAtAreaNodeId',me.config);
+                        },
+                        value:this.config.showAtAreaNodeId
+                    };
+                    this.$set(this,'selectAreaData',this.selectAreaData);
+                }
+                return this.selectAreaData;
+            },
+            _controlOnUpdate:function(bindProp,config){
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                AbsoluteDesign.dialog4selectDept.attr('configJson',oui.parseString(this.config));
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:10px ;
+        padding-bottom:10px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+    .content-bottom{
+        position: fixed;
+        bottom: -10px;
+    }
+</style>

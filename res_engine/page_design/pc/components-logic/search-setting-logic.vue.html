@@ -1,0 +1,211 @@
+<template>
+    <div class="">
+        <el-drawer 
+            title="逻辑接口定义"
+            size="80%"
+            :wrapperClosable="false" 
+            :destroy-on-close="true" 
+            :visible.sync="drawer" 
+            custom-class="logic-drawer" 
+            ref="logic_drawer"
+            :before-close="handleClose"  
+            >
+
+
+            <div class="api-setting scrollbar">
+
+            <oui-include :data="getData4LogicInputParams()" ref="data4logicInput" type="module" url="res_engine/page_design/pc/components-logic/logic-define-tree-table.vue.html"></oui-include>
+            <oui-include :data="getData4LogicDefine()" ref="data4logicDefine" type="module" url="res_engine/page_design/pc/components-logic/logic-define-tree-table.vue.html"></oui-include>
+            <oui-include :data="getData4LogicOutputParams()" ref="data4logicOutput" type="module" url="res_engine/page_design/pc/components-logic/logic-define-tree-table.vue.html"></oui-include>
+
+            </div>
+            <div class="footer-btn"> 
+                <el-button size="medium"  @click="cancel"  >取消</el-button>
+                <el-button  type="primary" size="medium" @click="onSubmit">确认</el-button>
+            </div>
+          
+
+        </el-drawer>
+
+
+
+        
+        
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                drawer: false,
+                dialogVisible: false,
+                inputParams:[],
+                outputParams:[],
+                varParams:[],
+                toUpdateData:{}
+            }
+        },
+        computed: {
+            
+        },
+        mounted: function () {
+            this.init();
+        },
+        methods: {
+            getCache:oui.getCache4include, // key,data
+            getData4LogicInputParams:function (){
+                var me = this;
+                return this.getCache('inputParams',{
+                    varNamePrefix:'input',
+                    title:'输入参数',
+                    treeData:oui.clone(this.inputParams),
+                    onUpdate:function (k,v,ov,options){
+                        console.log('logic-define-tree-table.vue.html 子组件中有 变更了',arguments);
+                        me.toUpdateData.inputParams = oui.clone(v.treeData); //待更新，不需要触发当前组件更新
+                    }
+                });
+            },
+            init:function (){
+                var keys = 'inputParams,varParams,outputParams'.split(',');
+                var me = this;
+
+                this.init4serverOldData(this.inputParams);
+                this.init4serverOldData(this.outputParams);
+                this.init4serverOldData(this.varParams);
+                me.$nextTick(function (){
+                    oui.eachArray(keys,function (key){
+                        var cache = me.getCache(key);
+                        if(cache && cache.ref){
+                            cache.ref.treeData = oui.clone(me[key]);
+                            me.toUpdateData[key] = oui.clone(me[key]);//待更新的列表默认填充
+                        }
+                    })
+                })
+
+            },
+            //处理后台默认预制的老数据
+            init4serverOldData:function (params){
+                var me = this;
+                var row =  {
+                    "id":'',
+                    "name":'', //变量名
+                    "display":'',
+                    "parentId":'',
+                    "varNameType":"", //快捷变量名 类型
+                    "fieldType":"string_type", //字段类型
+                    "varSourceType":"",//默认值来源类型
+                    "defaultValue":'',//默认值
+                    "urlEncodeKey":false, //是否加密参数组成部分
+                    "desc":'', // 描述说明，用于生成api文档
+                    "array":false, //是否是数组
+                    "tableModelId":"",//表模型id
+                    "tableModelName":"", //表模型名称
+                    "dynamic":false,//是否动态参数
+                    "required":false, //是否必填
+                    "children":[], //子属性列表
+                    "canEdit":true,//可编辑
+                    "idPath":"",
+                    "namePath":"",
+                    "displayPath":"",
+                    "validates":{} //配置属性校验规则
+                };
+                oui.eachTreeArray(params,function (item){
+                    for(var k in row){
+                        if(typeof item[k] =='undefined'){
+                            item[k] = row[k] //指定默认值
+                            if(k=='id'){ //再单独处理
+                                item.id = 'r_'+oui.getUUIDLong();
+                            }
+                        }
+                    }
+                })
+
+            },
+            getData4LogicDefine:function (){
+                var me = this;
+                return this.getCache("varParams",{
+                    treeData:oui.clone(this.varParams),
+                    varNamePrefix:'define',
+                    title:'变量定义',
+                    onUpdate:function (k,v,ov,options){
+                        console.log('logic-define-tree-table.vue.html 子组件中有 变更了',arguments);
+                        me.toUpdateData.varParams = oui.clone(v.treeData); //待更新，不需要触发当前组件更新
+                    }
+                });
+            },
+            getData4LogicOutputParams:function (){
+                var me = this;
+                return this.getCache("outputParams",{
+                    treeData:oui.clone(this.outputParams),
+                    varNamePrefix:'output',
+                    title:'输出参数',
+                    onUpdate:function (k,v,ov,options){
+                        console.log('logic-define-tree-table.vue.html 子组件中有 变更了',arguments);
+                        me.toUpdateData.outputParams = oui.clone(v.treeData); //待更新，不需要触发当前组件更新
+                    }
+                });
+            },
+            cancel:function(){
+                this.drawer = false
+                this.destroyChildren();
+            },
+
+            //关闭事件
+            handleClose(done) {
+                done();
+            },
+            onCancel(){
+                this.drawer = false
+            },
+            getOldData:function (){
+                var keys = 'drawer,inputParams,varParams,outputParams'.split(',');
+                var me = this;
+                var cfg = [];
+                oui.eachArray(keys,function (key){
+                    cfg[key] = oui.clone(me[key]);
+                })
+                return cfg;
+            },
+            //校验 参数列表 1.非空 2.总数 3.层级 4.特殊字符
+            checkParams:function (){
+
+            },
+
+            updatePaths:function (arr){
+                oui.eachTreeArray(arr,function (item){
+                    var pids = [];
+                    var pnames = [];
+                    var pdisplays=[];
+                    oui.findParents(arr,item,function (curr){
+                        pids.push(curr.id);
+                        pnames.push(curr.name);
+                        pdisplays.push(curr.display||curr.name);
+                    });
+                    item.idPath = pids.reverse().concat(item.id).join(".");
+                    item.namePath = pnames.reverse().concat(item.name).join(".");
+                    item.displayPath = pdisplays.reverse().concat(item.display||item.name).join(".");
+                });
+            },
+            onSubmit:function (){
+                //需要触发组件更新
+                this.toUpdateData.drawer = false;
+                this.updatePaths(this.toUpdateData.inputParams||[]);
+                this.updatePaths(this.toUpdateData.outputParams||[]);
+                this.updatePaths(this.toUpdateData.varParams||[]);
+
+                //这里 处理 所有字段 idPath,namePath;
+                this.onUpdate&&this.onUpdate('logicSetting',this.toUpdateData,this.getOldData(),{
+                    operate:'submit'
+                });
+                this.drawer = false;
+
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,153 @@
+<!-- 首页版本管理弹窗>>>>>>>>待发布的 -->
+<template>
+    <div>
+        <!-- 内容 -->
+        <!-- 页面名称 -->
+        <div v-if="checkClick==0">
+            <div class="tableBox_tobe">
+                <el-table :data="ToBeReleasedList" style="width: 100%" :header-cell-style="{background:'#FAFAFA'}">
+                    <el-table-column prop="versionNumber" label="版本号" align="center">
+                    </el-table-column>
+                    <el-table-column prop="CreationTime" label="创建时间" align="center">
+                    </el-table-column>
+                    <el-table-column prop="briefIntroduction" label="更新内容简介" align="center" width="200%">
+                        <template slot-scope='scope'>
+                            <div class="briefIntroduction_1">{{scope.row.briefIntroduction}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="releaseTime" label="预计发布时间" align="center"></el-table-column>
+                    <el-table-column prop="founder" label="创建人" align="center"></el-table-column>
+
+                </el-table>
+            </div>
+            <!-- 按钮 -->
+            <!-- <div class="submitBtn">
+                <el-button class="cancel_btn">取消</el-button>
+                <el-button class="determine_btn">确定</el-button>
+            </div> -->
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                checkClick: 0,
+                ToBeReleasedList: [{
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '1231231222222222222222222222222222222',
+                    releaseTime: '21321',
+                    founder: '11'
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+                    releaseTime: '21321',
+                    founder: '11'
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+                    releaseTime: '21321',
+                    founder: '11'
+                }],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 表格 */
+
+    .tableBox_tobe {
+        margin: 24px 24px 0 24px;
+    }
+
+    .briefIntroduction_1 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* 按钮 */
+
+    .submitBtn {
+        margin: 60px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cancel_btn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancel_btn:focus,
+    .cancel_btn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determine_btn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determine_btn:focus,
+    .determine_btn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

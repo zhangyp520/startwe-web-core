@@ -1,0 +1,271 @@
+<!-- 排序字段设置弹窗 -->
+
+<template>
+    <div class="sortFieldContainer">
+        <!-- 搜索框 -->
+        <div class="searchBox">
+            <input type="text">
+            <img src="/res_startwe/assets/sousuo_11.png" alt="">
+        </div>
+        <!-- tips -->
+        <div class="sortFieldTips">
+            Tips:拖动或双击左侧的选项到右侧的次序位置进行排序，双击或者点击删除右侧选项进行删除
+        </div>
+        <!-- 内容 -->
+        <div class="sortFieldContent">
+            <!-- 默认选项 -->
+            <div class="DefaultOptions">
+                <!-- 标题 -->
+                <div class="TitleBox">
+                    <div class="innerTitle">默认选项</div>
+                </div>
+                <!-- 列表 -->
+                <ul class="DefaultList">
+                    <li>单行输入框[新的页面25]</li>
+                    <li>单行输入框[新的页面25]</li>
+                    <li>ID[新的页面25]</li>
+                </ul>
+            </div>
+            <!-- 已选 -->
+            <div class="DefaultOptions">
+                <!-- 标题 -->
+                <div class="TitleBox">
+                    <div class="innerTitle">已选</div>
+                </div>
+                <!-- 列表 -->
+                <ul class="DefaultList">
+                    <li>
+                        <span>1</span>
+                        <img src="" alt="">
+                        <span>单行输入框[新的页面25]</span>
+                    </li>
+                    <li>
+                        <span>1</span>
+                        <img src="" alt="">
+                        <span>单行输入框[新的页面25]</span>
+                    </li>
+                    <li>
+                        <span>1</span>
+                        <img src="" alt="">
+                        <span>ID[新的页面25]</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- 排序规则 -->
+            <div class="SortRules">
+                <!-- 标题 -->
+                <div class="SortTitleBox">
+                    <div class="SortinnerTitle">排序规则</div>
+                </div>
+                <!-- 列表 -->
+                <div class="SortRulesList">
+                    <el-select v-model="value" placeholder="请选择">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="value" placeholder="升序">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-select v-model="value" placeholder="降序">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+        </div>
+        <!-- 按钮 -->
+        <div class="submitBtn">
+            <el-button>取消</el-button>
+            <el-button type="primary">确认</el-button>
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                options: [{
+                    value: '选项1',
+                    label: '黄金糕'
+                }, {
+                    value: '选项2',
+                    label: '双皮奶'
+                }, {
+                    value: '选项3',
+                    label: '蚵仔煎'
+                }, {
+                    value: '选项4',
+                    label: '龙须面'
+                }, {
+                    value: '选项5',
+                    label: '北京烤鸭'
+                }],
+                value: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+
+    /* element样式修改 */
+
+    .el-select {
+        margin-bottom: 20px;
+    }
+
+    /* 最外层大盒子 */
+
+    .sortFieldContainer {
+        width: 100%;
+        height: 100%;
+        background-color: #f4f4f4;
+    }
+
+
+
+    /* 搜索框 */
+
+    .searchBox {
+        width: 400px;
+        position: relative;
+    }
+
+    .searchBox>input {
+        width: 400px;
+        height: 36px;
+        border: 1px solid #999;
+        border-radius: 18px;
+        padding: 0 0 0 20px;
+        outline: none;
+        margin: 20px 0 0 20px;
+    }
+
+    .searchBox>img {
+        position: absolute;
+        top: 30px;
+        right: -10px;
+    }
+
+    /* tips */
+
+    .sortFieldTips {
+        color: #999;
+        margin-top: 20px;
+        font-size: 12px;
+        margin: 20px 0 0 20px;
+    }
+
+    /* 内容 */
+
+    .sortFieldContent {
+        display: flex;
+        margin: 20px 0 0 20px;
+    }
+
+    .DefaultOptions {
+        width: 300px;
+        height: 480px;
+        padding: 0 20px;
+        border: 1px solid #979797;
+        background-color: #fff;
+        margin-right: 20px;
+    }
+
+    .TitleBox {
+        height: 20px;
+        border-bottom: 1px solid #979797;
+        position: relative;
+    }
+
+    .innerTitle {
+        width: 70px;
+        background-color: #fff;
+        position: absolute;
+        top: 10px;
+        left: 115px;
+        text-align: center;
+        color: #979797;
+    }
+
+    .DefaultList {
+        margin-top: 20px;
+    }
+
+    .DefaultList>li {
+        line-height: 30px;
+        margin-left: 10px;
+    }
+
+    /* 排序规则 */
+
+    .SortRules {
+        width: 200px;
+        height: 480px;
+        padding: 0 20px;
+        border: 1px solid #979797;
+        background-color: #fff;
+        margin-right: 20px;
+    }
+
+    .SortTitleBox {
+        height: 20px;
+        border-bottom: 1px solid #979797;
+        position: relative;
+    }
+
+    .SortinnerTitle {
+        width: 70px;
+        background-color: #fff;
+        position: absolute;
+        top: 10px;
+        left: 65px;
+        text-align: center;
+        color: #979797;
+    }
+
+    .SortRulesList {
+        margin-top: 20px;
+    }
+
+    /* 提交按钮 */
+
+    .submitBtn {
+        margin: 40px 0;
+        display: flex;
+        justify-content: center;
+    }
+</style>

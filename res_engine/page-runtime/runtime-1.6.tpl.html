@@ -1,0 +1,19 @@
+<oui-view id="view-portal-page-info" class="container" oui-controller="com.startwe.models.page.web.PageRuntime"  data="com.startwe.models.page.web.PageRuntime.getData()">
+
+</oui-view>
+<script type="text/html" id="view-portal-page-info-tpl"> 
+    <div class="pg-block" >
+      
+        <div class="pg-block-cont " >  
+ 
+            {{if nodeType=='pageList' }}
+             {{=content}}
+            {{/if}} 
+
+            {{if (!content)||(!content.length)}}
+            暂无内容
+            {{/if}}
+        </div>
+    </div>
+</script>
+

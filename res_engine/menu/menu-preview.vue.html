@@ -1,0 +1,40 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div>
+        <div class="hhh">
+            <div style="height: 100%;" v-html='www'>
+    
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    exports= {
+        templateType: 'art',
+       
+        data: function () {
+            return {
+               
+            }
+        },
+        created() {
+        }, 
+        mounted: function () {
+            var url = new URL(window.location.href);
+
+
+            console.log(url.href.split("name="))
+       
+        },
+        methods: {  
+           
+          
+            
+
+        }
+    }
+
+</script>
+<style>
+ 
+</style>

@@ -1,0 +1,51 @@
+<!--
+    容器组件 具备声明 oui-container
+    子组件占位符 必须声明 oui-container-flag
+-->
+<template>
+    <div class="oui-container" draggable="true">
+        <el-container>
+            <el-header v-if="showHeader">Header</el-header>
+            <el-aside :width="fAsideWidth" v-if="showAside">Aside</el-aside>
+            <el-main v-if="showHeader">Main</el-main>
+            <el-footer v-if="showFooter">Footer</el-footer>
+        </el-container>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                id: '',
+                name: '',
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: '',
+                asideWidth: 200,
+                showHeader: true,
+                showFooter: true,
+                showAside: true,
+            }
+        },
+        computed:{
+            fAsideWidth(){
+                var width = this.asideWidth
+                return typeof width ==="string"?width:width+'px'
+            }
+        },
+        methods: {
+            _controlOnUpdate: function (v, ov) {
+                // var key = this.bindProp;
+                // this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

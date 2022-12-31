@@ -1,0 +1,410 @@
+<template>
+    <div>
+        <!-- 头部 -->
+        <div class="template-mall-header">
+            <img src="/res_startwe/assets/logo2.png" alt="">
+        </div>
+        <!-- 搜索框 -->
+        <div class="search-content">
+            <div class="template-search">
+                <div>
+                    <el-select v-model="permission" placeholder="请选择" class="search-select" @change="permissionChange">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-input v-model="keyword" placeholder="请输入内容" class="search-input"></el-input>
+                    <div class="search-icon-box">
+                        <img src="/res_startwe/assets/sousuo.png" alt="" class="search-icon">
+                    </div>
+                </div>
+            </div>
+            <div class="search-history">
+                <div>
+                    <div class="search-history-title">
+                        搜索历史：
+                    </div>
+                    <div class="search-history-content">
+                        <div>123</div>
+                        <div>123</div>
+                        <div>123</div>
+                        <div>123</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 模板 -->
+        <div class="template-mall-content">
+            <div class="template-mall-inner">
+                <!-- 第一个 -->
+                <div class="template-inner-box" v-for="(item,index) in templateData" style="position: relative;">
+                    <div @mouseover="useIcon(index)" @mouseout="leaveIcon">
+                        <div>
+                            <img :src="item.url" alt="" class="template-img">
+                        </div>
+                        <div class="use-template-icon" v-show="showUseIcon&&current==index" @click="ApplyTemplate(item)">
+                            <div>
+                                <img :src="useIconUrl" alt="">
+                            </div>
+                            <div>应用该模板</div>
+                        </div>
+                    </div>
+                    <div class="template-inner-title">{{item.name}}</div>
+                    <div class="template-inner-label">
+                        <div>{{item.label}}</div>
+                    </div>
+                    <div style="position: absolute;top:0;left: 0;">
+                        <img src="/res_startwe/assets/new.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 添加弹框 -->
+        <div>
+            <el-dialog title="门户名称" :visible.sync="dialogVisible" width="30%">
+                <el-input v-model="name" placeholder="请输入门户名称"></el-input>
+                <span v-if="nameTips" style="color: red;">*请输入门户名称</span>
+                <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="confirmClick">确 定</el-button>
+                    </span>
+            </el-dialog>
+        </div>
+        <!-- 分页开始 -->
+        <div class="page">
+            <div class="block">
+                <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" :total="total" layout="total, prev, pager, next, jumper">
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        // el: 'home',
+        data: function () {
+            return {
+                name: "",
+                templateId: "",
+                nameTips: false,
+                dialogVisible: false,
+                showUseIcon: false,
+                current: 0,
+                templateData: [],
+                useIconUrl: '/res_startwe/assets/use.png',
+                options: [{
+                    value: 2,
+                    label: '全部模板'
+                }, {
+                    value: 1,
+                    label: '私有模板'
+                }],
+                permission: 2,
+                keyword: "",
+                templateCategoryId: "",
+                // 总条数
+                total: 0,
+                //每页显示数据的条数
+                pageSize: 12,
+                //默认当前页为第一页
+                currentPage: 1,
+                currentPortal: {},
+                createProjectPortalUrl: "",
+                circleId: '',
+                projectId: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            let me = this;
+            me.createProjectPortalUrl = this.$router.query.createProjectPortalUrl;
+            me.circleId = this.$router.query.circleId;
+            me.projectId = this.$router.query.projectId;
+            this.queryPortalTemplates();
+        },
+        methods: {
+            // 确认添加
+            confirmClick: function () {
+                var me = this;
+                if (!me.name) {
+                    me.nameTips = true;
+                    return;
+                }
+                me.currentPortal.id = null;
+                me.currentPortal.createTime = null;
+                me.currentPortal.creatorId = null;
+                me.currentPortal.creatorName = null;
+                me.currentPortal.modifiedId = null;
+                me.currentPortal.modifiedName = null;
+                me.currentPortal.modifyTime = null;
+                me.currentPortal.permission = null;
+                me.currentPortal.templateCategoryId = null;
+                me.currentPortal.templateId = me.templateId;
+                me.currentPortal.circleId = me.circleId;
+                me.currentPortal.projectId = me.projectId;
+                me.currentPortal.name = me.name;
+                oui.postData(me.createProjectPortalUrl, {
+                    projectPortal: me.currentPortal
+                }, function (res) {
+                    var url = oui.getContextPath() + 'res_engine/ppt_design/ppt-design.html';
+                    url = oui.addParams(url, {
+                        circleId: res.circleId,
+                        projectId: res.projectId,
+                        pptId: res.pptId,
+                        loadProjectTreeUrl: res.loadProjectTreeUrl,
+                        loadProjectPortalUrl: res.loadProjectPortalUrl,
+                        viewType: 'normal'
+                    });
+                    oui.openWindow({
+                        url: url,
+                        openType: '_blank'
+                    });
+
+                }, function (res) {
+                    me.$message(res)
+                }, '加载中...');
+                me.dialogVisible = false;
+            },
+            ApplyTemplate:function(item) {
+                this.currentPortal = item;
+                this.templateId = item.id;
+                this.dialogVisible = true;
+            },
+            permissionChange: function () {
+                this.queryPortalTemplates();
+            },
+            leaveIcon: function () {
+                this.current = null;
+                this.showUseIcon = false;
+            },
+            useIcon: function (index) {
+                this.current = index;
+                this.showUseIcon = true;
+            },
+            //查询模板
+            queryPortalTemplates: function () {
+                let me = this;
+                var url = this.$router.query.queryPortalTemplatesUrl;
+                //发送请求 查询模板信息
+                oui.postData(oui.getContextPath() + "com.startwe.models.project.web.ProjectPortalDesignController.queryPortalTemplates.biz", {
+                    permission: me.permission,
+                    templateCategoryId: me.templateCategoryId,
+                    keyWord: me.keyword,
+                    pager: {
+                        page: me.currentPage,
+                        rows: me.pageSize
+                    }
+                }, function (res) {
+                    me.templateData = res.pptTemplates || [];
+                }, function (res) {
+                    console.log(res);
+                });
+            },
+            //默认选中那一页
+            handleCurrentChange: function (val) {
+                this.currentPage = val;
+            },
+        }
+    }
+
+</script>
+
+<style>
+    .template-mall-header {
+        height: 80px;
+        border-bottom: 1px solid #e9e9e9;
+        display: flex;
+        align-items: center;
+    }
+
+    .template-mall-header>img {
+        margin-left: 10px;
+
+    }
+
+    .search-content {
+        margin: 30px 0;
+    }
+
+    .template-search {
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .template-search>div {
+        overflow: hidden;
+        border-radius: 20px;
+        width: 50%;
+        display: flex;
+        position: relative;
+        /* justify-content: center; */
+        border: 1px solid #DCDFE6;
+    }
+
+    .search-select {
+        /* width: 20%; */
+    }
+
+    .search-select .el-input {
+        font-size: 16px;
+    }
+
+    .search-select .el-input__inner {
+        border: none;
+        font-weight: bold;
+    }
+
+    .search-input .el-input__inner {
+        border: none;
+    }
+
+    .search-icon-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .search-icon {
+        width: 19px;
+        height: 18px;
+    }
+
+    .search-history {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .search-history>div {
+        display: flex;
+        width: 48%;
+    }
+
+    .search-history>div>div {
+        display: flex;
+    }
+
+    .search-history>div>div>div {
+        margin-right: 10px;
+    }
+
+    .search-history-title {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+    }
+
+    .search-history-content {
+        font-size: 16px;
+        color: rgba(122, 122, 122, 0.80);
+    }
+
+    .template-mall-content {
+        display: flex;
+        justify-content: center;
+    }
+
+    .template-mall-inner {
+        width: 90%;
+        display: flex;
+        flex-wrap: wrap;
+        /* justify-content: space-around; */
+    }
+
+    .template-mall-inner>div {}
+
+    .template-img {
+        width: 100%;
+        height: 180px;
+    }
+
+    .template-inner-title {
+        font-size: 20px;
+        line-height: 40px;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: bold;
+        margin: 0 10px;
+    }
+
+    .template-inner-label {
+        display: flex;
+        margin: 0 10px;
+    }
+
+    .template-inner-label>div {
+        margin-right: 10px;
+        font-size: 16px;
+        line-height: 50px;
+        margin-top: -10px;
+        color: rgba(0, 0, 0, 0.45);
+    }
+
+    .template-inner-box {
+        width: 23%;
+        border: 1px solid #E9E9E9;
+        border-radius: 4px;
+        margin-right: 2.66%;
+        overflow: hidden;
+        margin-bottom: 30px;
+
+    }
+
+    .template-inner-box>div:first-child {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .template-inner-box>div:first-child>div:first-child {
+        height: 180px;
+    }
+
+    .template-inner-box:nth-child(4n) {
+        margin-right: 0;
+    }
+
+    /* 分页区域开始---- */
+
+    .page {
+        display: flex;
+        justify-content: center;
+        width: 90%;
+        margin: auto;
+    }
+
+    .page>div {
+        margin: 20px 0;
+    }
+
+    .use-template-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        /* background: rgba(0, 0, 0, 0.2); */
+    }
+
+    .use-template-icon>div:last-child {
+        font-size: 12px;
+        color: #FFFFFF;
+        background: #524D62;
+        border-radius: 4px;
+        padding:3px 5px;
+        margin-top: 10px;
+    }
+</style>

@@ -1,0 +1,375 @@
+<template>
+    <div class="oui-class-mixedplay">
+        <div :class="currentQueue.cls"
+            style="width: 100%;height: 100%;display: flex;align-items: center;justify-content: center;">
+            <div style="width: 100%;height: 100%;" v-if="currentype == 2">
+                <img v-show="isShowmark" style="width: 100%;height: 100%;" :src="coverImageUrl"></img>
+                <video v-show="!isShowmark"  style="width: 100%;height: 100%;" :src="itemUrl"></video>
+            </div>
+            <div :style="{ width:contentWidth, height: contentHeight }" v-if="currentype == 1">
+                <img style="width: 100%;height: 100%;" :src="itemUrl"></img>
+            </div>
+        </div>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                isShowmark:true,
+                currentQueue: {
+                    cls: ''
+                },
+                coverImageUrl:'',
+                autoplay: false,
+                itemList: [],
+                animationList: [], //动画列表
+                intoList: [],
+                doingList: [],
+                exitList: [],
+                currentype: 0,
+                currentIndex: 0,
+                itemUrl: '',
+                delaySwitch: true,
+                delaytime: 1000,
+                autoSwitch: true,
+                switchTime: 1000,
+                contentWidth: '100%',
+                contentHeight: 0
+
+
+            }
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control) {
+                console.log('混播控件参数', this.control);
+            }
+            if (this.control.otherAttrs.imagesList) {
+                this.itemList = this.control.otherAttrs.imagesList
+                if(this.control.otherAttrs.imagesList[this.currentIndex].type == 1){
+                    // debugger
+                  let imageData = this.control.otherAttrs.imagesList[this.currentIndex]
+                    this.getBase64(imageData.itemUrl,imageData.type)
+                }
+                if(this.control.otherAttrs.imagesList[this.currentIndex].type == 2){
+                    // debugger
+                    let imageData = this.control.otherAttrs.imagesList[this.currentIndex]
+                    this.getBase64(imageData.coverImg,imageData.type)
+                    this.itemUrl = this.control.otherAttrs.imagesList[this.currentIndex].itemUrl
+                }
+
+
+                this.currentype = this.itemList[this.currentIndex].type
+                if (!this.control.otherAttrs.fillStyleArr) {
+                    this.proportion(this.itemList[this.currentIndex].activeProp)
+                } else {
+                    this.proportion(this.control.otherAttrs.fillStyleArr)
+                }
+
+            }
+            if (this.control.otherAttrs.autoSwitch) {
+                this.autoSwitch = this.control.otherAttrs.autoSwitch
+                if (this.control.otherAttrs.autoSwitch) {
+                    this.start();
+                }
+            }
+            let width = this.control.style.width
+            let height = this.control.style.height
+
+
+
+
+
+            if (this.control.otherAttrs.animationList) {
+                this.animationList = this.control.otherAttrs.animationList
+                console.log('动画数据', this.animationList);
+
+            }
+            if (this.control.otherAttrs.switchTime) {
+                this.switchTime = this.control.otherAttrs.switchTime
+            }
+
+            if (this.control.otherAttrs.animationList && this.control.otherAttrs.animationList) {
+                animationsList = this.control.otherAttrs.animationList;
+                var intoList = [];
+                var doingList = [];
+                var exitList = [];
+                oui.eachArray(animationsList, function (item) {
+                    if (item.type == '1') {
+                        intoList.push(item);
+                    } else if (item.type == '2') {
+                        doingList.push(item);
+                    } else if (item.type == '3') {
+                        exitList.push(item);
+                    }
+                });
+                // 判断是否有开场动画 显示播放按钮
+                if (intoList.length < 1 && this.control.otherAttrs.imagesList) {
+                    this.isShowControlMask = true
+                }
+                this.intoList = intoList;
+                this.doingList = doingList;
+                this.exitList = exitList;
+            }
+
+        },
+        methods: {
+
+            getBase64:function(imgUrl,type) {
+                let that = this
+
+                window.URL = window.URL || window.webkitURL;
+                var xhr = new XMLHttpRequest();
+                xhr.open("get", imgUrl, true);
+                // 至关重要
+                xhr.responseType = "blob";
+                xhr.onload = function () {
+                    if (this.status == 200) {
+                        //得到一个blob对象
+                        var blob = this.response;
+                        console.log("blob", blob);
+                        // 至关重要
+                        let oFileReader = new FileReader();
+                        oFileReader.onloadend = function (e) {
+                            // 此处拿到的已经是 base64的图片了
+                            let base64 = e.target.result;
+                            if(type == 1){
+                                that.itemUrl  = e.target.result
+                            }
+                            if(type == 2){
+                                that.coverImageUrl =e.target.result
+                            }
+
+
+                            console.log("方式一》》》》》》》》》", base64)
+                        };
+                        oFileReader.readAsDataURL(blob);
+                    }
+                };
+                xhr.send();
+            },
+
+            //比例计算器
+
+
+            proportion(proportion) {
+
+
+
+                let outwidth = this.control.style.width
+                let outheight = this.control.style.height
+                let height = (outwidth * proportion[1] / proportion[0]).toFixed(2);
+
+                if (height > outheight) {
+                    height = outheight;
+                }
+
+                var width = (height * proportion[0] / proportion[1]).toFixed(2);
+                if (width > outwidth) {
+                    width = outwidth;
+                    height = (outwidth * proportion[1] / proportion[0]).toFixed(2);
+                }
+                this.contentHeight = height + 'px'
+                this.contentWidth = width + 'px'
+
+            },
+            start: function () {
+                var me = this;
+                if (this.control.otherAttrs.imagesList && this.control.otherAttrs
+                    .animationList) {
+                    this.playInto(function () {
+                        me.playDoing(function () {
+                            me.playExit(function () {
+                                if (me.currentIndex < me.control
+                                    .otherAttrs.imagesList
+                                    .length) {
+                                    me.currentIndex++
+                                    me.currentQueue.cls = '';
+                                    if (me.currentIndex == me.control
+                                        .otherAttrs
+                                        .imagesList
+                                        .length) {
+                                        me.currentIndex = 0
+                                    }
+                                    me.itemList = me.control.otherAttrs.imagesList
+                                    me.itemUrl = me.itemList[me.currentIndex].itemUrl
+                                    me.currentype = me.itemList[me.currentIndex].type
+                                    // me.start();
+                                    if (me.delaySwitch) {
+                                        me.delaySwitch = false
+                                        setTimeout(() => {
+                                            me.delaySwitch = true
+                                            me.start();
+                                        }, me.switchTime)
+                                    }
+                                } else {
+                                    me.currentQueue.cls = '';
+                                    me.currentIndex = 0
+                                  
+                                   setTimeout(()=>{
+                                    me.currentype = me.itemList[me.currentIndex].type
+                                   },200)
+                                   me.start();
+
+                                    
+                                }
+                            });
+                        });
+                        console.log('进入动画执行完毕');
+                    });
+                }
+            },
+            // 获取当前动画
+            getCurrentAnimation: function () {
+                return this.currentQueue;
+            },
+            //播放开始进入
+            playInto: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.intoList, function (item) {
+                    console.log('into动画参数', item)
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        count: 0,
+                        run: function () {
+                            console.log('动画：', this.cls);
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this
+                                .delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                                me.isShowControlMask = true
+                            }, time);
+                        }
+                    });
+                });
+                me.intoListQueue = qu;
+                qu.start(function () {
+                    callback && callback();
+
+                });
+            },
+            //播放强调
+            playDoing: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.doingList, function (item) {
+                    console.log('强调动画loaiing........', item.cls);
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        run: function () {
+
+                            console.log('动画：', this.cls);
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this
+                                .delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                            }, time);
+                        }
+                    });
+                });
+                me.doingListQueue = qu;
+                qu.start(function () {
+                    me.playExit()
+                    callback && callback();
+                });
+            },
+            //播放退出
+            playExit: function (callback) {
+                var me = this;
+                var qu = oui.Queue.createNewQueue();
+                oui.eachArray(this.exitList, function (item) {
+                    qu.add({
+                        cls: `animate__animated ${item.cls}`, //样式传入
+                        time: item.time, //执行时间 s
+                        number: item.number, //执行次数
+                        delay: item.delay, //延迟时间 s
+                        isReady: false,
+                        run: function () {
+                            me.currentQueue = this;
+                            me.currentQueue.isReady = true;
+                            var time = this.time * 1000 * this.number + this
+                                .delay * 1000;
+                            setTimeout(function () {
+                                me.currentQueue.cls = '';
+                                me.currentQueue.inited = true;
+                            }, time);
+                        }
+                    });
+                });
+                me.exitListQueue = qu;
+                qu.start(function () {
+
+                    callback && callback();
+                });
+            },
+            // 当前选中index
+            hasCurrent: function () {
+                this.currentIndex = 1
+                return true
+            }
+        }
+    }
+</script>
+
+<style>
+    .oui-class-mixedplay {
+        width: 100%;
+        height: 100%;
+    }
+
+    .oui-class-loginaccount {
+        width: 100%;
+        height: 100%;
+    }
+
+    .loginaccount-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e6e6e6;
+        background: #fff;
+    }
+
+    .loginaccount-icon {
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        z-index: 100;
+    }
+
+    .control-container-abs .loginaccount-input input {
+        border: none;
+        border-radius: 4px;
+    }
+
+    .oui-error-info {
+        position: absolute;
+        color: red;
+        font-size: 14px;
+    }
+</style>

@@ -1,0 +1,852 @@
+@charset "utf-8";
+html{
+    font-size: 100px;
+}
+body{
+    font-size: .16rem;
+}
+oui-condition *{
+    display: none;
+}
+/*简单查询*/
+.oui-class-condition{
+    background: #ffffff;
+    width: 100%;
+    height: .44rem;
+    padding: .05rem .07rem;
+    display: block;
+    position: relative;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.oui-condition-go2search{
+    background: #f4f4f4;
+    position: absolute;
+    top: .05rem;
+    bottom:.05rem;
+    left: .1rem;
+    right: .1rem;
+    font-size: .14rem;
+    text-align: center;
+    line-height: .34rem;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    color: #999;
+    z-index: 50;
+}
+.search-icon{
+    background: url("../images/showsearch-icon.png") no-repeat;
+    background-size: .18rem .18rem;
+    width: .18rem;
+    height: .18rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+.simple-condition{
+    width: 100%;
+    height: 100%;
+    background: #f4f4f4;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-border-radius: .3rem;
+    -moz-border-radius: .3rem;
+    border-radius: .3rem;
+    position: relative;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+.simple-condition.simple-condition-onlyOne  .simple-condition-fields-area,
+.simple-condition.simple-condition-onlyOne  .simple-condition-value-area:before,
+.oui-class-condition .condition-operation-area{
+    display: none;
+}
+
+.simple-condition-fields-area{
+    font-size: 14px;
+    width: 100%;
+    height: .34rem;
+    line-height: .34rem;
+    text-align: center;
+    color: #515151;
+}
+.simple-condition-selected-area{
+    background: #f4f4f4;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: center;
+}
+.simple-condition-selected{
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.simple-condition-options,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options{
+    background: #ffffff;
+    min-width: 2rem;
+    padding: 5px 0 !important;
+    position: absolute;
+    border: 1px solid #e8e8e8;
+    left: 0;
+    right: 0;
+    top: .41rem;
+    z-index: 600;
+    border-radius: .03rem;
+}
+.simple-condition-options:before{
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    background: #FFFFFF;
+    box-shadow: -.02rem -.02rem .04rem -.02rem rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: -.02rem -.02rem .04rem -.02rem rgba(0, 0, 0, 0.2);
+    content: "";
+    height: .16rem;
+    position: absolute;
+    width: .16rem;
+    top: -.05rem;
+    left: 50%;
+    margin-left: -.08rem;
+    z-index: -1;
+}
+.simple-condition-field-half .simple-condition-options:before{
+    left: .1rem;
+    margin-left: 0;
+}
+.simple-condition-options ul,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul{
+    max-height: 3rem;
+    overflow-y: auto;
+    position: relative;
+    z-index: 600;
+}
+.simple-condition-options ul li,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul li{
+    width: 100%;
+    padding: .05rem;
+    text-align: left;
+    display: block;
+    line-height: 1.5;
+    font-size: .14rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+.simple-condition-options ul li:hover,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area .condition-operation-options ul li:hover{
+    background: #f4f4f4;
+}
+.oui-simple-search-submit-btn{
+    background: url("../images/oui-simple-search-icon.png") center no-repeat;
+    background-size: .2rem .2rem;
+    width: .36rem;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+    z-index: 70;
+}
+.oui-simple-search-close{
+    background: url("../images/oui-simple-search-close.png") center no-repeat;
+    background-size: .72rem .24rem;
+    background-position: -38px 5px;
+}
+/*点击后的宽度*/
+.simple-condition-field-half{
+    background: url("../images/search-choice-icon.png") center right .04rem no-repeat;
+    background-size: auto .06rem;
+    width: auto;
+    max-width: 1rem;
+    min-width: .65rem;
+    padding: 0 .15rem 0 .08rem;
+    margin-right: .05rem;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.simple-condition-value-area{
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    padding-right: .33rem;
+    position: relative;
+    z-index: 60;
+}
+.simple-condition-value-area:before{
+    content: '';
+    height: 140%;
+    position: absolute;
+    top: -20%;
+    bottom: -20%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    z-index: -1;
+    border-left: 1px solid #d6d6d6;
+}
+.simple-condition-value-area input{
+    background: transparent;
+    min-height: inherit !important;
+    border: 0 !important;
+    height: .34rem;
+    padding-right: 0;
+}
+.simple-condition-value-area>div{
+    border: 0 !important;
+}
+.simple-condition-value-area  .oui-class-selectperson-2 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-3 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-4 .personarea,
+.simple-condition-value-area  .oui-class-selectperson-6 .personarea{
+    border: 0 !important;
+    height: .34rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: transparent;
+    white-space: normal;
+}
+/*
+组合查询*/
+.paved-condition,
+.selector-condition{
+    display: inline-block;
+    position: relative;
+    /*z-index: 200;*/
+    margin: 0 auto;
+    vertical-align: top;
+}
+.selector-condition{
+    display: none;
+}
+.group-condition{
+    background: url("../images/group-condition-icon.png") center no-repeat;
+    background-size: 24px 24px;
+    width: 32px;
+    height: 32px;
+    font-size: 0;
+    display: inline-block;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    cursor: pointer;
+    vertical-align: top;
+}
+.group-condition.group-condition-hide{
+    display: none;
+}
+.group-condition.condition-setting-btn{
+    width: auto;
+    height: auto;
+    background: #2C82FC;
+    font-size: .14rem;
+    padding: .06rem .12rem;
+    color: #ffffff;
+}
+.selector-condition .group-condition.condition-setting-btn{
+    width: auto;
+    height: auto;
+    background: #2C82FC;
+    font-size: 14px;
+    padding: 6px 12px;
+    color: #ffffff;
+}
+.selector-condition .group-condition.condition-setting-btn:hover{
+    background: #4779C5;
+}
+.tips-condition .group-condition-area,
+.dialog-condition .group-condition-area{
+    background: #ffffff;
+    width: 6rem;
+    padding: .15rem .1rem;
+    padding-top: .07rem;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    position: absolute;
+    top: .4rem;
+    z-index: 10;
+    text-align: left;
+}
+.group-condition-triangle{
+    display: inline-block;
+    width: .08rem;
+    height: .08rem;
+    background-color: #fff;
+    border-top: solid 1px #e6e6e6;
+    border-right: solid 1px #e6e6e6;
+    position: absolute;
+    top: -.05rem;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    z-index: 6;
+}
+.group-condition-title{
+    display: block;
+    font-size: .15rem;
+    color: #2C82FC;
+    text-align: left;
+    position: relative;
+    z-index: 10;
+    margin-bottom: .1rem;
+}
+.tips-condition .group-condition-triangle
+.dialog-condition .group-condition-triangle{
+    display: none;
+}
+.group-condition-area>ul{
+    position: relative;
+    z-index: 10;
+}
+.group-condition-area ul li{
+    position: relative;
+    margin-top: .08rem;
+}
+/*.oui-class-condition{
+    margin-right: .65rem;
+    width: auto;
+}*/
+.group-condition-area ul li .simple-condition-options ul li{
+    margin: 0;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .oui-simple-search-submit-btn{
+    display: none;
+}
+.group-condition-area ul li .oui-class-condition{
+    padding-right:0;
+    border: 0;
+}
+
+.group-condition-area ul li .oui-class-condition .simple-condition{
+    font-size: 0;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area {
+    display: inline-block;
+    border: 1px solid #cccccc;
+    border-radius: .03rem;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    font-size: .14rem;
+    position: relative;
+    vertical-align: middle;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area,
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area
+{
+    width: 36%;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area{
+    min-height: .35rem;
+    padding-top: .05rem;
+}
+.oui-class-condition .simple-condition .simple-condition-value-area.display_none,
+.oui-class-condition .simple-condition .simple-condition-fields-area .simple-condition-options.display_none,
+.oui-class-condition .simple-condition .condition-operation-area .condition-operation-options.display_none,
+.oui-class-condition-1 .group-condition-area.display_none,
+.oui-condition-go2search.display_none{
+    display: none;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area{
+    width: 20%;
+    margin-right: 4%;
+}
+.group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area{
+    margin-right: 4%;
+}
+.group-condition-area .group-condition-foot-area{
+    text-align: center;
+    padding-top: .2rem;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    text-align: center;
+    position: relative;
+    z-index: 8;
+}
+.group-condition-area .group-condition-foot-area span {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    max-width: 1rem;
+    height: .34rem;
+    line-height: .32rem;
+    font-size: .14rem;
+    margin: 0 auto;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    display: inline-block;
+    cursor: pointer;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-confirm-btn{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-confirm-btn:hover{
+    background: #63a4ed;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-cancel-btn{
+    background: #e5e5e5;
+    color: #333333;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-cancel-btn:hover{
+    background: #c4c4c4;
+    color: #ffffff;
+}
+.group-condition-area .group-condition-foot-area span.group-condition-more-btn{
+    display: none;
+}
+/*添加删除按钮*/
+.group-condition-area ul li .group-condition-add,
+.group-condition-area ul li .group-condition-del,
+.group-condition-area ul li .group-condition-accordion{
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0;
+    cursor: pointer;
+    margin-right: .1rem;
+    border: 0;
+    padding: 0;
+    float: none;
+}
+.group-condition-area ul li .group-condition-add,
+.group-condition-area ul li .group-condition-del{
+    background: url("../images/oui-simple-search-close.png") no-repeat;
+    background-size: .78rem .26rem;
+    width: .39rem;
+    height: .26rem;
+}
+.group-condition-area ul li .group-condition-add{
+    background-position: 0 0;
+    right: .33rem;
+}
+.group-condition-area ul li .group-condition-del{
+    background-position: -.39rem 0;
+    right: .03rem;
+}
+.group-condition-area ul li .group-condition-accordion{
+    width: .6rem;
+    height: .3rem;
+    margin-right: 0;
+    text-align: right;
+    position: absolute;
+    right: 0;
+    top: -2px;
+    display: none;
+}
+.group-condition-area ul li .group-condition-accordion:after{
+    content: "展开";
+    width: .6rem;
+    height: .3rem;
+    line-height: .3rem;
+    color: #2C82FC;
+    text-align: right;
+    font-size: .12rem;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.group-condition-area ul li .oui-class-condition.condition-height-clear + .group-condition-accordion:after{
+    content: "收起";
+}
+.group-condition-add-rule{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    width: 100%;
+    height: .34rem;
+    line-height: .32rem;
+    font-size: .14rem;
+    color: #2C82FC;
+    border: 1px solid #2C82FC;
+    margin-top: .1rem;
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    cursor: pointer;
+    outline: none;
+    display: none;
+}
+/*平铺条件开始*/
+.paved-condition .display_none{
+    display: none !important;;
+}
+.paved-condition{
+    display: inline-block;
+    margin: 0 auto;
+}
+.paved-condition .group-condition-area{
+    background: #ffffff;
+    width: auto;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 0;
+    z-index: 990;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+.paved-condition .oui-condition-content{
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: .1rem .12rem;
+    -webkit-overflow-scrolling: touch;
+    max-height: inherit !important;
+}
+.paved-condition .oui-condition-content .oui-condition-root{
+    /*max-height: 360px;*/
+    white-space: normal;
+}
+.paved-condition .group-condition-title{
+    background: #f5f6f7;
+    height: .44rem;
+    line-height: .44rem;
+    color: #515151;
+    text-align: center;
+    margin-bottom: 0;
+}
+.paved-condition .group-condition-triangle,
+.paved-condition .oui-condition-go2search,
+.paved-condition .oui-simple-search-submit-btn,
+.paved-condition .simple-condition-value-area:before,
+.paved-condition .oui-condition-cancel,
+.paved-condition .group-condition-preview,
+.paved-condition .group-condition-rules,
+.paved-condition .condition-operation-area,
+.paved-condition .group-condition-area ul li .group-condition-add,
+.paved-condition .oui-condition-group-mask-layer,
+.paved-condition .simple-condition-options{
+    display: none !important;
+}
+.paved-condition .simple-condition,
+.paved-condition .group-condition-area ul li .oui-class-condition{
+    background: transparent;
+    width: 100%;
+    display: block;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition{
+    height: auto;
+    padding: 0;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area,
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .condition-operation-area,
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area,
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .condition-var-area{
+    width: 100%;
+    display: block;
+    margin: 0 0 .08rem 0;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area{
+    background: transparent;
+    height: auto;
+    line-height: 2;
+    border: 0;
+    text-align: left;
+    padding: 0;
+    padding-right: .4rem;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-fields-area.simple-condition-field-half{
+    max-width: inherit;
+    max-height: inherit;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition .simple-condition .simple-condition-value-area{
+    min-height: .36rem;
+    padding-right: 0;
+    margin-bottom: 0;
+    border: 1px solid #ccc;
+    z-index: auto;
+}
+.paved-condition .simple-condition-value-area>div{
+    border: 1px solid #cccccc !important;
+}
+.paved-condition .oui-class-singleselect-3 .oui-select-pop-area{
+    width: 100%;
+    left: 0;
+    margin-left: 0;
+}
+.paved-condition .simple-condition-fields-area.simple-condition-field-half + .condition-operation-area + .simple-condition-value-area,
+.paved-condition .simple-condition-value-area>div.oui-class-radio-4,
+.paved-condition .simple-condition-value-area>div.oui-class-multiselect-6{
+    border: 0 solid transparent !important;
+}
+.paved-condition .simple-condition-value-area>div.oui-class-radio-4,
+.paved-condition .simple-condition-value-area>div.oui-class-multiselect-6{
+    min-height: .35rem;
+    height: .35rem;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: 0 !important;
+}
+.paved-condition .group-condition-area ul li .oui-class-condition.condition-height-clear .simple-condition .simple-condition-value-area>div.oui-class-radio-4,
+.paved-condition .group-condition-area ul li .oui-class-condition.condition-height-clear .simple-condition .simple-condition-value-area>div.oui-class-multiselect-6{
+    height: auto;
+}
+
+.paved-condition .group-condition-area ul li .group-condition-del{
+    position: absolute;
+    right: .03rem;
+    top: .04rem;
+    margin-right: 0;
+    display: none;
+}
+.paved-condition .oui-condition-content .oui-condition-root>li{
+    position: relative;
+    margin-bottom: .15rem;
+}
+.paved-condition .condition-center{
+    margin-left: -1.6rem;
+}
+.paved-condition .group-condition-area ul li .group-condition-accordion,
+.paved-condition .group-condition-add-rule{
+    display: block;
+}
+.paved-condition .group-condition-add-rule{
+    height: .4rem;
+    line-height: .4rem;
+    display: none;
+}
+.paved-condition .oui-class-multiselect-6 > div,
+.paved-condition .oui-class-radio-4 > div{
+    margin-top: 0;
+    padding: 0;
+}
+.paved-condition .oui-class-multiselect-6 > div label,
+.paved-condition .oui-class-radio-4 > div label{
+    padding: 0 .12rem;
+    line-height: .34rem;
+    font-size: .14rem;
+}
+.paved-condition .button-wrapper-info{
+    font-size: .14rem;
+}
+.paved-condition .group-condition-area .group-condition-foot-area{
+    background: #f5f6f7;
+    padding: .1rem 0;
+}
+.paved-condition .group-condition-area .simple-condition-value-area input{
+    padding: 0 .1rem;
+}
+.paved-condition .oui-class-multiselect-6 > div label + .oui-input-others,
+.paved-condition .oui-class-radio-4 > div label + .oui-input-others{
+    display: none;
+}
+/*时间组件--从-到-s*/
+.paved-condition .simple-condition-value-area>div.select-radio-area,
+.paved-condition .simple-condition-value-area>div.select-control-area{
+    display: block;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area{
+    border: 0 !important;
+    margin-top: .08rem;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .start-info,
+.paved-condition .simple-condition-value-area>div.select-control-area .end-info{
+    font-size: .14rem;
+    line-height: .34rem;
+    display: inline-block;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .start-info{
+    padding-right: .05rem;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .end-info{
+    margin: 0 .05rem;
+}
+.paved-condition .simple-condition-value-area>div.select-radio-area .oui-class-singleselect select{
+    height: .34rem;
+    border: 0 !important;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area{
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker{
+    box-flex: 1;
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker input{
+    border: 1px solid #cccccc !important;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+.paved-condition .simple-condition-value-area>div.select-control-area .oui-class-datepicker .form-ico-datepicker{
+    z-index: -1;
+}
+/*时间组件--从-到-e*/
+/*平铺条件结束*/
+
+/*
+蒙层*/
+.oui-condition-field-mask-layer,
+.oui-condition-operation-mask-layer,
+.oui-condition-group-mask-layer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 5;
+    display: none;
+}
+
+/*
+弹窗位置*/
+.condition-left{
+    left: 0;
+}
+.condition-center{
+    left: 50%;
+    margin-left: -300px;
+}
+.condition-right{
+    right: 0;
+}
+.condition-left .group-condition-triangle{
+    left: 10px;
+}
+.condition-center .group-condition-triangle{
+    left: 50%;
+    margin-left: -.04rem;
+}
+.condition-right .group-condition-triangle{
+    right: .1rem;
+}
+/*
+取消*/
+.oui-condition-cancel{
+    width: .45rem;
+    height: 100%;
+    text-align: center;
+    line-height: .34rem;
+    font-size: .14rem;
+    color: #2C82FC;
+    position: relative;
+    z-index: 40;
+}
+
+.simple-condition-value-area .oui-class-singleselect-3 .oui-select-pop-area,
+.simple-condition-value-area .oui-class-multiselect-3 .oui-select-pop-area,
+.simple-condition-value-area .oui-class-singleselect-4 .oui-select-pop-area,
+.simple-condition-value-area .oui-class-singleselect-5 .oui-select-pop-area,
+.simple-condition-value-area .oui-class-multiselect-4 .oui-select-pop-area,
+.simple-condition-value-area .oui-class-multiselect-5 .oui-select-pop-area{
+    border: 1px solid #e8e8e8;
+    box-shadow: none;
+}
+.simple-condition-value-area .oui-class-singleselect-3 .oui-select-pop-area:before,
+.simple-condition-value-area .oui-class-multiselect-3 .oui-select-pop-area:before,
+.simple-condition-value-area .oui-class-singleselect-4 .oui-select-pop-area:before,
+.simple-condition-value-area .oui-class-singleselect-5 .oui-select-pop-area:before,
+.simple-condition-value-area .oui-class-multiselect-4 .oui-select-pop-area:before,
+.simple-condition-value-area .oui-class-multiselect-5 .oui-select-pop-area:before{
+    transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    background: #FFFFFF;
+    box-shadow: -.02rem -.02rem .04rem -.02rem rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: -.02rem -.02rem .04rem -.02rem rgba(0, 0, 0, 0.2);
+    content: "";
+    height: .16rem;
+    position: absolute;
+    width: .16rem;
+    top: -.05rem;
+    left: 50%;
+    margin-left: -.08rem;
+    z-index: -1;
+}
+.simple-condition-value-area>div i.select-triangle{
+    display: none;
+}
+.simple-condition-value-area .oui-class-singleselect-2,
+.simple-condition-value-area .oui-class-singleselect-3,
+.simple-condition-value-area .oui-class-multiselect-2,
+.simple-condition-value-area .oui-class-multiselect-3,
+.simple-condition-value-area .oui-class-singleselect-4,
+.simple-condition-value-area .oui-class-singleselect-5,
+.simple-condition-value-area .oui-class-multiselect-4,
+.simple-condition-value-area .oui-class-multiselect-5{
+    position: inherit;
+}
+
+/*只有一个条件切且选中的情况*/
+.oui-conditions-only .simple-condition-selected{
+    display:none;
+}
+.oui-conditions-only .simple-condition-value-area{
+    width:100%;
+}
+.oui-conditions-only .simple-condition-value-area input{
+    padding-left: .1rem !important;
+}
+/*
+数字控件*/
+.simple-condition-value-area .oui-class-number .oui-number-split-area{
+    /*background: #f4f4f4;*/
+    min-height: .34rem;
+    line-height: .29rem;
+    border: 0;
+    font-size: .14rem;
+    padding-right: 0;
+    left: 0;
+    padding-left: .1rem;
+}
+
+
+
+
+

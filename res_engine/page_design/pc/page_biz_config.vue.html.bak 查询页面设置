@@ -1,0 +1,216 @@
+
+<template >
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">查询页面模板<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+
+                <div class="design-field "  >
+                    <div class="fieldname">查询页面设置</div>
+                    <div class="fieldblock">
+
+                        <el-switch
+                                on-text ="是"
+                                off-text = "否"
+                                on-color="#5B7BFA"
+                                off-color="#dadde5"
+                                v-model="config.otherAttrs.useQueryPage"
+                                @change="_controlOnUpdate('otherAttrs.useQueryPage',config)"
+                                ></el-switch>
+                    </div>
+                </div>
+                <div class="design-field " v-show="config.otherAttrs.useQueryPage"  >
+                    <div class="fieldname">查询条件呈现方式</div>
+                    <div class="fieldblock">
+                        <el-radio-group v-model="config.otherAttrs.queryConditionShowType" @change="_controlOnUpdate('otherAttrs.queryConditionShowType',config)">
+                            <el-radio :label="1">1.简单查询</el-radio>
+                            <el-radio :label="2">2.多条件平铺</el-radio>
+                            <el-radio :label="3">3.高级查询</el-radio>
+
+                        </el-radio-group>
+                    </div>
+                    <div class="fieldname">动态查询条件字段</div>
+                    <div class="fieldblock">
+                        <el-button >设置查询条件字段</el-button>
+                        <el-select
+                                v-model="config.otherAttrs.fields4queryCondition"
+                                @change="_controlOnUpdate4relation('otherAttrs.fields4queryCondition',relation,config)"
+                                filterable
+                                clearable
+                                remote
+                                reserve-keyword
+                                placeholder="请输入关键词"
+                                @clear="clear4loadRemoteTargetForms"
+                                :remote-method="loadRemoteTargetForms"
+                                :loading="relation.loading4targetForms">
+                            <el-option
+                                    v-for="item in relation.targetForms"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div class="fieldname">固定查询条件字段</div>
+                    <div class="fieldblock">
+                        <el-select
+                                v-model="relation.targetFieldId"
+                                @change="_controlOnUpdate4relation('targetFieldId',relation,config)"
+                                filterable
+                                clearable
+                                remote
+                                reserve-keyword
+                                placeholder="请输入关键词"
+                                @clear="clear4loadRemoteTargetFields"
+                                :remote-method="loadRemoteTargetFields"
+                                :loading="relation.loading4targetFields">
+                            <el-option
+                                    v-show="isShowRelationField(field)"
+                                    v-for="field in relation.targetFields"
+                                    :key="field.id"
+                                    :label="field.name"
+                                    :value="field.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="fieldname">排序字段</div>
+                    <div class="fieldblock">
+                        <el-select
+                                v-model="relation.targetDisplayFieldId"
+                                @change="_controlOnUpdate4relation('targetDisplayFieldId',relation,config)"
+                                filterable
+                                clearable
+                                remote
+                                reserve-keyword
+                                placeholder="请输入关键词"
+
+                                @clear="clear4loadRemoteTargetFields"
+                                :remote-method="loadRemoteTargetDisplayFields"
+                                :loading="relation.loading4targetDisplayFields">
+                            <el-option
+                                    v-for="field in relation.targetFields"
+                                    :key="field.id"
+                                    :label="field.name"
+                                    :value="field.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+
+                    <div class="fieldname">分页设置</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                on-text ="是"
+                                off-text = "否"
+                                on-color="#5B7BFA"
+                                off-color="#dadde5"
+                                v-model="config.otherAttrs.usePager"
+                                @change="_controlOnUpdate('otherAttrs.usePager',config)"
+                                ></el-switch>
+                    </div>
+
+                    <div class="fieldname" v-show="config.otherAttrs.usePager">最低分页条数</div>
+                    <div class="fieldblock" v-show="config.otherAttrs.usePager">
+                        <el-radio-group v-model="config.otherAttrs.minPagerSize" @change="_controlOnUpdate('otherAttrs.minPagerSize',config)">
+                            <el-radio :label="5">5条</el-radio>
+                            <el-radio :label="10">10条</el-radio>
+                            <el-radio :label="15">15条</el-radio>
+                            <el-radio :label="20">20条</el-radio>
+                        </el-radio-group>
+                    </div>
+
+                    <div class="fieldname">查询列表字段设置</div>
+                    <div class="fieldblock">
+                    </div>
+                    <div class="fieldname">Toolbar功能设置</div>
+                    <div class="fieldblock">
+                        <el-checkbox-group v-model="config.otherAttrs.toolbarButtons" @change="_controlOnUpdate('otherAttrs.toolbarButtons',config)">
+                            <el-checkbox :label="new">新增</el-checkbox>
+                            <el-checkbox :label="edit">编辑</el-checkbox>
+                            <el-checkbox :label="removeRow">删除</el-checkbox>
+                            <el-checkbox :label="exportData">导出</el-checkbox>
+                        </el-checkbox-group>
+                    </div>
+                    <div class="fieldname">Toolbar自定义按钮设置</div>
+                    <div class="fieldblock">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+
+                config:{
+                    id:'',
+                    bizId:'',
+                    otherAttrs:{
+                        useQueryPage:false,
+                        queryConditionShowType:2,
+
+                        bizDes:''
+                    }
+                }
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var data = com.oui.absolute.AbsoluteDesign.data;
+            if(data && data.id){
+                if(!data.otherAttrs.useQueryPage){
+                    data.otherAttrs.useQueryPage = false;
+                }
+            }
+            this.config.id = data.id;
+            this.config.bizId = data.bizId;
+            this.config.otherAttrs = oui.parseJson(oui.parseString(data.otherAttrs));
+        },
+        methods:{
+
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                var data = com.oui.absolute.AbsoluteDesign.data;
+
+                if(bindProp &&config && (data && (data.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,data,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

@@ -1,0 +1,37 @@
+<!--省市区 控件 TODO-->
+<template >
+
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                id:'' //控件id
+            }
+        },
+        mounted:function(){
+            var designer = this.getDesigner();//获取当前设计器
+            console.log('当前的配置Id:'+this.id);
+            console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+
+            getDesigner:function(){
+                var designFullName= this.designFullName;
+                return oui.util.eval(designFullName);
+            },
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

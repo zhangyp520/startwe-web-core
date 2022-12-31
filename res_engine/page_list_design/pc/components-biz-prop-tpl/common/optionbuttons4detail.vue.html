@@ -1,0 +1,196 @@
+
+<template >
+    <div>
+        <draggable v-model="options" draggable=".item" handle=".item-move" @end="onSortEnd"  ghost-class="ghost" >
+
+            <el-row  v-for="(element,index) in options" :key="element.id" class="item">
+                <el-col :span="3" class="item-move">
+                    <el-button type="text" size="medium" icon="el-icon-rank" class="item-move" ></el-button>
+                </el-col>
+                <el-col :span="15">
+                    <el-input type="text" :bindIndex="index" bindProp="display" v-model="element.display" @change="_controlOnUpdate(index,element)" />
+                    <el-input type="text" :bindIndex="index" bindProp="value" v-model="element.value"  @change="_controlOnUpdate(index,element)" />
+                </el-col>
+                <el-col :span="6">
+                    <el-button-group>
+                        <el-button type="text" size="medium" icon="el-icon-setting" class="item-setting" @click="settingOption(element.id)" draggable="false"></el-button>
+                        <el-button type="text" size="medium" icon="el-icon-plus" class="item-add" @click="addOption(element.id)" draggable="false"></el-button>
+                        <el-button type="text" size="medium" icon="el-icon-delete" class="item-delete" @click="removeOption(element.id)" draggable="false"></el-button>
+                    </el-button-group>
+                </el-col>
+            </el-row>
+        </draggable>
+        <el-button slot="footer" @click="addOption()">添加</el-button>
+        <el-button slot="footer" @click="clearOptions()">清空</el-button>
+        <el-button slot="footer" @click="resetOptions()">默认</el-button>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                options:[]
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if(currentControl&&currentControl.id&&currentControl.controlType){
+                if(!currentControl.otherAttrs){
+                    currentControl.otherAttrs = {};
+                }
+                if(!currentControl.otherAttrs.buttons){
+                    currentControl.otherAttrs.buttons =[];
+                }
+                this.options = oui.parseJson(oui.parseString(currentControl.otherAttrs.buttons));
+            }
+
+        },
+        methods:{
+            onMove:function(e){
+                console.log(e);
+            },
+            onSortEnd:function(){
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons = oui.parseJson(oui.parseString(this.options));
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            },
+            clearOptions:function(){
+                this.options.length=0;
+                this.options=[];
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons = oui.parseJson(oui.parseString(this.options));
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            },
+            addOptions:function(){
+
+            },
+            resetOptions:function(){
+                //默认设置
+
+                var config = oui.findOneFromArrayBy( com.oui.absolute.AbsoluteDesign.defaultControls4Normal, function (item) {
+                    if (item.controlType == 'detail') {
+                        return true;
+                    }
+                });
+                var buttons = oui.parseJson(oui.parseString(config.otherAttrs.buttons));
+                this.options = oui.parseJson(oui.parseString(buttons));
+                oui.eachArray(buttons,function(item){
+                    item.id = oui.getUUIDLong();
+                    item.value = oui.getUUIDLong();
+                });
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons = buttons;
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            },
+            addOption:function(id){
+                if(id){
+                    var item = oui.findOneFromArrayBy(this.options,function(item){
+                        if(item.id ==id){
+                            return true;
+                        }
+                    });
+                    var idx = this.options.indexOf(item);
+                    this.options.splice(idx+1,0,{
+                        id:oui.getUUIDLong(),
+                        value:oui.getUUIDLong(),
+                        contentType:'page',
+                        display:'按钮-'+this.options.length
+                    });//删除指定元素
+                }else{
+                    this.options.push({
+                        id:oui.getUUIDLong(),
+                        value:oui.getUUIDLong(),
+                        contentType:'page',
+                        display:'按钮-'+this.options.length
+                    });
+                }
+
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons = oui.parseJson(oui.parseString(this.options));
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            },
+            removeOption:function(id){
+                var item = oui.findOneFromArrayBy(this.options,function(item){
+                    if(item.id ==id){
+                        return true;
+                    }
+                });
+                var idx = this.options.indexOf(item);
+                this.options.splice(idx,1);//删除指定元素
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons = oui.parseJson(oui.parseString(this.options));
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            },
+            //选项设置
+            settingOption:function(id){
+
+                var item = oui.findOneFromArrayBy(this.options,function(item){
+                    if(item.id ==id){
+                        return true;
+                    }
+                });
+                var index = this.options.indexOf(item);
+                var url = oui.getContextPath()+'index4vue.html#'+'res_engine/page_design/pc/components-biz-prop-tpl/common/dialog4button.vue.html';
+
+                com.oui.absolute.AbsoluteDesign.dialog4button = oui.showUrlDialog({
+                    title:'按钮设置',
+                    contentStyle:'width:780px;height:720px',
+                    url:url,
+                    actions:[
+                        {
+                            cls:'oui-dialog-ok submit-button',
+                            text:'确定',
+                            action:function(){
+                                var temp  = com.oui.absolute.AbsoluteDesign.dialog4button.attr('config');
+                                //选择页面资源
+                                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons[index] = oui.parseJson(oui.parseString(temp));
+                                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                                });
+                                com.oui.absolute.AbsoluteDesign.dialog4button.hide();
+                            }
+                        },{
+                            cls:'oui-dialog-cancel submit-button',
+                            text:'取消',
+                            action:function(){
+                                com.oui.absolute.AbsoluteDesign.dialog4button.hide();
+                            }
+                        }]
+                });
+                com.oui.absolute.AbsoluteDesign.dialog4button.attr('config',item);
+            },
+            _controlOnUpdate:function(index,item){
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.buttons[index] = oui.parseJson(oui.parseString(item));
+                com.oui.absolute.AbsoluteDesign.changed4props({},function(){
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

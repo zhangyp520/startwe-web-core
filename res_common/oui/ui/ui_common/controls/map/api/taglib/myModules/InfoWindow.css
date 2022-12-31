@@ -1,0 +1,93 @@
+@charset "UTF-8";
+.myInfoWindow {
+    background: #ffffff;
+    padding: 10px 12px;
+    position: absolute;
+    z-index: 100;
+    -moz-box-shadow: 0 0 1em #26393D;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.myInfoWindow:after{
+    content: " ";
+    background: #ffffff;
+    width: 16px;
+    height: 16px;
+    display: block;
+    position: absolute;
+    left: 50%;
+    margin-left: -9px;
+    bottom: -7px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.dj_ie .myInfoWindow {
+    border: 1px solid black;
+}
+
+.myInfoWindow .content {
+    background-color: #ffffff;
+    position: relative;
+    color: #515151;
+    overflow: auto;
+    max-width: 300px;
+    max-height: 160px;
+}
+
+.myInfoWindow .close {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 10;
+    cursor: pointer;
+    background: url(https://serverapi.arcgisonline.com/jsapi/arcgis/2.6/js/dojo/dijit/themes/claro/layout/images/tabClose.png) no-repeat scroll 0 0 transparent;
+    width: 12px;
+    height: 12px;
+    margin: 3px 3px 0px 0px;
+}
+
+.myInfoWindow .close:hover, .myInfoWindow .toggleOpen:hover, .myInfoWindow .toggleClose:hover {
+    background-color: #F7FCFF;
+}
+
+.myInfoWindow .toggleOpen {
+    position: absolute;
+    top: 0px;
+    right: 12px;
+    cursor: pointer;
+    background: url(https://serverapi.arcgisonline.com/jsapi/arcgis/2.6/js/dojo/dijit/themes/claro/form/images/buttonArrows.png);
+    background-position: -51px 53%;
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    margin: 3px 3px 0px 0px;
+}
+
+.myInfoWindow .toggleClose {
+    position: absolute;
+    top: 0px;
+    right: 12px;
+    cursor: pointer;
+    background: url(https://serverapi.arcgisonline.com/jsapi/arcgis/2.6/js/dojo/dijit/themes/claro/form/images/buttonArrows.png);
+    background-position: 0px 53%;
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    margin: 3px 3px 0px 0px;
+}
+
+.myInfoWindow .title {
+    font-weight: bold;
+    padding: 2px 2px 2px 2px;
+    background-color: #046380;
+    color: #E6E2AF;
+}
+

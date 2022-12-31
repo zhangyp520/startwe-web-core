@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="20px" viewBox="0 0 40 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>switch</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="页面组件" transform="translate(-344.000000, -515.000000)" fill="#ABABAB" fill-rule="nonzero">
+            <g id="switch" transform="translate(344.000000, 515.000000)">
+                <path d="M10,1.2 C5.14,1.2 1.2,5.14 1.2,10 C1.2,14.86 5.14,18.8 10,18.8 L30,18.8 C34.86,18.8 38.8,14.86 38.8,10 C38.8,5.14 34.86,1.2 30,1.2 L10,1.2 Z M10,0 L30,0 C35.5228,0 40,4.4772 40,10 C40,15.5228 35.5228,20 30,20 L10,20 C4.4772,20 0,15.5228 0,10 C0,4.4772 4.4772,0 10,0 Z M16.5,10.25 C16.5,6.798 13.7016,4 10.25,4 C6.798,4 4,6.7984 4,10.25 C4,13.702 6.7984,16.5 10.25,16.5 C13.702,16.5 16.5,13.7016 16.5,10.25 Z" id="形状"></path>
+            </g>
+        </g>
+    </g>
+</svg>

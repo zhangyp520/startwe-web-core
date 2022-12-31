@@ -1,0 +1,288 @@
+<!-- 新增圈子 -->
+<template>
+    <!-- 头部 -->
+    <div>
+        <div>
+            <oui-include type="module" url="/res_startwe/html/home.vue.html">
+            </oui-include>
+        </div>
+        <div class="addCircle">
+            <!-- 内容 -->
+            <div class="addCircleWrapper">
+                <!-- 标题 -->
+                <div class="addCircleTitle">新增圈子</div>
+                <!-- 内容 -->
+                <el-form class="addCircleContent" :model="circle" :rules="rules" ref="circle">
+                    <!-- 小盒子 -->
+                    <div class="addCircle_inbox">
+                        <div class="in_title">圈子名称</div>
+                        <el-form-item prop="name">
+                            <el-input class="in_input" v-model="circle.name">
+                            </el-input>
+                        </el-form-item>
+                    </div>
+                    <div class="addCircle_inbox">
+                        <div class="in_title">圈子标识</div>
+                        <el-form-item prop="enName">
+                            <el-input type="text" v-model="circle.enName"></el-input>
+                            <div class="in_tips">*唯一能找到圈子的别名，命名规则：英文字母开始，英文、数字、_、的结合，可以只要多个单词的首字母组合，不能有中文，长度不超过10位</div>
+                        </el-form-item>
+                    </div>
+
+                    <div class="addCircle_inbox">
+                        <div class="in_title">圈子分类</div>
+                        <el-form-item prop="circleType">
+                            <el-select placeholder="请选择分类" v-model="circle.circleType">
+                                <el-option v-for="item in circleType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+
+                            </el-select>
+                        </el-form-item>
+
+                    </div>
+                    <div class="addCircle_inbox">
+                        <div class="in_title">权限访问</div>
+                        <el-form-item prop="permission">
+                            <el-select placeholder="请选择权限" v-model="circle.permission">
+                                <el-option v-for="item in permission" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+
+                    </div>
+                    <div class="addCircle_inbox">
+                        <div class="in_title">圈子描述</div>
+                        <div id="textContent">
+                            {{circle.description}}
+                        </div>
+                    </div>
+                </el-form>
+                <div class="submitBtn">
+                    <div>
+                        <el-button @click="comeBackClick">返回</el-button>
+                        <el-button type="primary" @click="confirmClick">确认</el-button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // addCircles:[],
+                circle: {
+                    name: '',
+                    enName: '',
+                    circleType: '',
+                    description: '',
+                    permission: ''
+                },
+                // 每个对象的验证规则
+                rules: {
+                    name: [
+                        { required: true, message: '请输入圈子名称', trigger: 'blur' },
+                    ],
+                    enName: [
+                        { required: true, message: '请输入圈子标识', trigger: 'blur' },
+                    ],
+                },
+
+                circleType: [{
+                    value: 'growth',
+                    label: '个人成长'
+                }, {
+                    value: 'education',
+                    label: '家庭教育'
+                }, {
+                    value: 'science',
+                    label: '科学技术'
+                },
+                {
+                    value: 'project',
+                    label: '项目孵化'
+                },
+                {
+                    value: 'resource',
+                    label: '资源管理'
+                },
+                {
+                    value: 'design',
+                    label: '产品设计'
+                }, {
+                    value: 'service',
+                    label: '产品服务'
+                }],
+                permission: [{
+                    value: '',
+                    label: '仅自己可看'
+                }, {
+                    value: 'all',
+                    label: '所有人可看'
+                }],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.loadMyCircles();
+
+        },
+        methods: {
+            // 富文本
+            textContent: function () {
+                var me = this;
+                oui.require([
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/css/bootstrap.min.css",
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/js/bootstrap.min.js",
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.css',
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.min.js',
+                    oui.getContextPath() + 'res_common/third/editor/dist/lang/summernote-zh-CN.js'], function () {
+
+                        me.$nextTick(function () {
+                            $('#textContent').summernote({
+                                height: 300,
+                                tabsize: 2,
+                                lang: 'zh-CN'
+                            });
+                        });
+                    });
+            },
+            // 返回
+            comeBackClick: function () {
+                oui.router.push('res_startwe/html/index.vue.html')
+            },
+            // 确认
+            confirmClick: function () {
+                var me = this;
+                //从缓存获取菜单数据，找出id为 circle的菜单，todo
+
+                me.circle.description = $('#textContent').summernote('code');
+                // var path = oui.biz.Tool.getApiPathByController(me.FullName.replace('4Edit', ''), 'save');
+                var param = {
+                    circle: me.circle
+                };
+                oui.postData(me.saveUrl, param, function (res) {
+
+                    if (res.success) {
+                        me.circle.id = res.circleId;
+                        oui.getTop().oui.alert('保存成功');
+
+                    } else {
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                    oui.router.push('res_startwe/html/index.vue.html')
+                }, function (err) {
+                    oui.getTop().oui.alert(err);
+                }, '保存中...');
+
+            },
+            // 数据
+            loadMyCircles: function () {
+                var that = this;
+                var str = oui.storage.get('startwe_menus');
+                var startwe_menus = oui.parseJson(str || '[]');
+                var one = oui.findOneFromArrayBy(startwe_menus, function (item) {
+                    if (item.id == 'circle') {
+                        return true;
+                    }
+                });
+                if (one) {
+                    that.saveUrl = one.params.initPath;
+                    that.textContent();
+                }
+            },
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .el-form-item {
+        width: 94%;
+    }
+
+    .el-select {
+        width: 100%;
+    }
+
+    .note-editor.note-frame {
+        border: 1px solid #DCDFE6;
+        width: 94%;
+    }
+    /* 内容 */
+
+    .addCircle {
+        background-color: #f2f2f2;
+    }
+
+    .addCircleWrapper {
+        width: 80%;
+        margin: auto;
+        padding: 40px 0;
+    }
+
+    .addCircleTitle {
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .addCircleContent {
+        margin-top: 40px;
+    }
+
+    .addCircle_inbox {
+        display: flex;
+    }
+
+    .in_title {
+        font-size: 14px;
+        margin-right: 10px;
+        line-height: 40px;
+    }
+
+    .in_tips {
+        color: #999;
+    }
+
+
+    /* 提交按钮 */
+
+    .submitBtn>div {
+        display: flex;
+        justify-content: center;
+    }
+</style>

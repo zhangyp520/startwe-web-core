@@ -1,0 +1,374 @@
+<!-- 首页内容 -->
+<template>
+
+    <div>
+        <!-- 头部 -->
+        <div>
+            <oui-include type="module" url="/res_startwe/html/home.vue.html">
+            </oui-include>
+        </div>
+        <!-- slogan -->
+        <el-carousel arrow="never" trigger="click" :interval="5000" :height="bannerH+'px'">
+            <el-carousel-item v-for="item in img_list" :key="item.id">
+                <div class="slogan" style="width: 100%;">
+                    <img :src="item.url" alt="" class="banner" @load="imgLoad" ref="bannerH">
+                </div>
+            </el-carousel-item>
+        </el-carousel>
+
+        <!-- 圈子 -->
+        <div class="circle">
+            <!-- 标题 -->
+            <div class="circleTitle">我的圈子</div>
+            <!-- 圈子内容 -->
+            <div class="circleContent">
+                <!-- 圈子小盒子 -->
+                <!-- 第一个 -->
+                <div :style="{marginBottom:(!isBottom?'40px':'0px')}"  class="circle_inbox" style="margin-right: 40px;" v-for="(item,index) in circles" @mouseenter="enter(index)" @mouseleave="leave()">
+                    <div>
+                        <div @click="editClick(item)" class="inbox_Title">{{item.name}}</div>
+                        <div class="inbox_date">{{item.createTime}}</div>
+                        <div @click="editClick(item)" class="inbox_content" v-html="item.description"></div>
+                        <div class="inbox_icon">
+                            <div>
+                                <img src="/res_startwe/assets/chakan.png" alt="">
+                                <span>1121</span>
+                            </div>
+                            <div>
+                                <img src="/res_startwe/assets/pinglun-3.png" alt="">
+                                <span>12321</span>
+                            </div>
+                            <div>
+                                <img src="/res_startwe/assets/xin.png" alt="">
+                                <span>213212</span>
+                            </div>
+                        </div>
+                        <!-- 删除 -->
+                        <div class="del_circle" v-if="del_circle&&index==current" @click="delClick(index)">
+                            <img src="/res_startwe/assets/shanchu1.png" alt="">
+                        </div>
+                    </div>
+
+                </div>
+                <!-- 第三个 -->
+                <div class="addCircle" v-if="addCircle" @click="addClick">
+                    <img src="/res_startwe/assets/add.png" alt="">
+                </div>
+            </div>
+        </div>
+        <!-- 备案号 -->
+        <div class="pg-footer">
+            <div class="pg-ft-wrap">
+                <span>版权所有 Powered by StartWE&nbsp;&nbsp;蜀ICP备18031704号</span>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                isBottom:false,//超过三个显示下边距
+                checked: false,
+                input: "",
+                img_list: [
+                    { id: 0, url: '/res_startwe/assets/img1.png' },
+                    { id: 1, url: '/res_startwe/assets/img2.png' }
+                ],
+                bannerH: '',
+                circles: [],
+                addCircle: true,
+                del_circle: false,
+                current: 0,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.imgLoad();
+            this.loadMyCircles();
+            window.addEventListener('resize', () => {
+                this.bannerH = this.$refs.bannerH[0].height
+                this.imgLoad();
+            }, false)
+
+
+        },
+        methods: {
+            // 点击进入圈子编辑页面
+            editClick: function (row) {
+
+                oui.router.push('res_startwe/html/circle/circleDetails.vue.html', {
+                    id: row.id,
+                    loadUrl: row.extraAttrs.loadUrl,
+                    saveUrl: row.extraAttrs.saveUrl
+                })
+
+
+            },
+            // 鼠标移入显示删除图标
+            enter(index) {
+                this.del_circle = true;
+                this.current = index;
+            },
+            // 鼠标移出隐藏删除图标
+            leave() {
+                this.del_circle = false;
+                this.current = null;
+            },
+            // 点击删除事件
+            delClick: function (index) {
+                var that = this;
+                var circleId = that.circles[index].id;
+                var removeUrl = that.circles[index].extraAttrs.removeUrl;
+                // console.log(removeUrl);
+                var path = oui.biz.Tool.getApiPathByController(that.FullName.replace('4Query', ''), 'removeCircle');
+                var param = {
+                    id: circleId
+                };
+                oui.postData(removeUrl || path, param, function (res) {
+                    if (res.success) {
+                        oui.getTop().oui.alert('删除成功');
+                        oui.removeFromArrayBy(that.circles, function (item) {
+                            if (item.id == circleId) {
+                                return true;
+                            }
+                        });
+                        window.location.reload();
+                    } else {
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                }, function (err) {
+                    oui.getTop().oui.alert(err);
+                }, '删除中...');
+
+                // console.log(index);
+                // that.circles.splice(index,1);
+
+            },
+            // 添加圈子
+            addClick: function () {
+                oui.router.push('res_startwe/html/circle/addCircle.vue.html')
+            },
+            // 数据
+            loadMyCircles: function () {
+                var that = this;
+                var str = oui.storage.get('startwe_menus');
+                var startwe_menus = oui.parseJson(str || '[]');
+                var one = oui.findOneFromArrayBy(startwe_menus, function (item) {
+                    if (item.id == 'circle_create_by_me') {
+                        return true;
+                    }
+                });
+                if (one) {
+                    var url = one.params.initPath;
+                    oui.postData(url, {}, function (res) {
+                        //拿到圈子列表
+                        that.circles = res.circles;
+                        // var addCircle=true;
+                        if (res.circles.length >= 3) {
+                            that.addCircle = false;
+                            that.isBottom = true;
+                        } else {
+                            that.isBottom = false;
+                            that.addCircle = true;
+                        }
+
+
+                    });
+                }
+            },
+            // banner高度自适应
+            imgLoad() {
+                this.$nextTick(() => {
+                    this.bannerH = this.$refs.bannerH[0].height
+                })
+            }
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+
+    /* 备案号 */
+
+    .pg-ft-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        /* position: absolute;
+        bottom: 10px; */
+    }
+    .pg-ft-wrap>span{
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* 内容开始 */
+
+    .banner {
+        width: 100%;
+        height: auto;
+    }
+    .pg-footer{
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    /* 圈子 */
+
+    .circle {
+        width: 80%;
+        margin: auto;
+
+    }
+
+    /* 圈子标题 */
+
+    .circleTitle {
+        font-size: 26px;
+        font-weight: bold;
+        margin: 30px 0;
+    }
+
+    /* 圈子内容 */
+
+    .circleContent {
+        display: flex;
+      
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+
+    }
+
+    /* 每个小盒子 */
+
+    .circleContent>div {
+        height: 234px;
+        width: 28%;
+        /* height: 280px; */
+        border: 1px solid #f2f2f2;
+        border-radius: 10px;
+        box-shadow: #979797 0px 0px 10px;
+       
+    }
+    .circleContent>div:nth-child(3n){
+        margin-right: 0;
+    }
+    /* .circleContent>div:not(:last-child) {
+        margin-right: 120px;
+    } */
+
+    .circle_inbox>div {
+        width: 90%;
+        margin: 20px auto;
+        position: relative;
+    }
+
+    .circle_inbox:hover {
+        background-color: #f4f4f4;
+    }
+
+    .inbox_Title {
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .inbox_Title:hover {
+        color: #7863FF;
+        text-decoration: underline;
+    }
+
+    .inbox_date {
+        font-size: 14px;
+        color: #979797;
+        line-height: 40px;
+    }
+
+    .inbox_content {
+        font-size: 16px;
+        line-height: 30px;
+        color: #979797;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        height: 90px;
+        cursor: pointer;
+    }
+
+    .inbox_content:hover {
+        text-decoration: underline;
+    }
+
+    .inbox_icon {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .inbox_icon>div {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+
+    .inbox_icon>div>span {
+        color: #979797;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    /* 最后一个小盒子————添加圈子 */
+
+    .addCircle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    /* 删除 */
+
+    .del_circle {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        cursor: pointer;
+    }
+</style>

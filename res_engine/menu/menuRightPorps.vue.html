@@ -1,0 +1,978 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : slbHeight } ">
+        <el-scrollbar style="height: 100%;">
+            <div class="padingleft">
+                <div class="right_title">外观设置</div>
+                <div>
+                    <!-- <div class="fillTitle">
+                        <span class="inner-title">填充111</span>
+                    </div>
+                    <div class="fillBox">
+                        <div>
+                            <el-color-picker v-model="backgroundColor" @change="changeBackgroundColor" class="colorPicker">
+                            </el-color-picker>
+                        </div>
+                        <el-input v-model="backgroundColor" class="fillInput"></el-input>
+                        <el-input v-model="opacity" class="alphaInput" @change="changeOpacity"></el-input>
+                    </div> -->
+                    <!-- <div class="biginputbox">
+                        <div class="isinputBox" v-for='(item,index) in form'>
+                            <div class="isinputitle">{{item.title}}</div>
+                            <input class="isinput" v-model='item.value' type="text">
+                        </div>
+                    </div> -->
+
+                    <div class="marginb">
+                        <div>圆角</div>
+                        <div class="flex sliderBox">
+                            <el-slider v-model="value3" :show-tooltip="false" show-input></el-slider>
+
+                        </div>
+                    </div>
+
+                    <div class="marginb">
+                        <div class="flex justify-between">
+                            <div>填充</div>
+                            <div>+</div>
+                        </div>
+                        <div class="flexal">
+                            <el-checkbox></el-checkbox>
+                            <el-color-picker v-model="color2" @change='colorChange'></el-color-picker>
+                            <div class="colorValue">{{color2}}</div>
+                            <el-input v-model="percentage"></el-input>
+                        </div>
+                    </div>
+
+                    <!-- <div class="marginb">
+                        <div class="flex justify-between">
+                            <div>边框</div>
+                            <div>+</div>
+                        </div>
+                        <div class="flexal">
+                            <el-checkbox></el-checkbox>
+                            <el-color-picker v-model="bordercolor" @change='changeBorder'></el-color-picker>
+                            <div class="colorValue">{{bordercolor}}</div>
+                            <el-input v-model="percentage"></el-input>
+                        </div>
+
+                    </div> -->
+
+                    <div>
+                        <div class="flex justify-between">
+                            <div>文字</div>
+                            <div>+</div>
+                        </div>
+                        <div class="flexal">
+                            <el-checkbox></el-checkbox>
+                            <el-color-picker v-model="color1" @change='changeText'></el-color-picker>
+                            <div class="colorValue">{{color1}}</div>
+                            <el-input v-model="percentage"></el-input>
+                        </div>
+
+                    </div>
+
+                    <div class="right_title">文本设置</div>
+
+                    <div class="marginb">
+                        <el-input v-model="textarea" placeholder="请输入内容" @change='textChange'></el-input>
+                    </div>
+                    
+                    <!-- <div class="marginb">
+                        <el-select placeholder="黑体">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div>
+                    <div class="flex">
+                        <el-select placeholder="粗体">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                        <el-select placeholder="14px">
+                            <el-option label="区域一" value="shanghai"></el-option>
+                            <el-option label="区域二" value="beijing"></el-option>
+                        </el-select>
+                    </div> -->
+
+                </div>
+            </div>
+        </el-scrollbar>
+        
+        <el-dialog title="保存为菜单模板" :visible.sync="centerDialogVisible" width="30%">
+            <div>
+                <div class="flex_iuput">
+                    <div class="dialoginputT">名称</div>
+                    <el-input v-model="input" placeholder="请输入内容"></el-input>
+                </div>
+                <div class="flex_iuput">
+                    <div class="dialoginputT">简介</div>
+                    <el-input  type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="input"></el-input>
+                </div>
+            </div>
+        
+            <el-checkbox v-model="checked">公共模板</el-checkbox>
+        
+            <span slot="footer" class="dialog-footer">
+                <div class="dombut">
+                    <div class="button_no" @click='centerDialogVisible = false'>取消</div>
+                    <div class="button_ok">确认</div>
+                </div>
+            </span>
+        </el-dialog>
+
+
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+
+        data: function () {
+            return {
+                checked:true,
+                input:'',
+                centerDialogVisible: false,
+                textarea:'',
+                //浏览器可视区域高度
+                clientHeight: '',
+                slbHeight: '',
+                //背景颜色透明度
+                opacity: '100%',
+                //背景颜色
+                backgroundColor: '',
+                form: [
+                    {
+                        title: 'X',
+                        value: ''
+                    },
+                    {
+                        title: 'Y',
+                        value: ''
+                    },
+                    {
+                        title: '',
+                        value: ''
+                    },
+                    {
+                        title: 'W',
+                        value: ''
+                    },
+                    {
+                        title: 'H',
+                        value: ''
+                    }
+                ],
+                value3: 36,
+                radiusValue: '',
+                color2: null,
+                color1: null,
+                percentage: '100%',
+                bordercolor:''
+
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload4Enable.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+            this.clientHeight = `${document.documentElement.clientHeight}`;//获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 80 + 'px';
+            }
+            window.addEventListener("message", function (event) {
+                console.log(event.data,32132132)
+                var data = event.data;
+                that.textarea = data.param.text
+
+                if(data.cmd == 'saveMenu') {
+                    that.centerDialogVisible = true
+                }
+            });
+        },
+        watch: {
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        methods: {
+            changetextColor: function () {
+
+            },
+            handleBgImgRemove: function () {
+
+            },
+            //边框样式是否改变勾选
+            borderStyleCheck: function (val) {
+
+
+            },
+            // 边框颜色改变
+            changeBorderColor: function () {
+
+            },
+            //边框线型改变
+            changeBorderStyle: function () {
+
+            },
+            //边框宽度改变
+            changeBorderWidth: function () {
+
+            },
+            //改变背景颜色透明度
+            changeOpacity: function () {
+
+            },
+            // 圆角
+            changeBorderRadius: function () {
+
+            },
+            // 滚动条
+            changeFixed: function (clientHeight) {
+                this.slbHeight = clientHeight - 80 + 'px';
+            },
+
+            // 背景透明色改变
+            changeBackgroundColor: function () {
+
+            },
+            //保存设计
+            saveDesign: function (callback) {
+                var me = com.oui.absolute.AbsoluteDesign;
+                var data = me.getDesignData();
+                me.paramCfg.page = data;
+                me.updateParamCfgSource(me.paramCfg);//更新调用处参数
+                var plugin = me.plugin || {};
+                me.hasChange = false;
+                var param = oui.getParam();
+                if (param.portalId) {
+                    oui.postData(me.updateProjectPortalUrl, {
+                        projectPortal: data
+                    }, function (res) {
+                        callback && callback();
+                    }, function (res) {
+                    }, '保存中...');
+                }
+            },
+            // 文本设置
+            textChange () {
+                window.postMessage({
+                    cmd: 'cmdMessageData',
+                    param: {
+                        configData: {
+                            text:this.textarea
+                        }
+                    }
+                }, '*');
+            },
+            //填充
+            colorChange() {
+                window.postMessage({
+                    cmd: 'colorData',
+                    param: {
+                        color:this.color2
+                    }
+                }, '*');
+            },
+            //文字颜色
+            changeText() {
+                window.postMessage({
+                    cmd: 'colorText',
+                    param: {
+                        color:this.color1
+                    }
+                }, '*');
+            },
+            //边框
+            changeBorder() {
+                window.postMessage({
+                    cmd: 'colorBorder',
+                    param: {
+                        color:this.bordercolor
+                    }
+                }, '*');
+            }
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+
+    .bgColorRadio .el-radio__inner {
+        margin-top: 13px;
+    }
+
+    .fillColorRadio {
+        margin-right: 0;
+    }
+
+    .fillColorRadio .el-radio__inner {
+        margin-top: 2px;
+    }
+
+    .uploadRadio .el-radio__inner {
+        margin-top: 12px;
+    }
+
+    .rightBorderChecked .el-checkbox__label {
+        width: 88%;
+    }
+
+    .query-module-type {
+        /* display: flex; */
+        margin-top: 20px;
+    }
+
+    .query-module-type>div {
+        margin-top: 10px;
+    }
+
+    /* .show-showTypes{
+        display: flex;
+
+    } */
+
+    .show-showTypes>div {
+        margin-top: 10px;
+
+    }
+
+    .showTypes-box {
+        margin-top: 20px;
+    }
+
+    .showTypes-box .el-select {
+        width: 100%;
+    }
+
+    .showTypes-list>div {
+        padding: 0 10px;
+    }
+
+    .showTypes-list>div:hover {
+        background: #FF7D82;
+        color: #fff;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .fillSetUpOpacity {
+        display: flex;
+        align-items: center;
+        margin-right: 0;
+    }
+
+    .fillSetUpOpacity .el-radio__input {
+        margin-top: -25px;
+    }
+
+    .pageSetUpBg {
+        display: flex;
+        align-items: center;
+    }
+
+    .pageSetUpBgImg {
+        display: flex;
+        align-items: center;
+
+    }
+
+    .pageSetUpBgImg .el-radio__input {
+        margin-top: -120px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderCheck .el-icon-close:before {
+        content: " ";
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px !important;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 30px;
+        height: 22px;
+        border-radius: 1px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        width: 28px;
+        height: 20px;
+        border-radius: 1px;
+    }
+
+    .fillCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .fillCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .fillCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .fillCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .bgColorPiker .el-color-picker__trigger {
+        border: none;
+        width: 74px;
+        height: 40px;
+    }
+
+    .bgColorPiker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .bgColorPiker.el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    .bgColorPiker .el-color-picker__color-inner {
+        width: 64px;
+        height: 30px;
+        border-radius: 2px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .pageSetUp .el-radio {
+        display: flex;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        margin-top: 10px;
+        position: relative;
+    }
+
+    .imgBG .el-button.is-circle {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 20px;
+        right: 8px;
+        z-index: 2;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 34px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+
+    .el-slider__bar {
+        background: #FF7D82;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 100%;
+        margin-left: 10px;
+    }
+
+    .sliderBox .el-slider__input {
+        width: 104px;
+    }
+
+    .sliderBox .el-slider__runway.show-input {
+        margin-right: 120px;
+    }
+
+    /* .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    } */
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .addTitle {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #8c939d;
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .isinputBox {
+        border: 1px solid #d7dae2;
+        border-radius: 4px;
+        width: 70px;
+        display: flex;
+        align-items: center;
+        margin: 0 18px 10px 0;
+    }
+
+    .isinputBox>.isinputitle {
+        width: 20%;
+        text-align: center;
+    }
+
+    .isinput {
+        border: 0;
+        width: 80%;
+        padding: 0 0 0 5px;
+        outline: none;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 4px;
+    }
+
+    .biginputbox {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .padingleft {
+        padding: 0 15px 0 15px;
+    }
+
+    .flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .slider {
+        width: 200px;
+        margin-right: 10px;
+    }
+
+    .justify-between {
+        justify-content: space-between;
+    }
+
+    .el-color-picker__trigger {
+        height: 20px;
+        padding: 0;
+    }
+
+    .flexal {
+        display: flex;
+        height: 25px;
+
+    }
+
+    .flexal .el-input__inner {
+        height: 20px;
+    }
+
+    .el-color-picker__empty {
+        display: none;
+    }
+
+    .el-color-picker__empty {
+        display: none;
+    }
+
+    .el-icon-arrow-down:before {
+        display: none;
+    }
+
+    .el-checkbox {
+        margin-right: 10px;
+    }
+
+    .el-color-picker__color {
+        border: 1px solid #d7dae2;
+    }
+
+    .colorValue {
+        border: 1px solid #d7dae2;
+        width: 200px;
+        height: 20px;
+        margin: 0 10px;
+        border-radius: 4px;
+    }
+
+    .marginb {
+        margin-bottom: 20px;
+    }
+
+    .el-input__icon {
+        line-height: 20px;
+    }
+
+    .select {
+        margin: 0 10px;
+    }
+
+    .el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background-color: #f56c6c;
+        border-color: #f56c6c;
+    }
+    .el-checkbox__inner:hover{
+     border-color: #f56c6c;   
+    }
+    .el-dialog__header {
+        height: 54px;
+        background-color: #F2F2F2;
+        line-height: 22px;
+        font-size: 20px;
+        color: #524D62;
+
+    }
+    .button_ok{
+        background: #524D62;    
+        border-radius: 2px;
+        width: 140px;
+        height: 40px;
+        color: #fff;
+        line-height: 40px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .button_no{
+        background: #FFFFFF;
+        border: 1px solid #D9D9D9;
+        border-radius: 2px;
+        width: 140px;
+        height: 40px;
+        color: #595959;
+        line-height: 40px;
+        margin-right: 10px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .dombut{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .flex_iuput{
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .dialoginputT{
+        width: 12%;
+    }
+    .el-checkbox__input.is-checked+.el-checkbox__label{
+        color: #000;
+        margin-left:30px;
+    }
+</style>

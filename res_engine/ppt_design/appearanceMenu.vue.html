@@ -1,0 +1,485 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div style="">
+        <div>
+            <div class="right_title">外观设置</div>
+            <div class="locationSetting">
+                <div class="X location_inner">
+                    <span>X</span>
+                    <input type="text">
+                </div>
+                <div class="Y location_inner">
+                    <span>Y</span>
+                    <input type="text">
+                </div>
+                <div class="num">
+                    <!-- <span>0</span> -->
+                    <input type="text" :value="input">
+                </div>
+                <div class="W  location_inner">
+                    <span>W</span>
+                    <input type="text">
+                </div>
+                <div class="H  location_inner">
+                    <span>H</span>
+                    <input type="text">
+                </div>
+                <div class="lockImg">
+                    <img src="/res_startwe/html/DesignPages/assets/locking.png" alt="">
+                </div>
+            </div>
+            <div class="publicBox">
+                <span class="inner-title">圆角</span>
+                <div class="sliderBox">
+                    <div>
+                        <el-slider v-model="value1"></el-slider>
+                    </div>
+
+                    <input type="text" v-model="value1">
+                </div>
+            </div>
+            <div class="publicBox">
+                <div class="fillTitle">
+                    <span class="inner-title">填充</span>
+                    <span class="addTitle">+</span>
+                </div>
+                <div class="fillBox">
+                    <el-checkbox v-model="fillChecked" class="fillCheck"></el-checkbox>
+                    <div>
+                        <el-color-picker v-model="fillColor" @change="changeFillColor" class="colorPicker">
+                        </el-color-picker>
+                    </div>
+
+                    <el-input v-model="fillColor" class="fillInput"></el-input>
+                    <el-input v-model="transparency" class="alphaInput"></el-input>
+                </div>
+
+            </div>
+            <div class="publicBox">
+                <div class="borderTitle">
+                    <span class="inner-title">边框</span>
+                    <div>
+                        <span class="addTitle">...</span>
+                        <span class="addTitle">+</span>
+                    </div>
+                </div>
+                <div class="borderInnerBox">
+                    <el-checkbox v-model="borderChecked" class="borderCheck"></el-checkbox>
+                    <div>
+                        <el-color-picker v-model="borderColor" @change="changeBorderColor" class="colorPicker">
+                        </el-color-picker>
+                    </div>
+                    <el-select v-model="value" placeholder="请选择" class="borderSelect">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+
+                    <!-- <el-input v-model="borderColor" class="fillInput"></el-input> -->
+                    <el-input v-model="borderWidth" class="borderWidthInput"></el-input>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                fillColor: '#fff',
+                borderColor: '#fff',
+                imageUrl: '',
+                fillChecked: false,
+                borderChecked: false,
+                input: 0,
+                value1: 0,
+                transparency: '100%',
+                borderWidth: '2',
+                options: [{
+                    value: '选项1',
+                    label: 'solid 实线'
+                }, {
+                    value: '选项2',
+                    label: 'dotted 点线'
+                }, {
+                    value: '选项3',
+                    label: 'double 双线'
+                }, {
+                    value: '选项4',
+                    label: 'none 无边框'
+                }],
+                value: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            changeBorderColor: function () {
+
+            },
+            changeFillColor: function () {
+
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+    .el-slider__bar{
+        background: #FF7D82;
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .fillCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .fillCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .fillCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .fillCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 30px;
+        height: 22px;
+        border-radius: 1px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        width: 28px;
+        height: 20px;
+        border-radius: 1px;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        margin-top: 10px;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 50px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 78%;
+        padding: 0 5px;
+    }
+
+    .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .addTitle {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #8c939d;
+    }
+</style>

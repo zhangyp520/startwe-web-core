@@ -1,0 +1,56 @@
+<!-- 按钮 -->
+<template >
+    <mt-button
+            :tempStyle="style"
+            :title="title"
+            :id="id"
+            :bindProp="bindProp"
+            :class="cls"
+            v-model="title"
+            @click="event2click"
+            :placeholder="placeholder"
+            :icon="iconCls"
+            type="primary"
+            >{{title}}
+    </mt-button>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                iconCls:'',
+                title:'',
+
+                value:'',
+                display:'',
+                buttonLayout:'onlyText', //onlyText,leftIcon,rightIcon,onlyIcon
+                buttonShowType:'default',//default,primary,success,info,warning,danger,text
+                plain:false,
+                round:false,
+                circle:false,
+                disabled:false,
+                buttonSize:'default'
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+            event2click:function(){ //icon图标点击事件
+                this.onClick&&this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

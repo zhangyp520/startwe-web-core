@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0, maximum-scale=0, user-scalable=yes,shrink-to-fit=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="成都起微倾力打造的更灵活、更智能、更强大的企业信息化系统可视化设计平台StartWE，可以实现快速的各类企业系统开发，助力企业降本增效" />
+    <meta name="keywords" content="起微网络科技,管理信息系统,企业信息化系统,企业应用开发,数字化建设,快速开发工具,可视化开发" />
+    <title>成都起微网络技术有限公司 - Startwe起微-数字化建设项目服务平台</title>
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
+    <link rel="stylesheet" href="js/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="js/aos/aos.css" />
+    <style>
+        .swiper-slide .title {
+            height: 44px;
+            font-size: 40px;
+            font-weight: 700;
+            color: #000000;
+            line-height: 44px;
+            letter-spacing: 3px;
+            margin-bottom: 27px;
+        }
+
+        .white {
+            color: #FFFFFF !important;
+        }
+
+        .swiper-button-prev,
+        .swiper-button-next {
+            display: none;
+        }
+
+        .swiper-pagination-bullet {
+            display: inline-block;
+            border-radius: 50px;
+            transform-origin: center center;
+            -webkit-transform-origin: center center;
+            margin: 0 8px;
+            width: 25px;
+            height: 3px;
+            transition: all 0.8s;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main" id="main-box">
+        <!-- 头部导航 -->
+        <div class="header">
+            <div style="width: 1176px;margin: 0 auto;">
+                <div class="logo">
+                    <img src="images/logo.png" />
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li onclick="goSomeWhere('main-box', this)">首页</li>
+                        <li onclick="goSomeWhere('pro-box' , this)">产品介绍</li>
+                        <li onclick="goSomeWhere('synergy-box' , this)">解决方案</li>
+                        <li onclick="goSomeWhere('case-box' , this)">客户案例</li>
+                        <li onclick="goSomeWhere('about-box' , this)">关于我们</li>
+                        <li class="login"><a href="/index4vue.html#res_startwe/html/login.vue.html"
+                                target="_self">登录/注册</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 中间内容区域 -->
+        <div class="content clear" style="padding-top: 65px;">
+            <div class="banner">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide banner-box banner-img-111 swiper-lazy"  data-background="images/banner1.png" >
+                            <div class="banner-title-box">
+                                <div class="banner-title">
+                                    <p class="title opacity65">可视化项目搭建平台</p>
+                                    <p class="title-desc opacity65">通过可视化、组件化、模板化的方式</p>
+                                    <p class="title-desc opacity65" style="margin-top: 9px;margin-bottom: 33px;">
+                                        完成项目开发，有效降低企业开发成本，快速完成交付</p>
+                                    <span><a href="/index4vue.html#res_startwe/html/login.vue.html" target="_self"
+                                            class="white">立即试用</a></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide banner-box banner-img-2 swiper-lazy" data-background="images/banner2.png">
+                            <div class="banner-title-box">
+                                <div class="banner-title">
+                                    <p class="title white">全生命周期管理的项目服务</p>
+                                    <p class="title-desc white">软件生产的全生命周期管理</p>
+                                    <p class="title-desc white" style="margin-top: 9px;margin-bottom: 33px;">
+                                        让IT生产更贴近客户需求，让价值输出更有温度</p>
+                                    <span class="ori"><a href="/index4vue.html#res_startwe/html/login.vue.html"
+                                            target="_self" class="ori" style="
+                                            color: #4372E8;">立即试用</a></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide banner-box banner-img-3 swiper-lazy" data-background="images/banner3.png">
+                            <div class="banner-title-box">
+                                <div class="banner-title">
+                                    <p class="title white">新一代项目孵化平台</p>
+                                    <p class="title-desc white">所见即所得的项目价值输出</p>
+                                    <p class="title-desc white" style="margin-top: 9px;margin-bottom: 33px;">
+                                        让需求方与服务方有更直观的项目建设体验</p>
+                                    <span class=""><a href="/index4vue.html#res_startwe/html/login.vue.html"
+                                            target="_self" class="white">立即试用</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+
+            </div>
+
+            <!-- 产品介绍 -->
+            <div class="content_box clear" id="pro-box">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">Startwe可视化开发让你更敏捷的应对挑战</p>
+                    <p class="product-introduce-desc" data-aos="fade-up">
+                        传统的软件项目开发往往需要经历很长的规划和代码开发时间，项目环节多、周期长，使用Startwe可视化开发工具</p>
+                    <p class="product-introduce-desc" data-aos="fade-up"> 可以有效的降低研发周期，极大缩短开发时间，实现企业降本增效</p>
+                    <img class="product-diff" data-aos="fade-up" style="width: 1010px;"
+                        src="images/product-introduce.png" />
+                </div>
+            </div>
+
+            <!-- 技术路径 -->
+            <div class="content_box clear" style="background: #F5F9FF;">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">Startwe可视化项目搭建平台主要技术路径</p>
+                    <p class="product-introduce-desc" data-aos="fade-up">以页面呈现模型和逻辑模型为基础，通过可视化配置或模型驱动实现平台搭建</p>
+                    <div>
+                        <div class="left">
+                            <img src="images/pic2.png" style="margin-left: 110px;margin-top:94px;margin-bottom:76px ;"
+                                data-aos="fade-up" />
+                        </div>
+                        <div class="right" style="padding-top:80px;margin-right: 146px;" data-aos="fade-up">
+                            <p class="tech-title">Startwe可视化项目搭建平台</p>
+                            <div style="width: 413px;">
+
+                                <div class="left" style="width: 48%;">
+                                    <img style="margin: 0 auto;display: block;" src="images/arrow.png" />
+                                </div>
+                                <div class="right" style="width: 48%;">
+                                    <img style="margin: 0 auto;display: block;" src="images/arrow.png" />
+                                </div>
+                                <div class="platform-inc">
+
+                                    <div class="left" style="width: 49%;height: 100%;">
+                                        <div class="visibile-edit width100">
+                                            <img src="images/edit.png" />
+                                            <span>可视化页面呈现编辑</span>
+                                        </div>
+                                        <p class="tech-one"> 技术路径一： </p>
+                                        <p class="tech-one">
+                                            允许用户使用页面呈现模型编辑器开发代替传统的IDE开发，用户只需通过拖拉拽的方式对页面进行组件布局、数据源绑定等操作，即可快速搭建系统页面。</p>
+
+                                        <div></div>
+                                    </div>
+                                    <div class="right" style="width: 49%;height: 100%;">
+
+                                        <div class="visibile-edit width100">
+                                            <img src="images/zuzhi.png" />
+                                            <span>可视化逻辑编排</span>
+                                        </div>
+                                        <p class="tech-one"> 技术路径二： </p>
+                                        <p class="tech-one">
+                                            支持用户在可视化逻辑编辑器内对系统逻辑进行编排、应用即可运行，用户不需要再进行代码开发，极大降低了逻辑开发的难度和bug产生数量，有效提升开发效率。
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="model-inc">
+                                    <span> 页面模型</span>
+                                    <img src="images/WeChat_.pic.png" />
+                                    <span> 逻辑模型</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 丰富的业务模型助力搭建应用系统全流程 -->
+            <div class="content_box">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">丰富的业务模型助力搭建应用系统全流程</p>
+                    <div class="engine_box" data-aos="fade-up">
+                        <div class="engine_box_left left">
+                            <div class="ul_position">
+                                <ul>
+                                    <li id="switch_1" class="engine_box_li_bg">呈现模型引擎</li>
+                                    <li id="switch_2">强大的逻辑引擎</li>
+                                    <li id="switch_3">表单设计引擎</li>
+                                    <li id="switch_4">报表设计引擎</li>
+                                    <li id="switch_5">门户设计引擎</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="engine_box_right right">
+                            <div id="engine_container_1">
+                                <div class="engine_box_img">
+                                    <img src="./images/yq_cx.png" />
+                                </div>
+                                <div class="engine_box_desc opacity45">
+                                    通过简单的拖拉拽、便捷操作即可设计出一个丰富的页面效果
+                                    自由搭建表单页、列表页、详情页、报表页、打印页等可满足企业所有业务页面搭建
+                                </div>
+                            </div>
+                            <div id="engine_container_2" style="display: none;">
+                                <div class="engine_box_img">
+                                    <img src="./images/yq_lj.png" />
+                                </div>
+                                <div class="engine_box_desc opacity45">
+                                    通过简单的拖拉拽、连线操作，即可设计出一个实用的流程，将原来线下流程搬到startwe上；自由流程、固定流程、分支流程、并行流程
+                                    可满足企业所有业务流程，实现智能流转
+
+                                </div>
+                            </div>
+
+                            <div id="engine_container_3" style="display: none;">
+                                <div class="engine_box_img">
+                                    <img src="./images/yq_bd.png" />
+                                </div>
+                                <div class="engine_box_desc opacity45">
+                                    丰富表单字段，文本、选择、日期、区间、弹层等多种类型一应俱全；丰富的业务组件，满足复杂的业务需求
+                                </div>
+                            </div>
+
+                            <div id="engine_container_4" style="display: none;">
+                                <div class="engine_box_img">
+                                    <img src="./images/yq_bb.png" />
+                                </div>
+                                <div class="engine_box_desc opacity45">
+                                    通过简单的拖拉拽、便捷操作即可设计出一个丰富的页面效果
+                                    自由搭建表单页、列表页、详情页、报表页、打印页等可满足企业所有业务页面搭建
+                                </div>
+                            </div>
+
+                            <div id="engine_container_5" style="display: none;">
+                                <div class="engine_box_img">
+                                    <img src="./images/yq_mh.png" />
+                                </div>
+                                <div class="engine_box_desc opacity45">
+                                    通过简单的拖拉拽、便捷操作即可设计出一个丰富的页面效果
+                                    自由搭建表单页、列表页、详情页、报表页、打印页等可满足企业所有业务页面搭建
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 赋能工具：全生命周期管控的项目服务工具 -->
+            <div class="content_box" style="background: #F9F9F9;">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">赋能工具：全生命周期管控的项目服务工具</p>
+                    <p class="product-introduce-desc opacity45" data-aos="fade-up">
+                        传统的软件项目开发过程往往需要经历任务计划、需求分析、开发设计、编码开发、系统测试、系统维护等多个步骤</p>
+                    <p class="product-introduce-desc opacity45" data-aos="fade-up">开发完成；此外，在软件开发前期往往会在需求分析上花费大量的时间。</p>
+                    <img class="product-diff" src="images/tools.png" style="margin: 80px auto;" data-aos="fade-up" />
+                </div>
+            </div>
+
+            <!-- Startwe可视化项目搭建平台功能特性 -->
+            <div class="content_box">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">Startwe可视化项目搭建平台功能特性</p>
+                    <!-- 第一排 -->
+                    <div style="display: flex;margin-left: 109px;margin-top: 80px;" data-aos="fade-up">
+                        <div class="features-box none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/ico_1.png" style="width: 28px;;" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">可视化业务模型设计</span>
+                                    <p class="opacity45">丰富的业务场景设计支持能力</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-box none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/chengxian.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">可视化呈现设计</span>
+                                    <p class="opacity45">灵活的可持续扩展能力</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="features-box">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/luoji.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">可视化逻辑设计</span>
+                                    <p class="opacity45">易用的可持续集成能力</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第二排 -->
+                    <div style="display: flex;margin-left: 109px;" data-aos="fade-up">
+                        <div class="features-box none-border-top none-border-bottom none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/menhu.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">可视化门户设计</span>
+                                    <p class="opacity45">易用的呈现集成</p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="features-box none-border-top none-border-bottom none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/zujiandj.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">组件搭建能力</span>
+                                    <p class="opacity45">自由的可自建体系的组件生态，可持续创新创造能力</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="features-box none-border-top none-border-bottom">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/mubandj.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">模板搭建能力</span>
+                                    <p class="opacity45">自由的可拿来即用的模板生态，可持续复制成功案例</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第三排 -->
+                    <div style="display: flex;margin-left: 109px;" data-aos="fade-up">
+                        <div class="features-box none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/daoxiang.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">以客户业务为导向</span>
+                                    <p class="opacity45">由上而下的顶层战略业务架构与由下而上的底层专业技术架构无缝连接</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="features-box none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/zhongxin.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">以客户项目为中心</span>
+                                    <p class="opacity45">可持续积累的资产体系与沉淀可持续提升的价值系统</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="features-box">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/qudong.png" />
+                                </div>
+                                <div class="title-box">
+                                    <span class="opacity65">以客户运营为驱动</span>
+                                    <p class="opacity45">解决全生命周期各个节点产出的数字化、自动化、标准化、智能化</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第四排 -->
+                    <div style="display: flex;margin-left: 109px;margin-bottom: 80px;" data-aos="fade-up">
+                        <div class="features-box none-border-top none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/qianyi.png" style="margin-top: 34px;" />
+                                </div>
+                                <div class="title-box" style="padding-top: 34px;">
+                                    <span class="opacity65">SaaS与PaaS的无缝迁移</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="features-box none-border-top none-border-right">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/dajiangj.png" style="margin-top: 34px;" />
+                                </div>
+                                <div class="title-box" style="padding-top: 34px;">
+                                    <span class="opacity65">可灵活定制的项目搭建工具能力</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="features-box none-border-top">
+                            <div style="display: flex;">
+                                <div class="imgbox">
+                                    <img src="images/dingzhicp.png" style="margin-top: 34px;" />
+                                </div>
+                                <div class="title-box" style="padding-top: 34px;">
+                                    <span class="opacity65">可灵活定制的产品能力</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 一个标准系统的搭建仅需几个小时 -->
+            <div class="content_box" style="background: #F5F9FF;">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">一个标准系统的搭建仅需几个小时</p>
+                    <img class="product-diff" style="margin: 86px auto;width: 963px;" src="images/pic4.png"
+                        data-aos="fade-up" />
+                </div>
+            </div>
+
+            <!-- 帮助企业提速、降本、增效 -->
+            <div class="content_box synergy" id="synergy-box" style="height: 1040px;padding-top: 0;">
+                <div class="content_box_center" style="height: 1039px;">
+                    <p class="synergy-title opacity80" data-aos="fade-up">帮助企业提速、降本、增效</p>
+                    <div data-aos="fade-up">
+                        <div class="speed-up left">
+                            <div>
+                                <p class="synergy-subtitle">提速</p>
+                            </div>
+                            <p class="synergy-content opacity65">
+                                无论经验多么丰富的开发者，代码实现的速度都不可能追赶上一种可视化开发解决方案。因为这种解决方案就是一种智能机器的行为，自动编写相应的代码。
+                                <br />
+                                同时，也无法避免开发所引入的bug，然而经过检测的可视化开发平台，bug数量会被降到最低。
+                            </p>
+                        </div>
+                        <div class="speed-up left">
+                            <div>
+                                <p class="synergy-subtitle">降本</p>
+                            </div>
+                            <p class="synergy-content opacity65">
+                                企业聘请高技术IT人员的花费很高，因此要把这些优秀的IT人员用在企业重大的项目和技术难题上，而一些通用的易于实现的需求就不需要花费多余的时间来重新开发。把这些通用且易于实现的需求开发工作交给可视化项目搭建平台，既可以提高系统的开发效率，又可以为企业节约大量的人力成本。
+                            </p>
+                        </div>
+                        <div class="speed-up left">
+                            <div>
+                                <p class="synergy-subtitle">增效</p>
+                            </div>
+                            <p class="synergy-content opacity65">
+                                可以快速将管理者的战略目标落地到系统上，快速实现企业商业模式验证，提高投入产出比，为企业带来真正的实际效益。
+                            </p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- 开发时间等  -->
+                    <div class="clear" id="content_box_synergy" data-aos="fade-up"
+                        style="display: flex;margin-top: 41px;">
+                        <div class="has-bet">
+                            <img src="images/down.png" />
+                            <div class="right">
+                                <p class="opacity65">开发时间</p>
+                                <p><span id="develop-time" class="countToNum"
+                                        style="display: inline-block;width: 38px;">95</span>%</p>
+                            </div>
+
+                        </div>
+                        <div class="has-bet">
+                            <img src="images/down.png" />
+                            <div class="right">
+                                <p class="opacity65">IT成本</p>
+                                <p><span id="develop-it" class="countToNum"
+                                        style="display: inline-block;width: 38px;">70</span>%</p>
+                            </div>
+                        </div>
+                        <div class="has-bet">
+                            <img src="images/up.png" />
+                            <div class="right">
+                                <p class="opacity65">员工满意度</p>
+                                <p><span id="develop-emplee" class="countToNum"
+                                        style="display: inline-block;width: 38px;">95</span>%</p>
+                            </div>
+                        </div>
+                        <div class="has-bet">
+                            <img src="images/up.png" />
+                            <div class="right">
+                                <p class="opacity65">投入产出比</p>
+                                <p style="white-space:nowrap;"><span class="countToNum" id="develop-chanchu"
+                                        style="display: inline-block;width: 74px;">1800</span>%</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <p class="synergy-title opacity80" data-aos="fade-up">行业解决方案</p>
+                    <img src="images/hangye.png" data-aos="fade-up" class="hangye" />
+
+                </div>
+            </div>
+
+            <!-- 项目案例 -->
+            <div class="content_box case" id="case-box">
+                <div class="content_box_center">
+                    <p class="product-introduce" data-aos="fade-up">项目案例</p>
+                    <div style="display: flex;margin-top: 69px;margin-bottom: 26px;" data-aos="fade-up">
+                        <div class="case-box" data-aos="zoom-in">
+                            <div style="height: 253px;">
+                                <img src="images/photo1.png" />
+                                <div class="title">智能车间系统</div>
+                            </div>
+                            <div class="case-desc">
+                                <p>智能车间管理系统</p>
+                                <p>覆盖汽车维保核心业务运营管理模块数字化浪潮，推动“人、货、款、客、店”的现象及重构提供可持续价值系统与业务应需扩展能力。</p>
+                            </div>
+                        </div>
+                        <div class="case-box" data-aos="zoom-in">
+                            <div style="height: 253px;">
+                                <img src="images/photo2.png" />
+                                <div class="title">服装厂管理系统</div>
+                            </div>
+                            <div class="case-desc">
+                                <p>服装厂管理系统</p>
+                                <p>服装厂管理系统打造服装产业的全生命管理系统，从设计、原辅材料采购、制造、运输到商城的管理，降低人员成本，提高工作效率。</p>
+                            </div>
+                        </div>
+                        <div class="case-box" data-aos="zoom-in">
+                            <div style="height: 253px;">
+                                <img src="images/photo3.png" />
+                                <div class="title">景区点歌系统</div>
+                            </div>
+                            <div class="case-desc">
+                                <p>景区点歌系统</p>
+                                <p>点歌系统不仅便于对景区音乐播放的管理，且可收集 景点的浏览量进行数据收集，统计景区的音乐量，发 布景点文章咨讯，为景区管理提供便利。</p>
+                            </div>
+                        </div>
+                        <div class="case-box" data-aos="zoom-in">
+                            <div style="height: 253px;">
+                                <img src="images/photo4.png" />
+                                <div class="title">教育机构系统</div>
+                            </div>
+                            <div class="case-desc">
+                                <p>教育机构系统</p>
+                                <p>用信息化手段来提升管理水平，增强传统的学校管理 需求，提升教务、教学管理能力，快速查看课表、排 课表等数据统计，便捷校方数据分析与管理。</p>
+                            </div>
+                        </div>
+                        <div class="case-box" data-aos="zoom-in">
+                            <div style="height: 253px;">
+                                <img src="images/photo5.png" />
+                                <div class="title">节目编辑系统</div>
+                            </div>
+                            <div class="case-desc">
+                                <p>节目编辑系统</p>
+                                <p>以拖拉组件的形式快速搭建节目框架，对组件进行属 性设置，轻松、高效完成整个节目搭建，相对于传统 的编辑形式效率得到明显提升。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="case-line"></div>
+                    <div class="case-contactus">联系我们 获取更多方案</div>
+                </div>
+            </div>
+
+            <!-- 部分合作客户 -->
+            <div class="content_box" id="content_box_case" style=" background-color: #ffffff;">
+                <div class="content_box_center" style="height: 531px;">
+                    <p class="product-introduce" data-aos="fade-up">部分合作客户</p>
+
+                    <!-- 第一排 -->
+                    <div style="display: flex;margin-top: 64px;" data-aos="fade-up">
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner1.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner2.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner3.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner4.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner5.png" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第二排 -->
+                    <div style="display: flex;margin-top: 67px;" data-aos="fade-up">
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner6.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner7.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner8.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner9.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner10.png" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第三排 -->
+                    <div style="display: flex;margin-top: 67px;margin-bottom: 99px;" data-aos="fade-up">
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner11.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner12.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner13.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner14.png" />
+                            </div>
+                        </div>
+                        <div class="partner-box none-border-right">
+                            <div class="logo-box">
+                                <img src="images/partner15.png" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 底部区域 -->
+        <div class="footer" id="about-box">
+
+            <div class="bottom-menu">
+                <div class="content_box_center" style="height: 241px;">
+                    <div class="menu-left left">
+                        <img src="images/bottom-logo.png" style="margin-left: 79px;" />
+                        <p style="margin-left: 79px;">成都起微网络技术有限公司</p>
+                        <p style="margin-left: 79px;">新一代项目孵化平台</p>
+                    </div>
+                    <div class="menu-line left"></div>
+                    <div class="menu-right left" style="margin-left: 26px;">
+                        <p class="title">产品服务</p>
+                        <p class="subtitle" style="margin-top: 19px;">Startwe可视化项目搭建平台</p>
+                        <p class="subtitle">页面呈现模型设计引擎</p>
+                        <p class="subtitle">逻辑可视化设计引擎</p>
+                        <p class="subtitle">组件自定义搭建平台</p>
+                    </div>
+
+                    <div class="menu-right left" style="margin-left: 26px;">
+                        <p class="title">解决方案</p>
+                        <p class="subtitle" style="margin-top: 19px;">CRM客户关系管理系统</p>
+                        <p class="subtitle">进销存业务管理系统</p>
+                        <p class="subtitle">业务流程审批系统</p>
+                        <p class="subtitle">内容发布系统</p>
+                    </div>
+
+                    <div class="menu-right left" style="margin-left: 26px;">
+                        <p class="title">联系我们</p>
+                        <p class="subtitle" style="margin-top: 19px;">手机：138 0807 8013</p>
+                        <p class="subtitle">座机：028-8733 5679</p>
+                        <p class="subtitle">邮箱：startwe@startwe.net</p>
+                    </div>
+
+                    <div class="menu-right right">
+                        <img src="images/wei.png" style="width: 131px;" />
+                        <p class="weixin">微信扫码联系我们</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="bottom-copy clear">
+                    © 2020-2022 成都起微网络信息技术有限公司 <a href="https://beian.miit.gov.cn" target="_blank">蜀ICP备2021020732号</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/swiper/swiper-bundle.min.js"></script>
+    <script src="js/jquery-3.4.0.min.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+    <script src="js/countUp-jquery.js"></script>
+    <script src="js/aos/aos.js"></script>
+    <script src="js/site.js"></script>
+
+</body>
+
+</html>

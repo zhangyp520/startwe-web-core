@@ -1,0 +1,349 @@
+
+<template >
+    <div>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮预览
+            </el-col>
+            <el-col :span="18"  >
+                    <oui-include type="module" ref="include4button" url="res_common/oui/ui/ui_pc/components/button.vue.html" data="config"></oui-include>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮唯一标识
+            </el-col>
+            <el-col :span="18"   >
+                <el-input v-model="config.value" disabled="true"/>
+            </el-col>
+        </el-row>
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                名称
+            </el-col>
+            <el-col :span="18"   >
+                <el-input v-model="config.display" @change="_controlOnUpdate('display',config)"/>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮图标
+            </el-col>
+            <el-col :span="18"   >
+                <el-input v-model="config.iconCls" @change="_controlOnUpdate('iconCls',config)"/>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮图标文字布局方式
+            </el-col>
+            <el-col :span="18"   >
+                <el-radio-group v-model="config.buttonLayout" @change="_controlOnUpdate('buttonLayout',config)">
+                    <el-radio label="onlyText">只显示文字</el-radio>
+                    <el-radio label="leftIcon">左侧图标右侧文字</el-radio>
+                    <el-radio label="rightIcon">左侧文字右侧图标</el-radio>
+                    <el-radio label="onlyIcon">只显示图标</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+
+
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮类型
+            </el-col>
+            <el-col :span="18"   >
+                <el-radio-group v-model="config.buttonShowType" @change="_controlOnUpdate('buttonShowType',config)">
+                    <el-radio label="default">默认</el-radio>
+                    <el-radio label="primary">主要按钮</el-radio>
+                    <el-radio label="success">成功按钮</el-radio>
+                    <el-radio label="info">信息按钮</el-radio>
+                    <el-radio label="warning">警告按钮</el-radio>
+                    <el-radio label="danger">危险按钮</el-radio>
+                    <el-radio label="text">文字按钮</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                朴素按钮
+            </el-col>
+            <el-col :span="18"   >
+                <el-switch
+                        v-model="config.plain"
+                        @change="_controlOnUpdate('plain',config)">
+                </el-switch>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                圆角按钮
+            </el-col>
+            <el-col :span="18"   >
+                <el-switch
+                        v-model="config.round"
+                        @change="_controlOnUpdate('round',config)">
+                </el-switch>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                圆形按钮
+            </el-col>
+            <el-col :span="18"   >
+                <el-switch
+                        v-model="config.circle"
+                        @change="_controlOnUpdate('circle',config)">
+                </el-switch>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                是否禁用
+            </el-col>
+            <el-col :span="18"   >
+                <el-switch
+                        v-model="config.disabled"
+                        @change="_controlOnUpdate('disabled',config)">
+                </el-switch>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                按钮尺寸
+            </el-col>
+            <el-col :span="18"   >
+                <el-radio-group v-model="config.buttonSize" @change="_controlOnUpdate('buttonSize',config)">
+                    <el-radio label="default">默认</el-radio>
+                    <el-radio label="medium">中等按钮</el-radio>
+                    <el-radio label="small">小型按钮</el-radio>
+                    <el-radio label="mini">超小按钮</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+        <el-row  class="item">
+            <el-col :span="6" class="col-right" >
+                脚本设置
+            </el-col>
+            <el-col :span="18"   >
+                <el-button @click="event2showCodeDialog" type="primary">设置按钮点击事件</el-button>
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                loading4targetForms:false,
+                targetForms:[],
+                fullName:'',
+                config:{
+                    id:'',
+                    value:'',
+                    display:'',
+                    iconCls:'',
+                    buttonLayout:'onlyText', //onlyText,leftIcon,rightIcon,onlyIcon
+                    buttonShowType:'primary',//default,primary,success,info,warning,danger,text
+                    plain:false,
+                    round:false,
+                    circle:false,
+                    disabled:false,
+                    buttonSize:'medium',//default,medium,small,mini
+
+                    contentType:'page',//page,pageList,pageUrl
+                    pageId:'',
+                    url:'',
+                    events:{}
+                }
+            }
+        },
+        mounted:function(){
+            var me = this;
+            var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+            AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var temp  = AbsoluteDesign.dialog4button.attr('config');
+            var  config = oui.parseJson(oui.parseString(temp));
+            console.log('config');
+            console.log(config);
+            for(var k in config){
+                this.config[k] = config[k];
+            }
+            if(!this.config.events){
+                this.config.events = {};
+            }
+            me.initRemoteTargetForms();//查询可选的表单列表
+
+            this.$nextTick(function(){
+                me.refresh();
+            });
+        },
+        methods:{
+            confirm:function(){
+                //回填
+                //contentType
+                //url
+
+            },
+            cancel:function(){
+
+            },
+            /** 显示 脚本dialog **/
+            event2showCodeDialog:function event2showCodeDialog(cfg){
+                var me = this;
+
+                /*
+                 eventType="script4buttonClick"
+                 code-max-length="5000"
+                 error-msg-compile="设置按钮点击事件脚本错误，请检查"
+                 error-msg-max="设置按钮点击事件脚本，长度不能超过5000个字符"
+                 oui-e-click="event2showCodeDialog"
+                 invoke-id="{{currentControl.id}}">设置按钮点击事件</button>
+                 */
+                var codeMaxLength =10000;//脚本最大长度，默认code-max-length
+                var errorMsgMax ='脚本长度不能超过个'+codeMaxLength+'字符'; //'脚本长度不能超过error-msg-max个字符'
+                var compileErrorMsg ='设置按钮点击事件脚本错误，请检查';//脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                var prop = 'events.click';
+                var eventType = 'script4buttonClick';
+
+                var scriptJson = oui.JsonPathUtil.getJsonByPath(prop,this.config);
+                if(!scriptJson){
+                    scriptJson ={};
+                }
+                var defaultParams = {"params":[],"startCode":"","bodyCode":"var pageData = this.getPageData();\nvar mainData = pageData.mainData;\nvar result={\nmainData:mainData,\npageData:pageData.detailData\n};\npageData.save(function(){\n}); \n//提交数据 oui.postData(oui.getContextPath()+'res_engine/page_design/pc/page-design.html',mainData,function(res){},function(err){});//提交数据 例子\n","endCode":"","returnType":"string"};
+
+                scriptJson.eventType=eventType;
+                var json = $.extend({},defaultParams,scriptJson,true);
+                oui.getTop().oui.showCodeDialog(json,function(jsonResult){//回调 返回修改后的codeJson对象
+                    try{
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if(jsonResult.bodyCode&&jsonResult.bodyCode.length>codeMaxLength){
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    }catch(e){
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    console.log(jsonResult);
+                    console.log(oui.parseString(jsonResult));
+                    jsonResult = oui.parseJson(oui.parseString(jsonResult));
+                    oui.JsonPathUtil.setObjByPath(prop,me.config,jsonResult,true);
+                    me._controlOnUpdate(prop,me.config);
+                },{
+                    title:'按钮点击事件',
+                    bodyCodeRows:20,
+                    contentStyle:''//dialog样式相关
+                });
+            },
+            _controlOnUpdate4targetForm:function(bindProp,config){
+
+            },
+
+            initRemoteTargetForms:function(query){ //加载远程表单模型列表方法
+                var me = this;
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                if(!AbsoluteDesign.forms){
+                    query = query ||'';
+                    var url = AbsoluteDesign.paramCfg.params.queryPageModelsUrl;//查询页面资源列表url
+                    oui.postData(url,{//ajax获取数据
+                        excludeFormIds:AbsoluteDesign.data.id,
+                        name:query
+                    },function(res){
+                        var pages =res.pages ||[];
+                        me.targetFormsJson =oui.parseString(pages);
+                        me.targetForms = pages;
+                        AbsoluteDesign.forms = oui.parseJson(me.targetFormsJson);
+                    },function(res){},'加载中...');
+                }else{
+
+                    me.targetFormsJson = oui.parseString(AbsoluteDesign.forms);
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+
+                }
+
+            },
+            clear4loadRemoteTargetForms:function(){
+                var me = this;
+                var temp = oui.parseJson(me.targetFormsJson);
+                me.targetForms = temp;
+            },
+            loadRemoteTargetForms:function(query){
+                query = query ||'';
+                var me = this;
+                //根据输入参数模糊匹配
+                if(query){
+                    var temp = oui.parseJson(me.targetFormsJson);
+                    var arr = oui.findManyFromArrayBy(temp,function(item){
+                        if(item.name.toLowerCase().indexOf(query.toLowerCase())>-1){
+                            return true;
+                        }
+                    });
+                    me.targetForms = arr;
+                }else{
+                    me.targetForms = oui.parseJson(me.targetFormsJson);
+                }
+            },
+            _controlOnUpdate:function(bindProp,config){
+                var AbsoluteDesign = oui.getTop().com.oui.absolute.AbsoluteDesign;
+                var temp = AbsoluteDesign.dialog4button.attr('config');
+                oui.JsonPathUtil.setObjByPath(bindProp,temp,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                if(bindProp =='pageId'){
+                    if(config.pageId){
+                        //更新
+                        var currPage = oui.findOneFromArrayBy(this.targetForms,function(item){
+                            if(item.id == config.pageId){
+                                return true;
+                            }
+                        });
+                        if(currPage){
+
+                            config.pageMenuUrl =currPage.pageMenuUrl;
+                        }else{
+                            config.pageMenuUrl = '';
+                        }
+                    }else{
+                        config.pageMenuUrl = '';
+                    }
+                    temp.pageMenuUrl = config.pageMenuUrl;
+                }
+                this.refresh();
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:10px ;
+        padding-bottom:10px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+    .content-bottom{
+        position: fixed;
+        bottom: -10px;
+    }
+</style>

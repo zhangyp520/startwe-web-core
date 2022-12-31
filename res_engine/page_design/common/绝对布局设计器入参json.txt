@@ -1,0 +1,62 @@
+﻿{
+	buttons:'preview,save,selectArea,print', //按钮参数
+	useControls:true,//使用传入控件列表作为 待设计控件区域,否则待选区域的控件未全控件列表
+	controls:[{//已有控件列表
+		controlType:'textInput',// textInput,selectInput,repeatSelect,textRead,other
+		bizControlType:'textfield',
+		showType:0,
+		display:'显示内容',
+		id:'xxx',
+		name:'name',
+		formField:true
+		
+	}],
+	page:{},//回填
+	saveCallbackMethod:''//保存成功后 回调函数
+}
+--------------------------------------------------------
+
+ControlTypeEnum{
+	selectArea:{}, //选择区域
+	label:{},//文本输入 
+	//----------------------------
+	textInput:{},
+	selectInput:{},
+	repeatSelect:{},
+	read:{},
+	other:{}
+}
+
+1、文本输入类：textInput
+单行文本
+多行文本
+数字
+手机控件
+2、选择输入类 selectInput
+下拉框
+日期时间
+时间
+省市区
+上传附件
+上传图片
+选人
+选部门
+地理位置
+外部控件
+3、平铺选择类 repeatSelect
+单选
+多选
+开关
+评分
+图片单选
+图片多选
+
+5、查看类 read
+隐藏框
+流水号
+文字说明
+图片组
+分割线
+6、其它类 other
+文本+按钮（特殊控件，未被分类的控件,在其它）
+

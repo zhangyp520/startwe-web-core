@@ -1,0 +1,178 @@
+@charset "UTF-8";
+/** 分页控件 */
+.oui-class-pager {
+    /*background: red;*/
+    font-size: 0;
+    overflow: hidden;
+    padding: 0 8px;
+}
+
+.oui-class-pager .pager-btns,
+.oui-class-pager .pager-info {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 8px 0;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.oui-class-pager .pager-btns{
+    font-size: 14px;
+}
+.oui-class-pager .pager-info{
+    font-size: 12px;
+    color: #515151;
+}
+.oui-class-pager .pager-info select{
+    width: 60px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+}
+.oui-class-pager .pager-info select:hover{
+    border-color: #2C82FC;
+    cursor: pointer;
+}
+.oui-class-pager .pager-btns span {
+    min-width: 28px;
+    height: 28px;
+    line-height: 26px;
+    float: left;
+    text-align: center;
+    color: #2C82FC;
+    margin-right: 8px;
+    transition: all 0.2s ease-in-out;
+    border-radius: 2px;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.oui-class-pager .pager-btns span:hover {
+    border: 1px solid #2C82FC;
+    transition: border 0.3s;
+    cursor: pointer;
+}
+.oui-class-pager .pager-btns strong span{
+    background: #2C82FC !important;
+    color: #ffffff;
+}
+
+.oui-class-pager .pager-btns span.btn-first,
+.oui-class-pager .pager-btns span.btn-last{
+    font-size: 14px;
+    line-height: 28px;
+    padding-left: 7px;
+    padding-right: 7px;
+    color: #99a1a7;
+}
+.oui-class-pager .pager-btns span.btn-first i,
+.oui-class-pager .pager-btns span.btn-pre i,
+.oui-class-pager .pager-btns span.btn-next i,
+.oui-class-pager .pager-btns span.btn-last i {
+    background: url(../images/oui-pager-icon.png);
+    background-size: 56px 28px;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    margin-top: -7px;
+    display: none;
+}
+.oui-class-pager .pager-btns span.btn-first i,
+.oui-class-pager .pager-btns span.btn-last i{
+    left: 50%;
+    margin-left: -7px;
+}
+.oui-class-pager .pager-btns span.btn-pre{
+    padding-left: 7px;
+    padding-right: 7px;
+    color: #99a1a7;
+    line-height: 28px;
+}
+.oui-class-pager .pager-btns span.btn-next{
+    padding-left: 7px;
+    padding-right: 7px;
+    color: #99a1a7;
+    line-height: 28px;
+}
+.oui-class-pager .pager-btns span.btn-first:hover,
+.oui-class-pager .pager-btns span.btn-pre:hover,
+.oui-class-pager .pager-btns span.btn-next:hover,
+.oui-class-pager .pager-btns span.btn-last:hover{
+    color: #2C82FC;
+}
+.oui-class-pager .pager-btns span.btn-pre i {
+    left: 5px;
+}
+.oui-class-pager .pager-btns span.btn-next i{
+    right: 4px;
+}
+.oui-class-pager .pager-btns span.btn-first i{
+    background-position: 0 0;
+}
+.oui-class-pager .pager-btns span.btn-pre i{
+    background-position: -14px 0;
+}
+.oui-class-pager .pager-btns span.btn-next i{
+    background-position: -28px 0;
+}
+.oui-class-pager .pager-btns span.btn-last i{
+    background-position: -42px 0;
+}
+.oui-class-pager .pager-btns span.btn-first:hover i{
+    background-position: 0 -14px;
+}
+.oui-class-pager .pager-btns span.btn-pre:hover i{
+    background-position: -14px -14px;
+}
+.oui-class-pager .pager-btns span.btn-next:hover i{
+    background-position: -28px -14px;
+}
+.oui-class-pager .pager-btns span.btn-last:hover i{
+    background-position: -42px -14px;
+}
+/*加载更多*/
+.oui-class-pager-1 .pager-btns{
+    display: block;
+    height: 1px;
+    border-top: 1px solid #e6e6e6;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    position: relative;
+}
+.oui-class-pager-1 .pager-btns .btn-next{
+    background: #ffffff;
+    width: 90px;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    text-align: center;
+    color: #2C82FC;
+    font-size: 14px;
+    position: absolute;
+    left: 50%;
+    margin-left: -45px;
+    top: 50%;
+    margin-top: -15px;
+    cursor: pointer;
+}
+.oui-class-pager-1 .pager-btns .btn-next.no-more{
+    color: #999999;
+    cursor: default;
+}
+
+
+
+
+

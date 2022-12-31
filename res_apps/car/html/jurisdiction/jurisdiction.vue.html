@@ -1,0 +1,418 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item> <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>系统设置</el-breadcrumb-item>
+                <el-breadcrumb-item>权限设置</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 主体内容区域 -->
+        <el-main>
+            <div class="table_box">
+                <el-row>
+                    <el-button type="primary" class="el-icon-plus Workorder_button" @click="addRole">新增权限角色
+                    </el-button>
+                </el-row>
+                <div class="Table_head">
+                    <template>
+                        <el-table :data="queryInfo.roleList" style="width: 100%" v-loading="loading">
+                            <el-table-column prop="date" type='index' label="序号" width="80%" align="center">
+                            </el-table-column>
+                            <el-table-column prop="roleName" label="角色名称" width="200%" align="center">
+                            </el-table-column>
+                            <el-table-column prop="functionNames" label="拥有的权限" align="center">
+                            </el-table-column>
+                            <el-table-column prop="comments" label="备注" align="center"></el-table-column>
+                            <el-table-column class="operation_box" label="操作" width="100%" align="center">
+                                <template slot-scope="scope">
+                                    <el-button type="text" @click="setJurisdiction(scope.row)">修改</el-button>
+                                    <el-button type="text" style="color: red;" @click="deleteRoleInfo(scope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </div>
+                <div class="page">
+                    <div class="block">
+                        <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                                       :current-page="queryInfo.currentPage" :page-sizes="[1, 3, 5, 10, 20]"
+                                       :page-size="queryInfo.pageSize" :total="queryInfo.total"
+                                       layout="total, sizes, prev, pager, next, jumper">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </el-main>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                queryInfo: {
+                    // 类表存储的数据
+                    roleList: [],
+                    // 员工名称
+                    empName: '',
+                    // 控制开关的开启和关闭 需要动态来改变他的值默认让他为true
+                    value: 2,
+                    // 总条数
+                    total: 0,
+                    //每页显示数据的条数
+                    pageSize: 10,
+                    //默认当前页为第一页
+                    currentPage: 1,
+                },
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            //  页面加载时渲染列表数据
+            this.queryRoleList();
+        },
+        methods: {
+            // 渲染多层权限文本内容
+            findFunctionNames: function (row) {
+                var funcs = row.functions || [];
+                var arr = [];
+                oui.eachArray(funcs, function (item) {
+                    arr.push(item.functionName);
+                });
+                var s = arr.join(',');
+                arr = [];
+                return s;
+            },
+            // 页面加载时渲染列表数据
+            queryRoleList: function () {
+                var that = this;
+                oui.ajaxPost('company/role/queryRole', {
+                        "pager": {
+                            "page": that.queryInfo.currentPage,
+                            "rows": that.queryInfo.pageSize
+                        }
+                    },
+                    function (res) {
+                        that.queryInfo.total = res.resultObj.total;
+                        // 每一列数据
+                        that.queryInfo.roleList = res.resultObj.roles;
+                        that.loading=false;
+                    }, function (res) {
+                        that.$message.error(res.message)
+                    }
+                );
+            },
+
+
+            //   默认选中那一页
+            handleCurrentChange: function (val) {
+                this.queryInfo.currentPage = val;
+                this.queryRoleList();
+
+            },
+            // 每页显示多少条
+            handleSizeChange: function (val) {
+                this.queryInfo.pageSize = val;
+                this.queryRoleList();
+            },
+
+            // 设置角色
+            setJurisdiction: function (row) {
+                oui.router.push('res_apps/car/html/jurisdiction/PermissionModification.vue.html', {
+                    roleId: row.id,
+                    roleName: row.roleName,
+                    remarks: row.comments,
+                    roleCode: row.roleCode,
+                    roleType: row.roleType
+                })
+            },
+            // 新增角色
+            addRole: function () {
+                oui.router.push('res_apps/car/html/jurisdiction/addJurisdiction.vue.html')
+            },
+            deleteRoleInfo:function(row) {
+                let that = this;
+                this.$confirm('确认删除该角色信息吗？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('company/role/deleteRole', {
+                            "id": row.id
+                        },
+                        function (res) {
+                            that.$message.success('角色删除成功');
+                            oui.router.push('res_apps/car/html/jurisdiction/jurisdiction.vue.html')
+                        }, function (res) {
+                            that.$message.error(res.message)
+                        }
+                    );
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            }
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body>.el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 204px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+
+    }
+
+
+
+
+    /* 关键字区域样式结束 */
+
+    /* 我的工单区域开始 */
+
+
+    .el-main {
+        line-height: normal;
+    }
+
+    /* 表单单独的按钮 */
+    .Workorder_button {
+        margin-bottom: 15px;
+
+    }
+
+    /* 改变加号和文字之间的距离 */
+    .el-icon-plus:before {
+        margin-right: 8px;
+    }
+
+
+    /* 工单表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        padding: 21px 20px;
+        background-color: #fff;
+
+    }
+
+
+    .work_order_box {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .my_work_order {
+        width: 100px;
+        line-height: 30px;
+        color: #000000;
+        /* padding-left: 20px; */
+        font-weight: 700;
+    }
+
+    .work_order_details {
+        line-height: 30px;
+        color: red;
+        /* padding-right: 20px; */
+        font-size: 14px;
+    }
+
+
+    /* 调整按钮之间的距离 */
+    /* .el-button--text{
+    margin-right:40px;
+ 
+} */
+    /* 我的工单区域结束 */
+
+
+
+
+    /* .el-button--primary{
+    padding: 20px 20px;
+  } */
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

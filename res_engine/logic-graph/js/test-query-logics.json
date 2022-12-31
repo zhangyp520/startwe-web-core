@@ -1,0 +1,10 @@
+{
+  "success":true,
+  "msg":{
+    "logics":[{
+      "name":"test1",
+      "inputParams":[{"dataType":"STRING","name":"hello"}],
+      "outputParams":[{"dataType":"STRING","name":"hello2"}]
+    }]
+  }
+}

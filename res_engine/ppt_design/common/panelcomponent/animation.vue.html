@@ -1,0 +1,417 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div>
+        <div class="property-item" style="display: flex; justify-content: space-around; opacity:0.87; color: #fff">
+            <span @click="addAnimation" class="component-blocker"><i class="el-icon-plus"></i>添加</span>
+            <span class="component-blocker"><i class="el-icon-caret-right"></i>播放</span>
+        </div>
+        <div class="property-item" style="display: flex; flex-direction: column; color: #fff;">
+            <div v-for="(item, key) in query.animationList" key="index"
+                style="margin-top: 10px;align-items: center; display: flex; flex-direction: column; justify-content: space-between; width: 271px;">
+                <div @click="showAnimation(item,key)"
+                    style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: #404040">
+                    <div style="display: flex; align-items: center">
+                        <img :src="imagesMap.preview">
+                        <div>{{item.name}}</div>
+                    </div>
+                    <img @click="deleteAnimation(key)" style="width: 16px; height: 16px" :src="imagesMap.trashImg">
+                </div>
+                <div class="property-item" v-if="item.isShowAnimation">
+                    <el-tabs style="width: 280px" stretch v-model="query.animationList[key].type" @tab-click="tabClick">
+                        <el-tab-pane label="进入 " name="1">
+                            <div class="animation-container-in">
+
+                                <div v-for="(item1, key1) in animationList1" class="animation-item-container"
+                                    @click="chooseAnimation(item1,key,'1')">
+                                    <img :src="calImgSrc1(item, item1)" style="height: 40px; width: 40px" />
+                                    <span style="margin-top: 10px;opacity: 0.65; font-size: 12px;">{{item1.name}}</span>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="强调" name="2">
+                            <div class="animation-container-in">
+
+                                <div v-for="(item1, key1) in animationList2" class="animation-item-container"
+                                    @click="chooseAnimation(item1, key,'2')">
+                                    <img :src="calImgSrc2(item, item1)" style="height: 40px; width: 40px" />
+                                    <span style="margin-top: 10px;opacity: 0.65; font-size: 12px;">{{item1.name}}</span>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="退出" name="3">
+                            <div class="animation-container-in">
+                                <div v-for="(item1, key1) in animationList3" class="animation-item-container"
+                                    @click="chooseAnimation(item1, key,'3')">
+                                    <img :src="calImgSrc3(item, item1)" style="height: 40px; width: 40px" />
+                                    <span style="margin-top: 10px;opacity: 0.65; font-size: 12px;">{{item1.name}}</span>
+                                </div>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+                <div v-if="item.isShowAnimation" class=" property-item">
+                    <div class="grid-demo grid-demo-bg1 base_title ">时间</div>
+                    <div class="base_box_input-unit-container">
+                        <input class="seconds-input" type="text" v-model="item.time" @change="changeField">
+                        <span>秒</span>
+                    </div>
+                </div>
+                <div v-if="item.isShowAnimation" class=" property-item">
+                    <div class="grid-demo grid-demo-bg1 base_title ">延迟</div>
+                    <div class="base_box_input-unit-container">
+                        <input class="seconds-input" type="text" v-model="item.delay" @change="changeField">
+                        <span>秒</span>
+                    </div>
+                </div>
+                <div v-if="item.isShowAnimation" class=" property-item">
+                    <div class="grid-demo grid-demo-bg1 base_title ">次数</div>
+                    <input class="base_box_input" type="text" v-model="item.number" @change="changeField">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+
+        data: function () {
+            return {
+                seceltval: 2,
+                isShowAnimation: false,
+                currentAnimation: null,
+                query: {
+                    animationList: [],
+                    delay: 1,
+                    number: 2,
+                    time: 20,
+                },
+                imagesMap: {
+                    trashImg: oui.getContextPath() + 'res_engine/ppt_design/images/trash.png',
+                    preview: oui.getContextPath() + 'res_engine/ppt_design/images/ic_preview.png',
+                    addVideo: oui.getContextPath() + 'res_engine/ppt_design/images/ic_add_hover.png',
+                    addBotVideo: oui.getContextPath() + 'res_engine/ppt_design/images/add_video.png',
+                },
+                animationList1: [{
+                    cls: 'animate__fadeIn',
+                    tabId:'1',
+                    name: '淡入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/lightIn.png',
+                    imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/lightIn-active.png'
+                }, {
+                    cls: 'animate__fadeInLeftBig',
+                    tabId:'1',
+                    name: '向右移入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/rightMoveIn.png',
+                    imgActive: oui.getContextPath() +
+                        'res_engine/ppt_design/images/rightMoveIn-active.png',
+                }, {
+                    cls: 'animate__fadeInLeftBig',
+                    tabId:'1',
+                    name: '向左移入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/leftMoveIn.png',
+                    imgActive: oui.getContextPath() +
+                        'res_engine/ppt_design/images/leftMoveIn-active.png',
+                }, {
+                    cls: 'animate__fadeInUp',
+                    tabId:'1',
+                    name: '向上移入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/upMoveIn.png',
+                    imgActive: oui.getContextPath() +
+                        'res_engine/ppt_design/images/upMoveIn-active.png',
+                }, {
+                    name: '向下移入',
+                    tabId:'1',
+                    cls: 'animate__fadeInDownBig',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/downMoveIn.png',
+                    imgActive: oui.getContextPath() +
+                        'res_engine/ppt_design/images/downMoveIn-active.png',
+                }, {
+                    cls: 'animate__flip',
+                    name: '翻转进入',
+                    tabId:'1',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/overTurnIn.png',
+                    imgActive: oui.getContextPath() +
+                        'res_engine/ppt_design/images/overTurnIn-active.png',
+                }, {
+                    cls: 'animate__bounceInLeft',
+                    tabId:'1',
+                    name: '向右弹入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/rightIn.png',
+                    imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/rightIn-active.png',
+                }, {
+                    cls: 'animate__bounceInRight',
+                    tabId:'1',
+                    name: '向左弹入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/leftIn.png',
+                    imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/leftIn-active.png',
+                }, {
+                    cls: 'animate__bounceInUp',
+                    tabId:'1',
+                    name: '向上弹入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/upIn.png',
+                    imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/upIn-active.png',
+                }, {
+                    cls: 'animate__bounceInDown',
+                    tabId:'1',
+                    name: '向下弹入',
+                    isActive: false,
+                    img: oui.getContextPath() + 'res_engine/ppt_design/images/downIn.png',
+                    imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/downIn-active.png',
+                }],
+                animationList2: [{
+                        cls: 'animate__shakeX',
+                        tabId:'2',
+
+                        name: '抖动',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/shake.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/shake-active.png',
+                    },
+                    {
+
+                        cls: 'animate__wobbleleft',tabId:'2',
+                        name: '左右浮动',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/leftRight.png',
+                        imgActive: oui.getContextPath() +
+                            'res_engine/ppt_design/images/leftRight-active.png',
+                    },
+                    {
+                        cls: 'animate__wobbleTop',tabId:'2',
+                        name: '上下浮动',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/upDown.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/upDown-active.png',
+                    },
+                    {
+                        cls: 'animate__heartBeat',tabId:'2',
+                        name: '闪烁',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/flash.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/flash-active.png',
+                    },
+                    {
+                        cls: 'animate__wobble',tabId:'2',
+                        name: '晃动',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/rock.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/rock-active.png',
+                    },
+                ],
+                animationList3: [{
+
+                        cls: 'animate__fadeOut',tabId:'3',
+                        name: '淡出',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/lightOut.png',
+                        imgActive: oui.getContextPath() +
+                            'res_engine/ppt_design/images/lightOut-active.png',
+                    },
+                    {
+                        cls: 'animate__fadeOutUp',tabId:'3',
+                        name: '向上淡出',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/upOut.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/upOut-active.png',
+                    },
+                    {
+                        cls: 'animate__fadeOutDown',tabId:'3',
+                        name: '向下淡出',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/downOut.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/downOut-active.png',
+                    },
+                    {
+                        cls: 'animate__fadeOutRight',tabId:'3',
+                        name: '向右淡出',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/rightOut.png',
+                        imgActive: oui.getContextPath() +
+                            'res_engine/ppt_design/images/rightOut-active.png',
+                    },
+                    {
+                        cls: 'animate__fadeOutLeft',tabId:'3',
+                        name: '向左淡出',
+                        isActive: false,
+                        img: oui.getContextPath() + 'res_engine/ppt_design/images/leftOut.png',
+                        imgActive: oui.getContextPath() + 'res_engine/ppt_design/images/leftOut-active.png',
+                    },
+                ],
+
+
+
+
+                animation: {
+                    delay: 0,
+                    number: 1,
+                    time: 2
+                }
+            }
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload4Enable.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data
+                .currentControl));
+            if (this.currentControl.otherAttrs.animationList) {
+                this.query.animationList = this.currentControl.otherAttrs.animationList
+
+            }
+
+
+            console.log('动画模板参数', this.currentControl.otherAttrs);
+
+        },
+
+        methods: {
+            tabClick:function(tab){
+
+
+            },
+            changeField() {
+                this.currentControl.otherAttrs.animationList = this.query.animationList;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.animationList = this.query
+                    .animationList;
+            },
+            calImgSrc1(item, item1) {
+
+                return item.name === item1.name ? item1.imgActive : item1.img
+            },
+            calImgSrc2(item, item1) {
+                return item.name === item1.name ? item1.imgActive : item1.img
+            },
+            calImgSrc3(item, item1) {
+                return item.name === item1.name ? item1.imgActive : item1.img
+            },
+
+            showAnimation(item, key) {
+                console.log('动画开关');
+                let scrollHight = document.getElementById('scroolY')
+                console.log('高度啊高度', scrollHight.offsetHeight);
+                scrollHight.scrollTo(0,scrollHight.offsetHeight)
+                item.isShowAnimation = !item.isShowAnimation;
+                this.currentAnimation = key;
+            },
+            deleteAnimation(key, item) {
+                this.query.animationList.splice(key, 1);
+                this.currentControl.otherAttrs.animationList = this.query.animationList;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.animationList = this.query
+                    .animationList;
+            },
+            addAnimation() {
+                this.isShowAnimation = false
+                this.query.animationList.push({
+                    cls: '',
+                    checkname: '1',
+                    name: '无动画',
+                    time: 2,
+                    delay: 1,
+                    number: 1,
+                    type: '1', //type=0 无动画 type = 1 进入动画 type =2 强调动画  type = 3 退出动画
+                    isShowAnimation: false
+                });
+
+
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.animationList = this.query
+                    .animationList;
+                this.updateCurrentControl()
+            },
+            chooseAnimation(item, key, type) {
+                console.log('动画页面选择的动画', item);
+                this.query.animationList[key].name = item.name
+                this.query.animationList[key].cls = item.cls
+                this.query.animationList[key].type = type
+
+                console.log('上一次', oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.animationList));
+                console.log('当前动画列表', this.query.animationList)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.animationList = oui.parseJson(oui
+                    .parseString(this.query.animationList));
+                this.$forceUpdate();
+
+                this.updateCurrentControl()
+            },
+
+
+            // 更新
+            updateCurrentControl: function () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if ($scroll && $scroll.length) {
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                oui.setPageParam('right_props_scrollTop', scrollTop);
+
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+<style scoped>
+    .el-tabs__item.is-active{
+        color: #409EFF
+    }
+    .animation-container-in {
+        display: flex;
+        flex-direction: row;
+        flex-flow: wrap;
+    }
+
+    .animation-item-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 20px;
+        width: 50px;
+        margin-top: 10px;
+    }
+
+    .base_box_input-unit-container {
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+
+    .seconds-input {
+        height: 100%;
+        border: 0;
+        background: #303030;
+        color: #fff;
+        outline: none;
+    }
+</style>

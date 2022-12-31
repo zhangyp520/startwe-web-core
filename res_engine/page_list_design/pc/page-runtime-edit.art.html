@@ -1,0 +1,89 @@
+<!--默认渲染模板-->
+<template>
+    <div >
+        {{=content}}
+    </div>
+</template>
+
+
+<!--当前页面脚本配置-->
+<script>
+
+    exports = {
+        templateType:'art',
+        data: function () {
+            return {
+                data:{},
+                designData:null,
+                mainData:null,
+                detailData:null,
+                pageData:{getControlRenderDataById:function(){}},
+                content:''
+            }
+        },
+        mounted:function (){
+            var designData=null;
+            var detailData = null;
+            var mainData = null;
+            var controllerData = null;
+            try{
+                // 尝试从portal获取控制器数据，如果没有，则从特殊页面获取，如果还没有，则默认为空
+                controllerData = com.oui.portal.PortalController.getCurrMenuControllerData();
+            }catch(err){
+                controllerData = {};
+            }
+            try{
+                designData = controllerData.designData|| com.oui.AppController.designData ||{};
+                detailData = controllerData.detailData || com.oui.AppController.detailData||{};
+                mainData  = controllerData.mainData || com.oui.AppController.mainData||{};
+            }catch(err){
+            }
+
+            if(!designData){ //没有设计态数据
+                //根据url参数加载 获取
+                //默认测试 数据 demo
+                designData = { };
+
+            }
+            var me = this;
+            var pageData = oui.util.createPageData({
+                refresh:function(){
+                    me.refresh&&me.refresh();
+                },
+                designer:designData,
+                mainData:mainData,//主表数据
+                detailData:detailData//子表数据
+            });
+            pageData.beforeInit(function(){
+                me.content = pageData.render(); //渲染
+                me.pageData = pageData;
+                if(!me.data){
+                    me.data={};
+                }
+                if(!me.__data){
+                    me.__data = function(){
+                        return this;
+                    };
+                }
+                me.data.pageData = pageData;
+                pageData.afterInit();//渲染完成
+
+                // console.log("顶层控制器");
+                // console.log(designData);
+                // console.log(me.$router);
+                me.refresh();
+            }); //初始化前
+
+        },
+        methods:{
+            getPageData:function getPageData(){
+                return this.pageData;
+            }
+        }
+
+    }
+</script>
+
+<!--本页自定义样式处理-->
+<style>
+</style>

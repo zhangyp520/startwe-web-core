@@ -1,0 +1,1361 @@
+
+<template >
+    <div style="padding: 0 25px 0 25px;">
+        <!-- <el-row style="padding-bottom: 10px" >
+            <el-col span="6">项目Id</el-col>
+            <el-col span="12"><el-input type="text" :value="projectId"> </el-input>
+            </el-col>
+        </el-row> -->
+
+        <div class="flex_iuput">
+            <div>
+                项目id
+            </div>
+            <div class="margin_r_input">
+                <el-input type="text" :value="projectId"> </el-input>
+            </div>
+        </div>
+        <!-- <el-button slot="footer" @click="addOption()">添加基本参与者类型</el-button>
+        <el-button slot="footer" @click="addOption4joint()">添加组合参与者类型</el-button> -->
+
+        <div class="button_flex">
+            <div class="button__add" @click="addOption()">添加基本参与者类型</div>
+            <div class="button__add"  @click="addOption4joint()">添加组合参与者类型</div>
+            <div class="button__close">清空</div>
+        </div>
+
+        <!-- <el-button slot="footer" @click="clearOptions()">清空</el-button>
+        <el-button type="primary" @click="event2save()" style="text-align: center" icon="el-icon-save">保存全部</el-button> -->
+
+        <div class="box_bg">
+            <div class="box_bg_tips">从项目中选择组织机构模型</div>
+            <div style="width: 642px;height: 32px;">
+                <oui-include type="module" ref="projectId4RbacModel" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="getData4Projects()">
+                </oui-include>
+            </div>
+        </div>
+
+        <!-- <el-row class="item">
+            <el-col :span="24">
+                <el-form-item label="从项目中选择组织机构模型111">
+                    <oui-include type="module" ref="projectId4RbacModel" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="getData4Projects()">
+                    </oui-include>
+                </el-form-item>
+            </el-col>
+        </el-row> -->
+        <el-form >
+
+            
+            <draggable v-model="options" draggable=".item" handle=".item-move" @end="onSortEnd"  ghost-class="ghost" >
+
+
+                <el-row  v-for="(element,index) in findOptions()" :key="'row_'+element.id" class="item">
+                    <el-col :span="2" class="item-move">
+                        <span>{{index+1}}</span>
+                        <el-button type="text" size="medium" icon="el-icon-rank" class="item-move" ></el-button>
+                    </el-col>
+                    <el-col :span="20">
+                        <el-row>
+                            <el-col :span="2" style="margin-right: 10px;">
+                                <el-form-item label="组合参与者类型">
+                                    <el-switch v-model="element.jointParticipantType" disabled="disabled" @change="_controlOnUpdate(index,element)" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-form-item label="参与者类型编码">
+                                    <el-input :ref="'value_'+element.id" type="text" v-model="element.value" @input="onInput()" @change="_controlOnUpdate(index,element,'value')" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-form-item label="参与者类型名称">
+                                    <el-input :ref="'display_'+element.id"  type="text" v-model="element.display" @input="$forceUpdate()"  @change="_controlOnUpdate(index,element,'display')" />
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"  v-if="!element.jointParticipantType">
+                                <el-form-item label="绑定表模型">
+                                    <oui-include type="module" :ref="findBindTableModelId(element)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4tableModels(element)">
+                                    </oui-include>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"  v-if="!element.jointParticipantType">
+                                <el-form-item label="绑定表查询模板">
+                                    <oui-include type="module" :ref="findBindTableQueryModelId(element)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4tableQueryModels(element)">
+                                    </oui-include>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="3"  v-if="!element.jointParticipantType">
+                                <el-form-item label="绑定表模型的Id字段">
+                                    <oui-include type="module" :ref="findBindId4TableModelId(element)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4BindId(element)">
+                                    </oui-include>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="3"  v-if="!element.jointParticipantType">
+                                <el-form-item label="绑定表模型的名称字段">
+                                    <oui-include type="module" :ref="findBindName4TableModelId(element)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4BindName(element)">
+                                    </oui-include>
+
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="2">
+                                <el-form-item label="可在根节点显示">
+                                    <div>
+                                        <el-switch v-model="element.showAtRootArea" @change="_controlOnUpdate(index,element)" />
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="2" v-if="!element.jointParticipantType" >
+                                <el-form-item label="是否为叶子节点">
+                                    <div>
+
+                                    <el-switch v-model="element.leafParticipant" @change="_controlOnUpdate(index,element)" />
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-if="!element.leafParticipant" :span="3">
+                                <el-form-item label="子参与者类型列表">
+                                    <el-button type="text" size="medium" icon="el-icon-edit" class="item-edit" @click="setChildTypeCodes(element)" draggable="false"></el-button>
+                                </el-form-item>
+                                <!-- <div class="but_edit">子参与者类型列表</div> -->
+                            </el-col>
+
+                            <el-col v-if="element.jointParticipantType" :span="3">
+                                <el-form-item label="组合参与者类型列表">
+                                    <el-button type="text" size="medium" icon="el-icon-edit" class="item-edit" @click="setJointTypeCodeList(element)" draggable="false"></el-button>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row v-if="(!element.jointParticipantType)&&(!element.leafParticipant)&&(element.juniorParticipantTypeIds&&element.juniorParticipantTypeIds.length)">
+                            <el-col  :span="2">
+                                关系绑定
+                            </el-col>
+                            <el-col :span="20">
+                                <el-row>
+                                    <el-col :span="4" v-for="(child,childIndex) in findChildrenParticipantTypes(element)" :key="findKey4Child(element,child)" >
+                                        <el-form-item  :label="findLabel4Child(element,child)">
+                                            <oui-include type="module" :ref="findRef4Child(element,child)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4Child(element,child)"></oui-include>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button-group>
+                            <el-button type="text" size="medium" icon="el-icon-plus button" class="item-add" @click="addOption(element.id)" draggable="false"></el-button>
+                            <el-button type="text" size="medium" icon="el-icon-delete button" class="item-delete" @click="removeOption(element.id)" draggable="false"></el-button>
+                        </el-button-group>
+                    </el-col>
+                </el-row>
+            </draggable>
+            <!-- <el-row>
+                <el-col :span="24" style="text-align:center">
+                    <el-button type="primary" @click="event2save()" style="text-align: center" icon="el-icon-save">保存全部</el-button>
+                </el-col>
+            </el-row> -->
+            <div class="keepanydom" @click="event2save()">保存全部</div>
+        </el-form>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+
+                getData4Projects:this.getData4Projects,
+                findOptions:this.findOptions,
+                data4projects:{},
+                projectId:'',
+                projectId4RbacModel:'',
+                cache4vue:{},
+                options:[]
+            }
+        },
+        mounted:function(){
+            var me = this;
+            //参与者类型配置
+            oui.require([oui.getContextPath()+'res_common/third/sortable/sortable1.8.js', oui.getContextPath()+'res_common/third/sortable/vuedraggable2.20.js'],function(){
+                me.init();
+            });
+        },
+        methods:{
+            findOptions:function(){
+                console.log(this.options)
+                return this.options;
+            },
+            onInput:function(){
+                this.$forceUpdate&&this.$forceUpdate();
+            },
+            init:function(){
+                var me = this;
+                var param = this.$router.query||{};
+                var projectId = param.projectId || '';
+
+                var dialog =  oui.getTop().com.startwe.models.project.web.ProjectController4Design.dialog4projectConfig;
+
+                var projectsJson = dialog.attr('projectsJson');
+                var queryPagesByProjectIdUrl = dialog.attr('queryPagesByProjectIdUrl');
+                this.queryPagesByProjectIdUrl = queryPagesByProjectIdUrl;
+                var projects = oui.parseJson(projectsJson);
+                var configJson = dialog.attr('rbacModelConfigJson');
+
+                var config = oui.parseJson(configJson);
+                var participantTypeList = config.participantTypeList ||[];
+                var participantTypeMap = config.participantTypeMap||{};
+                var projectId4RbacModel = config.projectId4RbacModel||projectId;
+                projectId = config.projectId || projectId;
+                this.projects = projects;
+
+
+                this.$refs.projectId4RbacModel.comp.data = projects;
+                this.$refs.projectId4RbacModel.comp.value = config.projectId4RbacModel;
+
+                this.projectId4RbacModel = projectId4RbacModel;
+                var oneProject4rbac = oui.findOneFromArrayBy(this.projects,function(item){
+                    if(item.value == projectId4RbacModel){
+                        return true;
+                    }
+                });
+                if(oneProject4rbac){
+                    this.queryPageFieldsByFormIdUrl = oneProject4rbac.queryPageFieldsByFormIdUrl;
+                }
+                this.projectId = projectId;
+                var tableModelConfigMap = config.tableModelConfigMap||{};
+                var options = this.options||[];
+
+
+                oui.eachArray(participantTypeList,function(typeCode){
+                    var item = participantTypeMap[typeCode];
+                    if(item){
+                        var tableModelItem = tableModelConfigMap[typeCode];
+                        if(tableModelItem){
+                            for(var k in tableModelItem){
+                                item[k] = tableModelItem[k];
+                            }
+                        }
+                        options.push(item);
+                    }
+                });
+
+                var allCodes = [];
+                oui.eachArray(me.options,function(item){
+                    if(!item.prefix){
+                        item.prefix = me.randomPrefix();
+                    }
+                    if(!item.code){
+                        item.code = item.prefix+"_"+oui.getUUIDLong();
+                    }
+
+                    if(!item.id){
+                        item.id = oui.getUUIDLong();
+                    }
+                    if(!item.value){
+                        item.value = item.code;
+                    }
+                    if(!item.display){
+                        item.display = item.displayName;
+                    }
+
+                    allCodes.push(item.value);
+
+                    item.juniorParticipantTypeCodes = item.juniorParticipantTypeCodes||[];
+                    item.jointTypeCodeList = item.jointTypeCodeList||[];
+                });
+
+                oui.eachArray(me.options,function(item){
+                    var juniorParticipantTypeCodes = item.juniorParticipantTypeCodes||[];
+                    var jointTypeCodeList = item.jointTypeCodeList||[];
+                    var juniorParticipantTypeIds = [];
+                    var jointTypeIdList = [];
+                    if(juniorParticipantTypeCodes.length){
+                        var tempArr = [];
+                        oui.eachArray(juniorParticipantTypeCodes,function(temp){
+                            if(allCodes.indexOf(temp)>-1){
+                                tempArr.push(temp);
+                                var idx = allCodes.indexOf(temp);
+                                juniorParticipantTypeIds.push(me.options[idx].id);
+                            }
+                        });
+                        item.juniorParticipantTypeCodes = oui.parseJson(oui.parseString(tempArr));
+                    }
+                    if(jointTypeCodeList.length){
+                        var tempArr =[];
+                        oui.eachArray(jointTypeCodeList,function(temp){
+                            if(allCodes.indexOf(temp)>-1){
+                                tempArr.push(temp);
+                                var idx = allCodes.indexOf(temp);
+                                jointTypeIdList.push(me.options[idx].id);
+                            }
+                        });
+                        item.jointTypeCodeList = oui.parseJson(oui.parseString(tempArr));
+                    }
+                    item.jointTypeIdList = jointTypeIdList;
+                    item.juniorParticipantTypeIds = juniorParticipantTypeIds;
+                });
+                this.options = options;
+                this.refresh();
+            },
+            getCache:function(){
+                var cache4vue = this.cache4vue;
+                if(!cache4vue){
+                    cache4vue = {};
+                    this.cache4vue= cache4vue;
+                }
+                return this.cache4vue;
+            },
+            /*
+             *<el-form-item v-for="(child,childIndex) in findChildrenParticipantTypes(element)" :key="findKey4Child(element,child)" :label="findLabel4Child(element,child)">
+             <oui-include type="module" :ref="findRef4Child(element,child)" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="findData4Child(element,child)"></oui-include>
+             </el-form-item>
+             */
+            findChildrenParticipantTypes:function(item){ // typeCode,parentIdKey
+                var childIds = item.juniorParticipantTypeIds||[];
+                var arr= [];
+                oui.eachArray(this.options,function(temp){
+                    if(childIds.indexOf(temp.id)>-1){
+                        arr.push(temp);
+                    }
+                });
+                return arr;
+            },
+            /*
+             * 父子关系的ref
+             */
+            findKey4Child:function(item,child){
+                return 'parentIdKey_'+item.id+'_'+child.id;
+            },
+            findLabel4Child:function(item,child){
+                return child.display+'-关联字段';
+            },
+            findRef4Child:function(item,child){
+                return 'parentIdKey_ref_'+item.id+'_'+child.id;
+            },
+            findRef4ChildById:function(pid,cid){
+                return 'parentIdKey_ref_'+pid+'_'+cid;
+            },
+            findData4Child:function(item,child){
+                var me = this;
+                var cache4vue =  this.getCache();
+                var bindKey = 'parentIdKey_'+item.id+'_'+child.id;
+                var childIds = item.juniorParticipantTypeIds||[];
+                if(!item.childModelMap){
+                    item.childModelMap = {};
+                    me.$set(item,'childModelMap',item.childModelMap);
+                }
+                for(var k in item.childModelMap){
+                    if(childIds.indexOf(k)<0){
+                        item.childModelMap[k] = null;
+                        delete item.childModelMap[k];
+                    }
+                }
+                oui.eachArray(this.options,function(temp){
+                    if(childIds.indexOf(temp.id)>-1){
+                        var cId = temp.id;
+                        if(!item.childModelMap[cId]){
+                            item.childModelMap[cId] = {
+                                parentId:item.id,
+                                id:cId,
+                                typeCode:temp.value,
+                                parentTypeCode:item.value,
+                                tableModelId:temp.tableModelId,
+                                parentTableModelId:item.tableModelId,
+                                parentIdKey:'',
+                                parentIdKeyDisplay:''
+                            };
+                            me.$set(item.childModelMap,cId,item.childModelMap[cId]);
+                        }
+                    }
+                });
+                if(!cache4vue[bindKey]){
+                    var data4item = [];
+                    if(item.childModelMap[child.id].parentIdKey){
+                        data4item.push({value:item.childModelMap[child.id].parentIdKey,display:item.childModelMap[child.id].parentIdKeyDisplay});
+                    }
+                    cache4vue[bindKey] = {
+                        notClone4Component:true,
+                        id:bindKey,
+                        name:bindKey,
+                        bindProp:bindKey,
+                        value:item.childModelMap[child.id].parentIdKey,
+                        data:data4item,
+                        queryParams:{
+                            formId:child.tableModelId
+                        },
+                        url:me.queryPageFieldsByFormIdUrl,
+                        dataKey:'fields',
+                        queryKey:'name',
+                        valueKey:'value',
+                        displayKey:'name',
+                        rowId:item.id,
+                        childId:child.id,
+                        onUpdate:function(key,v,ov,data4options){
+                            var rowId = this.rowId;
+                            var childId = this.childId;
+                            var one = oui.findOneFromArrayBy(me.options,function(temp){
+                                if(temp.id == rowId){
+                                    return true;
+                                }
+                            });
+                            if(one){
+                                one.childModelMap[childId].parentIdKey = v; //值改变处理
+                                if(!v){
+                                    one.childModelMap[childId].parentIdKeyDisplay='';
+                                }else{
+                                    one.childModelMap[childId].parentIdKeyDisplay = data4options.display;
+                                }
+                            }
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+                }
+                return cache4vue[bindKey];
+            },
+            findData4BindName:function(item){
+                var me = this;
+                var cache4vue =  this.getCache();
+                var bindKey = 'tableModelId_name_'+item.id;
+                if(!cache4vue[bindKey]){
+                    var data4item = [];
+                    if(item.nameKey){
+                        data4item.push({value:item.nameKey,display:item.nameKeyDisplay});
+                    }
+                    cache4vue[bindKey] = {
+                        notClone4Component:true,
+                        id:bindKey,
+                        name:bindKey,
+                        bindProp:bindKey,
+                        value:item.nameKey,
+                        data:data4item,
+                        queryParams:{
+                            formId:item.tableModelId
+                        },
+                        url:me.queryPageFieldsByFormIdUrl,
+                        dataKey:'fields',
+                        queryKey:'name',
+                        valueKey:'value',
+                        displayKey:'name',
+                        rowId:item.id,
+                        onUpdate:function(key,v,ov,data4options){
+                            var rowId = this.rowId;
+                            var one = oui.findOneFromArrayBy(me.options,function(temp){
+                                if(temp.id == rowId){
+                                    return true;
+                                }
+                            });
+                            if(one){
+                                one.nameKey = v; //值改变处理
+                                if(!v){
+                                    one.nameKeyDisplay='';
+                                }else{
+                                    one.nameKeyDisplay = data4options.display;
+                                }
+                            }
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+                }
+                return cache4vue[bindKey];
+            },
+
+            //根据表单Id 查询 字段列表绑定的数据
+            findData4BindId:function(item){
+                var me = this;
+                var cache4vue =  this.getCache();
+                var bindKey = 'tableModelId_id_'+item.id;
+                if(!cache4vue[bindKey]){
+                    var data4item = [];
+                    if(item.idKey){
+                        data4item.push({value:item.idKey,display:item.idKeyDisplay});
+                    }
+                    cache4vue[bindKey] = {
+                        notClone4Component:true,
+                        id:'tableModelId_id_'+item.id,
+                        name:'tableModelId_id_'+item.id,
+                        bindProp:'tableModelId_id_'+item.id,
+                        value:item.idKey,
+                        data:data4item,
+                        queryParams:{
+                            formId:item.tableModelId
+                        },
+                        url:me.queryPageFieldsByFormIdUrl,
+                        dataKey:'fields',
+                        queryKey:'name',
+                        valueKey:'value',
+                        displayKey:'name',
+                        rowId:item.id,
+                        onUpdate:function(key,v,ov,data4options){
+                            var rowId = this.rowId;
+                            var one = oui.findOneFromArrayBy(me.options,function(temp){
+                                if(temp.id == rowId){
+                                    return true;
+                                }
+                            });
+                            if(one){
+                                one.idKey = v; //值改变处理
+                                if(!v){
+                                    one.idKeyDisplay = '';
+                                }else{
+                                    one.idKeyDisplay = data4options.display;
+                                }
+                            }
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+
+                }
+                return cache4vue[bindKey];
+            },
+            //绑定表模型的查询模板
+            findData4tableQueryModels:function(item){
+                var me = this;
+                var cache4vue =  this.getCache();
+                var bindKey = 'tableModelQueryId_'+item.id;
+                if(!cache4vue[bindKey]){
+                    var data4item = [];
+                    if(item.tableModelQueryId){
+                        data4item.push({value:item.tableModelQueryId,display:item.tableModelQueryIdDisplay});
+                    }
+                    cache4vue[bindKey]  = {
+                        notClone4Component:true,
+                        id:bindKey,
+                        name:bindKey,
+                        bindProp:bindKey,
+                        value:item.tableModelQueryId,
+                        data:data4item,
+
+                        rowId:item.id,
+                        onShowItems:function(){
+                            //过滤数据
+
+                        },
+                        onUpdate:function(key,v,ov,data4options){
+                            var rowId = this.rowId;
+                            var one = null;
+
+                            if(!v){
+                                one.tableModelQueryIdDisplay='';
+                                //idKey
+                                var refKey4bindId =  'tableModelId_id_'+one.id;
+                                if(me.$refs[refKey4bindId]){
+                                    me.$refs[refKey4bindId][0].comp.value = '';
+                                    me.$refs[refKey4bindId][0].comp.data = [];
+                                }
+
+                                //nameKey
+                                var refKey4bindNameId =  'tableModelId_name_'+one.id;
+                                if(me.$refs[refKey4bindNameId]){
+                                    me.$refs[refKey4bindNameId][0].comp.value = '';
+                                    me.$refs[refKey4bindNameId][0].comp.data = [];
+                                }
+                            }else{
+                                one.tableModelQueryIdDisplay=data4options.display;
+
+                                //TODO 处理  查询字段中绑定的id字段 的data
+                                //TODO 处理 查询字段中绑定的name字段 的data
+                                var refKey4bindId =  'tableModelId_id_'+one.id;
+                                if(me.$refs[refKey4bindId]){
+                                    me.$refs[refKey4bindId][0].comp.value = '';
+                                    me.$refs[refKey4bindId][0].comp.data =  [];
+                                }
+
+
+                                //nameKey
+                                var refKey4bindNameId =  'tableModelId_name_'+one.id;
+                                if(me.$refs[refKey4bindNameId]){
+                                    me.$refs[refKey4bindNameId][0].comp.value = '';
+                                    me.$refs[refKey4bindNameId][0].comp.data = [];
+                                }
+                            }
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+
+                }
+                return cache4vue[bindKey];
+            },
+            findData4tableModels:function(item){
+                var me = this;
+                var cache4vue =  this.getCache();
+                var bindKey = 'tableModelId_'+item.id;
+                if(!cache4vue[bindKey]){
+                    var data4item = [];
+                    if(item.tableModelId){
+                        data4item.push({value:item.tableModelId,display:item.tableModelIdDisplay});
+                    }
+                    cache4vue[bindKey]  = {
+                        notClone4Component:true,
+                        id:'tableModelId_'+item.id,
+                        name:'tableModelId_'+item.id,
+                        bindProp:'tableModelId_'+item.id,
+                        value:item.tableModelId,
+                        data:data4item,
+                        queryParams:{
+                            projectId:me.projectId4RbacModel
+                        },
+                        url:me.queryPagesByProjectIdUrl,
+                        dataKey:'pages',
+                        queryKey:'name',
+                        valueKey:'id',
+                        displayKey:'name',
+                        rowId:item.id,
+                        onShowItems:function(){
+                            //过滤数据
+                            var options =me.options||[];
+                            var rowId = this.rowId;
+                            var tableModelIds = [];
+                            oui.eachArray(options,function(curr){
+                                if(curr.id !=rowId){
+                                    if(curr.tableModelId){
+                                        tableModelIds.push(curr.tableModelId);
+                                    }
+                                }
+                            });
+                            var data = this.data||[];
+                            var tempArr = []
+                            oui.eachArray(data,function(curr){
+                                if(tableModelIds.indexOf(curr.value)<0){
+                                    tempArr.push(curr);
+                                }
+                            });
+                            this.data = tempArr;
+                        },
+                        onUpdate:function(key,v,ov,data4options){
+                            var rowId = this.rowId;
+                            var one = null;
+                            //遍历所有处理 表模型
+                            var allCodes = [];
+                            var allIds = [];
+                            var allTableModelIds = [];
+                            oui.eachArray(me.options,function(temp){
+                                //更新被引用的子参与者类型列表
+                                if(allCodes.indexOf(temp.value)<0){
+                                    allCodes.push(temp.value);
+                                }
+                                if(allIds.indexOf(temp.id)<0){
+                                    allIds.push(temp.id);
+                                }
+                                if(temp.tableModelId&& allTableModelIds.indexOf(temp.tableModelId)<0){
+                                    allTableModelIds.push(temp.tableModelId);
+                                }
+                                if(temp.id == rowId){
+                                    one = temp;
+                                }
+                            });
+
+                            if(one){
+                                one.juniorParticipantTypeCodes=[];
+                                one.jointTypeCodeList=[];
+                                one.juniorParticipantTypeIds=[];
+                                one.jointTypeIdList=[];
+                                one.childModelMap={};
+
+                                me.$set(one,'juniorParticipantTypeCodes',[]);
+                                me.$set(one,'jointTypeCodeList',[]);
+                                me.$set(one,'juniorParticipantTypeIds',[]);
+                                me.$set(one,'jointTypeIdList',[]);
+                                me.$set(one,'childModelMap',{});
+                                one.tableModelId = v; //值改变处理
+                                one.idKey='';
+                                one.nameKey='';
+                                //根据表模型Id 查询 字段
+                                if(!v){
+                                    one.tableModelIdDisplay='';
+                                    //idKey
+                                    var refKey4bindId =  'tableModelId_id_'+one.id;
+                                    if(me.$refs[refKey4bindId]){
+                                        me.$refs[refKey4bindId][0].comp.value = '';
+                                        me.$refs[refKey4bindId][0].comp.data = [];
+                                    }
+
+                                    //nameKey
+                                    var refKey4bindNameId =  'tableModelId_name_'+one.id;
+                                    if(me.$refs[refKey4bindNameId]){
+                                        me.$refs[refKey4bindNameId][0].comp.value = '';
+                                        me.$refs[refKey4bindNameId][0].comp.data = [];
+                                    }
+                                }else{
+                                    one.tableModelIdDisplay=data4options.display;
+                                    // getData
+                                    //TODO 获取字段数据
+                                    oui.getData(me.queryPageFieldsByFormIdUrl,{formId:one.tableModelId},function(res){
+                                        var refKey4bindId =  'tableModelId_id_'+one.id;
+                                        if(me.$refs[refKey4bindId]){
+                                            me.$refs[refKey4bindId][0].comp.queryParams.formId = one.tableModelId;
+                                            me.$refs[refKey4bindId][0].comp.value = '';
+                                            me.$refs[refKey4bindId][0].comp.data = oui.parseJson(oui.parseString(res.fields))||[];
+                                        }
+
+
+                                        //nameKey
+                                        var refKey4bindNameId =  'tableModelId_name_'+one.id;
+                                        if(me.$refs[refKey4bindNameId]){
+
+                                            me.$refs[refKey4bindNameId][0].comp.queryParams.formId = one.tableModelId;
+                                            me.$refs[refKey4bindNameId][0].comp.value = '';
+                                            me.$refs[refKey4bindNameId][0].comp.data =oui.parseJson(oui.parseString(res.fields))||[];
+                                        }
+                                    });
+                                }
+
+                                oui.eachArray(me.options,function(temp){
+                                    //更新被引用的子参与者类型列表
+                                    var childModelMap = temp.childModelMap;
+                                    if(!childModelMap){
+                                        temp.childModelMap = {};
+                                        childModelMap = temp.childModelMap;
+                                    }
+                                    var juniorParticipantTypeCodes = temp.juniorParticipantTypeCodes||[];
+                                    var jointTypeCodeList = temp.jointTypeCodeList||[];
+                                    var juniorParticipantTypeIds = temp.juniorParticipantTypeIds||[];
+                                    var jointTypeIdList = temp.jointTypeIdList ||[];
+                                    oui.removeFromArrayBy(juniorParticipantTypeIds,function(juId){
+                                        if(allIds.indexOf(juId)<0){
+                                            return true;
+                                        }
+                                    });
+                                    oui.removeFromArrayBy(jointTypeIdList,function(jId){
+                                        if(allIds.indexOf(jId)<0){
+                                            return true;
+                                        }
+                                    });
+
+                                    oui.removeFromArrayBy(jointTypeCodeList,function(jCode){
+                                        if(allCodes.indexOf(jCode)<0){
+                                            return true;
+                                        }
+                                    });
+                                    oui.removeFromArrayBy(juniorParticipantTypeCodes,function(juCode){
+                                        if(allCodes.indexOf(juCode)<0){
+                                            return true;
+                                        }
+                                    });
+
+                                    for(var k in childModelMap){
+                                        if(allIds.indexOf(k)<0){
+                                            childModelMap[k] = null;
+                                            delete  data4options[k];
+                                        }else{
+                                            if(allIds.indexOf(childModelMap[k].id)<0 ||
+                                                    (allCodes.indexOf(childModelMap[k].typeCode)<0) ||
+                                                    (allTableModelIds.indexOf(childModelMap[k].tableModelId)<0)){
+                                                childModelMap[k].parentIdKey='';
+                                                childModelMap[k].parentIdKeyDiplay='';
+                                                var refkey = me.findRef4ChildById(rowId,k);
+                                                me.$refs[refkey][0].comp.value='';
+                                                me.$refs[refkey][0].comp.data =[];
+                                            }
+                                        }
+                                    }
+
+                                });
+                            }
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+
+                }
+                return cache4vue[bindKey];
+            },
+
+            getData4Projects:function(){
+                var me = this;
+                var cache4vue = this.getCache();
+                var bindKey = 'projectId4RbacModel';
+                if(!cache4vue[bindKey]){
+                    cache4vue[bindKey] = {
+                        notClone4Component:true,
+                        clearable:false,
+                        id:'projectId4RbacModel',
+                        name:'projectId4RbacModel',
+                        bindProp:'projectId4RbacModel',
+                        value:this.projectId4RbacModel,
+                        data:this.projects||[],
+                        onUpdate:function(key,v){
+                            me.onUpdate(key,v);
+                        }
+                    };
+                    me.$set(cache4vue,bindKey,cache4vue[bindKey]);
+                }
+                return cache4vue[bindKey];
+            },
+
+//            getData4Projects:function(){
+//                return this.data4projects;
+//            },
+
+            onUpdate:function(key,v){
+                var me = this;
+                if(key =='projectId4RbacModel'){
+                    me.projectId4RbacModel = v;
+                    if(v){
+                        var one = oui.findOneFromArrayBy(me.projects,function(temp){
+                            if(temp.value == v){
+                                return true;
+                            }
+                        });
+                        if(one){
+                            me.queryPageFieldsByFormIdUrl = one.queryPageFieldsByFormIdUrl;
+                        }
+
+                        oui.getData(me.queryPagesByProjectIdUrl,{
+                            projectId:v
+                        },function(res){
+                            var pages =res.pages||[];
+                            //组织模型所属项目变更后，更新控件数据项
+                            oui.eachArray(me.options||[],function(item){
+                                var data4tableModels = me.findData4tableModels(item);
+
+
+                                data4tableModels.queryParams= {
+                                    projectId:v
+                                };
+                                var refKey = 'tableModelId_'+item.id;
+                                if(me.$refs[refKey]){
+                                    me.$refs[refKey][0].comp.value = '';
+                                    me.$refs[refKey][0].comp.data = oui.parseJson(oui.parseString(pages));
+                                    me.$refs[refKey][0].comp.queryParams.projectId = v;
+                                }
+                                //idKey
+                                var refKey4bindId =  'tableModelId_id_'+item.id;
+                                if(me.$refs[refKey4bindId]){
+                                    me.$refs[refKey4bindId][0].comp.value = '';
+                                    me.$refs[refKey4bindId][0].comp.data = [];
+                                }
+
+
+                                //nameKey
+                                var refKey4bindNameId =  'tableModelId_name_'+item.id;
+                                if(me.$refs[refKey4bindNameId]){
+                                    me.$refs[refKey4bindNameId][0].comp.value = '';
+                                    me.$refs[refKey4bindNameId][0].comp.data = [];
+                                }
+
+                            });
+                        });
+                    }else{
+                        me.queryPageFieldsByFormIdUrl='';
+                    }
+
+
+                }
+                this.$set(this,key,v);
+            },
+            findBindTableModelId:function(item){
+                return 'tableModelId_'+item.id;
+            },
+            findBindTableQueryModelId:function(item){
+                return 'tableModelQueryId_'+item.id;
+            },
+            findBindId4TableModelId:function(item){
+                return 'tableModelId_id_'+item.id;
+            },
+            findBindName4TableModelId:function(item){
+                return 'tableModelId_name_'+item.id;
+            },
+            findChildParticipantTypeCodes:function(item){
+                var ids = item.juniorParticipantTypeIds ||[];
+                var newValue = [];
+                if(ids.length){
+                    oui.eachArray(this.options||[],function(temp){
+                        if(temp.value && (ids.indexOf(temp.id)>-1)){
+                            newValue.push(temp.value);
+                        }
+                    });
+                }
+                return newValue.join(',')
+            },
+            findJointTypeCodes:function(item){
+                var ids = item.jointTypeIdList ||[];
+                var newValue = [];
+                if(ids.length){
+                    oui.eachArray(this.options||[],function(temp){
+                        if(temp.value && (ids.indexOf(temp.id)>-1)){
+                            newValue.push(temp.value);
+                        }
+                    });
+                }
+                return newValue.join(',')
+            },
+            setJointTypeCodeList:function(item){
+                var me = this;
+
+                var value = item.jointTypeCodeList ||[];
+                //找出所有非组合类型的参与者作为组合类型的组成部分
+                var data = [];
+                oui.eachArray(this.options,function(ops){
+                    if(!ops.jointParticipantType){
+                        data.push(oui.parseJson(oui.parseString(ops)));
+                    }
+                });
+                oui.getTop().oui.showOptionsDialog({
+                    isShowSearch:true,
+                    value:value.join(','),
+                    data:data,
+                    confirm:function(value,selects,obj){
+                        if(value){
+                            item.jointTypeCodeList = value.split(',');
+                        }else{
+                            item.jointTypeCodeList = [];
+                        }
+                        var ids =[];
+                        oui.eachArray(selects,function(temp){
+                            ids.push(temp.id);
+                        });
+                        item.jointTypeIdList = ids;
+                        me.$set(me.options,me.options.indexOf(item),item);
+                    }
+                });
+            },
+            //设置子参与者类型编码
+            setChildTypeCodes:function(item){
+                var me = this;
+
+                var value = item.juniorParticipantTypeCodes ||[];
+
+                //找出所有非组合类型的参与者作为子参与者
+                var data = [];
+                oui.eachArray(this.options,function(ops){
+                    if(!ops.jointParticipantType){
+                        data.push(oui.parseJson(oui.parseString(ops)));
+                    }
+                });
+
+                oui.getTop().oui.showOptionsDialog({
+                    isShowSearch:true,
+                    value:value.join(','),
+                    data:data,
+                    confirm:function(value,selects,obj){
+                        if(value){
+                            item.juniorParticipantTypeCodes = value.split(',');
+                        }else{
+                            item.juniorParticipantTypeCodes = [];
+                        }
+                        var ids =[];
+                        oui.eachArray(selects,function(temp){
+                            ids.push(temp.id);
+                        });
+                        item.juniorParticipantTypeIds = ids;
+                        me.$set(me.options,me.options.indexOf(item),item);
+                    }
+                });
+            },
+            checkOne:function(item){
+                var me = this;
+                var isValidate = true;
+                if(!item.code){
+                    me.$alert('参与者类型编码不能为空');
+                    isValidate = false;
+                    return false;
+                }
+                if(!item.display){
+                    me.$alert('参与者类型名称不能为空');
+
+                    isValidate = false;
+                    return false;
+                }
+                //组合参与者类型判断
+                if(item.jointParticipantType){
+                    //必须要有子参与者类型编码配置
+                    if((!item.juniorParticipantTypeCodes) ||(!item.juniorParticipantTypeCodes.length)){
+                        me.$alert('子参与者类型列表不能为空');
+                        isValidate = false;
+                        return false;
+                    }
+                    if((!item.jointTypeCodeList) ||(!item.jointTypeCodeList.length)){
+                        me.$alert('组合参与者类型列表不能为空');
+                        isValidate = false;
+                        return false;
+                    }
+                    if( item.jointTypeCodeList.length<2){
+                        me.$alert('组合参与者类型列表至少需要两个参与者类型');
+                        isValidate = false;
+                        return false;
+                    }
+                }else{
+                    if(!item.tableModelId){
+                        me.$alert('绑定表模型不能为空');
+
+                        isValidate =false;
+                        return false;
+                    }
+                    if(!item.idKey){
+                        me.$alert('绑定表模型Id字段不能为空');
+
+                        isValidate = false;
+                        return false;
+                    }
+
+                    if(!item.nameKey){
+                        me.$alert('绑定表模型的名称字段不能为空');
+                        isValidate = false;
+                        return false;
+                    }
+                }
+
+                return isValidate;
+            },
+            checkData:function(){
+                var me = this;
+                var isValidate = true;
+                oui.eachArray(this.options||[],function(item){
+                    isValidate = me.checkOne(item);
+                    if(!isValidate){
+                        return false;
+                    }
+                });
+                return isValidate;
+            },
+            event2save:function(){
+                var me = this;
+                //保存所有
+                /*
+                 projectId:me.data.project.id,
+                 projectId4RbacModel:me.data.project.id,
+                 participantTypeList:[],
+                 participantTypeMap:{},
+                 tableModelConfigMap:{}
+                 */
+                var options = this.options||[];
+                var projectConfig = {
+                    projectId:this.projectId,
+                    projectId4RbacModel:this.projectId4RbacModel,
+                    participantTypeList:[],
+                    participantTypeMap:{},
+                    tableModelConfigMap:{}
+                };
+                var isValidate= true;
+                oui.eachArray(options,function(item){
+                    if(projectConfig.participantTypeList.indexOf(item.code)<0){
+                        projectConfig.participantTypeList.push(item.code);
+                    }
+
+                    projectConfig.participantTypeMap[item.code] = {
+                        id:item.id,
+                        prefix:item.code.substring(0,1),
+                        code:item.code,
+                        displayName:item.display,
+                        showAtRootArea:item.showAtRootArea,
+                        description:item.description||'',
+                        priority:item.priority,
+                        leafParticipant:item.leafParticipant,
+                        juniorParticipantTypeCodes:item.juniorParticipantTypeCodes||[],
+                        jointParticipantType:item.jointParticipantType,
+                        jointTypeCodeList:item.jointTypeCodeList||[],
+                        childModelMap:item.childModelMap||{}
+                    };
+                    projectConfig.tableModelConfigMap[item.code] = {
+                        participantType:item.code,
+                        tableModelId:item.tableModelId,
+                        tableModelIdDisplay:item.tableModelIdDisplay,
+                        idKey:item.idKey,
+                        idKeyDisplay:item.idKeyDisplay,
+                        nameKey:item.nameKey,
+                        nameKeyDisplay:item.nameKeyDisplay
+                    };
+                    isValidate = me.checkOne(item);
+                    if(!isValidate){
+                        return false;
+                    }
+                });
+                if(!isValidate){
+
+                    return;
+                }
+                var dialog =  oui.getTop().com.startwe.models.project.web.ProjectController4Design.dialog4projectConfig;
+
+                var json4save = dialog.attr('json4save');
+                json4save = oui.parseJson(json4save);
+                json4save.treeMap = oui.parseJson(json4save.treeMap);
+                json4save.treeMap.rbacModelConfig = projectConfig;
+                json4save.treeMap  = oui.parseString(json4save.treeMap);
+                dialog.attr('json4save',oui.parseString(json4save));
+                var url = dialog.attr('saveDesignUrl');
+                dialog.attr('rbacModelConfigJson',oui.parseString(projectConfig));
+                oui.postData(url,json4save,function(res){
+                    if(res.success){
+                        me.$message({
+                            message:'保存成功',
+                            type:'success'
+                        });
+                        //保存成果后刷新父页面
+                        var topMe = oui.getTop().com.startwe.models.project.web.ProjectController4Design;
+                        topMe.load({id: topMe.urlParams.id},function(res){
+                            topMe.refreshByRoot();
+                        });
+                    }else{
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                },function(err){
+                    oui.getTop().oui.alert(err);
+                },'保存中...');
+            },
+            onMove:function(e){
+                console.log(e);
+            },
+            onSortEnd:function(){
+
+            },
+            clearOptions:function(){
+                this.options.length=0;
+                this.options = [];
+            },
+            addOptions:function(){
+
+            },
+            randomPrefix:function(){
+                var str = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z";
+                var arr = str.split(',');
+                var prefixAll = [];
+                oui.eachArray(this.options,function(item){
+                    if(item.prefix&&prefixAll.indexOf(item.prefix)<0){
+                        prefixAll.push(item.prefix);
+                    }
+                });
+                var flag = true;
+                var randomPrefixId = '';
+                do{
+                    randomPrefixId = oui.uuid(1,arr.length);
+                    randomPrefixId = randomPrefixId.toLowerCase();
+                    if(randomPrefixId && (prefixAll.indexOf(randomPrefixId)<0)){
+                        flag= false;
+                    }
+                }while(flag);
+                return randomPrefixId;
+            },
+            addOption4joint:function(id){
+                var me = this;
+                var prefix = me.randomPrefix();
+                var newId = oui.getUUIDLong();
+                var code  = prefix+"_"+(oui.getUUIDLong().substring(0,4));
+                var displayName = "组合参与者类型-"+(me.options.length+1);
+                if(me.options.length+1>20){
+                    oui.getTop().oui.alert('组合参与者类型不能超过20个');
+                    return;
+                }
+                var flag = me.checkData();
+                if(!flag){
+                    return false;
+                }
+                if(id){
+                    var item = oui.findOneFromArrayBy(this.options,function(item){
+                        if(item.id ==id){
+                            return true;
+                        }
+                    });
+                    var idx = this.options.indexOf(item);
+
+                    this.options.splice(idx+1,0,{
+                        id:newId,
+                        code:code,
+                        prefix:prefix,
+                        value:code,
+                        display:displayName,
+                        displayName:displayName,
+                        showAtRootArea:false,
+                        priority:10,
+                        leafParticipant:false,
+                        juniorParticipantTypeCodes:[],
+                        jointParticipantType:true,
+                        jointTypeCodeList:[]
+                    });//删除指定元素
+                }else{
+                    this.options.push({
+                        id:newId,
+                        prefix:prefix,
+                        code:code,
+                        value:code,
+                        display:displayName,
+                        displayName:displayName,
+                        showAtRootArea:false,
+                        priority:10,
+                        leafParticipant:false,
+                        juniorParticipantTypeCodes:[],
+                        jointParticipantType:true,
+                        jointTypeCodeList:[]
+                    });
+                }
+            },
+            addOption:function(id){
+                var me = this;
+                var prefix = me.randomPrefix();
+                var newId = oui.getUUIDLong();
+                var code  = prefix+"_"+(oui.getUUIDLong().substring(0,4));
+                var displayName = "参与者类型-"+(me.options.length+1);
+                if(me.options.length+1>20){
+                    oui.getTop().oui.alert('参与者类型不能超过20个');
+                    return;
+                }
+                var flag = me.checkData();
+                if(!flag){
+                    return false;
+                }
+                if(id){
+                    var item = oui.findOneFromArrayBy(this.options,function(item){
+                        if(item.id ==id){
+                            return true;
+                        }
+                    });
+                    var idx = this.options.indexOf(item);
+
+                    this.options.splice(idx+1,0,{
+                        id:newId,
+                        code:code,
+                        prefix:prefix,
+                        value:code,
+                        display:displayName,
+                        displayName:displayName,
+                        showAtRootArea:true,
+                        priority:10,
+                        leafParticipant:false,
+                        juniorParticipantTypeCodes:[],
+                        jointParticipantType:false,
+                        jointTypeCodeList:[]
+                    });//删除指定元素
+                }else{
+                    this.options.push({
+                        id:newId,
+                        prefix:prefix,
+                        code:code,
+                        value:code,
+                        display:displayName,
+                        displayName:displayName,
+                        showAtRootArea:true,
+                        priority:10,
+                        leafParticipant:false,
+                        juniorParticipantTypeCodes:[],
+                        jointParticipantType:false,
+                        jointTypeCodeList:[]
+                    });
+                }
+
+            },
+            removeOption:function(id){
+                var item = oui.findOneFromArrayBy(this.options,function(item){
+                    if(item.id ==id){
+                        return true;
+                    }
+                });
+                var idx = this.options.indexOf(item);
+                this.options.splice(idx,1);//删除指定元素
+            },
+            _controlOnUpdate:function(index,item){
+                var me  = this;
+                this.$nextTick(function(){
+                    item.displayName = item.display+'';
+                    item.code = item.value+'';
+                    item.prefix = item.code.substring(0,1);
+                    me.$set(me.options,index,item);
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .button{
+        padding: 10px;
+    }
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding: 20px;
+        padding-bottom:5px ;
+        border: 1px dashed #979797 ;
+        margin-top: 10px;
+        
+    }
+    .item:hover{
+        background-color: beige;
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+    .flex_iuput{
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+        margin-top: 10px;
+    }
+    .margin_r_input{
+        margin-left: 20px;
+    }
+    .button_flex{
+        display: flex;
+    }
+    .button__add{
+        border: 1px solid #1890FF;
+        border-radius: 2px;
+        width: 160px;
+        height: 32px;
+        text-align: center;
+        line-height: 32px;
+        color: #1890FF;
+        margin-right: 25px;
+        cursor: pointer;
+    }
+    .button__close{
+        border: 1px solid #FF1818;
+        border-radius: 2px;
+        width: 60px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        color: #FF1818;
+        cursor: pointer;
+    }
+    .box_bg{
+        background: #F4F4F4;
+        height: 96px;
+        margin-top: 24px;
+        padding: 12px 0px 0 24px;
+    }
+    .box_bg_tips{
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+        color: rgba(0,0,0,0.85);
+        font-weight: 400;
+        margin-bottom: 6px;
+    }
+    .el-form-item__content{
+        margin-right: 10px;
+    }
+    .but_edit{
+        width: 150px;
+        height: 32px;
+        border: 1px solid #1890FF;
+        border-radius: 2px;
+        color: #1890FF;
+        line-height: 32px;
+        text-align: center;
+        font-size: 14px;
+        line-height: 32px;
+        font-weight: 400;
+        margin-top: 20px;
+    }
+    .keepanydom{
+        width: 224px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        text-align: center;
+        line-height: 40px;
+        color: #fff;
+        margin: auto;
+        margin-top: 55px;
+        cursor: pointer;
+    }
+</style>

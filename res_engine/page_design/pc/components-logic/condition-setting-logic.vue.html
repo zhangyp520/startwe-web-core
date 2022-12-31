@@ -1,0 +1,432 @@
+<template>
+    <div class="sider-logic-edit-drawer">
+        <el-drawer 
+            title="逻辑规则设置" 
+            size="1200px" 
+            :wrapperClosable="false" 
+            :destroy-on-close="true" 
+            :visible.sync="drawer" 
+            custom-class="logic-drawer" 
+            ref="logic_drawer_node_edit"
+            :before-close="handleClose"  
+            >
+            <div class="api-setting conditon-setting scrollbar">
+
+                <div>
+                    节点名称:<el-input type="textfield" v-model="nodeName"></el-input>
+                </div>
+                <div class="condition-area-outer">
+                    <oui-include :data="getData4ConditionRule()" type="module" url="res_engine/page_design/pc/components-logic/condition-rule-div.vue.html"></oui-include>
+                </div>
+
+                <div class="condition-area-outer assignment-area-outer">
+                    <oui-include :data="getData4Assignment()" type="module" url="res_engine/page_design/pc/components-logic/condition-rule-div.vue.html"></oui-include>
+                </div>
+
+                <div class="call-logic-outer">
+                    <oui-include :data="getData4Calllogic()" type="module" url="res_engine/page_design/pc/components-logic/callLogic.vue.html"></oui-include>
+                </div>
+
+            </div>
+ 
+            <div class="footer-btn">
+                
+                <el-button size="medium"  @click="onCancel"  >取消</el-button>
+                <el-button  type="primary" size="medium" @click="onSubmit">确认</el-button>
+            </div>
+    
+        </el-drawer> 
+ 
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        props:['logicResources','findLogicInputAndOutputUrl'],//需要定义属性，才能 监听属性
+        data: function () {
+            return {
+                conditionData:oui.clone(com.startwe.models.project.web.LogicDesignController.getCurrentNodeData().conditionObjects||[]),
+                executeData4Fields:oui.clone(com.startwe.models.project.web.LogicDesignController.findCurrentNodeExecuteData4Fields()),
+                executeData4Calllogic:oui.clone(com.startwe.models.project.web.LogicDesignController.findCurrentNodeExecuteData4Calllogic()),
+                fields:oui.clone(com.startwe.models.project.web.LogicDesignController.findFields4Conditions()),//参与选择的字段列表
+                LogicData:com.startwe.models.project.web.LogicDesignController.data,
+                logicController : com.startwe.models.project.web.LogicDesignController,
+                associationRuntimeQueryUrl:com.startwe.models.project.web.LogicDesignController.data.associationRuntimeQueryUrl,
+                logicResources:[],
+                optionData: { 
+                }, 
+                logicvalue:'',
+                disabled:false,
+                drawer: false,
+                direction: 'rtl',
+                dialogVisible: false,
+                keyword: '',
+                uploaddata: null , //上传参数
+                checkFileList: ['选中且禁用', '复选框 A'],
+                userinfo:null,
+                progress: 0,//上传进度
+                pass: null,//是否上传成功
+                filetypename:'全部',
+                activeName: '1',
+                filetotal:0, 
+                circleId:'',
+                projectId:'',
+                pageId:'',
+                uploadUrl:'',
+                testdata:[1,2,3],
+                tabRelation:'and',
+                condition_and_value:'',
+                condition_and_field:'',
+                condition_and_operator:[],
+                condition_and_field_options:[
+                    {
+                    value: '1',
+                    label: '变量1'
+                    }, {
+                    value: '2',
+                    label: '变量2'
+                    }, {
+                    value: '3',
+                    label: '变量3'
+                    } 
+                ],
+                condition_or_field:'',
+                condition_or_operator:'',
+                condition_or_field_options:[
+                    {
+                    value: '1',
+                    label: '变量1'
+                    }, {
+                    value: '2',
+                    label: '变量2'
+                    }, {
+                    value: '3',
+                    label: '变量3'
+                    } 
+                ],
+                 
+                condition_or_value_options:[
+                    {
+                    value: '1',
+                    label: '变量1'
+                    }, {
+                    value: '2',
+                    label: '变量2'
+                    }, {
+                    value: '3',
+                    label: '变量3'
+                    } 
+                ],
+                condition_val:'',
+                conditionAndData:[
+                     {}
+                ],
+                conditionOrData:[
+                     {}
+                ],
+                previewtxt:'请设置条件进行预览', //预览文字
+                tableValue: [
+                    {
+                        valname: '变量名称',
+                        operator: '运算符', 
+                        val_value: '变量值',   
+                    }, 
+                ],
+                condition_logicdata_options:[
+                    {
+                        label:'数据查询[内置]',
+                        value:'1',
+                    }
+                ],
+                logicInputParams:null, //逻辑调用输入
+                logicOutputParams:null, //逻辑调用输出
+                valParams:null,
+                nodeName:''
+            }
+            
+        },
+        computed: {
+            
+        },
+        mounted: function () { 
+            this.drawer = true;
+            var me = this;
+            var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+            var currentNodeData = LogicDesign.getCurrentNodeData();
+            this.nodeName = currentNodeData.name;
+            this.$nextTick(function (){
+                me.loadLogicsData();
+            });
+        },
+        watch:{
+            logicResources:function (val){
+                this.getData4Calllogic().logicResources= val;
+                if(this.getData4Calllogic().ref){
+                    this.getData4Calllogic().ref.logicResources = val;
+                }
+            },
+            findLogicInputAndOutputUrl:function (val){
+                this.getData4Calllogic().findLogicInputAndOutputUrl= val;
+                if(this.getData4Calllogic().ref){
+                    this.getData4Calllogic().ref.findLogicInputAndOutputUrl = val;
+                }
+            }
+        },
+        methods: {
+            destroyed:function (){
+            },
+            getCache:oui.getCache4include,
+
+
+
+            /***
+             * 条件设置
+             * @returns {*}
+             */
+            getData4ConditionRule:function (){
+                var me = this;
+                return this.getCache('conditionRule',{
+                    associationRuntimeQueryUrl:this.associationRuntimeQueryUrl,
+                    isShowPreview:true,
+                    conditionData:this.conditionData,conditionId:'',parentConditionId:'',fields:this.fields,rootConditionData:this.conditionData,
+                    onUpdate:function (k,v,ov,option){
+                        try{
+                            me.rootConditionData = oui.clone(v.rootConditionData);
+                            me.conditionData = me.rootConditionData ;
+                            me.$set(me,'conditionData',me.conditionData);
+                            me.$set(me,'rootConditionData',me.rootConditionData);
+
+                            console.log('condition-setting-logic.vue.html 中的条件组件变更了',arguments);
+                            console.log(me.conditionData,'当前条件组');
+                            // oui.destroyVueControllers();
+                        }catch (err){
+                            console.log(err);
+                        }
+                    }
+
+                });
+            },
+            getData4Assignment:function (){
+                var me = this;
+                return this.getCache('assignment',{
+                    associationRuntimeQueryUrl:this.associationRuntimeQueryUrl,
+                    isShowPreview:false,
+                    isAssignment:true,
+                    conditionData:this.executeData4Fields,conditionId:'',parentConditionId:'',fields:this.fields,rootConditionData:this.executeData4Fields,
+                    onUpdate:function (k,v,ov,option){
+                        try{
+                            me.executeData4Fields = oui.clone(v.rootConditionData);
+                            me.$set(me,'executeData4Fields',me.executeData4Fields);
+                            console.log('condition-setting-logic.vue.html 中的赋值列表变更了',arguments);
+                        }catch (err){
+                            console.log(err);
+                        }
+                    }
+
+                });
+            },
+
+            getData4Calllogic:function (){
+                var me = this;
+                var one = me.executeData4Calllogic;
+                var callLogicBean = null;
+                if(one){
+                    callLogicBean = one.value;
+                }else{
+                    callLogicBean= {};
+                }
+                return this.getCache('calllogic',{
+                    fields:this.fields,
+                    logicResources: this.logicResources,
+                    findLogicInputAndOutputUrl: this.findLogicInputAndOutputUrl,
+                    associationRuntimeQueryUrl: this.associationRuntimeQueryUrl,//关联查询场景
+                    callLogicBean:callLogicBean,
+                    onUpdate:function (k,v,ov,option){
+                        try{
+                            this.callLogicBean = v;
+                            console.log('callLogicBean change:',v);
+                            if(me.executeData4Calllogic){
+                                me.executeData4Calllogic.value = v;
+                            }
+                            me.$set(me,'executeData4Calllogic',me.executeData4Calllogic);
+
+                            console.log('condition-setting-logic.vue.html 中的赋值列表变更了',arguments);
+                        }catch (err){
+                            console.log(err);
+                        }
+                    }
+
+                });
+            },
+            isEmpty(val) {
+                for (let key in val) {
+                  return false
+                }
+                return true
+            },
+            deleteTableValue(){
+
+            },
+            addValassign(){
+                let newdata = {
+                        valname: '变量名称',
+                        operator: '运算符', 
+                        val_value: '变量值',   
+                    }
+                this.tableValue.push(newdata);
+            },
+            removeAllValassign(){
+                this.tableValue = [];
+            },
+            clicktest(){
+                this.testdata = [2,3,4] 
+                console.info(this.$refs.logicApiSetting,'this.$refs.logicApiSetting.testdata')
+               
+                this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+
+                this.currentControl.testdata = this.testdata;
+
+                com.oui.absolute.AbsoluteDesign.changed4props(
+                    this.currentControl,
+                    function() {}
+                );
+                
+            },
+            //读取逻辑调用数据
+            loadLogicsData(){
+
+                console.info(this.LogicData,'LogicDataLogicData')
+                let params = {
+
+                }
+                let url = this.LogicData.queryLogicsUrl.replace('{0}','');
+                oui.postData(url, params,  (res)=> { 
+
+                        if(res.success){ 
+                             this.logicResources = res.resources||[];
+                             this.findLogicInputAndOutputUrl = res.findLogicInputAndOutputUrl;
+                             this.$nextTick(()=>{
+                                 this.$set(this,'logicResources',this.logicResources);
+                                 this.$set(this,'findLogicInputAndOutputUrl',this.findLogicInputAndOutputUrl);
+                                 console.info(this.logicResources,'this.logicResources')
+                             })
+                        }
+                 },null,'加载中...')
+
+
+
+            },
+            getDataLgicApiSetting: function() {
+               
+                return {testdata:this.testdata};
+            },
+            //关闭事件
+            handleClose(done) {
+                done();
+            },
+            addConditon(){
+                if(this.tabRelation == 'and'){  //添加条件
+                    this.conditionAndData.push([])
+                }
+                if(this.tabRelation == 'or'){  //添加条件
+                    this.conditionOrData.push([])
+                }
+            },
+            deleteConditonAnd(index){
+                this.conditionAndData.splice(index,1)
+            },
+            deleteConditonOr(index){
+                this.conditionOrData.splice(index,1)
+            },
+            handleTabClick(tab, event) {
+                
+            },
+            onSubmit:function () {
+                var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                var currentNodeData = LogicDesign.getCurrentNodeData();
+                currentNodeData.conditionObjects = this.conditionData||[];
+                var executeData4Fields = this.executeData4Fields||[];
+
+                var calllogic  =  this.executeData4Calllogic; //逻辑调用
+                if(calllogic&&calllogic.value && calllogic.value.id){
+                    executeData4Fields.push(calllogic)
+                }
+                currentNodeData.executeObjects = executeData4Fields; //赋值处理和 调用处理在同一个列表里面
+                currentNodeData.name = this.nodeName||currentNodeData.name;
+
+
+                //逻辑判断,赋值,方法调用 ok,
+                //TODO 循环遍历
+                //TODO 关联查询
+                var me = this;
+                LogicDesign.saveCurrentNodeData(currentNodeData,function (){
+                    me.$message({
+                        message: '逻辑节点设置成功！',
+                        type: 'success'
+                    });
+                    me.drawer = false;
+                    var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                    LogicDesign.treeMap.updateNodeName(currentNodeData.id,currentNodeData.name);
+                    LogicDesign.refreshByNodeId(currentNodeData.id,LogicDesign.treeMap);
+                    LogicDesign.destroyLogicEditNodeDrawControllers();
+                });
+            },
+            onCancel(){
+                this.drawer = false;
+                var LogicDesign  = com.startwe.models.project.web.LogicDesignController;
+                LogicDesign.destroyLogicEditNodeDrawControllers();
+            },
+            //逻辑调用选择
+            handleNodeClick(data) {  
+                this.logicvalue = data.name 
+                this.$emit('input', data['id'])
+                this.optionData.id = data['id']
+                this.optionData.name = data['name']
+                this.$refs.select.visible = false  
+
+                this.logicInputParams = data.data.inputParams 
+                this.logicOutputParams = data.data.outputParams
+
+            },
+            visibleChange(e) {
+                if(e) {
+                    let selectDom = document.querySelector('.is-current')
+                    setTimeout(() => {
+                        this.$refs.select.scrollToOption({$el: selectDom})
+                    },0)
+                }
+            },
+            clear() {
+                this.$emit('input', '')
+                console.info('clear')
+            },
+            initselecttree(val) {
+                if (val) {
+                    this.$nextTick(() => {
+          
+                        this.$refs.tree.setCurrentKey(val)
+                        let node = this.$refs.tree.getNode(val) 
+                        this.optionData.id = val
+                        this.optionData.name = node.name
+                    })
+                } else{
+                    this.$refs.tree.setCurrentKey(null)
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+    .option {
+        height: auto;
+        line-height: 1;
+        padding: 0;
+        background-color: #fff;
+    }
+    .tree {
+        padding: 4px 20px;
+        font-weight: 400;
+    }
+</style>

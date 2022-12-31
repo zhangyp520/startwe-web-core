@@ -1,0 +1,260 @@
+<!-- 领取物资清单 -->
+<template>
+    <div class="tel_box">
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+                <el-table :data="workOrderMaterialList" style="width: 100%" v-loading="loading">
+                    <el-table-column prop="isReceived" label="领取状态" align="center">
+                    </el-table-column>
+                    <el-table-column prop="materialType" label="物资类别" align="center" :formatter="formatType">
+                    </el-table-column>
+                    <el-table-column prop="materialName" label="物资名称" align="center"></el-table-column>
+                    <el-table-column prop="materialCode" label="物资编号" align="center"></el-table-column>
+                    <el-table-column prop="materialQty" label="出库数量" align="center"></el-table-column>
+                    <el-table-column prop="materialBrand" label="物资品牌" align="center"></el-table-column>
+                    <el-table-column prop="materialUnitCode" label="计量单位" align="center"></el-table-column>
+                    <el-table-column prop="materialSpec" label="单品规格" align="center"></el-table-column>
+                    <el-table-column prop="vendorName" label="厂商" align="center"></el-table-column>
+                </el-table>
+            </template>
+        </div>
+ 
+        <!-- 表格区域结束 -->
+
+        <!-- 分页开始 -->
+        <div class="page">
+            <div class="block">
+                <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange"
+                               :current-page="currentPage"
+                               :page-sizes="[1, 5, 10, 15, 20]" :page-size="pageSize"
+                               :total="total" layout="total, sizes, prev, pager, next, jumper">
+                </el-pagination>
+            </div>
+        </div>
+        <!-- 分页结束 -->
+        <!-- 有误和确定按钮 -->
+        <div class="return_and_save">
+            <el-row>
+                <el-button @click="goViewproject">返回</el-button>
+                <el-button id="mistaken" type="danger" @click="workOrderMaterialMistaken" style="display: none">有误</el-button>
+                <el-button id="confirm" type="primary" @click="workOrderMaterialConfirm" style="display: none">确定</el-button>
+            </el-row>
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                loading:true,
+                //数据总条数 默认没有数据
+                total : 0,
+                //每页显示数据的条数
+                pageSize : 10,
+                //默认当前页为第一页
+                currentPage : 1,
+                workOrderMaterialList:[],
+
+                workOrderId: "",
+                workOrderType: "",
+                workOrderStatus: "",
+                isChecked: ""
+            }
+        },
+        // 员工列表数据结束
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            this.findOneWorkOrderMaterials();
+        },
+        methods: {
+            formatType:function(row) {
+                if (row.materialType == 1) {
+                    return "维修材料";
+                }else if (row.materialType == 2) {
+                    return "保养材料";
+                }else if (row.materialType == 3) {
+                    return "其他材料";
+                }else if (row.materialType == 4) {
+                    return "低值易耗品";
+                }
+            },
+            findOneWorkOrderMaterials:function(){
+                var me = this;
+                var queryParam = this.$router.query;
+                me.workOrderId = queryParam.workOrderId;
+                me.workOrderType = queryParam.workOrderType;
+                me.workOrderStatus = queryParam.workOrderStatus;
+                me.isChecked = queryParam.isChecked;
+                oui.ajaxPost('workorder/projectWorkOrder/findOneWorkOrderMaterials', {
+                    "workOrderId":queryParam.workOrderId,
+                    "pager":{
+                        "page": this.currentPage,
+                        "rows": this.pageSize
+                    }
+                }, function (res) {
+                    me.workOrderMaterialList = res.resultObj.workOrderMaterialDetail;
+                    me.total = res.resultObj.total;
+                    if (me.workOrderStatus == 5 || me.workOrderStatus == 6) {
+                        oui.eachArray(me.workOrderMaterialList, function (item) {
+                            item.isReceived = "未领取";
+                        });
+                    } else {
+                        oui.eachArray(me.workOrderMaterialList, function (item) {
+                            item.isReceived = "已领取";
+                        });
+                    }
+                    if (me.isChecked == 1 && me.workOrderStatus == 7) {
+                        var mistakenBtn = document.getElementById("mistaken");
+                        var confirmBtn = document.getElementById("confirm");
+                        mistakenBtn.style.display = "inline-block";
+                        confirmBtn.style.display = "inline-block";
+                    }
+                    me.loading=false;
+                },function (res) {
+                    me.$message.error(res.message);
+                });
+            },
+            handleCurrentChange : function(val) {
+                this.currentPage = val;
+                this.findOneWorkOrderMaterials();
+            },
+            handleSizeChange : function (val) {
+                this.pageSize = val;
+                this.findOneWorkOrderMaterials();
+            },
+            goViewproject:function(){
+                if (this.workOrderStatus == 7 && this.isChecked == 1) {
+                    oui.router.push('res_apps/car/html/product/product.vue.html',{
+                    });
+                }else {
+                    oui.router.push('res_apps/car/html/product/viewproject.vue.html',{
+                        rowId:this.workOrderId
+                    });
+                }
+            },
+            workOrderMaterialConfirm() {
+                let that = this;
+                this.$confirm('是否已确定材料单无误？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('workorder/projectWorkOrder/workOrderMaterialConfirm', {
+                            "workOrderId": this.workOrderId,
+                            "workOrderType": this.workOrderType,
+                            "workOrderStatus": this.workOrderStatus,
+                            "isChecked": this.isChecked
+                        },
+                        function () {
+                            that.$message({
+                                message: '材料单确认成功',
+                                type: 'success'
+                            });
+                            oui.router.push('res_apps/car/html/product/viewproject.vue.html',{
+                                rowId:that.workOrderId
+                            });
+                        },
+                        function (res) {
+                            that.$message.error(res.message);
+                        }
+                    )
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+            workOrderMaterialMistaken() {
+                let that = this;
+                this.$confirm('是否确定材料单有误？', '提示', {
+                    type: 'warning'
+                }).then(() => {
+                    oui.ajaxPost('workorder/projectWorkOrder/workOrderMaterialMistaken', {
+                            "workOrderId": this.workOrderId,
+                            "workOrderType": this.workOrderType,
+                            "workOrderStatus": this.workOrderStatus,
+                            "isChecked": this.isChecked
+                        },
+                        function () {
+                            that.$message({
+                                message: '材料单回退到待出库状态',
+                                type: 'success'
+                            });
+                            oui.router.push('res_apps/car/html/product/product.vue.html',{
+                            });
+                        },
+                        function (res) {
+                            that.$message.error(res.message);
+                        }
+                    )
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            }
+
+        }
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        /* width: 430px;
+        height: 240px; */
+        margin: 24px auto;
+        box-sizing: border-box;
+    }
+
+    /* 类表的样式 */
+    /* 表格数据 居中对齐*/
+
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        margin-top: 20px;
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+    /* 分页区域结束----- */
+
+    /* 有误和确定 */
+    .return_and_save {
+        display: flex;
+        justify-content: center;
+        height: 60px;
+        line-height: 60px;
+        margin-top:30px ;
+        /* background-color: rgb(163, 12, 12); */
+    }
+
+    .return_and_save .el-button {
+        width: 96px;
+        margin-right: 34px;
+    }
+</style>

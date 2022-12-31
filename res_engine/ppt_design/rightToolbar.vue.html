@@ -1,0 +1,452 @@
+<!-- 首页内容 -->
+<template>
+    <div class="right-toolbars">
+        <div class="fixed-box" v-if='pershow'>
+            <oui-include type="module"  url ='res_engine/ppt_design/preview.vue.html' :data="rightToolbarData"></oui-include>
+        </div>
+        <!--图标按钮-->
+        <div v-for="image in images" @click="buttonClick(image)" :title="image.name" :class="findCls(image)">
+            <img :src="image.src" />
+        </div>
+
+        <!--放大缩小-->
+        <div class="image-icon" title="放大" @click='enlarge'>
+            <img :src="plusUrl"/>
+        </div>
+        <div class="div-percent">
+            <span v-html="percent"></span>%
+        </div>
+        <div class="image-icon" title="缩小" @click='narrow'>
+            <img :src="minusUrl"/>
+        </div>
+
+
+        <!-- 图层 -->
+        <div class="design_bifbox" v-if='showCont'>
+            <div id="apps" @mousedown="move">       <!--绑定按下事件-->
+                <div class="design_move">
+                    <div class="design_move_title">
+                        <div>部件列表</div>
+                        <div id='close' @click='showCont = false'>X</div>
+                    </div>
+                    <div class="design_move_content" v-for='(item,index) in pageDataList'>
+                        <div>
+                            <img v-if='item.show' @click='dataShow(index)' src="/res_engine/ppt_design/images/ic_showt.png" alt="">
+                            <img v-else @click='dataShow(index)' src="/res_engine/ppt_design/images/ic_showf.png" alt="">
+                        </div>
+                        <div>{{item.name}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                pershow:false,
+                rightToolbarData:{},
+                percent:100,
+                historyMax:10,
+                ready2loadHistory:false,
+                plusUrl:oui.getContextPath()+'res_engine/ppt_design/images/ic_plus.png',
+                minusUrl:oui.getContextPath()+'res_engine/ppt_design/images/ic_minus.png',
+                images:[{
+                        src:oui.getContextPath()+'res_engine/ppt_design/images/ic_prev.png',
+                        action:'prev',
+                        name:'撤销'
+                    },
+                    {
+                        name:'恢复',
+                        action:'next',
+                        src:oui.getContextPath()+'res_engine/ppt_design/images/ic_next.png'
+                    },
+                    {
+                        name:'预览',
+                        action:'preview',
+                        src:oui.getContextPath()+'res_engine/ppt_design/images/ic_preview.png'
+                    },
+                    {
+                        name:'图层',
+                        action:'showControls',
+                        src:oui.getContextPath()+'res_engine/ppt_design/images/ic_layers.png'
+                    },
+                    // {
+                    //     name:'音乐',
+                    //     action:'music',
+                    //     src:oui.getContextPath()+'res_engine/ppt_design/images/ic_music.png'
+                    // }
+                ],
+                transformX:1,
+                transformY:1,
+                positionX:0,
+                positionY:0,
+                pageDataList:[],
+                showCont:false,
+            
+                
+            }
+        },
+        mounted: function () {
+            if(com.oui.absolute.AbsoluteDesign.transformX) {
+                this.transformX = com.oui.absolute.AbsoluteDesign.transformX
+                this.transformY = com.oui.absolute.AbsoluteDesign.transformY
+                this.percent = com.oui.absolute.AbsoluteDesign.percent
+            }
+
+            this.pageDataList = com.oui.absolute.AbsoluteDesign.data.controls
+            for (const item of this.pageDataList) {
+                item.show = true
+            }
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var me = this;
+            this.messageFunction = function(event){
+                if(!event.data){
+                    return ;
+                }
+                me.onMessage&&me.onMessage(event.data);
+            };
+            window.addEventListener('message',this.messageFunction);
+            this.loadHistory();
+        },
+        methods: {
+            move(e){
+                let odiv = document.getElementById('apps')        //获取目标元素
+                //算出鼠标相对元素的位置
+                let disX = e.clientX - odiv.offsetLeft;
+                let disY = e.clientY - odiv.offsetTop;
+                document.onmousemove = (e)=>{       //鼠标按下并移动的事件
+                    //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+                    let left = e.clientX - disX;    
+                    let top = e.clientY - disY;
+                    //绑定元素位置到positionX和positionY上面
+                    this.positionX = top;
+                    this.positionY = left;
+                    //移动当前元素
+                    odiv.style.left = left + 'px';
+                    odiv.style.top = top + 'px';
+                };
+                document.onmouseup = (e) => {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                };
+            },
+            findCls:function(image){
+                var isReadOnly = false;
+                if(image.action =='prev' || image.action =='next'){
+                    //向前
+                    if(image.action =='prev'){
+                        if(com.oui.absolute.AbsoluteDesign.currentHistoryIndex==0){
+                            isReadOnly = true;
+                        }
+                    }else{
+                        if(com.oui.absolute.AbsoluteDesign.currentHistoryIndex>= com.oui.absolute.AbsoluteDesign.currentHistoryMaxIndex ){
+                            isReadOnly = true;
+                        }
+                    }
+                    //向后
+                }
+                if(isReadOnly){
+                    return 'image-icon image-icon-readOnly';
+                }
+                return 'image-icon';
+            },
+            buttonClick:function(image){
+                this[image.action]&&this[image.action]();
+                console.log(image)
+            },
+            prev:function(){//还原到上一步
+                if(com.oui.absolute.AbsoluteDesign.ready2loadHistory){
+                    return ;
+                }
+                var timer = oui.getPageParam('timer_reviewHistory');
+                if(timer){
+                    clearTimeout(timer);
+                }
+                var me = this;
+                timer = setTimeout(function(){
+                    com.oui.absolute.AbsoluteDesign.currentHistoryIndex= com.oui.absolute.AbsoluteDesign.currentHistoryIndex-1;
+                    if(com.oui.absolute.AbsoluteDesign.currentHistoryIndex<0){
+                        com.oui.absolute.AbsoluteDesign.currentHistoryIndex = 0;
+                    }
+                    me.reviewHistory()
+                },1);
+                oui.setPageParam('timer_reviewHistory',timer);
+            },
+            next:function(){//回退到下一步
+                if(com.oui.absolute.AbsoluteDesign.ready2loadHistory){
+                    return ;
+                }
+                var timer = oui.getPageParam('timer_reviewHistory');
+                if(timer){
+                    clearTimeout(timer);
+                }
+                var me = this;
+                timer = setTimeout(function(){
+                    com.oui.absolute.AbsoluteDesign.currentHistoryIndex = com.oui.absolute.AbsoluteDesign.currentHistoryIndex+1;
+                    if(com.oui.absolute.AbsoluteDesign.currentHistoryIndex>= com.oui.absolute.AbsoluteDesign.currentHistoryMaxIndex){
+                        com.oui.absolute.AbsoluteDesign.currentHistoryIndex = com.oui.absolute.AbsoluteDesign.currentHistoryMaxIndex;
+                    }
+                    me.reviewHistory()
+                },1);
+                oui.setPageParam('timer_reviewHistory',timer);
+
+            },
+            loadHistory:function(){ //加载本地历史数据
+                var me = this;
+                var pageId = com.oui.absolute.AbsoluteDesign.pageId;
+                if(typeof com.oui.absolute.AbsoluteDesign.currentHistoryIndex =='undefined'){
+                    oui.biz.db.ppt_page_design.selectOne(pageId,function(res){
+                        if(res&&res.history){
+                            com.oui.absolute.AbsoluteDesign.currentHistoryIndex = res.history.length-1;
+                            com.oui.absolute.AbsoluteDesign.currentHistoryMaxIndex = res.history.length-1;
+                            res = null;
+                            delete res;
+                        }else{//默认放入历史
+                            me.cmd4addHistory({pageId:pageId});
+                        }
+                    });
+                }
+            },
+            //查看历史
+            reviewHistory:function(){
+                //如果正在加载历史，则步执行
+                console.log('当前索引',com.oui.absolute.AbsoluteDesign.currentHistoryIndex);
+                var index = com.oui.absolute.AbsoluteDesign.currentHistoryIndex;
+                com.oui.absolute.AbsoluteDesign.ready2loadHistory = true;
+                var pageId = com.oui.absolute.AbsoluteDesign.pageId;
+                oui.biz.db.ppt_page_design.selectOne(pageId,function(res){
+                    if(res&&res.history){
+                        if(index<0){
+                            index=0;
+                        }
+                        if(index>res.history.length-1){
+                            index=res.history.length-1;
+                        }
+                        com.oui.absolute.AbsoluteDesign.currentHistoryIndex = index;
+                        var last = res.history [index];
+                        if(last){
+                            var obj = oui.parseJson(last);
+                            if(obj.currentControl&&obj.currentControl.id&&obj.currentControl.htmlType){
+                                var one = oui.findOneFromArrayBy(obj.controls,function(item){
+                                    if(item.id == obj.currentControl.id){
+                                        return true;
+                                    }
+                                });
+                                obj.currentControl  = one;
+                            }else{
+                                obj.currentControl =obj.currentControl;
+                            }
+                            com.oui.absolute.AbsoluteDesign.data = obj;
+                            var Design = com.oui.absolute.AbsoluteDesign;
+                            var pptControl = Design.data.currentControl;
+                            $('.el-tooltip__popper').remove();
+                            if(pptControl&&pptControl.id&&pptControl.controlType){
+                                Design.changed4props({},function(){
+                                    Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                                    setTimeout(function(){
+                                        com.oui.absolute.AbsoluteDesign.ready2loadHistory = false;
+                                    },1000);
+                                });
+                            }else{
+                                Design.setCurrPropsData4page('props', 'down2selectPage');
+                                setTimeout(function(){
+                                    com.oui.absolute.AbsoluteDesign.ready2loadHistory = false;
+                                },1000);
+                            }
+                            last=null;
+                            delete last;
+                        }else{
+                            com.oui.absolute.AbsoluteDesign.ready2loadHistory=false;
+                        }
+                    }else{
+                        com.oui.absolute.AbsoluteDesign.ready2loadHistory=false;
+                    }
+                });
+            },
+            preview:function(){//预览
+                this.pershow = true 
+               
+            },
+            showControls:function(){ //图层
+                this.showCont = !this.showCont
+            },
+            music:function(){ //音乐
+
+            },
+            enlarge() { //放大
+                if(this.percent == 120) {
+                    return
+                }
+
+                var scrollEl = $('.design-middle');
+                console.log(scrollEl)
+                
+                this.transformX = this.transformX + 0.1
+                this.transformY = this.transformY + 0.1
+                this.percent = this.percent + 10
+                com.oui.absolute.AbsoluteDesign.percent = this.percent
+                com.oui.absolute.AbsoluteDesign.transformX = this.transformX;
+                com.oui.absolute.AbsoluteDesign.transformY = this.transformY;
+            },
+            narrow() { //缩小
+                if(this.percent == 40) {
+                    return
+                }
+                this.transformX = this.transformX - 0.1
+                this.transformY = this.transformY - 0.1
+                this.percent = this.percent - 10
+                com.oui.absolute.AbsoluteDesign.percent = this.percent
+                com.oui.absolute.AbsoluteDesign.transformX = this.transformX;
+                com.oui.absolute.AbsoluteDesign.transformY = this.transformY;
+            },
+            onMessage:function(data){
+                 data.cmd&&this[data.cmd]&&this[data.cmd](data.param);
+            },
+            //关闭预览弹框
+            cmd4hide:function(param) {
+                this.pershow = false
+            },
+            //更新缓存历史记录
+            cmd4addHistory:function(param){
+                var me = this;
+                var _timer= oui.getPageParam('timer_addHistory');
+                if(_timer){
+                    clearTimeout(_timer);
+                }
+                _timer = setTimeout(function(){
+                    var pageId = param.pageId;
+                    var pageList = com.oui.absolute.AbsoluteDesign.pageList||[];
+                    
+                    var one = oui.findOneFromArrayBy(pageList||[],function(item){
+                        if(item.PageId == pageId){
+                            return true;
+                        }
+                    });
+                    if(one && (com.oui.absolute.AbsoluteDesign.pageId == pageId)){
+                        oui.biz.db.ppt_page_design.selectOne(pageId,function(res){
+                            var str = oui.parseString(com.oui.absolute.AbsoluteDesign.data);
+                            if(!res){
+                                var tempOne = {
+                                    id:pageId,
+                                    history:[str]
+                                };
+                                oui.biz.db.ppt_page_design.saveOrUpdate(tempOne);
+                                com.oui.absolute.AbsoluteDesign.currentHistoryIndex =0;
+                            }else if(res&&res.history){
+                                var last = res.history [res.history.length-1];
+                                if(last != str){
+                                    res.history.push(str);
+                                    if(res.history.length>me.historyMax){
+                                        var removeLen = res.history.length-me.historyMax;
+                                        res.history.splice(0,removeLen);
+                                    }
+                                    oui.biz.db.ppt_page_design.saveOrUpdate(oui.parseJson(oui.parseString(res)));
+                                    com.oui.absolute.AbsoluteDesign.currentHistoryIndex = res.history.length-1;
+                                    com.oui.absolute.AbsoluteDesign.currentHistoryMaxIndex = res.history.length-1;
+                                    res.history=null;
+                                    res = null;
+                                    delete res;
+
+                                }
+                            }
+                        });
+
+
+                    }
+                },300);
+                oui.setPageParam('timer_addHistory',_timer);
+            },
+            dataShow(index) {
+                var controls = com.oui.absolute.AbsoluteDesign.data.controls||[];
+           
+                this.pageDataList[index].show = !this.pageDataList[index].show
+                console.log(this.pageDataList,321321321)
+                this.$forceUpdate()
+                if(controls[index]){
+                    var display =  controls[index].innerStyle.styleFieldOuter.display;
+                    if(display=='none'){
+                        controls[index].innerStyle.styleFieldOuter.display = ''
+                    }else{
+                        controls[index].innerStyle.styleFieldOuter.display = 'none'
+                    }
+                    
+                } 
+                com.oui.absolute.AbsoluteDesign.renderCenterAll(); 
+            }
+        }
+    }
+
+</script>
+<style>
+    .fixed-box{
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+    .image-icon-readOnly{
+        opacity: 0.65;
+    }
+    .right-toolbars{
+        width: 50px; height: 100%; background: #3C3C3C
+    }
+
+    .image-icon,.div-percent{
+        text-align: center;
+        padding-top: 10px;
+    }
+    .image-icon{
+        cursor: pointer;
+    }
+    .div-percent{
+        color: #ffffff;
+    }
+    #control_items>div{
+        transform: scale({{transformX}}, {{transformY}});
+
+    }
+    .design_box{position: absolute;width: 160px; min-height: 100px; top:100px;left:100px;z-index: 1000;border-radius: 5px;background-color: rgb(54, 54, 54);}
+    .design_move{width: 100%;height: 100%;padding: 10px;font-size: 12px;color: #fff;}
+    .design_move:hover{cursor: pointer;}
+    .design_close{position: absolute;width: 30px;height: 30px;top:0px;right:0px;background:red;text-align: center;line-height: 30px;}
+    .design_move_title{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(128, 128, 128, 0.15);
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+    }
+    .design_move_content{
+        display: flex;
+        align-items: center;
+        margin: 5px 0 5px 0;
+    }
+    .design_move_content >div{
+        margin: 0 5px 0 0;
+    }
+    #apps{
+        position: absolute;     /*定位*/
+        top: 50%;
+        left: 50%;
+        width: 160px; min-height: 100px;z-index: 1000;border-radius: 5px;background-color: rgb(54, 54, 54);
+    }
+    .design_bifbox{
+        position: fixed;
+        z-index: 1000;
+        right: 400px;
+        left: 400px;
+      
+    }
+</style>

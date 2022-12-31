@@ -1,0 +1,458 @@
+@charset "utf-8";
+
+table {
+    width: 100%;
+}
+th,td {
+    text-align: left;
+}
+th{
+    background: #eef4fa;
+}
+table tr th img {
+    vertical-align: middle;
+    margin-left: 3px;
+    cursor: pointer;
+}
+/*表格边框开始*/
+.oui-class-tablegrid.table-topBorder table,
+.oui-class-tablegrid.table-th-topBorder table th,
+.oui-class-tablegrid.table-td-topBorder table td{
+    border-top: 1px solid #e6e6e6;
+}
+.oui-class-tablegrid.table-leftBorder table,
+.oui-class-tablegrid.table-th-leftBorder table th,
+.oui-class-tablegrid.table-td-leftBorder table td{
+    border-left: 1px solid #e6e6e6;
+}
+.oui-class-tablegrid.table-rightBorder table,
+.oui-class-tablegrid.table-th-rightBorder table th,
+.oui-class-tablegrid.table-td-rightBorder table td{
+    border-right: 1px solid #e6e6e6;
+}
+.oui-class-tablegrid.table-bottomBorder table,
+.oui-class-tablegrid.table-th-bottomBorder table th,
+.oui-class-tablegrid.table-td-bottomBorder table td{
+    border-bottom: 1px solid #e6e6e6;
+}
+/*表格边框结束*/
+.oui-class-tablegrid{
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling : touch;
+
+}
+.oui-class-tablegrid table {
+    background: #ffffff;
+    width: 100%;
+    padding: 0;
+    table-layout: auto;
+}
+.oui-class-tablegrid table, .oui-class-tablegrid table tr th>span, .oui-class-tablegrid table tr td>span {
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #515151;
+}
+.oui-class-tablegrid table tr th>span, .oui-class-tablegrid table tr td>span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.oui-class-tablegrid table tr td>span{
+    color: rgba(81,81,81,.8);
+}
+.oui-class-tablegrid table tr td>span a{
+    color: rgba(81,81,81,.8);
+    display: inline-block;
+    height: 100%;
+    cursor: pointer;
+}
+.oui-class-tablegrid table tr td>span a:hover{
+    color: #2C82FC;
+    display: inline-block;
+    height: 100%;
+}
+
+.oui-class-tablegrid table tr th>span, .oui-class-tablegrid table tr td>span {
+    display: block;
+    /*margin: 0 auto;在控件较少时让span居左，故注释掉该行代码*/
+    position: relative;
+}
+
+.oui-class-tablegrid table tr th>span {
+    background: #eef4fa;
+    height: 50px;
+    line-height: 50px;
+    width: 200px;
+    border: none;
+    padding: 0 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.oui-class-tablegrid table tr td>span {
+    height: 40px;
+    line-height: 40px;
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 8px;
+}
+
+/*span里面的元素出现省略号*/
+.oui-class-tablegrid table tr td>span>p,
+.oui-class-tablegrid table tr td>span>a{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block !important;
+}
+/*span里面的元素出现省略号*/
+/*添加最大、最小宽度*/
+.oui-class-tablegrid-1 table tr th>span {
+    line-height: 50px;
+    width: auto;
+    min-width: 150px;
+    max-width: 300px;
+    border: none;
+    text-align: left;
+    padding: 0 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.oui-class-tablegrid-1 table tr td>span {
+    height: 40px;
+    line-height: 40px;
+    width: auto;
+    min-width: 150px;
+    max-width: 300px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 8px;
+    text-align: left;
+}
+/*添加最大、最小宽度*/
+/*最大宽度为600*/
+.oui-class-tablegrid-2 table tr th>span {
+    line-height: 50px;
+    width: auto;
+    min-width: 150px;
+    max-width: 500px;
+    border: none;
+    text-align: left;
+    padding: 0 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.oui-class-tablegrid-2 table tr td>span {
+    height: 40px;
+    line-height: 40px;
+    width: auto;
+    min-width: 150px;
+    max-width: 500px;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 8px;
+    text-align: left;
+}
+/*添加最大、最小宽度*/
+.oui-class-tablegrid table tr th>span p:nth-child(2),.oui-class-tablegrid table tr td>span p:nth-child(2){
+    margin: 0 3px;
+    width: 50px;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.oui-class-tablegrid table tr th.fixed-width,
+.oui-class-tablegrid table tr td.fixed-width,
+.oui-class-tablegrid table tr th.fixed-width-serialnumber,
+.oui-class-tablegrid table tr td.fixed-width-serialnumber{
+    min-width:inherit;
+    max-width: none;
+    width: 80px !important;
+}
+.oui-class-tablegrid table tr th.fixed-width>span,
+.oui-class-tablegrid table tr td.fixed-width>span,
+.oui-class-tablegrid table tr th.fixed-width-serialnumber>span,
+.oui-class-tablegrid table tr td.fixed-width-serialnumber>span{
+    max-width: 80px !important;
+    min-width: 80px !important;
+    width: 80px !important;
+}
+.oui-class-tablegrid table thead tr th:nth-child(1){
+    background: #eef4fa;
+}
+
+.oui-class-tablegrid table tbody tr:nth-child(2n) {
+    background: rgba(230,230,230,.4);
+}
+
+.oui-class-tablegrid table tr:hover {
+    background: #eeeeee;
+}
+.oui-class-tablegrid table tr.active{
+    background-color:#dee9f5 !important;
+}
+.table-body{
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+}
+.table-header{
+    overflow: hidden;
+}
+/*.table-body {
+    position: relative;
+}移动端不滚动*/
+.table-body:hover{
+    height: 100%;
+}
+.table-scorll-seat{
+    display: block;
+    background: #e6e6e6;
+    width: 17px;
+    height: 100%;
+}
+/*表格操作*/
+.tr-operation {
+    background: rgba(0,0,0,.45);
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    width: 36px;
+    height: 108px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #515151;
+    text-align: center;
+}
+.tr-operation span{
+    background: url("../images/table-Troption-icon.png") no-repeat;
+    width: 24px;
+    height: 24px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 9px;
+    cursor: pointer;
+}
+.tr-operation span.tr-copy{
+    background-position: 0 0;
+}
+.tr-operation span.tr-copy:hover{
+    background-position: -24px 0;
+}
+.tr-operation span.tr-add{
+    background-position: 1px -24px;
+}
+.tr-operation span.tr-add:hover{
+    background-position: -23px -24px;
+}
+.tr-operation span.tr-delete{
+    background-position: 0 -48px;
+}
+.tr-operation span.tr-delete:hover{
+    background-position: -24px -48px;
+}
+.table-body-rows-view {
+    position: relative;
+    z-index: 9;
+    overflow: auto;
+    height: 100%;
+    width: auto;
+}
+
+.table-body-vscroll {
+    width: 18px;
+    overflow: hidden;
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.table-body-vscroll-content {
+    width: 1px;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.text-center{
+    text-align: center !important;
+}
+
+
+/*表格头部toolbar*/
+.oui-class-tablegrid .table-grid-toolbar{
+    width: 100%;
+    overflow: hidden;
+    padding: 4px 0;
+}
+.oui-class-tablegrid .table-grid-toolbar .table-grid-btns-view{
+    width: auto;
+    float: left;
+    font-size: 0;
+}
+.oui-class-tablegrid .table-grid-toolbar .table-grid-search-view{
+    width: auto;
+    float: right;
+    font-size: 0;
+}
+.oui-class-tablegrid .table-grid-toolbar .table-grid-btns-view span{
+    display: inline-block;
+    margin-right: 14px;
+}
+.oui-class-tablegrid .table-grid-toolbar .table-grid-btns-view span button{
+    display: inline-block;
+    padding: 4px 18px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    outline: none;
+}
+
+.oui-class-tablegrid-1 .icon-add,
+.oui-class-tablegrid-1 .icon-edit,
+.oui-class-tablegrid-1 .icon-delete{
+    color: #ffffff;
+    background: #2C82FC;
+}
+.oui-class-tablegrid-1 .icon-add:hover,
+.oui-class-tablegrid-1 .icon-edit:hover,
+.oui-class-tablegrid-1 .icon-delete:hover{
+    color: #ffffff;
+    background: #337ab7;
+}
+.oui-class-tablegrid-2 .icon-add,
+.oui-class-tablegrid-2 .icon-edit,
+.oui-class-tablegrid-2 .icon-delete{
+    color: #fff;
+    background: #5bc0de;
+}
+.oui-class-tablegrid-2 .icon-add:hover,
+.oui-class-tablegrid-2 .icon-edit:hover,
+.oui-class-tablegrid-2 .icon-delete:hover{
+    color: #fff;
+    background: #31b0d5;
+}
+.oui-class-tablegrid-3 .icon-add,
+.oui-class-tablegrid-3 .icon-edit,
+.oui-class-tablegrid-3 .icon-delete{
+    color: #fff;
+    background: #d9534f;
+}
+.oui-class-tablegrid-3 .icon-add:hover,
+.oui-class-tablegrid-3 .icon-edit:hover,
+.oui-class-tablegrid-3 .icon-delete:hover{
+    color: #fff;
+    background: #c9302c;
+}
+/*表格搜索*/
+.table-grid-toolbar .table-grid-search-view span{
+    display: inline-block;
+    vertical-align: middle;
+}
+.table-grid-toolbar .table-grid-search-view .table-grid-search-view-btn button
+{
+    display: inline-block;
+    padding: 4px 18px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    outline: none;
+}
+.oui-table-search-input{
+    width: 100%;
+    min-height: 30px;
+    border: 1px solid #cccccc;
+    border-right: 0;
+    padding: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 14px;
+    outline: none;
+}
+.oui-table-search-input:focus{
+    border-color: #2C82FC;
+}
+.icon-search{
+    color: #ffffff;
+    background: #2C82FC;
+}
+.icon-search:hover{
+    color: #ffffff;
+    background: #337ab7;
+}
+
+/*表格底部分页信息*/
+.table-grid-footer{
+    width: 100%;
+    overflow: hidden;
+    padding: 4px 0;
+}
+.table-grid-footer .table-grid-pager{
+    width: 100%;
+    overflow: hidden;
+}
+.table-grid-footer .table-grid-pager .pager-btns{
+    width: auto;
+    float: left;
+}
+.table-grid-footer .table-grid-pager .pager-info{
+    width: auto;
+    float: right;
+}
+
+
+
+
+

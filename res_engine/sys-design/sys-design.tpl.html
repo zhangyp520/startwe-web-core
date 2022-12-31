@@ -1,0 +1,205 @@
+
+<oui-view id="sys-design"
+          data="com.oui.models.sys.web.SysController4Design.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script id="sys-design-tpl" type="text/html" charset="utf-8">
+
+    <div class="pg-block" oui-controller="com.oui.models.sys.web.SysController4Design" >
+        <link type="text/css" rel="stylesheet" href="{{oui.getContextPath()}}res_engine/graph-common/css/orgchart.css" />
+        <link type="text/css" rel="stylesheet" href="{{oui.getContextPath()}}res_engine/graph-common/css/font-awesome.min.css" />
+        <link href="{{oui.getContextPath()}}res_engine/page_design/pc/css/page-common-runtime.css" />
+        <link rel="stylesheet" href="{{oui.getContextPath()}}res_common/third/element-ui/lib/theme-chalk/index.css">
+        <div class="pg-block-header">
+            <a class="button" href="#" oui-e-{{SysController4Design.treeMap.clickName}}="event2exportGraph">导出图片</a>
+            <a style="visibility: hidden" href="#" class="download"></a>
+            <!--<a href="#" oui-e-{{SysController4Design.treeMap.clickName}}="event2saveDesign" >保存设计 </a>-->
+        </div>
+        <div class="pg-block-cont sys-design-graph" style="overflow: hidden">
+            <div class="orgchart">
+                {{include 'sys-table-tpl' ({treeMap:SysController4Design.treeMap,nodeId:SysController4Design.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+</script> 
+<script type="text/html" id="sys-table-tpl">
+    <table table-node-id="{{nodeId}}">
+        <tbody>
+        <tr>
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="node" draggable="true"  node-id="{{nodeId}}" oui-e-{{treeMap.clickName}}="event2showMenu"  >
+                    <div class="title" title="{{treeMap.findNodeName(nodeId)}}" >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        {{treeMap.findNodeName(nodeId)}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.hasChildren(nodeId) && treeMap.isExpand(nodeId)}}
+        <tr class="lines" >
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down"></div>
+            </td>
+        </tr>
+        <tr class="lines">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" class="">
+                {{include 'sys-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-sys-tpl">
+    <div class="second-menu">
+        {{if treeMap.findSourceNode(nodeId).nodeType==SysController4Design.nodeTypeEnum.root.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addSys" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加系统
+        </div>
+        <!--<div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">-->
+            <!--编辑-->
+        <!--</div>-->
+        {{/if}}
+
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==SysController4Design.nodeTypeEnum.sys.name}}
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑基本信息
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除当前系统
+        </div>
+        <!--<div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll" oui-e-{{treeMap.clickName}}="event2menuAction">-->
+            <!--删除所有-->
+        <!--</div>-->
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        <!--swapSort,swap,addParentByTarget,addBrotherByTarget,addChildByTarget,hideMenu4DragEnd -->
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" style="display: none" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swap" oui-e-{{treeMap.clickName}}="event2menuAction">
+            交换位置
+        </div>
+        {{if !treeMap.isChild(nodeId,targetNodeId)}}
+        {{if !treeMap.hasParents(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="addChildByTarget" oui-e-{{treeMap.clickName}}="event2menuAction">
+            变更为目标节点的子节点
+        </div>
+        {{/if}}
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<!--编辑节点名称模板-->
+<script type="text/html" id="node-edit-tpl">
+    <input type="text" node-id="{{nodeId}}" style="position: absolute;left:0;top:0;height: 40px;color:#000000" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+</script>
+
+<!--业务设置模板-->
+<script type="text/html" id="node-biz-edit-tpl">
+    <div>
+
+
+
+        <div class="page-abs page-abs-normalForm paper-area  bg-center" style="background-color:#ffffff;;">
+            <div id="ctrl_763710868814690564" class="control-abs control-abs-component control-abs-html-textInput control-abs-textfield control-abs-oneLine " style="left:0px;top:0px;z-index:1;opacity:1;width:99.7480%;height:68.6563px;border-radius:0px;border-left-width:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;background-color:#ffffff;border-left-color:#e6e6e6;border-top-color:#e6e6e6;border-bottom-color:#e6e6e6;border-right-color:#e6e6e6;border-left-style:solid;border-top-style:solid;border-bottom-style:solid;border-right-style:solid">
+                <div class="control-inner-abs" style="left:px;top:px;z-index:;opacity:1;vertical-align:middle">
+
+
+
+
+                    <div class="control-title-abs" style="left:px;top:px;z-index:;opacity:1;line-height:1.6;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:left;white-space:normal">页面url</div>
+                    <div class="control-container-abs" style="left:px;top:px;z-index:;opacity:1;text-align:left">
+                        <div class="el-input control-field-value-abs" oui-controller="oui.routerView.refs.v963676048646969580.instance" style="opacity: 1; line-height: 1.6; border-width: 0px; font-size: 14px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid; color: rgb(51, 51, 51); font-weight: normal; text-align: left; white-space: normal;"><!----><input type="text" autocomplete="off" id="field-ctrl_763710868814690564" name="field-ctrl_763710868814690564" bindprop="ctrl_299720568390613528" placeholder="" class="el-input__inner"><!----><!----><!----><!----></div>
+                    </div>
+
+
+
+                </div>
+            </div>    <div id="ctrl_153205748935974183" class="control-abs control-abs-component control-abs-html-textInput control-abs-textfield control-abs-oneLine " style="left:0px;top:68.6563px;z-index:2;opacity:1;width:99.7480%;height:68.6563px;border-radius:0px;border-left-width:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;background-color:#ffffff;border-left-color:#e6e6e6;border-top-color:#e6e6e6;border-bottom-color:#e6e6e6;border-right-color:#e6e6e6;border-left-style:solid;border-top-style:solid;border-bottom-style:solid;border-right-style:solid">
+            <div class="control-inner-abs" style="left:px;top:px;z-index:;opacity:1;vertical-align:middle">
+
+
+
+
+                <div class="control-title-abs" style="left:px;top:px;z-index:;opacity:1;line-height:1.6;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:left;white-space:normal">页面名称(默认为菜单名称)</div>
+                <div class="control-container-abs" style="left:px;top:px;z-index:;opacity:1">
+                    <div class="el-input control-field-value-abs" oui-controller="oui.routerView.refs.v768191169909350294.instance" style="opacity: 1; line-height: 1.6; border-width: 0px; font-size: 14px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid; color: rgb(51, 51, 51); font-weight: normal; text-align: left; white-space: normal;"><!----><input type="text" autocomplete="off" id="field-ctrl_153205748935974183" name="field-ctrl_153205748935974183" bindprop="ctrl_550111363018200581" placeholder="" class="el-input__inner"><!----><!----><!----><!----></div>
+                </div>
+
+
+
+            </div>
+        </div>    <div id="ctrl_032160903654615398" class="control-abs control-abs-component control-abs-html-selectInput control-abs-singleselect control-abs-oneLine " style="left:0px;top:137.3126px;z-index:3;opacity:1;width:99.7480%;height:49px;border-radius:0px;border-left-width:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;background-color:#ffffff;border-left-color:#e6e6e6;border-top-color:#e6e6e6;border-bottom-color:#e6e6e6;border-right-color:#e6e6e6;border-left-style:solid;border-top-style:solid;border-bottom-style:solid;border-right-style:solid">
+            <div class="control-inner-abs" style="left:px;top:px;z-index:;opacity:1;vertical-align:middle">
+
+
+
+
+                <div class="control-title-abs" style="left:px;top:px;z-index:;opacity:1;line-height:1.6;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:left;white-space:normal">交互方式</div>
+                <div class="control-container-abs" style="left:px;top:px;z-index:;opacity:1">
+                    <div class="el-select control-field-value-abs" bindprop="ctrl_736826871882771220" oui-controller="oui.routerView.refs.v702902191306424829.instance" style="opacity: 1; line-height: 1.6; border-width: 0px; font-size: 14px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid; color: rgb(51, 51, 51); font-weight: normal; text-align: left; white-space: normal;"><!----><div class="el-input el-input--suffix"><!----><input type="text" readonly="readonly" autocomplete="off" placeholder="" name="field-ctrl_032160903654615398" id="field-ctrl_032160903654615398" class="el-input__inner"><!----><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-select__caret el-input__icon el-icon-arrow-up"></i><!----><!----><!----><!----><!----></span><!----></span><!----><!----></div><div class="el-select-dropdown el-popper" style="display: none; min-width: 212px;"><div class="el-scrollbar" style="display: none;"><div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;"><ul class="el-scrollbar__view el-select-dropdown__list"><!----> <style scoped="scoped"></style></ul></div><div class="el-scrollbar__bar is-horizontal"><div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div></div><div class="el-scrollbar__bar is-vertical"><div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div></div></div><p class="el-select-dropdown__empty">
+                        无数据
+                    </p></div></div>
+                </div>
+
+
+
+            </div>
+        </div>    <div id="ctrl_383463351856751879" class="control-abs control-abs-component control-abs-html-textInput control-abs-textarea control-abs-oneLine " style="left:0px;top:186.3126px;z-index:4;opacity:1;width:99.7480%;height:97.6563px;border-radius:0px;border-left-width:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;background-color:#ffffff;border-left-color:#e6e6e6;border-top-color:#e6e6e6;border-bottom-color:#e6e6e6;border-right-color:#e6e6e6;border-left-style:solid;border-top-style:solid;border-bottom-style:solid;border-right-style:solid">
+            <div class="control-inner-abs" style="left:px;top:px;z-index:;opacity:1;vertical-align:middle">
+
+
+
+
+                <div class="control-title-abs" style="left:px;top:px;z-index:;opacity:1;line-height:1.6;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:left;white-space:normal">页面描述</div>
+                <div class="control-container-abs" style="left:px;top:px;z-index:;opacity:1">
+                    <div class="el-textarea control-field-value-abs" oui-controller="oui.routerView.refs.v427784139619508810.instance" style="opacity: 1; line-height: 1.6; border-width: 0px; font-size: 14px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid; color: rgb(51, 51, 51); font-weight: normal; text-align: left; white-space: normal;"><textarea autocomplete="off" rows="3" id="field-ctrl_383463351856751879" name="field-ctrl_383463351856751879" bindprop="ctrl_163708382556182240" placeholder="" class="el-textarea__inner"></textarea><!----></div>
+                </div>
+
+
+
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+</script>
+
+
+
+
+
+

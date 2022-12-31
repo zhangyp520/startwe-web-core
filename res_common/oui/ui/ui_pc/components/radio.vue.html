@@ -1,0 +1,105 @@
+<!--单选组-->
+<template >
+   <div class="radio-group-outer"  >
+       <el-radio-group v-model="value"
+                       :tempStyle="style"
+                       :id="id"
+                       :name="name"
+                       :bindProp="bindProp"
+                       :class="cls"
+                       :placeholder="placeholder"
+                       @change="_controlOnUpdate"
+                       :disabled="disabled" 
+                       v-show="!hidden"
+                       :style="{flexDirection:direction,display:'flex'}"
+               >
+
+
+           <el-radio v-if="!isButton" v-for="item in data" :label="item.value">{{item.display}}</el-radio>
+           <el-radio-button v-if="isButton" v-for="item in data" :label="item.value">{{item.display}}</el-radio-button>
+       </el-radio-group>
+   </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                otherAttrs:null,
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'',
+                direction:'row',
+                isButton:false,
+                status:'',
+                disabled:false, 
+                hidden:false
+            }
+        },
+        mounted:function(){
+            debugger;
+            if(this.otherAttrs.sourceType == "diy"){
+                let defaultSelect = this.otherAttrs.sourceDiyValues.items.find(_i =>  _i.key == this.otherAttrs.sourceDiyValues.defaultShow);
+                this.value = defaultSelect.value;
+                this.data = this.otherAttrs.sourceDiyValues.items;
+            } else if(!this.data.length){ 
+                if(this.otherAttrs&&this.otherAttrs.data){
+                    this.data = this.otherAttrs.data;
+                } 
+            } 
+            if(this.otherAttrs && this.otherAttrs.direction){
+                this.direction = this.otherAttrs.direction
+            }
+            if(this.otherAttrs && this.otherAttrs.isButton){
+                this.isButton = this.otherAttrs.isButton
+            }
+
+            if( this.otherAttrs.status ){
+
+
+                if(this.otherAttrs.status == '禁用'){
+                    this.disabled = true;
+                }
+                if(this.otherAttrs.status == '只读'){
+                    this.readonly = true;
+                } 
+                if(this.otherAttrs.status == '隐藏'){
+                    this.hidden = true;
+                }
+
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                debugger
+                var key = this.bindProp;
+                var data4db = {};
+                if(v){
+                    var one = oui.findOneFromArrayBy(this.data,function(item){
+                        if((item.value+'') == (v+'')){
+                            return true;
+                        }
+                    });
+                    data4db = one;
+                }
+                console.dir(this);
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:data4db, display:data4db.display }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+.el-radio-group.control-field-value-abs{
+    line-height: 35px;
+}
+.radio-group-outer{
+    line-height: 35px
+}
+</style>

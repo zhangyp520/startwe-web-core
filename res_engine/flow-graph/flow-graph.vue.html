@@ -1,0 +1,48 @@
+<template>
+    <div >
+        {{content}}
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                treeMap:{},
+                content:''
+            }
+        },
+        mounted: function () {
+            var me = this;
+            oui.require([
+                oui.getContextPath()+'res_engine/graph-common/js/tree-map.js'
+            ],function(){
+                // 加载模板 进行渲染
+                var tpl = oui.loadUrl();
+                var query = me.$router.query ||{};
+                var id = query.flowId;//流程模板id
+                if(id){
+                    //加载流程
+                    //TODO
+                }else{
+                    //新增流程
+                    var treeMap = com.oui.TreeMap.array2treeMap([{}],'id','parentId','name',true);
+                    me.treeMap = treeMap;
+
+                }
+
+                //TODO 绘制流程图
+                oui.require([    oui.getContextPath()+'res_common/third/html2canvas/dist/html2canvas.min.js'],function(){},true);
+
+            }, function(){ }, !(oui_context&&oui_context.debug));
+        },
+
+        methods: {
+
+        }
+    }
+</script>
+<style>
+
+</style>

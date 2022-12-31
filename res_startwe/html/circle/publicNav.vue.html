@@ -1,0 +1,67 @@
+<!-- 公共头部面包屑组件 -->
+<template>
+    <div>
+        <div class="publicNav">
+            <div class="crumbs">< 首页</div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                form: {
+                    region: ''
+                },
+                textarea: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+    /* 内容 */
+    .publicNav{
+        border-bottom: 1px solid #f1f1f1;
+    }
+    .crumbs{
+        width: 80%;
+        margin:20px auto;
+        font-size: 16px;
+    }
+</style>

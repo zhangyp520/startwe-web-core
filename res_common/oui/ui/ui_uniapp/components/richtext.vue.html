@@ -1,0 +1,83 @@
+<template>
+    <div class="oui-class-text curr">
+        <div v-if='richList.length > 0' v-html='richList[index].content' class="textcolor">
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                content:"",
+                //自动切换
+                autoSwitch: false,
+                rollingSpeed: "",
+                rollingContent:'',
+                richList:[],
+                index:0,
+                time:2,
+                setTimeFun:null
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (typeof this.control.otherAttrs.autoSwitch !== 'undefined') {
+                this.autoSwitch = this.control.otherAttrs.autoSwitch;
+
+            }
+            if (this.control.otherAttrs.rollingSpeed) {
+                this.rollingSpeed = this.control.otherAttrs.rollingSpeed;
+                if(this.rollingSpeed == 1) {
+                    this.time = 4
+                }else if(this.rollingSpeed == 2) {
+                    this.time = 2.5
+                }else{
+                    this.time = 1
+                }
+            }
+            if(this.control.otherAttrs.rollingContent) {
+                this.rollingContent = this.control.otherAttrs.rollingContent;
+            }
+            
+            if(this.control.otherAttrs.richList && this.control.otherAttrs.richList.length > 0 ) {
+                this.richList = this.control.otherAttrs.richList
+            }
+            if(this.control.otherAttrs.autoSwitch) {
+                this.setTimeFun = setInterval(() => {
+                    this.index ++
+                    if(this.richList.length == this.index) {
+                        this.index = 0
+                    }
+                },Number(this.time) * 1000)
+            }else{
+                clearInterval(this.setTimeFun)
+            }
+            
+        },
+    }
+</script>
+
+<style>
+    .oui-class-text{
+        font-size: 14px;
+    }
+    .oui-class-text.curr{
+        {style}}
+    }
+    .oui-class-text.curr{
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+    }
+    .textcolor{
+        {{style}}
+    }
+</style>

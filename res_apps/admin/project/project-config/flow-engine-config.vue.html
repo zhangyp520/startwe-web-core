@@ -1,0 +1,140 @@
+<template>
+    <div>
+        <el-form :model="config" ref="config" label-width="100px" class="demo-ruleForm"  size="middle">
+            <el-row style="text-align: center">
+                <el-col span="24" >
+                    <el-form-item label="流程引擎类型">
+                        <oui-include type="module" ref="data4flowEngineType" url="res_common/oui/ui/ui_pc/components/singleselect.vue.html" :data="getData4FlowEngineType()">
+                        </oui-include>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row style="text-align: center" v-if="config.engineType=='primeton_bps'">
+                <el-col span="24" >
+                    <el-form-item label="流程引擎服务地址">
+                        <el-input type="text" v-model="config.website4processApi"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+
+            <el-row style="text-align: center" v-if="config.engineType=='primeton_bps'">
+                <el-col span="24" >
+                    <el-form-item label="流程引擎集成地址">
+                        <el-input type="text" v-model="config.website"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row style="text-align: center" v-if="config.engineType=='primeton_bps'">
+                <el-col span="24" >
+                    <el-form-item label="项目的更新地址（相对于流程引擎集成地址）">
+                        <el-input type="text" v-model="config.projectUpdatePath"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+
+            <el-row>
+                <el-col style="text-align: center">
+                    <el-button   type="primary" @click="event2save" icon="el-icon-save">保存</el-button>
+                </el-col>
+            </el-row>
+        </el-form>
+    </div>
+</template>
+
+<script>
+exports = {
+    name: "engineConfig",
+    data:function() {
+        return {
+            config:{
+                engineType:'primeton_bps',
+                website:'',
+                website4processApi:'',
+                projectUpdatePath:''
+            },
+            cache:{}
+        };
+    },
+    mounted:function(){
+        var me = this;
+        var dialog =  oui.getTop().com.oursui.models.project.web.ProjectController4Design.dialog4projectConfig;
+        var json4save =dialog.attr('json4save');
+        var json = oui.parseJson(json4save);
+        var treeMap = oui.parseJson(json.treeMap);
+        var flowEngineConfig = treeMap.flowEngineConfig||{};
+        for(var k in flowEngineConfig){
+            this.config[k] = flowEngineConfig[k];
+        }
+
+
+    },
+    methods: {
+
+        getData4FlowEngineType:function(){
+            var me =this;
+            var bindKey = 'data4flowEngineType';
+            var cache = this.getCache();
+            if(!cache[bindKey]){
+                cache[bindKey] = {
+                    notClone4Component:true,
+                    value:this.config.engineType,
+                    clearable:false,
+                    id:bindKey,
+                    name:bindKey,
+                    bindProp:bindKey,
+                    data:[{value:'primeton_bps',display:'bps'}],
+                    onUpdate:function(key,v){
+                        me.config.engineType = v;
+                    }
+                };
+                me.$set(cache,bindKey,cache[bindKey]);
+            }
+            return cache[bindKey];
+        },
+        getCache:function(){
+            return this.cache;
+        },
+        event2showConfig:function(){
+            oui.getTop().oui.showInputDialog('当前配置', function(res){
+
+            }, [{type:'textarea',rows:3,value:oui.parseString(this.config)}], {});
+        },
+        event2save:function() {
+
+            var me = this;
+            var dialog =  oui.getTop().com.oursui.models.project.web.ProjectController4Design.dialog4projectConfig;
+            var json4save = dialog.attr('json4save');
+            json4save = oui.parseJson(json4save);
+            json4save.treeMap = oui.parseJson(json4save.treeMap);
+            json4save.treeMap.flowEngineConfig = this.config;
+            json4save.treeMap  = oui.parseString(json4save.treeMap);
+            dialog.attr('json4save',oui.parseString(json4save));
+            var url = dialog.attr('saveDesignUrl');
+            json4save.isUpdateFlowEngineConfig = true;
+            oui.postData(url,json4save,function(res){
+                if(res.success){
+                    me.$message({
+                        message:'保存成功',
+                        type:'success'
+                    });
+                    //保存成果后刷新父页面
+                    var topMe = oui.getTop().com.oursui.models.project.web.ProjectController4Design;
+                    topMe.load({id: topMe.urlParams.id},function(res){
+                        topMe.refreshByRoot();
+                    });
+                }else{
+                    oui.getTop().oui.alert(res.msg);
+                }
+            },function(err){
+                oui.getTop().oui.alert(err);
+            },'保存中...');
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>

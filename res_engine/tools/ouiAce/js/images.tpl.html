@@ -1,0 +1,29 @@
+
+<div class="myidea-images-oper">
+
+    <input type="file" id="myidea-add-img-id"  accept="image/*" multiple="multiple" oui-e-change="event2addImgs" class="display_none" />
+    <button oui-e-click="click2addImgs">添加图片</button>
+    <input id="myidea-selectall-imgs" type="checkbox" class="imgs-select-all" oui-e-click="selectAllImgs" />
+    <label for="myidea-selectall-imgs" id="imgs-all-label" class="imgs-select-all-label">全选</label>
+    <button oui-e-click="event2deleteSelectedImgs">删除图片</button>
+</div>
+<div class="myidea-images">
+
+    {{each imagePaths as item index}}
+        <div class="img-item">
+            <input type="checkbox" oui-e-click="event2selectImg" value="{{index}}"  />
+            <button class="img-del-btn">删除</button>
+            <button class="img-copyUrl-btn">复制路径</button>
+            <button class="img-source-btn">查看原图</button>
+            <div class="img-area larg-img-area">
+                <img index="{{index}}" oui-e-click="showSourceImg" />
+            </div>
+            <div class="img-text">
+                <div class="img-name-input" index="{{index}}" oui-e-keydown="event2enterblur" oui-e-dblclick="event2editFileName" oui-e-blur="event2changeImgName">{{MyIdea.findFileName(item)}}</div>
+                <span>{{MyIdea.findFileEndix(item)}}</span>
+            </div>
+
+        </div>
+    {{/each}}
+</div>
+

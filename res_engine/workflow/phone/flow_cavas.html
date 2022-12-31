@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>工作流-设计</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport"
+		  content="width=device-width, user-scalable=yes, initial-scale=1" />
+	
+      <link rel="stylesheet" type="text/css" href="../../../../res_common/oui/ui/ui_phone/css/dialog.css">
+	<!--业务Css资源 结束-->
+	<style type="text/css">
+		*{
+			font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+		}
+		html{
+			font-size: 100px;
+		}
+	body {
+		margin: 0;
+		pading: 0;
+		text-align: left;
+		font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+		font-size: 12px;
+		line-height: 1.5;
+		color: black;
+		background:#f2f2f2;
+		overflow: hidden;
+	}
+	.flow-body{
+
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.node {
+		width: 70px;
+		text-align: center;
+		vertical-align: middle;
+		border: 1px solid #fff;
+	}
+
+	.mover {
+		border: 1px solid #ddd;
+		background-color: #ddd;
+	}
+
+	.selected {
+		background-color: #ddd;
+	}
+ 
+	#ouiflow {
+		width:100%;
+		text-align:center;
+	}
+	#flow-ui-item{
+		width:100%;
+		text-align:left;
+		margin-top:20px;
+	}
+	.flow-top-button{
+		background:#edf2f7;
+		padding: 0 .2rem;
+		height:36px;
+		border:1px solid #7dabe4;
+		outline:none;
+		font-size:14px;
+		color:#333333;
+		border-radius:3px;
+		margin-right: .2rem;
+		cursor:pointer;
+		display: inline-block;
+	}
+	.flow-top-button-active{
+		background:#5990cf;
+		border:1px solid #5990cf;
+		color:#ffffff;
+	}
+	.oui-tipbox-content{
+		margin:0 -5px;
+	}
+	.oui-tipbox-content ul{
+		list-style:none;
+		padding: 4px 0;
+	}
+	.oui-tipbox-content ul li{
+		line-height:26px;
+		padding-left:7px;
+		padding-right:7px;
+		cursor:pointer;
+	}
+	.oui-tipbox-content ul li a{
+		width:100%;
+		display:block;
+	}
+	.oui-tipbox-content ul li:hover{
+		background:#f2f2f2;
+		color:#5990cf;
+	}
+	.flow-ui-theme,.flow-ui-viewType{
+		width: auto;
+		display: inline-block;
+		text-align:left;
+		margin-bottom: .2rem;
+	}
+	.flow-ui-theme span,.flow-ui-viewType span{
+		padding-left: .1rem;
+		padding-right: .1rem;
+		font-size: 15px;
+	}
+	.flow-ul-operation{
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+	}
+		.flow-ul-operation li{
+			padding: 0 .13rem;
+			height: .47rem;
+			line-height: .47rem;
+			text-align: left;
+			color: #515151;
+			font-size: .15rem;
+			position: relative;
+		}
+		.flow-ul-operation li a{
+			width:100%;
+			display:block;
+		}
+		.flow-ul-operation li:after{
+			content: '';
+			position: absolute;
+			top: -50%;
+			bottom: -50%;
+			left: -50%;
+			right: -50%;
+			-webkit-transform: scale(0.5);
+			transform: scale(0.5);
+			z-index: -1;
+			border-bottom: 1px solid #e6e6e6;
+		}
+		@-webkit-keyframes boxDown-s {
+			0% {
+				-webkit-transform: translate3d(0, 100%, 0);
+				-o-transform: translate3d(0, 100%, 0);
+				transform: translate3d(0, 100%, 0);
+			}
+			100% {
+				-webkit-transform: translate3d(0, 0, 0);
+				-o-transform: translate3d(0, 0, 0);
+				transform: translate3d(0, 0, 0);
+			}
+		}
+
+		@keyframes boxDown-s {
+			0% {
+				-webkit-transform: translate3d(0, 100%, 0);
+				-o-transform: translate3d(0, 100%, 0);
+				transform: translate3d(0, 100%, 0);
+			}
+			100% {
+				-webkit-transform: translate3d(0, 0, 0);
+				-o-transform: translate3d(0, 0, 0);
+				transform: translate3d(0, 0, 0);
+			}
+		}
+		.boxDown-show1{
+			-webkit-animation: boxDown-s .2s ease-in-out;
+			animation: boxDown-s .2s ease-in-out;
+			-webkit-animation-fill-mode: forwards;
+			animation-fill-mode: forwards;
+		}
+	</style>
+</head>
+<body oui-controller="oui.flow.FlowBiz">
+	
+	<div class="flow-body">
+		<div id="flow-ui-item">
+			
+		</div> 
+		<div id="ouiflow"></div>
+	</div>
+	<oui-include type="html" src="res_apps/test/flow4complex/flow-common.tpl"></oui-include>
+</body>
+<script type="text/html" id="flow-tpl-item">
+	<div id="flow-ui-item">
+		<div id="flow-ui-theme" class="flow-ui-theme">
+			<span>选择配色：</span>
+			<button flow-themeId="1" oui-e-{{Events.click}}="event2renderByThemeId" class="flow-top-button {{if (FlowBiz.themeId+'') =='1'}}flow-top-button-active{{/if}}">有底色</button>
+			<button flow-themeId="2" oui-e-{{Events.click}}="event2renderByThemeId" class="flow-top-button {{if (FlowBiz.themeId+'') =='2'}}flow-top-button-active{{/if}}"  >无底色</button>
+		</div>
+		<div id="flow-ui-viewType" class="flow-ui-viewType">
+			<span>选择版式：</span>
+			<button oui-e-{{Events.click}}="event2trans" class="flow-top-button {{if (FlowBiz.isVertical+'') =='false'}}flow-top-button-active{{/if}}">横向</button>
+			<button oui-e-{{Events.click}}="event2vertical" class="flow-top-button {{if (FlowBiz.isVertical+'') =='true'}}flow-top-button-active{{/if}}"> 纵向</button>
+		</div>
+		 
+	</div>
+</script>
+<script type="text/javascript">
+
+
+	 var oui_context={
+		debug:true,
+		contextPath:"../../../../",
+		bizPackage:"oui",
+		prefix:"oui-",
+		controlPrefix:"oui-c-",
+		eventPrefix:"oui-e-",
+		validatePrefix:"oui-v-",
+		beforePrifix:"oui-c-before-",
+		afterPrifix:"oui-c-after-",
+		controller:"oui-controller",
+		ownControll:"oui-c-own"
+	};
+</script>
+<script type="text/javascript"	src="js/buildJs.js" ></script>
+<!--业务资源 结束-->
+<script type="text/javascript">
+var d1 = new Date();
+/**
+ * 加载 基础js资源后
+ */
+loadArr(['res_common/third/jquery/jquery-2.1.4.min.js'],function(){	
+	load4sort([
+	'res_common/oui_phone.js',
+	'res_apps/test/flow4complex/oui-jsclazz.js'
+	//,
+	//'res_apps/test/flow4complex/oui-biz-ext.js'
+	],function(){
+		initRequire(); 
+	});
+});
+/**
+ * 请求资源
+ */
+function initRequire(){
+	 
+	 loadArr([
+	//"res_common/third/raphael-master/raphael1.5/raphael.js"
+	"res_common/third/konva-master/konva.min.js"
+	],function(){
+		// 按需加载业务资源	
+		load4sort(
+		[
+		
+		 "res_apps/test/flow4complex/flow-common.js", //pc和移动公共	
+		 "res_apps/test/flow4complex/phone/common/js/flow-common.js", //phone公共
+		 "res_apps/test/flow4complex/phone/js/flow-ui.js", 
+		 //"res_apps/test/flow4complex/flow-ui.js", 
+		 "res_apps/test/flow4complex/phone/js/flow-biz.js",
+		 "res_apps/test/flow4complex/phone/js/flow-themes.js",
+		 "res_apps/test/flow4complex/phone/js/flow-editors.js"
+		
+		],
+		function(){
+			var d2 = new Date();
+			console.log(d2-d1);
+			ready2init();
+			var d2 = new Date();
+			console.log(d2-d1);
+		}); 
+	});
+}
+function ready2init(){
+	window.setTimeout(function(){
+		d1=new Date(); 
+		oui.flow.FlowBiz.init({flowData: [ //data arr
+				{id:1,name:'发起者'},
+				{id:2,name:'张元平',pid:1},
+				{id:3,name:'林银锋',pid:2},
+				{id:4,name:'杨海',pid:2},
+				{id:5,name:'吴有智',pid:2},
+				{id:6,name:'康艳',pid:2},
+				{id:7,name:'罗雪',pid:3},
+				{id:8,name:'冉芹',pid:3},
+				{id:9,name:'陈亚兰',pid:3},
+				{id:10,name:'罗雪',pid:9},
+				{id:11,name:'冉芹',pid:9},
+				{id:12,name:'陈亚兰',pid:9},
+				{id:13,name:'罗雪',pid:9},
+				{id:14,name:'冉芹',pid:9},
+				{id:15,name:'陈亚兰',pid:9},
+				{id:16,name:'冉芹',pid:9},
+				{id:17,name:'陈亚兰',pid:9},
+				{id:18,name:'罗雪',pid:9},
+				{id:19,name:'冉芹',pid:9},
+				{id:20,name:'陈亚兰',pid:9},
+				{id:21,name:'冉芹',pid:9},
+				{id:22,name:'陈亚兰',pid:9},
+				{id:23,name:'罗雪',pid:9},
+				{id:24,name:'冉芹',pid:9},
+				{id:25,name:'陈亚兰',pid:9},
+				{id:26,name:'冉芹',pid:9},
+				{id:27,name:'陈亚兰',pid:9},
+				{id:28,name:'罗雪',pid:9},
+				{id:29,name:'冉芹',pid:9},
+				{id:30,name:'陈亚兰',pid:9},
+				{id:31,name:'冉芹',pid:9},
+				{id:32,name:'陈亚兰',pid:9},
+				{id:33,name:'罗雪',pid:9},
+				{id:34,name:'冉芹',pid:9},
+				{id:35,name:'陈亚兰',pid:9},
+				{id:36,name:'冉芹',pid:9}
+				,
+				{id:37,name:'陈亚兰',pid:36},
+				{id:38,name:'罗雪',pid:36},
+				{id:39,name:'冉芹',pid:36},
+				{id:40,name:'陈亚兰',pid:36},
+				{id:41,name:'冉芹',pid:36},
+				{id:42,name:'陈亚兰',pid:36},
+				{id:43,name:'罗雪',pid:36},
+				{id:44,name:'冉芹',pid:36},
+				{id:45,name:'陈亚兰',pid:
+				36},
+				{id:46,name:'冉芹',pid:36},
+				{id:47,name:'陈亚兰',pid:36},
+				{id:48,name:'罗雪',pid:36},
+				{id:49,name:'冉芹',pid:36},
+				{id:50,name:'陈亚兰',pid:36}
+				/*
+				 *,
+				{id:37,name:'陈亚兰',pid:36},
+				{id:38,name:'罗雪',pid:36},
+				{id:39,name:'冉芹',pid:36},
+				{id:40,name:'陈亚兰',pid:36},
+				{id:41,name:'冉芹',pid:36},
+				{id:42,name:'陈亚兰',pid:36},
+				{id:43,name:'罗雪',pid:36},
+				{id:44,name:'冉芹',pid:36},
+				{id:45,name:'陈亚兰',pid:
+				36},
+				{id:46,name:'冉芹',pid:36},
+				{id:47,name:'陈亚兰',pid:36},
+				{id:48,name:'罗雪',pid:36},
+				{id:49,name:'冉芹',pid:36},
+				{id:50,name:'陈亚兰',pid:36}
+				 */
+			]});
+			/*
+			 *,
+				
+				{id:10,name:'罗雪',pid:9},
+				{id:11,name:'冉芹',pid:9},
+				{id:12,name:'陈亚兰',pid:9},
+				{id:13,name:'罗雪',pid:9},
+				{id:14,name:'冉芹',pid:9},
+				{id:15,name:'陈亚兰',pid:9},
+				{id:16,name:'冉芹',pid:9},
+				{id:17,name:'陈亚兰',pid:9},
+				{id:18,name:'罗雪',pid:9},
+				{id:19,name:'冉芹',pid:9},
+				{id:20,name:'陈亚兰',pid:9},
+				{id:21,name:'冉芹',pid:9},
+				{id:22,name:'陈亚兰',pid:9},
+				{id:23,name:'罗雪',pid:9},
+				{id:24,name:'冉芹',pid:9},
+				{id:25,name:'陈亚兰',pid:9},
+				{id:26,name:'冉芹',pid:9},
+				{id:27,name:'陈亚兰',pid:9},
+				{id:28,name:'罗雪',pid:9},
+				{id:29,name:'冉芹',pid:9},
+				{id:30,name:'陈亚兰',pid:9},
+				{id:31,name:'冉芹',pid:9},
+				{id:32,name:'陈亚兰',pid:9},
+				{id:33,name:'罗雪',pid:9},
+				{id:34,name:'冉芹',pid:9},
+				{id:35,name:'陈亚兰',pid:9},
+				{id:36,name:'冉芹',pid:9},
+				{id:37,name:'陈亚兰',pid:9},
+				{id:38,name:'罗雪',pid:9},
+				{id:39,name:'冉芹',pid:9},
+				{id:40,name:'陈亚兰',pid:9},
+				{id:41,name:'冉芹',pid:9},
+				{id:42,name:'陈亚兰',pid:9},
+				{id:43,name:'罗雪',pid:9},
+				{id:44,name:'冉芹',pid:9},
+				{id:45,name:'陈亚兰',pid:9},
+				{id:46,name:'冉芹',pid:9},
+				{id:47,name:'陈亚兰',pid:9},
+				{id:48,name:'罗雪',pid:9},
+				{id:49,name:'冉芹',pid:9},
+				{id:50,name:'陈亚兰',pid:9}
+			 */
+			var d2 = new Date();
+			//alert(d2-d1);
+	},10);
+	
+}
+</script>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

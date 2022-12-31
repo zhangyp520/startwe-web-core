@@ -1,0 +1,97 @@
+<!--导入Excel模板 -->
+<script type="text/html" id="tpl-0">
+    <div class="import-file">
+        <div class="step-one">
+            <div class="ouiFile-download">
+                批量导入，您需要先
+                <button type="button" download-url="{{downloadUrl}}" onclick="oui.getPageParam_{{dialogViewId}}.downloadFile(this)"  class="ouiFile-btn ouiFile-btn-download">
+                    <span>下载导入模板</span>
+                </button>
+            </div>
+            <button type="button" class="ouiFile-import-file">
+                <input id="fileupload"  class="import-file-btn" data-url="{{uploadURL}}" accept="{{fileTypes}}"  {{if !isSingle}}multiple="multiple"{{/if}} type="file" name="files[]"  />
+                <span></span>
+
+                <p>点击这里选择上传</p>
+                <p class="front-error-msg"></p>
+            </button>
+            <div class="ouiFile-warn-info">
+                <h3>温馨提示</h3>
+                <p>1.文件格式仅支持.xls或.xlsx</p>
+                <p>2.文件大小{{fileSizeLimit}}以内。每次导入行数不超过1000行</p>
+
+            </div>
+        </div>
+
+        <div class="step-two" style="display: none">
+            <ul class="ouiFile-load-file-list">
+                <li class="ouiFile-load-file-item">
+                    <span class="icon"></span>
+                    <span class="file-name"></span>
+                    <span class="file-operation" onclick="oui.getPageParam_{{dialogViewId}}.removeFile(this)"></span>
+                </li>
+            </ul>
+            <div class="ouiFile-warn-info">
+                <h3>温馨提示</h3>
+                <p>1.文件格式仅支持.xls或.xlsx</p>
+                <p>2.文件大小10M以内。每次导入行数不超过1000行</p>
+            </div>
+        </div>
+
+        <div class="step-three">
+            <div class="uploading" style="display: none">
+                <div class="ouiFile-importing">
+                    <span class="icon"></span>
+                </div>
+                <div class="ouiFile-import-progress">
+                    <span class="ouiFile-import-active-progress"></span>
+                </div>
+                <p class="ouiFile-importing-file">
+                    <span class="ouiFile-import-status ouiFile-import-ing">正在上传
+                        <span class="file-name">xxx.xls</span>
+                    </span>
+                </p>
+            </div>
+
+            <div class="success" style="display: none;">
+                <div class="ouiFile-importing ">
+                    <span class="icon"></span>
+                </div>
+                <p class="ouiFile-importing-file">
+                    <span class="ouiFile-import-status ouiFile-import-success">成功导入 <span class="file-name">xxx.xls</span></span>
+                </p>
+                <p class="ouiFile-import-successData">
+                    成功导入员工数据180条
+                </p>
+            </div>
+
+            <div class="fail" style="display: none;">
+                <div class="ouiFile-importing">
+                    <span class="icon"></span>
+                </div>
+                <div class="ouiFile-import-progress">
+                    <span class="ouiFile-import-active-progress"></span>
+                </div>
+                <p class="ouiFile-importing-file">
+                    <span class="ouiFile-import-status ouiFile-import-fail">导入失败
+                        <span class="file-name">xxx.xls</span>
+                    </span>
+                </p>
+                <p class="ouiFile-import-failData">
+                    导入失败，查看失败原因，点击
+                    <button type="button" onclick="oui.getPageParam_{{dialogViewId}}.downloadErrorFile(this)" class="ouiFile-btn ouiFile-btn-download"><span>下载</span></button>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</script>
+<script type="text/html" id="tpl-1" target-tpl-id="tpl-0">
+</script>
+
+
+
+
+
+
+

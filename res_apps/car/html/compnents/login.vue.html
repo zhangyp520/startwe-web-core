@@ -1,0 +1,275 @@
+<template>
+    <!-- login背景图大盒子 -->
+    <div class="lonin_bgi_box">
+        <!-- 登录框 -->
+        <div class="login_box">
+            <div class="bg">
+                <div class="login_backstage">欢迎登录后台管理系统</div>
+                <!-- 账号 -->
+                <div class="account_name">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                        <el-form-item prop="name">
+                            <el-input v-model="ruleForm.name" placeholder="账号" prefix-icon="el-icon-user"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <!-- 密码 -->
+                <div class="password">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                        <el-form-item prop="password">
+                            <el-input v-model="ruleForm.password" placeholder="密码" prefix-icon="el-icon-lock"
+                                      show-password></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div class="automatic_logon">
+                    <span>
+                        <el-checkbox v-model="checked">自动登录</el-checkbox>
+                    </span>
+                    <!-- <span>忘记密码</span> -->
+                    <span @click="forgetPassword" style=" text-decoration: none; color: #000000; cursor: pointer;">忘记密码</span>
+                </div>
+                <!-- 登录按钮 -->
+                <div class="login_button">
+                    <el-button :plain="true" type="primary" style="width: 368px; height: 40px; padding:0;margin-top:20px;" @click=loginSignIn>登录
+                    </el-button>
+                </div>
+
+            </div>
+        </div>
+        <div>
+
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                ruleForm: {
+                    name: '',
+                    password: '',
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        {
+                            validator: function (rule, value, callback) {
+                                if (/^1[345789]\d{9}$/.test(value) == false) {
+                                    callback(new Error("请输入正确的手机号"));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur'
+                        }
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'change' },
+                        { min: 4, max: 16, message: '请输入4到16位字符', trigger: 'blur' }
+                    ],
+                },
+
+                // 控制是否自动登录
+                checked: false
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+            var me = this;
+            oui.require([oui.getContextPath()+'res_common/third/crypto/oed.min.js',oui.getContextPath()+'res_common/oui/med.min.js'],function () {
+                me.getCookie();
+            });
+        },
+        methods: {
+            //设置cookie
+            setCookie(c_name, c_pwd) {
+                oui.cookie('cookie_userName',oui.encode4des(c_name,'StartWe'));
+                oui.cookie('cookie_userPwd',oui.encode4des(c_pwd,'StartWe'));
+            },
+            //读取cookie
+            getCookie: function() {
+                var cookie_userName= oui.cookie('cookie_userName');
+                var cookie_userPwd = oui.cookie('cookie_userPwd');
+                if(cookie_userName&&cookie_userPwd){
+                    this.ruleForm.name =oui.decode4des(cookie_userName,'StartWe');
+                    this.ruleForm.password = oui.decode4des(cookie_userPwd,'StartWe');
+                    this.checked = true;
+                    this.loginSignIn();
+                }
+            },
+            //清除cookie
+            clearCookie: function() {
+                oui.cookie("cookie_userName", "");
+                oui.cookie("cookie_userPwd","");
+            },
+            // 点击登录按钮时触发
+            loginSignIn() {
+                var that = this;
+                this.$refs["ruleForm"].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost('company/employeeInfo/login', {
+                                empPhoneNo: this.ruleForm.name,
+                                empPassword: this.ruleForm.password
+                            }, function (res) {
+                                if (that.checked == true) {
+                                    that.setCookie(that.ruleForm.name, that.ruleForm.password);
+                                }else {
+                                    that.clearCookie();
+                                }
+                                const token = res.resultObj.token;
+                                const loginUser = res.resultObj.loginUser;
+                                window.localStorage.setItem("token", token);
+                                window.localStorage.setItem("loginUser", loginUser);
+                                // 页面跳转后面跟跳转的路径，取文件名的相对路径
+                                oui.router.push('res_apps/car/html/compnents/components.vue.html');
+                                // 成功时候的提示弹框
+                                that.$message({
+                                    message: '恭喜你，登录成功',
+                                    type: 'success'
+                                })
+                            },
+                            function (res) {
+                                that.$message.error(res.message);
+                            });
+                    } else {
+                        this.$message.error('请输入账号和密码');
+                    }
+                });
+            },
+            forgetPassword:function(){
+                var that=this;
+                that.$message.error('请联系系统管理员，进行【密码重置】')
+            }
+        }
+    }
+
+</script>
+<style>
+    .bg {
+        background-color: rgb(24, 139, 59);
+        height: 30px;
+    }
+
+    html {
+        width: 100%;
+
+        height: 100%;
+        /* background-image: url(/res_apps/car/project/image/homeImage/登录.png);
+    background-size: auto ; */
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+
+        background-size: cover
+        /* background-size: 100% 100%; */
+        /* background-size: auto ; */
+    }
+
+    .lonin_bgi_box {
+        width: 100%;
+        height: 100%;
+        /* background-color: rgb(36, 184, 17); */
+        background: url(/res_apps/car/image/login.png) no-repeat;
+        /* background-repeat: no-repeat; */
+        background-size: 100% 100%;
+        /* background-size:cover; */
+        /* background-size: contain; */
+        /* margin: auto; */
+        position: relative;
+
+
+    }
+
+
+    .login_box {
+        /* position: absolute; */
+        width: 534px;
+        height: 480px;
+        background-color: #fff;
+        /* top: 143px; */
+        /* right: 86px; */
+        /* margin: auto; */
+        /* 设置阴影 */
+        box-shadow: 0px 4px 6px 0px #888888;
+        /* padding: 20px; */
+            /* background: orange; */
+            /* color: #fff; */
+            position: absolute;
+            top: 100px;
+            left: 60%;
+            /* border-radius: 5px; */
+            /* -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); */
+    }
+
+    /* 欢迎词 */
+    .login_backstage {
+        height: 130px;
+        text-align: center;
+        line-height: 130px;
+        font-size: 24px;
+        color: #fff;
+        /* background-color: #4C62F5; */
+        background: linear-gradient(to left, #4C62F5, #55D3E9);
+    }
+
+    /* 账号 */
+    .account_name {
+        display: flex;
+        justify-content: center;
+        margin-top: 52px;
+    }
+
+    /* 密码 */
+
+    .password {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    /* 改变全局input高度 */
+    .el-input__inner {
+        width: 368px;
+        height: 40px;
+    }
+
+    /* 修改全局的单选框文字颜色 */
+    .el-checkbox__label {
+        color: rgb(0, 0, 0, 0.65) !important;
+    }
+
+    .automatic_logon {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 83px;
+    }
+
+    .automatic_logon>span {
+        font-size: 14px;
+        color: #1890FF;
+    }
+
+    .login_button {
+        text-align: center;
+    }
+</style>

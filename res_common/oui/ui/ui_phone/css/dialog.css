@@ -1,0 +1,941 @@
+@charset "UTF-8";
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.oui-dialog i {
+    font-style: normal;
+}
+
+.oui-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+
+    /* Safari、Opera 以及 Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+
+    /* W3C */
+    display:box;
+    box-pack:center;
+    box-align:center;
+
+    text-align: center;
+
+    background-color: rgba(0, 0, 0, .4);
+    -webkit-transition: background-color .3s;
+    transition: background-color .3s;
+
+}
+
+.oui-dialog-content {
+    background: #ffffff;
+    width: 80%;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -o-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-animation: DivZoom 0.5s ease-in-out;
+    -moz-animation: DivZoom 0.5s ease-in-out;
+    -ms-animation: DivZoom 0.5s ease-in-out;
+    animation: DivZoom 0.5s ease-in-out;
+    -webkit-border-radius: .05rem;
+    -moz-border-radius: .05rem;
+    border-radius: .05rem;
+    z-index: 2000;
+}
+
+.oui-dialog-top {
+    padding: .1rem .1rem 0px;
+    text-align: center;
+    position: relative;
+    font-size: .168rem;
+    color: #333333;
+}
+
+.oui-dialog-mid {
+    padding: .14rem .08rem;
+    max-height: 4.4rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-size: .16rem;
+    color: #555555;
+    /* Firefox */
+    display: -moz-box;
+    -moz-box-pack: center;
+    -moz-box-align: center;
+    /* Safari, Chrome, and Opera */
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    /* W3C */
+    box-pack: center;
+    box-align: center;
+    text-align: justify;
+    -webkit-text-align: justify;
+    -moz-text-align: justify;
+    -ms-text-align: justify;
+    display: -webkit-box;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.oui-dialog-mid-block {
+    display: block !important;
+    text-align: center !important;
+}
+
+.oui-dialog-bot {
+    display: -moz-box;
+    display: -webkit-box;
+    position: relative;
+}
+
+.oui-dialog-bot:before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    border-top: 1px solid #dbdbdb;
+}
+
+.oui-dialog-bot span {
+    width: 1%;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    box-flex: 1;
+    text-align: center;
+    display: block;
+    padding: .12rem 0;
+    position: relative;
+    color: #515151;
+    font-size: .16rem;
+}
+
+.oui-dialog-bot span:active {
+    background: #e8e8e8;
+}
+
+.oui-dialog-bot span:nth-child(1) {
+    border-bottom-left-radius: .05rem;
+}
+
+.oui-dialog-bot span:last-child {
+    border-bottom-right-radius: .05rem;
+    color: #2C82FC;
+}
+
+.oui-dialog-bot span:nth-child(2):before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    border-left: 1px solid #dbdbdb;
+    color: #2C82FC;
+}
+
+/*loading*/
+@-webkit-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-ms-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.oui-dialog-loading {
+    background: rgba(0, 0, 0, 0);
+}
+
+.oui-dialog-loading i.loading-info, .oui-dialog-loading i.loading-percentage {
+    background-color: rgba(0, 0, 0, .5);
+    min-width: .8rem;
+    min-height: .8rem;
+    padding: 0 .1rem;
+    -webkit-border-radius: .03rem;
+    border-radius: .03rem;
+    display: inline-block;
+    font-size: .14rem;
+    color: #ffffff;
+    font-style: normal;
+    text-align: center;
+    position: relative;
+}
+
+.oui-dialog-loading i.loading-info {
+    padding-top: .15rem;
+}
+
+.oui-dialog-loading i.loading-info::before, .oui-dialog-loading i.loading-percentage::before {
+    content: '';
+    display: block;
+    margin: 0 auto;
+    -webkit-animation: rotate 0.75s linear infinite;
+    -moz-animation: rotate 0.75s linear infinite;
+    -ms-animation: rotate 0.75s linear infinite;
+    animation: rotate 0.75s linear infinite;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NjlBNTA3MDNCRTg1MTFFNTg0QTFBNTUyNjE4MjgwMUEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NjlBNTA3MDRCRTg1MTFFNTg0QTFBNTUyNjE4MjgwMUEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2OUE1MDcwMUJFODUxMUU1ODRBMUE1NTI2MTgyODAxQSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo2OUE1MDcwMkJFODUxMUU1ODRBMUE1NTI2MTgyODAxQSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Plxw37oAAAlISURBVHja7F0LkJZT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) no-repeat 50% 50%;
+}
+
+.oui-dialog-loading i.loading-info::before {
+    -webkit-background-size: .3rem .3rem;
+    background-size: .3rem;
+    width: .8rem;
+    height: .32rem;
+}
+
+.oui-dialog-loading i.loading-percentage::before {
+    -webkit-background-size: .5rem .5rem;
+    background-size: .5rem;
+    width: .8rem;
+    height: .8rem;
+}
+
+.oui-dialog-loading i.loading-percentage p {
+    position: absolute;
+    color: #ffffff;
+    top: 50%;
+    left: 50%;
+    font-size: .12rem;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+/*全屏覆盖*/
+.oui-dialog-fullScreen {
+    background: #ffffff;
+    -webkit-box-pack: start;
+    -webkit-box-align: start;
+}
+
+.fullScreen-close {
+    background: rgba(0,0,0,.8);
+    width: .45rem;
+    height: .45rem;
+    border-bottom-left-radius: .45rem;
+    position: absolute;
+    text-align: center;
+    line-height: .4rem;
+    color: #ffffff;
+    font-size: .272rem;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+.fullScreen-close:after{
+    content: "";
+    background: url("../images/show-close-btn.png") no-repeat;
+    background-position:left .2rem top .1rem;
+    background-size: .16rem .16rem;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+}
+.fullScreen-close-bgtranslucent{
+    opacity: .5;
+}
+.fullScreen-content-no {
+    padding: .1rem;
+}
+.oui-dialog-activity{
+    width: 90%;
+    height: 90%;
+    overflow-y: auto;
+}
+.fullScreen-content-img {
+    background: #8ac0ef;
+    font-size: 0;
+}
+.fullScreen-content-img img {
+    width: 100%;
+    vertical-align: top;
+}
+.fullScreen-header {
+    background: #ffffff;
+    width: 100%;
+    position: absolute;
+    height: .44rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    color: #515151;
+    line-height: .44rem;
+    font-size: .168rem;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fullScreen-header:after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    bottom: -50%;
+    left: -50%;
+    right: -50%;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    border-bottom: 1px solid #dbdbdb;
+
+}
+
+.fullScreen-back {
+    background: none;
+    position: absolute;
+    left: .12rem;
+    top: 0;
+    bottom: 0;
+    color: #2C82FC;
+    border: 0;
+    font-size: .144rem;
+}
+
+.fullScreen-content {
+    position: absolute;
+    top: .44rem;
+    left: 0;
+    bottom: 0;
+    padding: 0 .1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: #515151;
+}
+.dialog-display-b{
+    display: block;
+}
+.oui-dialog input {
+    display: block;
+}
+.dialog-input{
+    width: 100%;
+    text-align: left;
+    margin-bottom: .05rem;
+}
+.dialog-input label{
+    width: 100%;
+    display: inline-block;
+    margin-bottom: .04rem;
+    font-size: .16rem;
+    color: #515151;
+    text-align: left;
+/*    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;*/
+}
+/** showHtmlDialog **/
+.oui-html-dialog-content {
+    background: #ffffff;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    bottom: 0;
+    font-size:.14rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    /*pointer-events:none;*/
+}
+.oui-html-dialog-item{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    zoom: 1;
+}
+.oui-html-dialog-content-overflow{
+    overflow:auto;
+}
+.oui-html-dialog-content-no-bg{
+    background:transparent;
+}
+.oui-html-dialog-btn {
+    background: #f8f8f8;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+    font-size: 0;
+    padding: .03rem 0;
+    text-align: center;
+    vertical-align: middle;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+.oui-html-dialog-btn span{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    /*max-width: 1.2rem;*/
+    height: .34rem;
+    line-height: .34rem;
+    color: #fff;
+    font-size: .16rem;
+    border: 0;
+    border-radius: .03rem;
+    outline: none;
+    cursor: pointer;
+    margin: 0 .06rem;
+    display: inline-block;
+}
+.oui-html-dialog-btn span:nth-child(2){
+    background: #2C82FC;
+}
+.oui-html-dialog-btn span:nth-child(1){
+    background: #e1e1e1;
+    color: #515151;
+}
+.oui-html-dialog-btn span.oui-dialog-cancel{
+    background: #e1e1e1;
+    color: #515151;
+}
+.oui-html-dialog-btn span.oui-dialog-ok{
+    background: #2C82FC;
+}
+/*UrlDialog*/
+.oui-html-dialog-url-content{
+    /*-webkit-overflow-scrolling: touch;
+    overflow: auto;ios端高级查询在关联的时候不出现底部按钮*/
+    zoom: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    position: relative;
+}
+.oui-html-dialog-url-content #contentForm{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    font-size: 0;
+    overflow-y: auto;
+}
+/* actionsheetdialog 取消按钮样式 */
+.oui-actionSheet-dialog-cancel {
+    background: #f5f6f8;
+    padding: .13rem;
+    color: #333;
+    text-align: center;
+    font-size: .16rem;
+}
+
+.oui-actionSheet-dialog-item {
+    padding: .13rem;
+    text-align: center;
+    color: #2C82FC;
+    font-size: .16rem;
+    position: relative;
+    z-index: 5;
+}
+
+/* 分享dialog的样式 */
+
+.oui-dialog-share-item span {
+    width: 100%;
+    display: block;
+    padding: .1rem;
+    font-size: .18rem;
+    color: #444444;
+    text-align: center;
+    padding-bottom: .05rem;
+}
+
+.oui-dialog-share-item ul {
+    width: 100%;
+    display: block;
+    margin-bottom: .12rem;
+    padding-bottom: .12rem;
+    overflow-x: auto;
+    font-size: 0;
+    position: relative;
+}
+
+/*.oui-dialog-share-item ul:after {*/
+/*content: '';*/
+/*position: absolute;*/
+/*top: -50%;*/
+/*bottom: -50%;*/
+/*left: -50%;*/
+/*right: -50%;*/
+/*-webkit-transform: scale(0.5);*/
+/*transform: scale(0.5);*/
+/*border-bottom: 1px solid #dbdbdb;*/
+/*z-index: -1;*/
+/*}*/
+
+.oui-dialog-share-item ul:nth-child(3) {
+    margin-bottom: 0;
+}
+
+.oui-dialog-share-item ul li {
+    width: 20%;
+    display: inline-block;
+    text-align: center;
+    font-size: .13rem;
+    color: #9a9a9a;
+    cursor: pointer;
+}
+
+.pub-social-contact {
+    width: 20%;
+    height: .8rem;
+    display: inline-block;
+    font-size: .13rem;
+    color: #9a9a9a;
+    text-align: center;
+}
+
+.oui-dialog-share-item ul li span.share-contact-ico {
+    background: url(../dialog/img/publish-contact-icon.png) no-repeat;
+    background-size: 3.5rem 4.2rem;
+    width: .6rem;
+    height: .6rem;
+    border: 1px solid #333;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    margin: 0 auto;
+    text-align: center;
+    display: block;
+    -moz-transform: scale(.7, .7);
+    -webkit-transform: scale(.7, .7);
+    -o-transform: scale(.7, .7);
+    transform: scale(.7, .7);
+}
+
+.oui-dialog-share-item ul li span.copy {
+    background-position: -.06rem -.05rem;
+    border-color: #68afe0;
+}
+
+.oui-dialog-share-item ul li span.qrcode {
+    background-position: -.76rem -.05rem;
+    border-color: #68afe0;
+}
+
+.oui-dialog-share-item ul li span.wechat {
+    background-position: -1.46rem -.06rem;
+    border-color: #6ec06a;
+}
+
+.oui-dialog-share-item ul li span.friends {
+    background-position: -2.16rem -.05rem;
+    border-color: #6ec06a;
+}
+
+.oui-dialog-share-item ul li span.sinaweibo {
+    background-position: -2.86rem -.05rem;
+    border-color: #e76862;
+}
+
+.oui-dialog-share-item ul li span.qq {
+    background-position: -.06rem -.75rem;
+    border-color: #68afe0;
+}
+
+.oui-dialog-share-item ul li span.qzone {
+    background-position: -.76rem -.77rem;
+    border-color: #efca47;
+}
+
+.oui-dialog-share-item ul li span.workmate {
+    background-position: -1.46rem -.77rem;
+    border-color: #68afe0;
+}
+.oui-dialog-share-item ul li span.dingtalk {
+    background-position: -2.16rem -.77rem;
+    border-color: #68afe0;
+}
+/*toastCss*/
+.oui-toast-bg {
+    width: 80%;
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    margin-left: -40%;
+    z-index: 1000;
+    font-size: 0;
+}
+
+.oui-toast {
+    width: auto;
+    background: rgba(0, 0, 0, .65);
+    -webkit-border-radius: .03rem;
+    -moz-border-radius: .03rem;
+    border-radius: .03rem;
+    color: #ffffff;
+    padding: .08rem .15rem;
+    margin: 0 auto;
+    font-size: .16rem;
+    display: inline-block;
+    line-height: 1.5;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.oui-toast-top {
+    padding-bottom: .1rem;
+    font-size: .16rem;
+}
+
+.oui-toast-mid {
+    font-size: .16rem;
+}
+
+.oui-toast-bot {
+    padding-top: .1rem;
+    font-size: .16rem;
+}
+
+/*微信分享*/
+.wechat-dialog-info {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+}
+
+.wechat-dialog-info img {
+    width: 1.2rem;
+    height: 1.59rem;
+    margin-right: .3rem;
+    margin-top: .1rem;
+    vertical-align: top;
+}
+
+.wechat-dialog-info span {
+    color: #ffffff;
+    font-size: .18rem;
+    text-align: center;
+    line-height: 1.8;
+    display: block;
+}
+
+/*
+文本框复制链接*/
+.oui-dialog-content span.copy-link {
+    width: 94%;
+    height: 1rem;
+    padding: .03rem;
+    margin: .05rem 0;
+    margin-left: 3%;
+    -webkit-user-select: text;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: .02rem;
+    font-size: .14rem;
+    color: #444444;
+    display: block;
+    text-align: left;
+    color: #777777;
+    font-family: Microsoft Yahei, "Helvetica Neue", Helvetica, sans-serif;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.oui-dialog-content img, .oui-dialog-content canvas {
+    width: 100% !important;
+    vertical-align: top;
+}
+
+/*
+图片预览*/
+.fullimg{
+    background: #000000;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+    text-align: center;
+    font-size: 0;
+}
+.oui-dialog-spied{
+    background: none;
+}
+.oui-dialog-spied .fullimg{
+    background: rgba(0,0,0,.5);
+}
+.fullimg-table{
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+.fullimg-table-area{
+    display: table-cell;
+    vertical-align: middle;
+}
+.fullimg-table img{
+    max-width: 100%;
+    vertical-align: top;
+}
+.fullImgContent{
+    /*background: rgba(0,0,0,.5);
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;*/
+    padding: .1rem .06rem;
+    color: #ffffff;
+    font-size: .14rem;
+    text-align: center;
+    z-index: 3;
+}
+.fullimg-option{
+    background: #f7f7f7;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    padding: .04rem 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+}
+.fullimg-option > div{
+    width: 1%;
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    box-flex: 1;
+    text-align: center;
+}
+.fullimg-option > div button{
+    width: 80%;
+    display: block;
+    color: #fff;
+    height: .37rem;
+    line-height: .37rem;
+    font-size: .16rem;
+    -webkit-border-radius: .04rem;
+    -moz-border-radius: .04rem;
+    border-radius: .04rem;
+    text-align: center;
+    margin: 0 auto;
+    border: 0;
+    outline: none;
+    position: relative;
+}
+.fullimg-option > div button.deleteBg{
+    background: none;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+}
+.fullimg-option > div button.changeBg{
+    background: #2C82FC;
+}
+.fullimg-option > div button input[type=file]{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    opacity: 0;
+}
+.oui-dialog-iframe{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+    font-size: 0;
+}
+.oui-dialog-iframe iframe{
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+.oui-dialog-iframe-hasFooter .oui-dialog-iframe{
+    bottom: .44rem;
+    z-index: 8;
+}
+.oui-dialog-iframe-hasFooter .oui-html-dialog-btn{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.oui-dialog-iframe + .oui-html-dialog-btn{
+    display: none;
+}
+.oui-dialog-iframe-hasFooter .oui-dialog-iframe + .oui-html-dialog-btn{
+    display: block;
+}
+/*通用底部按钮*/
+.oui-dialog-common-btn{
+    width: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+
+    /* Safariã€Opera ä»¥åŠ Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+}
+.oui-dialog-common-btn span.span-btn{
+    width: 1%;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: center;
+    padding: 5px 5px;
+    /* Firefox */
+    display:-moz-box;
+    -moz-box-pack:center;
+    -moz-box-align:center;
+
+    /* Safariã€Opera ä»¥åŠ Chrome */
+    display:-webkit-box;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+}
+.oui-dialog-common-btn span.span-btn button{
+    font-family: "Microsoft Yahei", "Trebuchet MS", Georgia, "Times New Roman", Times, sans-serif;
+    background: #2C82FC;
+    width: 100%;
+    max-width: 120px;
+    height: 34px;
+    border: 0;
+    color: #ffffff;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    margin: 0 auto;
+    font-size: 16px;
+    padding: 0 8px;
+    display: block;
+    outline: none;
+}
+.oui-dialog-common-btn span.span-btn button.bule{
+    background: #2C82FC;
+}
+.oui-dialog-common-btn span.span-btn button.grey,
+.oui-dialog-common-btn span.span-btn button.oui-dialog-cancel{
+    background: #e1e1e1;
+    color: #515151;
+}
+
+
+
+
+

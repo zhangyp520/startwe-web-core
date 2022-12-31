@@ -1,0 +1,886 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right ">
+        <oui-include type="module" url='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData">
+        </oui-include>
+        <div class="pageBasic scollY" id="scroolY" data-type="setting"  style="width:100%">
+            <el-collapse v-model="activeNames" class="property-collapse" @change="PanelSwitch">
+                <el-collapse-item :title="query.videoTitle" name="1">
+                    <div class=" base_box">
+                        <div class=" property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title ">填充样式</div>
+                            <!-- <input class="base_box_input" type="text" v-model="query.background" > -->
+                            <el-dropdown class="select_fill_stylebox" size="200" trigger="click"
+                                @command="selectFillStyle">
+                                <div class="el-dropdown-link selected_val">
+                                    <div>{{query.fillStyle}}</div><i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item command=0>原始比例</el-dropdown-item>
+                                    <el-dropdown-item command="1:1">1:1</el-dropdown-item>
+                                    <el-dropdown-item command="4:3">4:3</el-dropdown-item>
+                                    <el-dropdown-item command="16:9">16:9</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                        <div class=" property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+                            <div id="selectBackColor" class="layui-inline" style="display: flex; align-items: center">
+                                <el-switch v-model="query.autoSwitch" @change="toggleSwitch"></el-switch>
+                                <input style="width: 50px;text-align: center; margin-left: 10px" @change="delayTime"
+                                    v-model="query.delayTime" class="base_box_input" />
+                            </div>
+                        </div>
+                        <div class="property-item">
+                            <div class="grid-demo grid-demo-bg1 base_title">音量</div>
+                            <el-slider class="slide-bar" v-model="query.volume" @change="changeVolume"></el-slider>
+                            <input class="base_box_input" style="width: 50px; margin-left: 10px"
+                                v-model="query.volume" />
+                        </div>
+                        <div class="property-item videos-container">
+                            <div @click="secectIndeMet(index)" v-for="(item,index) in query.videos" :key="index"
+                                class="video-item"
+                                :style="{border:(stlectListindex == index ? '1px solid #4a80f6':'1px solid #464646')}">
+                                <div class="video-container">
+                                    <div class="videocontrolMask" v-show=" activeIndex == index ? false : true">
+
+                                        <img @click="startPlay(index,item)"
+                                            style="width: 28px;height:28px;border-radius: 50%;"
+                                            :src="imagesMap.videoplayicon" alt="">
+                                    </div>
+                                    <video :id="nameId(index)" style="width: 100%; height: 100%;"
+                                        :src="item.url"></video>
+                                </div>
+                                <div class="video-content">
+                                    <h4 style="text-align: center">{{item.title}}</h4>
+                                    <div
+                                        style="display: flex; justify-content: space-between; flex-direction: column; height: 100%; padding-bottom: 5px">
+                                        <div class="video-content-property">
+                                            <span>{{item.duration}}</span>
+                                            <span>{{item.size}}</span>
+                                        </div>
+                                        <div class="video-content-property">
+                                            <div style="width: 18px;height: 18px;"> <img @click="upImage(index)"
+                                                    :src="imagesMap.uploadImg"
+                                                    :class="index == 0?'video-img-operation image-readOnly':'video-img-operation'" />
+                                            </div>
+                                            <div style="width: 18px;height: 18px;"><img
+                                                    :class="index == query.videos.length-1?'video-img-operation image-readOnly':'video-img-operation'"
+                                                    @click="downImage(index)" :src="imagesMap. downloadImg" />
+                                            </div>
+                                            <div style="width: 18px;height: 18px;">
+
+                                                <img @click=" delImage(index) " :src="imagesMap.trashImg"
+                                                    class="video-img-operation" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bottom_addvideo">
+                                <!--                                <el-upload class="upload-demo" ref="upload" :limit=2 :on-preview="handlePreview"-->
+                                <!--                                    :auto-upload="false" :file-list="fileList" :show-file-list="false"-->
+                                <!--                                    :on-change="addVideoMet">-->
+                                <el-button class="addvideo_btn" :plain=false slot="trigger" size="small"
+                                    @click="selectVideo"><img :src="imagesMap.addBotVideo"
+                                        class="video-img-operation" /></el-button>
+                                <!--                                </el-upload>-->
+                            </div>
+                        </div>
+                    </div>
+                </el-collapse-item>
+                <el-collapse-item title="基础" name="2">
+                    <oui-include type="module" url='res_engine/ppt_design/common/panelcomponent/basicinfo.vue.html'>
+                    </oui-include>
+                </el-collapse-item>
+                <el-collapse-item title="动画" name="3">
+                    <oui-include type="module" url='res_engine/ppt_design/common/panelcomponent/animation.vue.html'>
+                    </oui-include>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+        <transition name="slide-fade">
+            <div class="previewBox" v-show="showDialog">
+                <div class="previewMian">
+                    <div class="previewMiancloseBtn" @click="closeDialog">
+                        <img style="width: 100%;height: 100%;" :src="imagesMap.close" alt="">
+                    </div>
+                    <div class="previewMianBetween">
+                        <div>
+                            <img @click="ChangeVideoUrl(-1)" style="cursor: pointer;width: 48px;height: 48px;"
+                                :src="imagesMap.yulanzuo" alt="">
+                        </div>
+                    </div>
+                    <div class="previewMianMiddle">
+                        <div class="playBtn " v-show="previewplayMask">
+                            <img @click="previewPlay"
+                                style="width: 60px;height: 60px;border-radius: 50%; cursor: pointer;"
+                                :src="imagesMap.videoplayicon" alt="">
+                        </div>
+                        <div :class="animaclass " style="width: 100%;height: 100%;" v-if="previewvideoitem">
+                            <video style="width: 100%;height: 100%;position: static;z-index: -1;" id="previewVideo"
+                                :src="previewvideoitem"></video>
+                        </div>
+
+                    </div>
+                    <div class="previewMianBetween">
+                        <img @click="ChangeVideoUrl(1)" style="width: 48px;height: 48px; cursor: pointer;"
+                            :src="imagesMap.yulanyou" alt="">
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            var status = oui.getPageParam("ppt_design_props_status");
+            if (!status) {
+                status = ['1', '2', '3'];
+            }
+            oui.setPageParam('ppt_design_props_status', status);
+            return {
+                scrollTop:oui.getPageParam('right_props_scrollTop')||0,
+                previewvideoindex: 0, //预览视频选中的index
+                stlectListindex: 0, //上传视频选中的index
+                previewplayMask: true,
+                previewvideoitem: '',
+                showDialog: false,
+                isshowMask: true,
+                fileList: [],
+                currentControl: {},
+                autoplays: false,
+                activeIndex: -1,
+                nowIndex: -1,
+                activeNames: status,
+                animaclass: '',
+                query: {
+                    background: '',
+                    delayTime: 0,
+                    number: 2,
+                    time: 20,
+                    name: '视频1',
+                    volume: 10, //音量
+                    fillStyle: '原始比例', //填充样式
+                    autoSwitch: true, // 自动切换
+                    videoTitle: '视频2',
+                    videos: []
+                },
+                imagesMap: {
+                    uploadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-up.png',
+                    downloadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-down.png',
+                    trashImg: oui.getContextPath() + 'res_engine/ppt_design/images/trash.png',
+                    preview: oui.getContextPath() + 'res_engine/ppt_design/images/ic_preview.png',
+                    addVideo: oui.getContextPath() + 'res_engine/ppt_design/images/ic_add_hover.png',
+                    addBotVideo: oui.getContextPath() + 'res_engine/ppt_design/images/add_video.png',
+                    yulanzuo: oui.getContextPath() + 'res_engine/ppt_design/images/yulanzuo.png',
+                    yulanyou: oui.getContextPath() + 'res_engine/ppt_design/images/yulanyou.png',
+                    videoplayicon: oui.getContextPath() + 'res_engine/ppt_design/images/videopaly.png',
+                    close: oui.getContextPath() + 'res_engine/ppt_design/images/close.png',
+                },
+                rightToolbarData: {},
+                //浏览器可视区域高度
+                clientHeight: '',
+                slbHeight: ''
+
+
+
+            }
+        },
+
+
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload4Enable.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data
+                .currentControl));
+
+            if (!this.currentControl || (!this.currentControl.id)) {
+                return;
+            }
+
+            // 名字回填
+            if (this.currentControl.otherAttrs.imgModeName) {
+                this.query.videoTitle = this.currentControl.otherAttrs.imgModeName
+                this.query.name = this.currentControl.imgModeName
+
+            } else {
+                this.query.videoTitle = this.currentControl.name
+                this.query.name = this.currentControl.name
+            }
+
+            //音量回填
+            if (this.currentControl.otherAttrs.volume) {
+                this.query.volume = this.currentControl.otherAttrs.volume;
+            }
+            // 自动播放按钮回填
+            if (typeof this.currentControl.otherAttrs.autoSwitch == 'undefined') {
+                this.currentControl.otherAttrs.autoSwitch = true;
+            }
+            this.query.autoSwitch = this.currentControl.otherAttrs.autoSwitch;
+
+            // if (this.currentControl.otherAttrs.autoSwitch) {
+
+            // }
+            // 视频列表回填
+            if (this.currentControl.otherAttrs.videoList) {
+                this.query.videos = oui.parseJson(oui.parseString(this.currentControl.otherAttrs.videoList));
+            }
+            // 填充样式
+            if (this.currentControl.otherAttrs.fillStyle) {
+                this.query.fillStyle = this.currentControl.otherAttrs.fillStyle;
+            }
+
+
+            // console.log('视频页面的数据', this.currentControl.otherAttrs)
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 80 + 'px';
+            }
+            this.$nextTick(function(){
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll[0]){
+                    $scroll[0].scrollTop = that.scrollTop;
+                }
+            });
+
+
+        },
+        watch: {
+            clientHeight: function () { //如果clientHeight 发生改变,这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        methods: {
+            
+
+            // 延时时间
+            delayTime(e) {
+                console.log(e);
+                this.query.delayTime
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.delayTime = this.query.delayTime
+            },
+            //《《《《《《《《《《《《选中列表项》》》》》》》》》》》》》
+            secectIndeMet(index) {
+                this.stlectListindex = index
+            },
+            //《《《《《《《《《《《《删除图片&视频》》》》》》》》》》》》》
+            delImage: function (index) {
+                this.query.videos.splice(index, 1);
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList = oui.parseJson(oui
+                    .parseString(this.query.videos));
+                this.updateCurrentControl()
+            },
+            //《《《《《《《《《《《《图片位置向下》》》》》》》》》》》》》
+            downImage: function (index) {
+                if (index + 1 < this.query.videos.length) {
+                    let temp1 = this.query.videos[index];
+                    let temp2 = this.query.videos[index + 1];
+                    this.query.videos[index + 1] = temp1;
+                    this.query.videos[index] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList = oui.parseJson(
+                        oui.parseString(this.query.videos));
+                    this.updateCurrentControl()
+                }
+            },
+            //《《《《《《《《《《《《图片位置向上》》》》》》》》》》》》》
+            upImage: function (index) {
+                if (index > 0) {
+                    let temp1 = this.query.videos[index - 1];
+                    let temp2 = this.query.videos[index];
+                    this.query.videos[index] = temp1;
+                    this.query.videos[index - 1] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList = oui.parseJson(
+                        oui.parseString(this.query.videos));
+                    this.updateCurrentControl()
+                }
+
+            },
+
+            ChangeVideoUrl(num) {
+
+                console.log(this.previewvideoindex)
+                this.previewvideoindex += num
+                if (this.previewvideoindex == -1) {
+                    this.previewvideoindex = this.query.videos.length - 1
+                }
+                if (this.previewvideoindex == this.query.videos.length) {
+                    this.previewvideoindex = 0
+                }
+                if (num > 0) {
+                    let changeurl = this.query.videos[this.previewvideoindex]
+                    this.previewvideoitem = changeurl.url
+                    this.previewplayMask = true
+                    // this.animaclass = ''
+                    // setTimeout(() => {
+                    //     this.animaclass = ''
+                    //     let changeurl = this.query.videos[this.previewvideoindex]
+                    //     this.previewvideoitem = changeurl.url
+                    //     this.previewplayMask = true
+                    //     setTimeout(() => {
+
+                    //         this.animaclass = ''
+
+                    //     }, 2000)
+                    // }, 1800)
+                }
+                if (num < 0) {
+                    let changeurl = this.query.videos[this.previewvideoindex]
+                    this.previewvideoitem = changeurl.url
+                    this.previewplayMask = true
+                    // this.animaclass = ''
+                    // setTimeout(() => {
+                    //     this.animaclass = ''
+                    //     let changeurl = this.query.videos[this.previewvideoindex]
+                    //     this.previewvideoitem = changeurl.url
+                    //     this.previewplayMask = true
+                    //     setTimeout(() => {
+
+                    //         this.animaclass = ''
+
+                    //     }, 2000)
+                    // }, 1800)
+                }
+
+
+
+            },
+            previewPlay() {
+                this.previewplayMask = false
+
+            },
+            nameId(index) {
+                return 'videoPlayer' + index
+            },
+            closeDialog() {
+                let video = document.getElementById('previewVideo');
+                video.pause();
+                video.currentTime = 0;
+                this.previewplayMask = true;
+                this.showDialog = false
+            },
+            startPlay: function (index, item) {
+                this.previewvideoindex = index
+                console.log(item.url);
+                this.previewvideoitem = this.query.videos[index].url;
+                this.showDialog = true
+                //     if(this.activeIndex>-1){
+                //         var lastVideo = document.getElementById('videoPlayer' + this.activeIndex); 
+                //         lastVideo.pause();
+                //    }
+                //    this.activeIndex = index
+                //    var video = document.getElementById('videoPlayer' + index);
+                //    video.play(); 
+            },
+
+            PanelSwitch(status) {
+                console.log(status);
+                oui.setPageParam('ppt_design_props_status', status);
+                this.activeNames = status
+                // event
+            },
+
+            //视频选择
+            selectVideo: function () {
+                let me = this;
+                com.oui.absolute.AbsoluteDesign.showFileDialog({
+                    fileType:1,
+                    fileTypes: ['video'],
+                    local: false,
+                    callback: function (res) {
+                        oui.eachArray(res, function (item) {
+                            let propList = item.resolution.split('*');
+                            let videoInfo = {
+                                url: item.url,
+                                title: item.fileName,
+                                duration: item.fileDuration,
+                                size: (item.fileSize / 1024000).toFixed(1) + 'M',
+                                coverImg: item.coverImgUrl,
+                                activeProp: propList,
+                                defaultProp: propList,
+                            };
+                            me.query.videos.push(videoInfo);
+                        });
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList =
+                            oui.parseJson(oui.parseString(me.query.videos));
+                        me.updateCurrentControl();
+                    }
+                })
+            },
+            //添加视频
+            addVideoMet(event) {
+                var localUrl = null;
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    localUrl = window.createObjectURL(event.raw);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    localUrl = window.URL.createObjectURL(event.raw);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    localUrl = window.webkitURL.createObjectURL(event.raw);
+                }
+                console.log(localUrl);
+
+                let me = this
+                this.getVideoDuration(event.raw, (time) => {
+                    me.extractFramesFromVideo(localUrl, function (frames, infoList) {
+                        let coverImg = frames[frames.length - 1]
+                        me.updateCurrentControl();
+                        console.log(frames);
+                        console.log(infoList);
+                        let videoInfo = {
+                            url: localUrl,
+                            title: event.name.split('.')[0],
+                            duration: time,
+                            size: (event.size / 1024000).toFixed(1) + 'M',
+                            coverImg: coverImg,
+                            activeProp: infoList,
+                            defaultProp: infoList
+                        }
+                        me.query.videos.push(videoInfo)
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList =
+                            oui.parseJson(oui.parseString(me.query.videos));
+                        me.updateCurrentControl();
+                    });
+
+
+
+                    // me.findvideocover(localUrl, function () {
+                    //     com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoList =
+                    //         me.query.videos;
+                    //     me.updateCurrentControl()
+                    // })
+                });
+
+
+            },
+
+            // 获取视频长度&格式化时间
+            getVideoDuration(file, callback) {
+                let url = URL.createObjectURL(file);
+                let audioElement = new Audio(url);
+                let times;
+                let h = 0,
+                    m = 0,
+                    s = 0
+                audioElement.addEventListener("loadedmetadata", () => {
+                    times = audioElement.duration;
+                    if (times / 3600 >= 1) {
+                        h = parseInt(times / 3600)
+                    }
+                    if (times % 3600 >= 1) {
+                        m = parseInt((times % 3600) / 60) < 10 ? '0' + parseInt((times % 3600) / 60) :
+                            parseInt((times % 3600) / 60)
+                    }
+                    if ((times % 3600) % 60 >= 1) {
+                        s = parseInt((times % 3600) % 60) < 10 ? '0' + parseInt((times % 3600) % 60) :
+                            parseInt((times % 3600) % 60)
+                    }
+                    if (h == 0) {
+                        times = m + ':' + s
+                    } else {
+                        times = +h + ':' + '0' + m + ':' + s
+                    }
+                    callback && callback(times);
+
+                });
+            },
+            // handlePreview(file) {
+            //     console.log(file);
+            // },
+            extractFramesFromVideo: function (videoUrl, callback) {
+                var me = this;
+                var fps = 2;
+                let video = document.createElement("video");
+                let canvas = document.createElement('canvas');
+                let context = canvas.getContext('2d');
+                var count = 0;
+                var fun = function () {
+                    let frames = [];
+                    let interval = 1 / fps;
+                    let duration = video.duration;
+                    var currentTime = 2;
+                    video.currentTime = 1;
+                    var width = video.videoWidth;
+                    var height = video.videoHeight;
+                    var sourceWidth = width;
+                    var currWidth = com.oui.absolute.AbsoluteDesign.data.currentControl.style.width;
+                    var currHeight = com.oui.absolute.AbsoluteDesign.data.currentControl.style.height;
+                    if (width > currWidth) {
+                        var w = currWidth;
+                        var h = (currWidth / width * height).toFixed(2);
+                        width = w;
+                        height = h;
+                    }
+                    if (height > currHeight) {
+                        var h = currHeight;
+                        var w = (currHeight * width / height).toFixed(2);
+                        width = w;
+                        height = h;
+                    }
+                    console.log(video.videoWidth, video.videoHeight);
+
+                    let infoList = []
+                    infoList.push(video.videoWidth)
+                    infoList.push(video.videoHeight)
+
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(video, 0, 0, width, height);
+                    console.log(currentTime);
+                    while (currentTime < duration) {
+                        currentTime += interval;
+                        count++;
+                        if (count > 50) {
+                            let base64ImageData = canvas.toDataURL();
+                            frames = [base64ImageData];
+                            callback && callback(frames, infoList);
+                            video.removeEventListener('canplay', fun);
+                            break;
+                        }
+                    }
+                }
+                video.addEventListener('canplay', fun);
+                video.src = videoUrl;
+            },
+            //选择填充样式
+            selectFillStyle(command) {
+                let propList = []
+                if (command == 0) {
+                    this.currentControl.otherAttrs.fillStyle = '原始比例';
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = '原始比例';
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyleArr = false;
+                } else {
+                    this.query.fillStyle = command
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = command;
+                    propList = command.split(":")
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyleArr = propList;
+                }
+                this.updateCurrentControl()
+            },
+            //自动切换
+            toggleSwitch(open) {
+                this.currentControl.otherAttrs.autoSwitch = open;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.autoSwitch = open;
+                this.updateCurrentControl()
+            },
+            //音量
+            changeVolume(vol) {
+                this.currentControl.otherAttrs.volume = vol;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.volume = vol;
+            },
+            // 更新
+            updateCurrentControl: function () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                oui.setPageParam('right_props_scrollTop',scrollTop);
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            // 滚动条
+            changeFixed: function (clientHeight) {
+                this.slbHeight = clientHeight - 80 + 'px';
+            },
+        }
+    }
+</script>
+<style scoped>
+    .scollY {
+        overflow-y: auto;
+        height: calc(100vh - 66px);
+        width: 100%;
+    }
+
+    .video-img-operation.image-readOnly:hover,
+    .video-img-operation.image-readOnly {
+        cursor: default;
+        opacity: 0.3;
+    }
+
+    .slide-fade-enter-active {
+        transition: all 0.3s ease;
+    }
+
+    .slide-fade-leave-active {
+        transition: all 0.3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+
+    .slide-fade-enter,
+    .slide-fade-leave-to {
+        transform: translateX(50px);
+        opacity: 0;
+
+    }
+
+    .previewBox {
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999999;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 130px;
+    }
+
+    .previewMian {
+
+        width: 924px;
+        height: 640px;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        padding-top: 40px;
+
+    }
+
+    .previewMiancloseBtn {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: 20px;
+        right: 26px;
+        border-radius: 50%;
+
+    }
+
+    .previewMianMiddle {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 560px;
+        height: 560px;
+        background: #000000;
+    }
+
+    .previewMianMiddle .playBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(158, 235, 135, 0);
+        z-index: 9999;
+    }
+
+    .previewMianMiddle>video {
+        width: 100%;
+    }
+
+    .previewMianBetween {
+        width: 100px;
+        height: 560px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .previewMianBetween>img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .previewMian>video {
+        width: 560px;
+        height: 560px;
+    }
+
+    .el-collapse {
+        border: none;
+    }
+
+    .addvideo_btn {
+        width: 100px;
+        height: 25px;
+        padding: 0;
+        background: #464646;
+        border: none;
+    }
+
+    .el-button:hover {
+        color: #464646 !important;
+    }
+
+    .el-collapse-item__content {
+        padding: 0;
+    }
+
+    .bottom_addvideo {
+        width: 100px;
+        height: 25px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .selected_val {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .el-dropdown-menu__item {
+        width: 200px;
+    }
+
+    .selected_val>div {
+        width: 150px;
+    }
+
+    .select_fill_stylebox {
+        color: #fff;
+        outline: none;
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .select_fill_styel {
+        width: 100%;
+        background-color: #fff;
+    }
+
+    .el-dropdown-link {
+        cursor: pointer;
+        color: #fff;
+    }
+
+    .el-icon-arrow-down {
+        font-size: 12px;
+    }
+
+    .slide-bar {
+        width: 50%;
+    }
+
+    .video-item {
+        width: 271px;
+        height: 112px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding-left: 8px;
+        margin-top: 10px;
+    }
+
+    .video-container {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        opacity: 1;
+        background: #2d2d2d;
+        border-radius: 4px;
+    }
+
+    .videocontrolMask {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: red;
+        z-index: 9999;
+    }
+
+    .videos-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .video-content {
+        display: flex;
+        flex-direction: column;
+        height: 96px;
+        width: 165px;
+        padding-left: 10px;
+        opacity: 0.6;
+    }
+
+    .video-content-property {
+        width: 90px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .video-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .video-img-operation:hover {
+        opacity: 1;
+    }
+
+
+    .base_box_input-unit-container {
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+
+    .seconds-input {
+        height: 100%;
+        border: 0;
+        background: #303030;
+        color: #fff;
+        outline: none;
+    }
+</style>

@@ -1,0 +1,552 @@
+<!-- 编辑名称及样式------逻辑 -->
+<template>
+    <!-- 内容 -->
+    <div class="modeuleContent">
+        <!-- 子内容图标 -->
+        <div class="inner_Modeule">
+            <!-- 导航 -->
+            <ul class="modeuleMenu">
+                <li class="clickShow">自定义</li>
+                <li>标签</li>
+                <li>优先级</li>
+                <li>任务</li>
+                <li>星星</li>
+                <li>旗帜</li>
+                <li>符号</li>
+            </ul>
+            <ul>
+                <!-- 自定义图标区域 -->
+                <li class="modeuleIcon">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/add_blue.png" alt="">
+                    </div>
+                </li>
+                <!-- 标签区域 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/icon1.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/icon9.png" alt="">
+                    </div>
+                </li>
+                <!-- 优先级 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/no1.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/no9.png" alt="">
+                    </div>
+                </li>
+                <!-- 任务 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/task1.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/task9.png" alt="">
+                    </div>
+                </li>
+                <!-- 星星 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/star1.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/star9.png" alt="">
+                    </div>
+                </li>
+                <!-- 旗帜 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/flag2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/flag9.png" alt="">
+                    </div>
+                </li>
+                <!-- 符号 -->
+                <li class="modeuleIcon" v-if="show">
+                    <div class="inner_ModeuleIcon inner_IconBorder">
+                        <img src="/res_startwe/assets/symbol1.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol2.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol3.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol4.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol5.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol6.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol7.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol8.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol9.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol10.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol11.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol12.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol13.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol14.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol15.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol16.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol17.png" alt="">
+                    </div>
+                    <div class="inner_ModeuleIcon inner_Icon">
+                        <img src="/res_startwe/assets/symbol18.png" alt="">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- 子内容色块 -->
+        <div class="inner_Modeule">
+            <!-- 导航 -->
+            <div class="modeuleMenu">
+                <div>填充</div>
+            </div>
+            <!-- 色块区域 -->
+            <div class="modeuleColor">
+                <div class="inner_ModeuleColor inner_ColorBorder">
+                    <div class="ColorBlock inner_color_4"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_1"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_2"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_3"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_5"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_6"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_7"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_8"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_color_9"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 子内容边框 -->
+        <div class="inner_Modeule">
+            <!-- 导航 -->
+            <div class="modeuleMenu">
+                <div>边框</div>
+            </div>
+            <!-- 边框区域 -->
+            <div class="modeuleBorder">
+                <div class="inner_ModeuleBorder inner_ColorBorder">
+                    <div class="ColorBlock inner_Border_4"></div>
+                </div>
+                <div class="inner_ModeuleBorder inner_Border">
+                    <div class="ColorBlock inner_Border_1"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_2"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_3"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_5"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_6"></div>
+                </div>
+                <div class="inner_ModeuleBorder inner_Border">
+                    <div class="ColorBlock inner_Border_7"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_8"></div>
+                </div>
+                <div class="inner_ModeuleColor inner_Color">
+                    <div class="ColorBlock inner_Border_9"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                show: false,
+                input: '首页'
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+        },
+        methods: {
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        /* font-size: 14px; */
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容 */
+
+    .modeuleContent {
+        width: 90%;
+        margin: auto;
+    }
+
+    .modeuleMenu {
+        display: flex;
+        font-size: 14px;
+        color: #999;
+    }
+
+    .modeuleMenu>li {
+        width: 58px;
+        height: 22px;
+        text-align: center;
+    }
+
+    .clickShow {
+        color: #fff;
+        background: #1890FF;
+        border-radius: 3px;
+    }
+
+    .inner_Modeule {
+        margin-top: 10px;
+    }
+
+    /* 图标 */
+
+    .modeuleIcon {
+        flex-wrap: wrap;
+        display: flex;
+    }
+
+    .inner_ModeuleIcon {
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Icon {
+        width: 38px;
+        height: 38px;
+        border: 1px dotted #1890FF;
+    }
+
+    .inner_IconBorder {
+        width: 40px;
+        height: 40px;
+        background-image: url(/res_startwe/assets/unselect.png)
+    }
+
+    .inner_ModeuleIcon>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* 色块 */
+
+    .modeuleColor {
+        flex-wrap: wrap;
+        display: flex;
+    }
+
+    .inner_ModeuleColor {
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Color {
+        width: 38px;
+        height: 38px;
+        border: 1px dotted #1890FF;
+    }
+
+    .inner_ColorBorder {
+        width: 40px;
+        height: 40px;
+        background-image: url(/res_startwe/assets/unselect.png)
+    }
+
+    .inner_ModeuleColor>div {
+        width: 24px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    .inner_color_1 {
+        background-color: #F8A24C;
+    }
+
+    .inner_color_2 {
+        background-color: #428DF8;
+    }
+
+    .inner_color_3 {
+        background-color: #FFE595;
+    }
+
+    .inner_color_4 {
+        background-color: #F86056;
+    }
+
+    .inner_color_5 {
+        background-color: #5ECF64;
+    }
+
+    .inner_color_6 {
+        background-color: #FF2EEC;
+    }
+
+    .inner_color_7 {
+        background-color: #B370D4;
+    }
+
+    .inner_color_8 {
+        background-color: #9D9DA1;
+    }
+
+    .inner_color_9 {
+        border: 1px solid #f2f2f2;
+        background-color: #fff;
+    }
+
+    /* 边框 */
+
+    .modeuleBorder {
+        flex-wrap: wrap;
+        display: flex;
+    }
+
+    .inner_ModeuleBorder {
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 10px 0 0;
+    }
+
+    .inner_Border {
+        width: 38px;
+        height: 38px;
+        border: 1px dotted #1890FF;
+    }
+
+    .inner_ColorBorder {
+        width: 40px;
+        height: 40px;
+        background-image: url(/res_startwe/assets/unselect.png)
+    }
+
+    .inner_ModeuleBorder>div {
+        width: 24px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    .inner_Border_1 {
+        border: 1px solid #F8A24C;
+    }
+
+    .inner_Border_2 {
+        border: 1px solid #428DF8;
+    }
+
+    .inner_Border_3 {
+        border: 1px solid #FFE595;
+    }
+
+    .inner_Border_4 {
+        border: 1px solid #F86056;
+    }
+
+    .inner_Border_5 {
+        border: 1px solid #5ECF64;
+    }
+
+    .inner_Border_6 {
+        border: 1px solid #FF2EEC;
+    }
+
+    .inner_Border_7 {
+        border: 1px solid #B370D4;
+    }
+
+    .inner_Border_8 {
+        border: 1px solid #9D9DA1;
+    }
+
+    .inner_Border_9 {
+        border: 1px solid #000;
+    }
+</style>

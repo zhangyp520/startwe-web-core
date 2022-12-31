@@ -1,0 +1,647 @@
+<template>
+  <div id="customer">
+    <!-- 面包屑头部盒子开始 -->
+    <div class="crumbs">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>
+          <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>
+          <a href="index4vue.html#res_apps/car/html/comprehensive query.vue.html">综合查询</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>查看详情</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <!-- 仓库中心，物资出入库记录 -->
+
+    <!-- 面包屑头部盒子结束 -->
+    <el-main>
+      <!-- 右侧内部表单布局容器开始-- -->
+      <!-- 第一行数据 -->
+      <div class="content">
+        <!-- 第一层 -->
+        <div class="billing_time">
+          <ul>
+            <li>
+              <div>查看时间：</div>
+              <span>{{currentTime}}</span>
+            </li>
+            <li>
+              <div>当前人员：</div>
+              <span>{{currentOperatorName}}</span>
+            </li>
+            <!-- <li></li> -->
+          </ul>
+        </div>
+        <!-- 第二层 -->
+
+        <div class="list_form">
+
+          <el-form :inline="true" label-position="top" label-width="80px" :model="transactionFormValue">
+            <!-- 第二层 -->
+            <div class="customer_name">
+              <ul>
+                <li>
+                  <el-form-item label="物料类型" style="width: 300px;">
+                    <el-select disabled v-model="transactionFormValue.materialType" clearable placeholder="请选择" style="width: 300px;">
+                      <el-option v-for="item in materialType" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="物料名称" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialName" readonly></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="物料编号" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialCode" readonly></el-input>
+                  </el-form-item>
+                </li>
+              </ul>
+            </div>
+            <!-- 第三层 -->
+            <div class="vehicle_fuel_volume">
+              <ul>
+                <li>
+                  <el-form-item label="物料状态" style="width: 300px;">
+                    <el-select disabled v-model="transactionFormValue.state" clearable placeholder="请选择" style="width: 300px;">
+                      <el-option v-for="item in status" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="在库数量" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.onHandQty" readonly></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="物料品牌" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialBrand" readonly></el-input>
+                  </el-form-item>
+                </li>
+              </ul>
+            </div>
+            <!-- 第四层 -->
+            <div class="source_of_customers">
+              <ul>
+                <li>
+                  <el-form-item label="物料型号" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialModel" readonly></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="厂商" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.vendorName" readonly></el-input>
+                  </el-form-item>
+                  <li></li>
+              </ul>
+            </div>
+            <!-- 第五层 -->
+            <div class="Price">
+              <ul>
+                <li>
+                  <el-form-item label="销售单价" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialPrice" placeholder="1300" readonly></el-input>
+                  </el-form-item>
+                </li>
+                <li>
+                  <el-form-item label="成本单价" style="width: 300px;">
+                    <el-input v-model="transactionFormValue.materialCost" placeholder="1200" readonly></el-input>
+                  </el-form-item>
+                  <li></li>
+              </ul>
+            </div>
+
+            <!-- 返回和保存 -->
+            <div class="return_and_save">
+              <el-form-item>
+                <el-button @click="backToMaterialListPage">返回</el-button>
+              </el-form-item>
+            </div>
+
+          </el-form>
+        </div>
+      </div>
+
+      <!--列表及出入库记录最外成box-->
+      <div class="material_delivery">
+        <!-- 物资出入库记录 -->
+        <div class="material_delivery_content">物资出入库记录</div>
+        <!-- 表格开始 -->
+
+        <div class="table_box">
+          <!-- 待出库物料详情区域结束 -->
+          <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+              <el-table :data="materialTransactionList" style="width: 100%" v-loading="loading">
+                <el-table-column type="index" label="编号" align="center">
+                </el-table-column>
+                <el-table-column prop="createDate" label="出入库时间" align="center">
+                </el-table-column>
+                <el-table-column prop="itemType" label="物料类别" align="center" :formatter="formatType"></el-table-column>
+                <el-table-column prop="inQrt" label="入库数量" align="center"></el-table-column>
+                <el-table-column prop="outQrt" label="出库数量" align="center"></el-table-column>
+                <el-table-column prop="creatorName" label="操作人 " align="center"></el-table-column>
+                <el-table-column prop="receiverName" label="领取人 " align="center"></el-table-column>
+              </el-table>
+            </template>
+          </div>
+          <!-- 分页 -->
+          <div class="page">
+            <div class="block">
+              <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page="currentPage" :page-sizes="[1, 5, 10, 15, 20]"
+                :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper">
+              </el-pagination>
+            </div>
+          </div>
+        </div>
+        <!-- 右侧内部表单布局容器结束 -->
+      </div>
+    </el-main>
+
+  </div>
+</template>
+<script>
+  export default {
+    templateType: 'vue',
+    el: 'home',
+    data: function () {
+      return {
+        loading: true,
+        currentTime: "",
+        currentOperatorId: "",
+        currentOperatorName: "",
+        // 总条数
+        total: 0,
+        //每页显示数据的条数
+        pageSize: 10,
+        //默认当前页为第一页
+        currentPage: 1,
+        materialTransactionList: [],
+        transactionFormValue: {
+
+        },
+        materialType: [{
+          value: 1,
+          label: '维修材料'
+        }, {
+          value: 2,
+          label: '保养材料'
+        }, {
+          value: 3,
+          label: '其他材料'
+        }, {
+          value: 4,
+          label: '低值易耗品'
+        }],
+        status: [{
+          value: 1,
+          label: '启用'
+        }, {
+          value: 2,
+          label: '禁用'
+        }]
+      }
+    },
+    created() {
+    },
+    mounted: function () {
+      if (this.isLoading) {
+        return ;
+      }
+      this.isLoading  =  true;
+      this.currentTime = oui.dateStrByTime(new Date().getTime(), 'yyyy-MM-dd HH:mm:ss');
+      let loginUser = window.localStorage.getItem("loginUser");
+      let operator = oui.parseJson(loginUser);
+      this.currentOperatorId = operator.id;
+      this.currentOperatorName = operator.empName;
+      this.queryMaterialInfo();
+      this.queryMaterialTransactionRecord();
+    },
+    methods: {
+      formatType: function (row) {
+        if (row.itemType == 1) {
+          return "维修材料";
+        } else if (row.itemType == 2) {
+          return "保养材料";
+        } else if (row.itemType == 3) {
+          return "其他材料";
+        } else if (row.itemType == 4) {
+          return "低值易耗品";
+        }
+      },
+      // 获取项目列表数据
+      queryMaterialInfo: function () {
+        var that = this;
+        let param = this.$router.query;
+        oui.ajaxPost('material/warehouseCenter/findOneMaterialInfoById', {
+          "id": param.materialId,
+        },
+          function (res) {
+            that.transactionFormValue = res.resultObj;
+            that.loading = false;
+          },
+          function (res) {
+            that.$message({
+              message: '网络出错，请稍后重试',
+              type: 'warning'
+            })
+          });
+      },
+      // 获取项目列表数据
+      queryMaterialTransactionRecord: function () {
+        var that = this;
+        let param = this.$router.query;
+        oui.ajaxPost('material/warehouseCenter/oneMaterialTransactionRecord', {
+          "materialId": param.materialId,
+          "pager": {
+            "page": that.currentPage,
+            "rows": that.pageSize
+          }
+        },
+          function (res) {
+            // console.log(res);
+            that.materialTransactionList = res.resultObj.materialTransactionList;
+            that.total = res.resultObj.pager.total;
+            //遍历数组拿到子项
+            oui.eachArray(that.materialTransactionList, function (item) {
+              //判断子项的值
+              if (item.transType == 1) {
+                item.inQrt = item.transQty;
+              } else if (item.transType == 2) {
+                item.outQrt = item.transQty;
+              }
+            });
+          },
+          function (res) {
+            that.$message({
+              message: '网络出错，请稍后重试',
+              type: 'warning'
+            })
+          });
+      },
+      //   默认选中那一页
+      handleCurrentChange: function (val) {
+        this.currentPage = val;
+        this.queryMaterialTransactionRecord();
+      },
+      // 每页显示多少条
+      handleSizeChange: function (val) {
+        this.pageSize = val;
+        this.queryMaterialTransactionRecord();
+      },
+      backToMaterialListPage() {
+        oui.router.push("res_apps/car/html/warehousecenter/comprehensiveQuery.vue.html")
+      }
+    }
+  }
+</script>
+<style>
+  .customer {
+    width: 1040px;
+    height: 700px;
+  }
+
+  html {
+    margin: 0 0px;
+    /* width: 1040px; */
+    /* height: 700px; */
+    /* background-color: rgb(243, 228, 21); */
+  }
+
+  * {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    list-style-type: none;
+  }
+
+  /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+  .el-main {
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    color: #333;
+
+  }
+
+
+  /* 自己的样式 */
+
+  /* 文字盒子span */
+
+  .el-icon-menu>span {
+    margin-left: 1px;
+  }
+
+
+  .el-menu {
+    border: 0;
+    margin: 0 0;
+    padding: 0 0;
+  }
+
+
+
+  /* 面包屑区域开始 -------*/
+
+  .crumbs {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    margin-top: 2px;
+    background-color: #fff;
+  }
+
+  .el-breadcrumb {
+    line-height: 40px;
+    padding-left: 20px;
+
+  }
+
+  /* 面包屑区域结束------ */
+
+  /* 内容主体区域 */
+
+  /* 内容区域的头部为空白 */
+
+  /* 设置右侧头部盒子的边框阴影 */
+
+  .blank_head {
+    background-color: #fff;
+    height: 60px !important;
+    box-shadow: #fff 0px 0px 0px 0px;
+    line-height: 60px;
+
+  }
+
+  .blank_head>div>span {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .el-checkbox-group {
+    display: inline;
+
+  }
+
+  /* 内容侧边栏每一项结束---- */
+
+  /* 内部盒子的内容主体区域 */
+
+  .inside_box {
+    background-color: #fff;
+    /* line-height: 160px; */
+    text-align: left !important;
+  }
+
+  /* 关键字的样式设置开始 */
+
+  /* 关键字区域 */
+
+  .keyword {
+    /* width: 1000px; */
+    height: 60px;
+    font-weight: 700;
+    line-height: 60px;
+    display: flex;
+    justify-content: left;
+  }
+
+  .keyword_content {
+    display: inline;
+    height: 30px;
+    font-size: 14px;
+
+  }
+
+
+
+  /* 正文区域 */
+
+  .content {
+    background-color: #fff;
+    padding: 20px;
+  }
+
+  /* 第一行内容 */
+
+  .billing_time>ul {
+    display: flex;
+    justify-content: left;
+    line-height: 30px;
+  }
+
+  .billing_time>ul>li>div {
+    display: inline-block;
+  }
+
+  .billing_time>ul>li>span {
+    font-size: 14px;
+    color: rgb(0, 0, 0, 0.5);
+
+  }
+
+  /* 第二行 */
+
+  .billing_time>ul>li {
+    width: 300px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .customer_name>ul {
+    display: flex;
+    justify-content: space-between;
+
+  }
+
+  .customer_name>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+
+  /* 第三行 */
+
+  .vehicle_fuel_volume>ul {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .vehicle_fuel_volume>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+
+  /* 第四行 */
+
+  .source_of_customers>ul {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .source_of_customers>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+
+  /* 第五行 */
+
+  .Price>ul {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .Price>ul>li {
+    width: 300px;
+    /* height: 30px; */
+  }
+
+
+
+  /* 修改全局文本框的样式 */
+
+  .el-textarea {
+    width: 765px;
+
+  }
+
+  /* 修改全局文本框内部的input的样式 */
+
+  .el-textarea__inner {
+    width: 100%;
+    height: 35px;
+  }
+
+
+
+  /* 返回和保存 */
+
+  .return_and_save {
+    display: flex;
+    justify-content: center;
+    height: 40px;
+    line-height: 40px;
+  }
+
+  .el-button {
+    width: 180px;
+  }
+
+
+
+
+  /* 物资出入库记录 */
+
+  .material_delivery {
+    margin: 24px 0;
+    padding-top: 24px;
+    background-color: #fff;
+  }
+
+  .material_delivery_content {
+    font-weight: 700;
+    margin-left: 24px;
+  }
+
+
+  /* 栅格栏布局自带样式 */
+
+  .el-row {
+    margin-bottom: 20px;
+
+  }
+
+  .el-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .el-col {
+    border-radius: 4px;
+  }
+
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+
+  .bg-purple {
+    background: #d3dce6;
+  }
+
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+
+  /* 我的工单区域开始 */
+
+  /* 表格处 */
+
+  /* 修改表格头部背景色 */
+
+  .el-table th {
+    background-color: #fafafa;
+  }
+
+
+  .table_box {
+    padding: 21px 20px;
+    background-color: #fff;
+
+  }
+
+
+  .my_work_order {
+    width: 100px;
+    line-height: 30px;
+    color: #000000;
+    /* padding-left: 20px; */
+    font-weight: 700;
+  }
+
+  .work_order_details {
+    line-height: 30px;
+    color: red;
+    /* padding-right: 20px; */
+    font-size: 14px;
+  }
+
+  /* 表格数据 居中对齐*/
+
+  .cell {
+    /* text-align: center; */
+    color: rgb(0, 0, 0, 0.7);
+  }
+
+  /* 我的工单区域结束 */
+
+  /* 分页区域位置放置区域 ----------------*/
+
+  /* 分页区域开始---- */
+
+  .page {
+    width: 100%;
+    height: 35px;
+    margin: 20px 0;
+  }
+
+  .block {
+    float: right;
+  }
+
+  /* 分页区域结束----- */
+</style>

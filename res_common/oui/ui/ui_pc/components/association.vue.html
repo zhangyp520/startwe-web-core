@@ -1,0 +1,174 @@
+<!--关联控件-->
+<template >
+
+    <div class="association-outer">
+    <!--下拉回填 showType 为0,1-->
+    <el-select v-if="showType==0 || showType==1" :style="style"
+               :id="id"
+               :name="name"
+               :bindProp="bindProp"
+               :class="cls"
+               :size="size"
+               :placeholder="placeholder"
+               v-model="value"
+               filterable
+               clearable
+               remote
+               reserve-keyword
+               :placeholder="placeholder"
+               emptyText="暂无数据"
+               @clear="clear4loadRemoteData"
+               :remote-method="loadRemoteData"
+               :loading="loading"
+               @change="_controlOnUpdate" >
+        <el-option
+                v-for="item in data"
+                :key="item.value"
+                :label="item.display"
+                :value="item.value"
+                :disabled="item.disabled">
+        </el-option>
+    </el-select>
+    </div>
+
+
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                loading:false,
+                id:'',
+                name:'',
+                showType:0,
+                size:'',
+                data:[],
+                otherAttrs:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'请选择'
+            }
+        },
+        mounted:function(){
+            if(this.otherAttrs){
+                var showType = this.otherAttrs.relationShowType;
+                if(!showType){
+                    showType = 0;
+                }
+                this.showType = showType;
+            }
+            if(!this.data.length){
+                if(this.otherAttrs&&this.otherAttrs.data){
+                    this.data = this.otherAttrs.data;
+                }
+            }
+            if(this.value){//值存在，则加载显示值
+                this.loadRemoteDataByValue();
+            }else{
+                this.loadRemoteData();
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                var data4db = {};
+                if(v){
+                    var one = oui.findOneFromArrayBy(this.data,function(item){
+                        if((item.value+'') == (v+'')){
+                            return true;
+                        }
+                    });
+                    data4db = one;
+                }
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:data4db, display:data4db.display }); //外部构造的方法调用
+            },
+            clear4loadRemoteData:function(){
+                //清除时加载远程地址
+                var me = this;
+                me.loadRemoteData();
+            },
+            loadBack:function(res){
+                var me = this;
+                var tempData = res.dataList ||[];
+                var fieldBizId = res.fieldBizId;
+                var displayFieldBizId =res.displayFieldBizId;
+                var data=[];
+                oui.eachArray(tempData,function(item){
+                    data.push({
+                        value:item[fieldBizId],
+                        display:item[displayFieldBizId]
+                    });
+                });
+
+                me.data = data;
+            },
+            /****
+             * 加载远程数据
+             * @param query
+             */
+            loadRemoteData:function(query){
+                //加载远程地址
+                query = query ||'';
+                var me = this;
+                me.loading = true;
+                //根据输入参数模糊匹配
+                //查询所有
+                var url = me.otherAttrs.associationRuntimeQueryUrl;
+                if(url){
+                    oui.postData(url,{
+                        queryFilter:query
+                    },function(res){
+                        if(res.success){
+                            me.loadBack(res);
+                        }
+                        me.loading = false;
+                    },function(res){
+
+                        me.loading = false;
+                    },'加载中...');
+                }
+            },
+            /****
+             * 根据值查询
+             * @param query
+             */
+            loadRemoteDataByValue:function(){
+                var me = this;
+                me.loading = true;
+                //根据输入参数模糊匹配
+                //查询所有
+                var url = me.otherAttrs.associationRuntimeQueryUrl;
+                if(url){
+                    oui.postData(url,{
+                        value:this.value
+                    },function(res){
+                        if(res.success){
+                            me.loadBack(res);
+                        }
+                        me.loading = false;
+                    },function(res){
+                        me.loading = false;
+                    },'加载中...');
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .association-outer{
+        width: 100%;
+        display: inline-flex;
+    }
+    .association-outer .el-select{
+        display: inline;
+        width: 100%;
+    }
+    .el-select .el-input input{
+        padding-right: 33px;
+    }
+</style>

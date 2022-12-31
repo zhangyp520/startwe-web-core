@@ -1,0 +1,666 @@
+
+<link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/pc-common.css"/>
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/logicchart.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/toolbar.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/font-awesome.min.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/logic-graph/css/iconfont.css"/>
+<oui-view id="view-logic" class="container" oui-controller="com.startwe.models.project.web.LogicDesignController"  data="com.startwe.models.project.web.LogicDesignController.getData()">
+
+</oui-view>
+<script type="text/html" id="view-logic-tpl">
+    <div class="pg-block" oui-controller="com.startwe.models.project.web.LogicDesignController" >
+        <style>
+            .logicchart > table > tbody > tr:first-child td .node .title{
+                background-color:#1890FF;
+                color:#fff ;
+                border: 1px solid #1890FF ;
+            }
+            .logicchart .node:hover .title {
+                background-color:#fff;
+            }
+            .logicchart .node .title {
+                font-size:14px;
+                color:#DEA535;
+                border: 1px solid #DEA535;
+            }
+            .node-end>.title{
+                background-color:#1890FF !important;
+                color:#fff !important;
+                border: 1px solid #1890FF !important;
+            }
+            .logicchart td > .down{
+                background-color:#DEA535;
+            }
+            .logicchart td.right{
+                border-right: 1px solid #DEA535;
+            }
+            .logicchart td.left{
+                border-left: 1px solid #DEA535;
+            }
+            .logicchart td.top{
+                border-top: 2px solid #DEA535;
+            }
+            .logicchart td.bottom{
+                border-bottom: 2px solid #DEA535;
+            }
+            .node-loop-right>.node>.title{
+                color:dodgerblue;
+                border: 1px solid dodgerblue;
+            }
+            .node-loop-right .down{
+                background-color:dodgerblue  !important;
+            }
+            .node-loop-right .right{
+                border-right: 1px solid dodgerblue !important;
+            }
+            .node-loop-right .left{
+                border-left: 1px solid dodgerblue !important;
+            }
+            .node-loop-right .top{
+                border-top: 2px solid dodgerblue !important;
+            }
+            .node-loop-right .bottom{
+                border-bottom: 2px solid dodgerblue !important;
+            }
+        </style>
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'logic-design'})}}
+        </div>
+        <div class="pg-block-header">
+            <a href="#" oui-e-{{LogicGraph.treeMap.clickName}}="event2direction">横向/纵向</a>
+            <a href="#" oui-e-{{LogicGraph.treeMap.clickName}}="event2exportGraph">导出图片</a>
+            <a href="#" oui-e-{{LogicGraph.treeMap.clickName}}="event2buildApi">生成加密api路径</a> <span id="build-api-span"></span>
+            <a href="#" oui-e-{{LogicGraph.treeMap.clickName}}="event2buildTestApi">生成api测试路径</a> <span ></span>
+
+            <!--<a href="#" oui-e-{{LogicGraph.treeMap.clickName}}="event2save">保存</a>-->
+            <div class="manager-toolbar">
+                <a style="visibility: hidden" href="#" class="download"></a>
+                <div class="manager-toolbar-right fr">
+                    <button oui-e-click="event2small" type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-narrow"></button>
+                    <button oui-e-click="event2big"  type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-enlarge"></button>
+                    <button oui-e-click="event2ToggleExpand" class="toolbar-group-item toolbar-group-icon {{if LogicGraph.isRootChildrenUnExpand}}toolbar-group-icon-open{{else}}toolbar-group-icon-close{{/if}}"></button>
+                </div>
+            </div>
+        </div>
+        <div class="pg-block-cont logic-graph-content" style="overflow: hidden">
+            <div class="logicchart {{LogicGraph.treeMap.direction}}">
+                {{include 'logic-table-tpl' ({treeMap:LogicGraph.treeMap,nodeId:LogicGraph.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="logic-table-split-tpl">
+    <table  height="1" width="1" style="display: inline-table"  >
+        <tbody>
+        {{if treeMap.findChildren(nodeId).length}}
+        <tr class="lines" >
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down"></div>
+            </td>
+        </tr>
+        <tr class="lines">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" style="overflow: hidden" width="1" >
+                {{include 'logic-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+                {{if treeMap.findChildren(nodeId).length}}
+                <div class="down" style="height: 100%;margin: 0 auto;"></div>
+                {{/if}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        {{if treeMap.findNode(nodeId).childIds.length>1 }}
+        <tr class="lines">
+            {{each treeMap.findLineCls4BottomArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+
+<script type="text/html" id="logic-table-tpl">
+    <table table-node-id="{{nodeId}}"  height="1" width="1"  >
+        <tbody>
+        {{if !treeMap.isJoin(nodeId)}}
+        <tr>
+            <td colspan="1" class="{{treeMap.findNode(nodeId).node.loopStart?'node-loop-top node-loop-left node-loop-right':''}} {{treeMap.findNode(nodeId).node.loopEnd?'node-loop-bottom node-loop-left node-loop-right':''}} ">
+                {{if treeMap.isJoin(nodeId)}}
+                {{if treeMap.findSplitChildrenLength(nodeId)>1}}
+                <div class="down"></div>
+                {{/if}}
+                {{if treeMap.findSplitChildrenLength(nodeId)<=1}}
+                <div class="down down-join-line-height"></div>
+                {{/if}}
+
+                {{/if}}
+                <div class="node {{treeMap.isJoin(nodeId)?'join-node':''}}" draggable="true"  node-id="{{nodeId}}"
+                     oui-e-{{treeMap.clickName}}="event2showMenu"
+                        >
+                    <div class="title {{treeMap.findSourceNode(nodeId).nodeType}}"  >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        <i class="fa fa-th-large symbol"></i>
+                        {{if treeMap.isRoot(nodeId)}}
+                            <i class="icon iconfont icon-kaishi"></i>
+                        {{/if}}
+                        {{if treeMap.findNode(nodeId).node.loopStart}}
+                            <i class="icon iconfont icon-iconfontdanquxunhuan2eps"></i>
+                        {{/if}}
+                        {{treeMap.findNodeName(nodeId)}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+        {{if (treeMap.hasChildren(nodeId)||treeMap.findJoinId(nodeId)) && treeMap.isExpand(nodeId)}}
+
+
+
+        {{if treeMap.findChildren(nodeId).length}}
+        <tr class="nodes">
+            <td colspan="1" class="{{treeMap.findNode(nodeId).node.loopStart?'node-loop-left node-loop-right':''}}">
+                {{include 'logic-table-split-tpl' ({treeMap:LogicGraph.treeMap,nodeId:nodeId})}}
+            </td>
+        </tr>
+        {{/if}}
+
+        {{if treeMap.findJoinId(nodeId)}}
+
+
+
+
+        <tr>
+            <td colspan="1" class="{{ treeMap.findNode(treeMap.findJoinId(nodeId)).node.loopEnd ?'node-loop-left node-loop-right node-loop-bottom':''}}  ">
+                {{if treeMap.isJoin(treeMap.findJoinId(nodeId))}}
+                {{if treeMap.findSplitChildrenLength(treeMap.findJoinId(nodeId))>1}}
+                <div class="down"></div>
+                {{/if}}
+                {{if treeMap.findSplitChildrenLength(treeMap.findJoinId(nodeId))<=1}}
+                <div class="down down-join-line-height"></div>
+                {{/if}}
+
+                {{/if}}
+                <div class="node  join-node " draggable="true"  node-id="{{treeMap.findJoinId(nodeId)}}"
+                     oui-e-{{treeMap.clickName}}="event2showMenu"
+                        >
+                    <div class="title {{treeMap.findSourceNode(nodeId).nodeType}}"  >
+                        {{if treeMap.hasChildren(treeMap.findJoinId(nodeId))}}
+                        {{if !treeMap.isExpand(treeMap.findJoinId(nodeId))}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        <i class="fa fa-th-large symbol"></i>
+                        {{treeMap.findNodeName(treeMap.findJoinId(nodeId))}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.findChildren(treeMap.findJoinId(nodeId)).length}}
+        <tr class="nodes"  >
+            <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                <div style="display: inline-table;">
+                    {{include 'logic-table-tpl' ({treeMap:LogicGraph.treeMap,nodeId:LogicGraph.treeMap.findJoinId(nodeId)})}}
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+
+        {{/if}}
+
+
+        {{/if}}
+        {{if treeMap.isRoot(nodeId)}}
+        <tr class="nodes" >
+            <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                <div class="down down-join-line-height"></div>
+                <div style="display: inline-table;">
+                    <div class="node node-end" >
+                        <div class="title"  >
+                            <i class="icon iconfont icon-tingzhi"></i>
+                            end
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+<!--join节点菜单-->
+<script type="text/html" id="node-menu4join-tpl">
+    <div class="second-menu">
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-bianji"></i>
+            编辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+            清空后续节点
+        </div>
+        {{if !treeMap.findNode(nodeId).node.loopEnd}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+            删除当前节点和后续节点
+        </div>
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="node-menu-start-tpl">
+    <div class="second-menu">
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="interfaceSettings" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-jiexishurushuchu"></i>
+            接口设置
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-bianji"></i>
+            编辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addGrandson" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-add-tree-child"></i>
+            添加孙子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-tpl">
+    <div class="second-menu">
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-bianji"></i>
+            编辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addGrandson" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-add-tree-child"></i>
+            添加孙子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addParent" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-jiedian"></i>
+            添加父节点
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addBrother" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-subordinate"></i>
+            添加兄弟节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLoop" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-iconfontdanquxunhuan2eps"></i>
+            添加循环节点
+        </div>
+
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-shanchujiedian"></i>
+            删除当前节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+                删除当前节点和所有子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+<!--拖拽结束的菜单功能-->
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<!--编辑节点名称模板-->
+<script type="text/html" id="node-name-edit-tpl">
+    <input type="text" node-id="{{nodeId}}" style="position: absolute;left:0;top:0;height: 40px;color:#000000" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+</script>
+
+<!--变量定义和输出变量的模板-->
+<script type="text/html" id="params-define-settings-tpl">
+    <div class="col-sm-5">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">变量名称</label>
+                <div class="col-sm-8">
+                    <oui-form id="varName-{{paramKey}}-{{index}}" validate="{{oui.parseString(LogicGraph.findValidate4params('varName',paramKey,index))}}" name="{{paramKey}}[{{index}}].name" bindProp="data[{{index}}].name" type="textfield" value="{{propDefine.name}}" placeholder="输入变量名称"></oui-form>
+                </div>
+            </div>
+        </div>
+        <div id="varName-{{paramKey}}-{{index}}-error"></div>
+    </div>
+    <div class="col-sm-5">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">变量类型</label>
+                <div class="col-sm-9">
+                    <oui-form id="varFieldType-{{paramKey}}-{{index}}" onUpdate="com.startwe.models.project.web.LogicDesignController.fieldTypeOnUpdate" validate="{{oui.parseString(LogicGraph.findValidate4params('varFieldType',paramKey,index))}}" name="{{paramKey}}[{{index}}].fieldType" bindProp="data[{{index}}].fieldType" type="singleselect" value="{{propDefine.fieldType}}" data="{{oui.parseString(LogicGraph.findFieldTypes())}}" placeholder="请选择变量类型"></oui-form>
+                    <div style="{{if !(propDefine.fieldType&&(propDefine.fieldType=='table_type')) }}display:none{{/if}}" id="tableModel-{{paramKey}}-{{index}}">
+                        <oui-form type="hidden" id="tableModelId-{{paramKey}}-{{index}}"  name="{{paramKey}}[{{index}}].tableModelId" value="{{propDefine.tableModelId}}"></oui-form>
+                        <oui-form type="hidden" id="tableModelDefineJson-{{paramKey}}-{{index}}"  name="{{paramKey}}[{{index}}].define" >{{oui.parseString(propDefine.define)}}</oui-form>
+
+                        <oui-form type="outercontrol" value="{{propDefine.tableModelName}}" name="{{paramKey}}[{{index}}].tableModelName" url="{{LogicGraph.data.queryPageModelsUrl}}" isReadOnly="false" dataType="array"  id="tableModelName-{{paramKey}}-{{index}}" doScriptMethod="com.startwe.models.project.web.LogicDesignController.tableModelSelectCallback"></oui-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="varFieldType-{{paramKey}}-{{index}}-error"></div>
+    </div>
+    <div class="col-sm-2">
+        <div class="pg-pb-item-op">
+            <div class="btn btn-default btn-xs" param-key="{{paramKey}}" var-index="{{index}}" oui-e-click="event2addCurrVar">
+                <span class="glyphicon glyphicon-plus" ></span>
+            </div>
+            <div class="btn btn-default btn-xs" param-key="{{paramKey}}" var-index="{{index}}" oui-e-click="event2removeCurrVar">
+                <span class="glyphicon glyphicon-minus"></span>
+            </div>
+        </div>
+    </div>
+</script>
+<!--输入参数定义模板-->
+<script type="text/html" id="inputParams-define-settings-tpl">
+    <div class="col-sm-4">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-5 control-label">变量名称</label>
+                <div class="col-sm-7">
+                    <oui-form id="varName-{{paramKey}}-{{index}}" validate="{{oui.parseString(LogicGraph.findValidate4params('varName',paramKey,index))}}" name="{{paramKey}}[{{index}}].name" bindProp="data[{{index}}].name" type="textfield" value="{{propDefine.name}}" placeholder="输入变量名称"></oui-form>
+                    <oui-form id="varName4Inner-{{paramKey}}-{{index}}" onUpdate="com.startwe.models.project.web.LogicDesignController.innerVarOnUpdate" data="{{oui.parseString(LogicGraph.findInnerVars())}}" type="singleselect" value="{{propDefine.name}}" placeholder="使用内置变量"></oui-form>
+                </div>
+            </div>
+        </div>
+        <div id="varName-{{paramKey}}-{{index}}-error"></div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-5 control-label">变量类型</label>
+                <div class="col-sm-7">
+                    <oui-form id="varFieldType-{{paramKey}}-{{index}}" onUpdate="com.startwe.models.project.web.LogicDesignController.fieldTypeOnUpdate"  validate="{{oui.parseString(LogicGraph.findValidate4params('varFieldType',paramKey,index))}}" name="{{paramKey}}[{{index}}].fieldType" bindProp="data[{{index}}].fieldType" type="singleselect" value="{{propDefine.fieldType}}" data="{{oui.parseString(LogicGraph.findFieldTypes())}}" placeholder="请选择变量类型"></oui-form>
+                    <div style="{{if !(propDefine.fieldType&&(propDefine.fieldType=='table_type')) }}display:none{{/if}}" id="tableModel-{{paramKey}}-{{index}}">
+                        <oui-form type="hidden" id="tableModelId-{{paramKey}}-{{index}}"  name="{{paramKey}}[{{index}}].tableModelId" value="{{propDefine.tableModelId}}"></oui-form>
+                        <oui-form type="hidden" id="tableModelDefineJson-{{paramKey}}-{{index}}"  name="{{paramKey}}[{{index}}].define" >{{oui.parseString(propDefine.define)}}</oui-form>
+
+                        <oui-form type="outercontrol" value="{{propDefine.tableModelName}}" name="{{paramKey}}[{{index}}].tableModelName" url="{{LogicGraph.data.queryPageModelsUrl}}" isReadOnly="false" dataType="array"  id="tableModelName-{{paramKey}}-{{index}}" doScriptMethod="com.startwe.models.project.web.LogicDesignController.tableModelSelectCallback"></oui-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="varFieldType-{{paramKey}}-{{index}}-error"></div>
+    </div>
+    <div class="col-sm-2">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-8 control-label">加密参数组成部分</label>
+                <div class="col-sm-4">
+                    <oui-form id="urlEncodeKey-{{paramKey}}-{{index}}" name="{{paramKey}}[{{index}}].urlEncodeKey" bindProp="data[{{index}}].urlEncodeKey" type="checkbox" value="{{propDefine.urlEncodeKey?'true':''}}" ></oui-form>
+                </div>
+            </div>
+
+        </div>
+        <div id="urlEncodeKey-{{paramKey}}-{{index}}-error"></div>
+    </div>
+    <div class="col-sm-2">
+        <div class="pg-pb-item-op">
+            <div class="btn btn-default btn-xs" param-key="{{paramKey}}" var-index="{{index}}" oui-e-click="event2addCurrVar">
+                <span class="glyphicon glyphicon-plus" ></span>
+            </div>
+            <div class="btn btn-default btn-xs" param-key="{{paramKey}}" var-index="{{index}}" oui-e-click="event2removeCurrVar">
+                <span class="glyphicon glyphicon-minus"></span>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="params-define-tpl">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span>{{title}}</span>
+            <div class="pull-right panel-title-btn">
+                <button class="btn btn-default btn-xs" param-key="{{paramKey}}" oui-e-click="event2addVar"><span class="glyphicon glyphicon-plus"></span> 添加变量</button>
+                <button class="btn btn-default btn-xs" param-key="{{paramKey}}" oui-e-click="event2removeVars"> <span class="glyphicon glyphicon-trash"></span> 删除全部</button>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        {{each LogicGraph.data[paramKey] as propDefine index}}
+        <div class="pg-pb-item">
+            <div class="row">
+                {{if paramKey=='inputParams'}}
+                    {{include 'inputParams-define-settings-tpl' ({paramKey:paramKey,index:index,propDefine:propDefine})}}
+                {{/if}}
+                {{if paramKey!='inputParams'}}
+                    {{include 'params-define-settings-tpl' ({paramKey:paramKey,index:index,propDefine:propDefine})}}
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+<!--输入输出设置-->
+<script type="text/html" id="node-interface-tpl">
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_engine/logic-graph/css/interfaces-setting.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/control.css" />
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css"/>
+    <div class="container pg-api-design" oui-controller="com.startwe.models.project.web.LogicDesignController" style="width:920px;max-height: 550px;overflow: auto">
+        <h3 class="pg-title text-center">接口名称 <small>{{logicName}}</small></h3>
+        <oui-view id="inputParams-view" class="panel panel-default" tplId="params-define-tpl" oui-controller="com.startwe.models.project.web.LogicDesignController" data="getData4inputParams()"></oui-view>
+        <oui-view id="varParams-view" class="panel panel-default" tplId="params-define-tpl" oui-controller="com.startwe.models.project.web.LogicDesignController" data="getData4varParams()"></oui-view>
+        <oui-view id="outputParams-view" class="panel panel-default" tplId="params-define-tpl" oui-controller="com.startwe.models.project.web.LogicDesignController" data="getData4outputParams()"></oui-view>
+    </div>
+</script>
+<!--条件设置-->
+<script type="text/html" id="node-edit-conditions">
+    <div class="panel panel-default" oui-controller="com.startwe.models.project.web.LogicDesignController">
+        <div class="panel-heading">
+            <h3 class="panel-title  title-left">
+                <span>条件设置</span>
+                <div class="pull-right panel-title-btn">
+                    <button class="btn btn-default btn-xs" oui-e-click="event2showOrHidePreview"><span class="glyphicon glyphicon-eye-open"></span> <label>规则预览</label></button>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <oui-condition id="edit4logicCondition" showType="3" type="condition"
+                           align="center"
+                           useOrRule="true"
+                           settingBtnText="逻辑条件设置"
+                           title="逻辑条件设置"
+                           confirmName="确认"
+                           maxConditionLenth="8"
+                           useSysVar4fiedValue="true"
+                           maxLimitMsgTitle="变量条件"
+                           maxLimitMsgTitle4all="变量条件总数"
+                           isFilterSettingFields="false"
+                           noEnumValueDisplay="该字段已经被删除"
+                           showConditionInfoAfter="com.startwe.models.project.web.LogicDesignController.showConditionInfoAfter"
+                           findSysVars="com.startwe.models.project.web.LogicDesignController.filterField4SysVar"
+
+                    >
+                {{each LogicGraph.findAllVars() as varItem}}
+                <oui-field title="{{varItem.title}}" showtype="{{varItem.showType}}" datatype="{{varItem.dataType}}" opt="{{varItem.opt}}" controltype="{{varItem.controlType}}" name="{{varItem.name}}"  ></oui-field>
+                {{/each}}
+            </oui-condition>
+        </div>
+    </div>
+
+</script>
+<!--赋值设置-->
+<script type="text/html" id="node-edit-evaluates">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title title-left">
+                <span>赋值设置</span>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="pg-pb-item">
+                <div class="row">
+                    <oui-condition id="edit4logicExecute" showType="3" type="condition"
+                                   align="center"
+                                   useOrRule="false"
+                                   settingBtnText="逻辑赋值设置"
+                                   title="逻辑赋值设置"
+                                   confirmName="确认"
+                                   maxConditionLenth="8"
+                                   useSysVar4fiedValue="true"
+                                   maxLimitMsgTitle="赋值设置"
+                                   maxLimitMsgTitle4all="赋值项总数"
+                                   isFilterSettingFields="true"
+                                   noEnumValueDisplay="该字段已经被删除"
+                                   findSysVars="com.startwe.models.project.web.LogicDesignController.filterField4SysVar"
+
+                            >
+                        {{each LogicGraph.findAllVars() as varItem}}
+                        <oui-field title="{{varItem.title}}" showtype="{{varItem.showType}}" datatype="{{varItem.dataType}}" opt="=" controltype="{{varItem.controlType}}" name="{{varItem.name}}"  ></oui-field>
+                        {{/each}}
+                    </oui-condition>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="callLogic-temp-tpl">
+    {{if callLogic&&callLogic.name}}
+
+    {{each ['inputParams','outputParams'] as paramKey index4paramKey}}
+    <div class="pg-pb-header title-left">
+        <span class="desp-text">
+        {{if index4paramKey==0}}输入参数{{/if}}
+        {{if index4paramKey==1}}输出参数{{/if}}
+        </span>
+    </div>
+    <div class="pg-pb-item">
+        {{each callLogic[paramKey] as propDefine index}}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">变量名称</label>
+                        <div class="col-sm-9">
+                            {{if index4paramKey==0}}
+                            <oui-form id="varName-{{paramKey}}-{{index}}" validate="{{oui.parseString(LogicGraph.findValidate4params('varName',paramKey,index))}}" name="callLogic.targetInputParams[{{index}}]"  type="singleselect" value="{{callLogic.targetInputParams[index]}}" data="{{oui.parseString(LogicGraph.findVarsByFieldType(propDefine.fieldType))}}"></oui-form>
+                            {{/if}}
+                            {{if index4paramKey==1}}
+                            <oui-form id="varName-{{paramKey}}-{{index}}" name="callLogic.targetOutputParams[{{index}}]"  type="singleselect" value="{{callLogic.targetOutputParams[index]}}" data="{{oui.parseString(LogicGraph.findVarsByFieldType(propDefine.fieldType))}}"></oui-form>
+                            {{/if}}
+
+                        </div>
+                    </div>
+                </div>
+                <div id="varName-{{paramKey}}-{{index}}-error"></div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-5 control-label">{{propDefine.name}}</label>
+                        <div class="col-sm-7">
+                            <oui-form right="readOnly" id="varFieldType-{{paramKey}}-{{index}}" type="singleselect" value="{{propDefine.fieldType}}" data="{{oui.parseString(LogicGraph.findFieldTypes())}}" placeholder="请选择变量类型"></oui-form>
+                        </div>
+                    </div>
+                </div>
+                <div id="varFieldType-{{paramKey}}-{{index}}-error"></div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/each}}
+    {{/if}}
+</script>
+<!--逻辑调用-->
+<script type="text/html" id="node-edit-callLogic">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title title-left">
+                <span>逻辑调用设置</span>
+            </h3>
+        </div>
+
+        <div class="panel-body" style="padding-bottom: 0">
+            <div class="pg-pb-header title-left">
+                <span class="desp-text">
+                    选择调用逻辑
+                </span>
+            </div>
+            <div class="pg-pb-item">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <oui-form type="outercontrol" onAfterUpdate="com.startwe.models.project.web.LogicDesignController.onUpdate4logic" value="{{callLogic&&callLogic.name}}" name="callLogic.name" url="{{queryLogicsUrl}}" isReadOnly="false" dataType="array"  id="logics-select" doScriptMethod="com.startwe.models.project.web.LogicDesignController.logicSelectCallback"></oui-form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <oui-view oui-controller="com.startwe.models.project.web.LogicDesignController" id="callLogic-temp" class="panel-body" data="getCurrNodeData('{{nodeId}}')"></oui-view>
+    </div>
+</script>
+
+<!--节点编辑页面，执行条件，执行赋值或者方法调用设置-->
+<script type="text/html" id="node-edit-tpl">
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_engine/logic-graph/css/node-edit-setting.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/dialog.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/control.css" />
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/pager/css/pager.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css"/>
+
+    <div class="panel-body" style="max-height: 550px;overflow-y:scroll">
+        <div class="pg-pb-item">
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <label>逻辑节点名称</label>
+                </div>
+                <div class="col-sm-5">
+                    <oui-form type="textfield" id="node_name" name="node.name" value="{{treeMap.findNodeName(nodeId)}}" ></oui-form>
+                </div>
+            </div>
+            {{include 'node-edit-conditions'}}
+            {{include 'node-edit-evaluates'}}
+            {{include 'node-edit-callLogic'}}
+        </div>
+    </div>
+
+</script>
+ 

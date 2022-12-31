@@ -1,0 +1,759 @@
+<template>
+    <div class="container">
+        <div class="timeBox">
+            <img src="res_startwe/games/img/time.png" alt="">
+            <div id="countDown" style="font-size: 30px;color: #fff;">
+
+            </div>
+        </div>
+        <!-- 中奖信息弹窗 -->
+        <div class="dialogBox">
+            <el-dialog :visible.sync="dialogVisible_1" width="50rem" style="margin-top: 35%;font-size: 3.2em" :before-close="handleClose"
+                :show-close="showClo">
+                <!--                <div class="dialogBox-name" style="border-bottom: 1px solid #999;">-->
+                <!--                    <span>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:</span>-->
+                <!--                    <el-input type="text" v-model="name"></el-input>-->
+                <!--                </div>-->
+                <div v-if="errShow_1" style="color: #FF7D82;font-size: 26px;">{{errTips_1}}</div>
+                <div class="dialogBox-name" style="border-bottom: 1px solid #999;margin-top: 20px;">
+                    <span>请输入手机号码:</span>
+                    <el-input type="text" v-model="phoneNumber"></el-input>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button class="determineDelBtn" type="primary" @click="submit">开始游戏</el-button>
+                </span>
+            </el-dialog>
+            <el-dialog :visible.sync="finished" width="50rem" style="margin-top: 35%;font-size: 3.2em" :before-close="handleClose" :show-close="showClo">
+                <div class="dialogBox-name">
+                    &nbsp;&nbsp;本次活动已经结束了！下次见！
+                </div>
+            </el-dialog>
+            <el-dialog :visible.sync="startLuckyDraw" width="50rem" style="margin-top: 35%;font-size: 3.2em" :before-close="handleClose"
+                :show-close="showClo">
+                <div class="dialogBox-name">
+                    活动将于2021-02-12 0点（大年初一）开始，敬请期待！
+                </div>
+            </el-dialog>
+        </div>
+        <div v-show="rain">
+
+            <div id="redzone">
+                <div class="time-go" v-if="timeUrl">
+                    <div class="div-img-pos">
+                        <img :src="timeUrl" alt="">
+                    </div>
+                </div>
+            </div>
+            <div id="bgsong-div" style="display: none"></div>
+            <!-- 中奖信息弹窗 -->
+            <el-dialog :visible.sync="dialogVisible" width="50rem" :before-close="handleClose" class="dialogBox" :show-close="showClo">
+                <div class="oneTips">
+                    <img :src="srcURL" alt="">
+                </div>
+
+                <span slot="footer" class="dialog-footer" v-show="info">
+                    <el-button class="determineDelBtn" type="primary" @click="submitMsg = true">填写收件信息</el-button>
+                </span>
+            </el-dialog>
+            <!-- 填写信息弹窗 -->
+            <el-dialog :visible.sync="submitMsg" width="50rem" :before-close="handleClose_1" class="dialogBox" :show-close="showClo">
+                <div v-if="errShow_2" style="color: #FF7D82;font-size: 26px;">{{errTips_2}}</div>
+                <div class="tipsTitle">
+                    填写收件信息
+                </div>
+                <div class="tipsContent">
+                    <div>
+                        <span>姓&nbsp;&nbsp;名:</span>
+                        <el-input type="text" v-model="name"></el-input>
+                    </div>
+                    <div>
+                        <span>手机号码:</span>
+                        <el-input type="text" v-model="phoneNumber"></el-input>
+                    </div>
+                    <div style="height: 130px;">
+                        <span style="margin-top: -60px;">公司名称:</span>
+                        <!-- <el-input type="text" v-model="companyName"></el-input> -->
+                        <el-input type="textarea" :rows="2" v-model="companyName"></el-input>
+                    </div>
+                    <div style="height: 200px;">
+                        <span style="margin-top: -110px;">收件地址:</span>
+                        <el-input type="textarea" :rows="3" v-model="address"></el-input>
+                    </div>
+                </div>
+                <div class="checkedBox">
+                    <el-checkbox v-model="checked">
+                    </el-checkbox>
+                    <div>
+                        <span>已阅读并同意</span>
+                        <span @click="dialogVisible_2=true">“隐私政策”</span>
+                    </div>
+                </div>
+
+                <span slot="footer" class="dialog-footer">
+                    <el-button class="submitBtn" type="primary" @click="receivePrizeInfo">提交信息</el-button>
+                </span>
+            </el-dialog>
+            <!-- 隐私协议弹窗 -->
+            <el-dialog :visible.sync="dialogVisible_2" width="50rem" :before-close="handleClose_2" class="dialogBox" :show-close="showClo">
+                <div style="font-size: 30px;font-weight: bold;text-align: center;line-height: 50px;">隐私服务条款</div>
+                <div style="font-size: 20px;line-height: 30px;">
+                    成都起微网络技术有限公司(以下称“起微”)尊重并保护所有使用服务用户的个人隐私权。为了给您提供更准确、更有个性化的服务，起微会按照本隐私权政策的规定使用和披露您的个人信息。但起微将以高度的勤勉、审慎义务对待这些信息。除本隐私权政策另有规定外，在未征得您事先许可的情况下，起微不会将这些信息对外披露或向第三方提供。起微会不时更新本隐私权政策。
+                    您在同意起微服务使用协议之时，即视为您已经同意本隐私权政策全部内容。本隐私权政策属于起微服务使用协议不可分割的一部分。 1. 适用范围 a) 在您注册起微帐号时，您根据起微要求提供的个人注册信息； b)
+                    在您使用起微网络服务，或访问起微平台网页时，起微自动接收并记录的您的浏览器和计算机上的信息，包括但不限于您的IP地址、浏览器的类型、使用的语言、访问日期和时间、软硬件特征信息及您需求的网页记录等数据；
+                    c) 起微通过合法途径从商业伙伴处取得的用户个人数据。 您了解并同意，以下信息不适用本隐私权政策： a) 您在使用起微平台提供的搜索服务时输入的关键字信息； b) 起微收集到的您在起微发布的有关信息数据，包括但不限于参与活动、成交信息及评价详情；
+                    c) 违反法律规定或违反起微规则行为及起微已对您采取的措施。 2. 信息使用 a) 起微不会向任何无关第三方提供、出售、出租、分享或交易您的个人信息，除非事先得到您的许可，或该第三方和起微（含起微关联公司）单独或共同为您提供服务，且在该服务结束后，其将被禁止访问包括其以前能够访问的所有这些资料。
+                    b) 起微亦不允许任何第三方以任何手段收集、编辑、出售或者无偿传播您的个人信息。任何起微平台用户如从事上述活动，一经发现，起微有权立即终止与该用户的服务协议。 c) 为服务用户的目的，起微可能通过使用您的个人信息，向您提供您感兴趣的信息，包括但不限于向您发出产品和服务信息，或者与起微合作伙伴共享信息以便他们向您发送有关其产品和服务的信息（后者需要您的事先同意）。
+                    3. 信息披露 在如下情况下，起微将依据您的个人意愿或法律的规定全部或部分的披露您的个人信息： a) 经您事先同意，向第三方披露； b) 为提供您所要求的产品和服务，而必须和第三方分享您的个人信息； c)
+                    根据法律的有关规定，或者行政或司法机构的要求，向第三方或者行政、司法机构披露； d) 如您出现违反中国有关法律、法规或者起微服务协议或相关规则的情况，需要向第三方披露； e) 如您是适格的知识产权投诉人并已提起投诉，应被投诉人要求，向被投诉人披露，以便双方处理可能的权利纠纷；
+                    f) 在起微平台上创建的某一交易中，如交易任何一方履行或部分履行了交易义务并提出信息披露请求的，起微有权决定向该用户提供其交易对方的联络方式等必要信息，以促成交易的完成或纠纷的解决。 g) 其它起微根据法律、法规或者网站政策认为合适的披露。
+                    4. 信息存储和交换 起微收集的有关您的信息和资料将保存在起微及（或）其关联公司的服务器上，这些信息和资料可能传送至您所在国家、地区或起微收集信息和资料所在地的境外并在境外被访问、存储和展示。 5. Cookie的使用
+                    a) 在您未拒绝接受cookies的情况下，起微会在您的计算机上设定或取用cookies，以便您能登录或使用依赖于cookies的起微平台服务或功能。起微使用cookies可为您提供更加周到的个性化服务，包括推广服务。
+                    b) 您有权选择接受或拒绝接受cookies。您可以通过修改浏览器设置的方式拒绝接受cookies。但如果您选择拒绝接受cookies，则您可能无法登录或使用依赖于cookies的起微网络服务或功能。
+                    c) 通过起微所设cookies所取得的有关信息，将适用本政策。 6. 信息安全。 a) 起微帐号均有安全保护功能，请妥善保管您的用户名及密码信息。起微将通过对用户密码进行加密等安全措施确保您的信息不丢失，不被滥用和变造。尽管有前述安全措施，但同时也请您注意在信息网络上不存在“完善的安全措施”。
+                    b) 在使用起微网络服务进行网上交易时，您不可避免的要向交易对方或潜在的交易对方披露自己的个人信息，如联络方式或者邮政地址。请您妥善保护自己的个人信息，仅在必要的情形下向他人提供。如您发现自己的个人信息泄密，尤其是起微用户名及密码发生泄露，请您立即联络起微客服，以便起微采取相应措施。
+                </div>
+                <div style="display: flex;justify-content: center;margin-top: 30px;">
+                    <el-button @click="closePrivacy">关闭</el-button>
+                </div>
+            </el-dialog>
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                errShow_1: false,
+                errTips_1: '',
+                errShow_2: false,
+                errTips_2: '',
+                companyName: '',
+                startTime: "",
+                endTime: "",
+                showClo: false,
+                //抽奖人id
+                id: "",
+                luckyDrawId: '',
+                name: '',
+                phoneNumber: '',
+                isParticipated: '',
+                isGetPrize: '',
+                info: false,
+                finished: false,
+                startLuckyDraw: false,
+                dialogVisible_1: true,
+                dialogVisible_2: false,
+                rain: false,
+                timeUrl: null,
+                liParams: [],
+                timer: null,
+                countDownTimer: null,
+                duration: 10000, // 定义时间
+                // 弹窗
+                dialogVisible: false,
+
+                submitMsg: false,
+
+                srcURL: '',
+
+                address: '',
+                checked: true
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            document.title = "STARTWE迎财神抢红包游戏";
+            var luckyDrawId = this.$router.query.luckyDrawId; //活动id
+            this.luckyDrawId = luckyDrawId;
+            this.queryLuckyDrawInfo(luckyDrawId);
+        },
+        methods: {
+            queryLuckyDrawInfo: function (param) {
+                let me = this;
+                oui.ajaxPost('luckyDraw/queryLuckyDrawInfo', {
+                    "id": param
+                }, function (res) {
+                    me.startTime = res.resultObj.startTime;
+                    me.endTime = res.resultObj.endTime;
+                    let start = oui.dateByDateStr(res.resultObj.startTime).getTime();
+                    let end = oui.dateByDateStr(res.resultObj.endTime).getTime();
+                    let now = new Date().getTime();
+                    if (now < start) {
+                        //活动没有开始 隐藏输入手机号码的弹窗
+                        me.dialogVisible_1 = false;
+                        me.startLuckyDraw = true;
+                        //倒计时
+                    } else if (now > end) {
+                        //活动结束了 隐藏输入手机号码的弹窗
+                        me.dialogVisible_1 = false;
+                        me.finished = true;
+                    }
+                    me.$nextTick(function(){
+                        me.startBgSong();
+                    });
+                }, function (res) {
+                    me.$message.error(res.message)
+                });
+            },
+            handleClose() {
+                //                this.dialogVisible = false;
+            },
+            handleClose_1() {
+                this.submitMsg = false;
+            },
+            handleClose_2() {
+                this.dialogVisible_2 = false;
+            },
+            closePrivacy:function(){
+                this.dialogVisible_2 = false;
+            },
+            toPrivacy: function () {
+                oui.router.push('res_startwe/games/Privacy.vue.html', {
+
+                })
+            },
+            addBao: function (left, height, src, baoNum) {
+                var div = document.createElement("div");
+                div.className = 'lucky-div';
+                div.setAttribute('oui-e-click', 'luckyDraw');
+                div.setAttribute('num', baoNum);
+                var img = document.createElement("img");
+                div.appendChild(img);
+                img.className = "roll";
+                img.setAttribute('num', baoNum);
+                img.src = src;
+                div.style.left = left + "px";
+                //                div.style.height = height + "px";
+                var num = oui.uuid(3, 10);
+                num = parseInt(num);
+                num = num % 45;
+                var num2 = oui.uuid(2, 10);
+                num2 = num2 % 2;
+                if (num2 == 1) {
+                    num = 0 - num;
+                }
+                div.style.transform = 'rotate(' + num + 'deg)';
+                div.className = "redBox";
+                document.getElementById("redzone").appendChild(div);
+                var me = this;
+                setTimeout(function () {
+                    try {
+                        document.getElementById("redzone").removeChild(div);
+                    } catch (e) {
+                    }
+                    // console.log(window.innerHeight);
+                }, 3000);
+
+            },
+            startBgSong:function(){
+                var num4song = oui.uuid(2, 10);
+                num4song = num4song % 3;
+                if (num4song == 0) {
+                    num4song = 3;
+                }
+                var src4song = oui.getContextPath() + "res_startwe/games/mv/bg-song-" + num4song + ".mp3";
+                var embed = document.createElement("audio");
+                embed.id = 'autio-' + oui.getUUIDLong();
+                embed.controls = "controls";
+                embed.hidden = "hidden";
+                embed.autoplay = "autoplay";
+                embed.loop = "loop";
+                var songdom = document.createElement("source");
+                songdom.src = src4song;
+                songdom.type = "audio/mp3";
+                embed.appendChild(songdom);
+
+                document.getElementById("bgsong-div").appendChild(embed);
+                function audioAutoPlay(id){
+                    var audio = document.getElementById(id),
+                            play = function(){
+                                audio.play();
+                                document.removeEventListener("touchstart",play, false);
+                            };
+                    audio.play();
+                    document.addEventListener("WeixinJSBridgeReady", function () {
+                        play();
+                    }, false);
+                    document.addEventListener('YixinJSBridgeReady', function() {
+                        play();
+                    }, false);
+                    document.addEventListener("touchstart",play, false);
+
+                };
+                audioAutoPlay(embed.id);
+            },
+            submit: function () {
+                let me = this;
+                oui.ajaxPost('luckyDraw/checkUserInfo', {
+                    "phoneNumber": this.phoneNumber,
+                    "luckyDrawId": this.luckyDrawId
+                }, function (res) {
+                    me.$message({
+                        message: '提交成功！',
+                        type: 'success'
+                    });
+                    me.id = res.resultObj.id;
+                    me.luckyDrawId = res.resultObj.luckyDrawId;
+                    me.name = res.resultObj.username;
+                    me.phoneNumber = res.resultObj.phoneNo;
+                    me.isParticipated = res.resultObj.isParticipated;
+                    me.isGetPrize = res.resultObj.isGetPrize;
+                    me.dialogVisible_1 = false;
+                    me.rain = true;
+                    me.bindAudio();
+                }, function (res) {
+                    // me.$message.error(res.message)
+                    me.errTips_1 = res.message;
+                    me.errShow_1 = true;
+                });
+            },
+            startRun: function () {
+                var me = this;
+                oui.Queue.getQueue().addAll([
+                    {
+                        run: function () {
+                            var timer = this;
+                            me.timeUrl = oui.getContextPath() + 'res_startwe/games/imgs/time-3.png';
+                            setTimeout(function () {
+                                timer.inited = true;
+                            }, 1000);
+                        }
+                    },
+                    {
+                        run: function () {
+                            var timer = this;
+                            me.timeUrl = oui.getContextPath() + 'res_startwe/games/imgs/time-2.png';
+                            setTimeout(function () {
+                                timer.inited = true;
+                            }, 1000);
+                        }
+                    },
+                    {
+                        run: function () {
+                            me.timeUrl = oui.getContextPath() + 'res_startwe/games/imgs/time-1.png';
+                            var timer = this;
+                            setTimeout(function () {
+                                timer.inited = true;
+                                me.timeUrl = '';
+                            }, 1000);
+                        }
+                    }
+                ]).start(function () {
+                    setTimeout(function () {
+                        me.stopTimer();
+                        if (!me.srcURL) {
+                            me.srcURL = oui.getContextPath() + "res_startwe/games/img/0.png";
+                            me.dialogVisible = true;
+                        }
+                    }, 15 * 1000);
+
+                    me.timer = setInterval(function () {
+                        var left = Math.random() * document.body.scrollWidth;
+                        var height = Math.random() * document.body.scrollHeight;
+                        var dragNum = parseInt(oui.uuid(2, 10));
+                        if (dragNum > 70) { //一定概率出现炸弹
+                            var num = 11;
+                            var src = oui.getContextPath() + "res_startwe/games/imgs/" + num + ".png";
+                            me.addBao(left, height, src, num);
+                        } else {
+                            var num = parseInt(oui.uuid(2, 10));
+                            num = num % 16;
+                            if (num == 0) {
+                                num = 16;
+                            }
+                            var src = oui.getContextPath() + "res_startwe/games/imgs/" + num + ".png";
+                            me.addBao(left, height, src, num);
+                        }
+
+                    }, 300);
+
+                    let countDownTime = 15;
+                    //按钮中字符变化
+                    $("#countDown").html("倒计时：" + countDownTime + "S");
+                    //每过一秒钟都要执行function函数
+                    me.countDownTimer = setInterval(function () {
+                        countDownTime=(countDownTime-0.1).toFixed(1);
+                        if (countDownTime == 0) {
+                            $("#countDown").html("时间到，游戏结束！");
+                            //结束定时器
+                            clearInterval(me.countDownTimer);
+                        } else {
+                            $("#countDown").html("倒计时：" + countDownTime + "S");
+                        }
+                    }, 100);
+                });
+            },
+            bindAudio: function () {
+                var me = this;
+                me.startRun();
+            },
+            stopTimer: function () {
+                var me = this;
+                clearInterval(me.timer);
+                clearInterval(me.countDownTimer);
+                $("#countDown").html("游戏结束！");
+                document.getElementById("redzone").innerHTML = '';
+            },
+            //抽奖
+            luckyDraw: function (cfg) {
+                let me = this;
+                var $dom = $(cfg.e.target);
+                if ($dom.hasClass('lucky-div') || $dom.hasClass('roll')) {
+                    var num = $dom.attr('num');
+                    //点中了
+                    try {
+                        $dom.remove();
+                    } catch (e) {
+                    }
+                    if (num) {
+                        num = parseInt(num);
+                        if (num == 11) { //11位炸弹
+                            //游戏结束
+                            me.stopTimer();
+                            if (!me.srcURL) {
+                                me.srcURL = oui.getContextPath() + "res_startwe/games/img/0.png";
+                                me.dialogVisible = true;
+                                return;
+                            }
+                        }
+                    }
+
+                    oui.ajaxPost('luckyDraw/luckyDrawing', {
+                        "id": this.id,
+                        "name": this.name,
+                        "phoneNumber": this.phoneNumber,
+                        "isParticipated": this.isParticipated,
+                        "isGetPrize": this.isGetPrize,
+                        "luckyDrawId": this.luckyDrawId
+                    }, function (res) {
+                        if (res.resultObj != null && (res.resultObj.prizeLevel)) {
+                            me.stopTimer();
+                            me.dialogVisible = true;
+                            me.prizeId = res.resultObj.id;
+                            if(res.resultObj.prizeLevel>0){
+                                me.srcURL = "res_startwe/games/img/"+res.resultObj.prizeLevel+".png";
+                                me.info = true;
+                            }
+                        }
+                    }, function (res) {
+                        me.$message.error(res.message)
+                    });
+                }
+
+            },
+            receivePrizeInfo: function () {
+                let me = this;
+                oui.ajaxPost('luckyDraw/receivePrize', {
+                    "luckyDrawId": this.luckyDrawId,
+                    "userId": this.id,
+                    "name": this.name,
+                    "phoneNumber": this.phoneNumber,
+                    "address": this.address,
+                    "prizeId": this.prizeId,
+                    "companyName": this.companyName,
+                }, function (res) {
+                    me.$message({
+                        message: '提交成功！',
+                        type: 'success'
+                    });
+                    me.dialogVisible = false;
+                    me.submitMsg = false;
+                    me.stopTimer();
+                }, function (res) {
+                    // me.$message.error(res.message)
+                    me.errTips_2 = res.message;
+                    me.errShow_2 = true;
+                });
+            }
+
+        }
+
+    }
+
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        font-size: 14px;
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+        background: url(res_startwe/games/img/bg.jpg) no-repeat;
+        background-size: 100%;
+        position: relative;
+    }
+    .timeBox{
+        position: absolute;
+        top: 210px;
+        right: 100px ;
+        /* width: 200px; */
+        display: inline-block;
+        background: rgba(0,33,82,0.50);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+    }
+    .timeBox>img{
+        width: 30px;
+        height: 30px;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+        display: none
+    }
+
+    .dialogBox>div {}
+
+    .dialogBox .el-dialog__body {
+        font-size: 3.2rem;
+    }
+
+    .dialogBox .el-input__inner {
+        font-size: 3rem;
+    }
+
+    .dialogBox .el-dialog {
+        border-radius: 1.2rem;
+    }
+
+    .el-textarea {
+        font-size: 2.5rem;
+    }
+
+    .el-textarea__inner {
+        /* font-size: 30px; */
+        border: none;
+    }
+
+    @keyframes redImg {
+        0% {
+            top: 0;
+        }
+        100% {
+            top: 100%;
+        }
+    }
+    .timeBox{
+        position: absolute;
+        top: 210px;
+        right: 100px ;
+        /* width: 200px; */
+        display: inline-block;
+        background: rgba(0,33,82,0.50);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 5px;
+    }
+    .timeBox>img{
+        width: 30px;
+        height: 30px;
+    }
+    .redBox {
+        position: absolute;
+        /* opacity: 0;*/
+        z-index: 100;
+        animation: redImg 3s infinite linear;
+        -webkit-animation: redImg 3s infinite linear;
+        -moz-animation: redImg 3s infinite linear;
+        -ms-animation: redImg 3s infinite linear;
+        -o-animation: redImg 3s infinite linear;
+    }
+
+    .redBox {
+        position: fixed;
+
+    }
+
+    .redBox img {
+        display: block;
+        width: 9rem;
+        height: 12rem;
+    }
+
+    .oneTips {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .oneTips>img {
+        width: 50rem;
+        height: 50rem;
+    }
+
+    .el-dialog__footer {
+        text-align: center;
+    }
+
+    .determineDelBtn {
+        margin-bottom: 2rem;
+    }
+
+    .determineDelBtn>span {
+        font-size: 5rem;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+        font-size: 2rem;
+    }
+
+    /* 收件信息弹框 */
+
+    .tipsTitle {
+        font-weight: bold;
+        color: #e58286;
+        font-size: 3rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .tipsContent {
+        font-size: 1.5rem;
+        margin: 0 10px;
+    }
+
+    .tipsContent>div {
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #999;
+    }
+
+    .tipsContent>div>span {
+        display: inline-block;
+        width: 32%;
+        font-size: 2rem;
+    }
+
+    /* .name{
+        letter-spacing: 10px;
+    } */
+
+    .el-input__inner {
+        height: 70px;
+        font-size: 2rem;
+        border: none;
+    }
+
+    .submitBtn {
+        width: 15rem;
+        height: 80px;
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+        margin: 20px 0;
+    }
+
+    .submitBtn:hover,
+    .submitBtn:focus {
+        border-color: #FF7D82;
+        background-color: #FF7D82;
+    }
+
+    .submitBtn>span {
+        font-size: 2rem;
+        letter-spacing: 10px;
+    }
+
+
+    .el-checkbox__input.is-focus.el-checkbox__inner {
+        border-color: #FF7D82;
+    }
+
+    .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .checkedBox {
+        height: 40px;
+        display: flex;
+        align-items: center;
+
+    }
+
+    .checkedBox {
+        display: flex;
+    }
+
+    .checkedBox>div>span {
+        font-size: 22px;
+        color: #999;
+    }
+
+    .checkedBox>div>span:last-child {
+        color: #FF7D82;
+        cursor: pointer;
+    }
+
+    .el-checkbox__input {
+        width: 20px;
+        height: 20px;
+
+    }
+
+    .el-checkbox__inner {
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+    }
+
+    .el-checkbox {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    .el-checkbox__inner::after {
+        width: 16px;
+        height: 19px;
+    }
+
+    .time-go {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+    }
+
+    .time-go img {
+        position: absolute;
+        left: 2rem;
+        top: 2rem;
+        width: 14rem;
+        height: 14rem;
+
+    }
+
+    .time-go .div-img-pos {
+        background: white;
+        width: 20rem;
+        height: 20rem;
+        border-radius: 20rem;
+        position: absolute;
+        left: -10rem;
+        top: -10rem;
+    }
+</style>

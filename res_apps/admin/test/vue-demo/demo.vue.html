@@ -1,0 +1,98 @@
+
+<template >
+    <div>
+        这仅仅 是一个vue demo
+        <el-row    class="item">
+            <el-col :span="3"  >
+                排序
+            </el-col>
+
+            <el-col :span="7">
+                默认名称
+            </el-col>
+            <el-col :span="7">
+                显示名称
+            </el-col>
+            <el-col :span="7">
+                字段变量别名
+            </el-col>
+        </el-row>
+        <draggable v-model="options" draggable=".item" handle=".item-move" @end="onSortEnd"  ghost-class="ghost" >
+
+            <el-row  v-for="(element,index) in options" :key="element.id" class="item">
+                <el-col :span="3" class="item-move">
+                    <el-button type="text" size="medium" icon="el-icon-rank" class="item-move" >{{index+1}}</el-button>
+                </el-col>
+
+                <el-col :span="7">
+                    <el-input type="text" :bindIndex="index" :title="element.display" readonly="true" bindProp="display" v-model="element.display" @change="_controlOnUpdate(index,element)" />
+                </el-col>
+                <el-col :span="7">
+                    <el-input type="text" :bindIndex="index" bindProp="varName" v-model="element.varName" @change="_controlOnUpdate(index,element)" />
+                </el-col>
+                <el-col :span="7">
+                    <el-input type="text" :bindIndex="index" bindProp="varName4api" v-model="element.varName4api" @change="_controlOnUpdate(index,element)" />
+                </el-col>
+            </el-row>
+        </draggable>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                options:[]
+            }
+        },
+        mounted:function(){
+            //todo 开始
+        },
+        methods:{
+            onMove:function(e){
+
+            },
+            onSortEnd:function(){
+            },
+            /***
+             * 查询页面模板变更处理
+             * @param index
+             * @param item
+             * @private
+             */
+            _controlOnUpdate:function(index,item){
+            }
+        }
+    }
+</script>
+
+<style>
+    .query-page-select-tpl{
+        display: inline-block;
+    }
+    .label{
+        font-size: 12px;
+    }
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

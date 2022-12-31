@@ -1,0 +1,142 @@
+<template>
+    <div>
+        <input type="file" id="excel-file" @change="event2selectFile"/>
+        <div v-for="(value,key) in groupData">
+            <a @click="event2download(key)">{{key}}.xls</a>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        data:function(){
+            return {
+                groupData:{}
+            }
+        },
+        created:function(){
+
+        },
+        mounted:function(){
+
+        },
+        methods:{
+            //根据字段排序  data.sort(compare('rank', compare('age', compare('name'))));
+            compare:function (name, minor) {
+                return function (o, p) {
+                    var a, b;
+                    if (o && p && typeof o === 'object' && typeof p === 'object') {
+                        a = o[name];
+                        b = p[name];
+                        if (a === b) {
+                            return typeof minor === 'function' ? minor(o, p) : 0;
+                        }
+                        if (typeof a === typeof b) {
+                            return a < b ? -1 : 1;
+                        }
+                        return typeof a < typeof b ? -1 : 1;
+                    } else {
+                        throw("error");
+                    }
+                }
+            },
+            //下载 某个人的任务书
+            event2download:function(person){
+                var me = this;
+                var data = me.groupData[person]||[];
+                var datas = [];
+                //数据转换 列转换行
+                oui.eachArray(data,function(item){
+
+                    var keys=['任务标题','任务编号','任务名称','任务说明','职能','计划开始时间'
+                        ,'计划完成时间','实际开始时间','实际完成时间','执行人'
+                        ,'相关参与者','验收标准','计划验收时间','计划验收人','实际验收时间','实际验收人','完成百分比','备注说明'
+                        ,'执行人工作总结','相关参与者工作总结','验收人工作总结','执行人自我评分'
+                        ,'相关参与者评分','验收人评分','相关参与者确认','执行人确认','验收人确认'];
+                    item['任务标题'] ='任务执行情况【'+item['任务编号']+'】-【'+item['执行人']+'】';
+                    oui.eachArray(keys,function(key){
+                        var temp = {
+                            '维度':key,
+                            '内容':item[key],
+                            '备注':''
+                        };
+                        datas.push(temp);
+                    });
+                    datas.push({
+                        '维度':'',
+                        '内容':'',
+                        '备注':''
+                    }); //空行
+                });
+                oui.exportExcel4ListMap('工作计划-'+person, datas,{
+                    heads:[{key:'维度',name:'维度'},{key:'内容',name:'内容'},{key:'备注',name:'备注'}]
+                }); //fileName,datas,options
+            },
+            formatExcelDate:function(numb, format) {
+                const time = new Date((numb - 1) * 24 * 3600000 + 1);
+                time.setYear(time.getFullYear() - 70);
+                time.setHours(time.getHours() - 8);
+                time.setDate(time.getDate()-1);
+//                const year = time.getFullYear() + '';
+//                const month = time.getMonth() + 1 + '';
+//                const date = time.getDate() - 1 + '';
+//                const hours = time.getHours().toLocaleString();
+//                const minutes = time.getMinutes();
+                return oui.dateStrByTime(time,'yyyy/MM/dd');
+            },
+            //选择文件进行excel解析
+            event2selectFile:function(e){
+                var me = this;
+                oui.require([oui.getContextPath()+'res_common/third/js-excel/excel.all.min.js',
+                    oui.getContextPath()+'res_common/oui/system/oui-excel.js'
+                ],function(){
+
+                    oui.require(oui.getContextPath()+'res_common/oui/ui/ui_pc/dialog/export-excel.js',function(){
+                        var files = e.target.files;
+                        oui.ExcelUtil.readFile(files[0],1,function(excelObject){
+                            console.log(excelObject);
+                            var data = excelObject.getData4ListMap('工作计划');
+                            data.sort(me.compare('执行人',me.compare('开始时间'))); //工作计划数据排序好了
+                            //构造新的excel
+                            var data4group = {};
+                            oui.eachArray(data,function(item){
+                                var key = item['执行人'];
+                                if(!key){
+                                    key ='未知';
+                                }
+                                if(!data4group[key]){
+                                    data4group[key] = [];
+                                }
+                                //formatExcelDate
+                                var st= item['计划开始时间'];//
+                                var et = item['计划完成时间'];//
+                                var yt = item['计划验收时间'];//
+                                if(st){
+                                    st = me.formatExcelDate(st,'/');
+                                    item['计划开始时间']= st;
+                                }
+                                if(et){
+                                    et = me.formatExcelDate(et,'/');
+                                    item['计划完成时间'] = et;
+                                }
+                                if(yt){
+                                    yt = me.formatExcelDate(yt,'/');
+                                    item['计划验收时间'] = yt;
+                                }
+                                data4group[key].push(item);
+                            });
+                            me.groupData = data4group;
+                            me.refresh();
+                        });
+                 
+                    });
+                });
+                
+            }
+
+        }
+    }
+</script>
+
+<style scoped>
+</style>

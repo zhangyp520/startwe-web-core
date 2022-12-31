@@ -1,0 +1,418 @@
+<!--审批页面组件-->
+<template>
+    <div style="height: 800px">
+        <div :id="flowUUID" style="height: 100%">
+            <div class="workplace" v-if="chartData.map"
+                 id="workplace">
+                <template v-for="(item, idx) in chartData.map">
+                    <div class="workplace-chart"
+                         :id="item.id"
+                         :style="calPosition(item)">
+                        <div :class="[item.nodeType]" @dblclick="editNode(item, idx)" @mouseenter="mouseIn(item, idx)" title="双击编辑该节点" :style="getBorder(item)">
+                            <i v-if="item.nodeType=='route'" class="el-icon-s-tools" >
+                            </i>
+                            <i v-if="item.nodeType !== 'start' && item.nodeType !== 'finish' && item.nodeType !=='route' && item.nodeType !=='note'"
+                               :class="`${item.icon} icon-class`"/>
+                            <div v-if="item.nodeType=='note'"
+                                 style="width: 100%; height: 100%; display: flex; flex-direction: column; color: #000; font-size: 12px; text-align: left">
+
+                                <span style="border-bottom: #666666 1px solid">{{item.otherAttrs.title}}</span>
+                                <div class="input-size" v-if="item.isEditing">
+                                    <el-input class="input-size-height" type="textarea"
+                                              v-model="item.description"></el-input>
+                                    <i class="el-icon-check"
+                                       style="font-size: 14px; position: absolute; bottom: 1%; right: 1%"
+                                       @click="saveText(item)"></i>
+                                </div>
+                                <span v-else>{{item.description}}</span>
+                            </div>
+                        </div>
+                        <span class="title">{{item.name}}</span>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+
+        data: function () {
+            return {
+                historyLineIds: [],
+                flowUUID: 'flow_' + oui.getUUIDLong(),
+                flow: {},
+                chartData: {},
+                jsp: null,
+                currentlineIds: null
+            }
+        },
+        mounted: function () {
+            this.loadFlow();
+        },
+        methods: {
+            editNode(item, idx) {
+                console.log(item)
+                this.$emit('dbClickNode', (item, idx))
+            },
+            mouseIn(item, idx) {
+                console.log(item)
+                this.$emit('mouseInNode', (item, idx))
+            },
+            getBorder(item) {
+                if (this.currentlineIds && this.currentlineIds.indexOf(item.id) > 0) {
+                    return {background: '#FFB90F'}
+                } else if (this.historyLineIds && this.historyLineIds.indexOf(item.id) > -1){
+                    return {background: '#20B2AA'}
+                } else {
+                    return null
+                }
+            },
+            initJsplumb() {
+                jsPlumb.ready(() => {
+                    // 默认配置
+                    let instance = jsPlumb.getInstance({
+                        Endpoint: [
+                            "Blank",
+                            {cssClass: "chart-dot", hoverClass: "chart-dot-hover", radius: 5}
+                        ],
+                        Connector: "Straight",
+                        HoverPaintStyle: {stroke: "#1e8151", strokeWidth: 2},
+                        ConnectionOverlays: [
+                            [
+                                "Arrow",
+                                {
+                                    location: 1,
+                                    visible: true,
+                                    width: 12,
+                                    id: "arrow"
+                                }
+                            ],
+                            [
+                                "Label",
+                                {
+                                    location: 0.5,
+                                    visible: false,
+                                    label: '关联',
+                                    id: "label",
+                                    cssClass: "aLabel",
+                                }
+                            ]
+                            // ["Label", { label: "-", id: "label", cssClass: "aLabel" }]
+                        ],
+                        Container: "workplace"
+                    });
+                    this.jsp = instance
+                    instance.bind("click", function(conn, originalEvent) {
+                        console.log(conn)
+                        this.$emit('dbClickNode', conn);
+                    });
+                    instance.bind("beforeDrop", function (info) {
+                        return false;
+                    })
+                    jsPlumb.fire("jsPlumbDemoLoaded", instance);
+                });
+            },
+            //url变更后触发流程图加载
+            onUpdate: function () {
+                this.loadFlow();
+            },
+            loadPreviousActivities:function(activitys,callback){
+                var me = this;
+                var query = this.$router.query || {};
+
+                if(me.getPreviousActivitiesUrl && activitys&&activitys.length){
+                    oui.postData(me.getPreviousActivitiesUrl,{
+                        projectId:query.projectId,
+
+                        destActDefID:activitys[0].activityDefID,
+                        currentActInstID:query.activityInstId
+
+                    },function(res){
+
+//                        me.currentlineIds = "startActivity_manualActivity";
+//                        me.historyLineIds = "startActivity_manualActivity";
+                        var acts4over = res.activitys||[];
+                        if(acts4over.length==1){
+                            query.currentlineIds=activitys[0].id+'_'+me.activityDefineId
+                        }else if(acts4over.length>1){
+
+                        }
+                        callback&&callback();
+                    },null,'加载中...');
+                }else{
+                    callback&&callback();
+                }
+            },
+            loadFlow: function () {
+                let query = this.$router.query || {};
+                let loadFlowUrl = query.loadFlowUrl;
+                this.currentlineIds = query.currentlineIds || '';
+                this.historyLineIds = query.historyLineIds || '';
+
+//                this.currentlineIds = "startActivity_manualActivity";
+//                this.historyLineIds = "startActivity_manualActivity";
+
+                //流程定义加载
+                if (!loadFlowUrl) {
+                    return;
+                }
+                let me = this;
+                oui.postData(loadFlowUrl, {
+                    processInstId:query.processInstId,
+                    projectId:query.projectId
+                }, function (res) {
+                    me.flow = res.flow;
+                    if(res.activitys&&res.activitys.length){
+                        //存在活动实例列表 然后再获取 所经所有节点路径
+                        if(res.getPreviousActivitiesUrl){
+                            //ajax获取 所经的节点列表
+                            me.getPreviousActivitiesUrl = res.getPreviousActivitiesUrl;
+                        }
+
+                    }
+                    console.log(JSON.parse(me.flow.json))
+                    me.loadPreviousActivities(res.activitys,function(){
+                        oui.require([oui.getContextPath() + 'res_common/third/jsplumb/jsplumb.min.js'], function () {
+                            //找到流程定义
+                            me.chartData = oui.parseJson(me.flow.json);
+                            //在这里渲染流程图
+                            me.initJsplumb();
+                            for (let i in me.chartData.map) {
+                                me.initNode(i);
+                            }
+                            me.initLine();
+                        });
+                        //特殊逻辑处理
+                        if (query.workItemId && query.activityDefineId) {
+                            let buttons = oui.JsonPathUtil.getJsonByPath('map.' + query.activityDefineId + '.otherAttrs.buttons', oui.parseJson(me.flow.json));
+                            if ((!buttons) || (!buttons.length)) {
+                                buttons = [];
+                            }
+                            window.postMessage({
+                                fromId: me.flowUUID,
+                                toId: query.approvalFormUUID,
+                                cmd: 'onUpdate',
+                                param: {
+                                    buttons: buttons
+                                }
+                            });
+                            //有工作项，需要根据环节权限配置获取按钮权限
+                            //找出按钮列表 更新 审批盒子中的按钮列表
+                            //回填 approveForm.vue.html的 按钮列表
+                        }
+                    });
+                }, function (res) {
+
+                }, '流程图加载中');
+            },
+            // 初始化node节点
+            initNode(el) {
+                // initialise draggable elements.
+                // 元素拖动，基于 katavorio.js 插件
+                let _self = this;
+                this.jsp.makeSource(el, {
+                    filter: ".ep",
+                    // anchor: "Continuous",
+                    anchor: ["Perimeter", {shape: "Rectangle"}],
+                    connectorStyle: {
+                        stroke: "#808080",
+                        strokeWidth: 1,
+                        outlineStroke: "transparent",
+                        outlineWidth: 4,
+                        dashstyle: _self.chartData.map[el].nodeType === 'note' ? "2 4" : null
+                    },
+                    extract: {
+                        action: "the-action"
+                    },
+                    maxConnections: -1,
+                    onMaxConnections: function (info, e) {
+                        alert("Maximum connections (" + info.maxConnections + ") reached");
+                    }
+                });
+
+                this.jsp.makeTarget(el, {
+                    dropOptions: {hoverClass: "dragHover"},
+                    anchor: ["Perimeter", {shape: "Rectangle"}],
+                    allowLoopback: false,
+                });
+
+                this.jsp.fire("jsPlumbDemoNodeAdded", el);
+            },
+            initLine() {
+                let vm = this;
+                for (let i in vm.chartData.lineMap) {
+                    let me = vm.jsp.connect({
+                        source: vm.chartData.lineMap[i].fromId,
+                        target: vm.chartData.lineMap[i].toId
+                    })
+                    me.getOverlay('label').setLabel(vm.chartData.lineMap[i].name);
+                    me.getOverlay('label').setVisible(vm.chartData.lineMap[i].name ? true : false);
+                    // 判断是起点终点否为 note
+                    if (vm.chartData.map[i.split('_')[0]].nodeType === 'note' || vm.chartData.map[i.split('_')[1]].nodeType === 'note') {
+                        let connectorStyle = {
+                            strokeWidth: 1,
+                            outlineStroke: "transparent",
+                            outlineWidth: 4,
+                            dashstyle: "2 4"
+                        }
+                        me.setPaintStyle(connectorStyle);
+                        me.getOverlay('arrow').setVisible(false);
+                    }
+                    if (vm.currentlineIds == i) {
+                        let connectorStyle = {
+                            strokeWidth: 1,
+                            stroke: "#FFB90F",
+                            outlineStroke: "transparent",
+                            outlineWidth: 4,
+                            dashstyle: vm.chartData.map[i.split('_')[0]].nodeType === 'note' || vm.chartData.map[i.split('_')[1]].nodeType === 'note' ? "2 4" : null
+                        }
+                        me.setPaintStyle(connectorStyle);
+                    }
+                    // 走过的节点连线
+                    if (vm.historyLineIds.indexOf(i) > -1) {
+                        let connectorStyle = {
+                            strokeWidth: 1,
+                            stroke: "#20B2AA",
+                            outlineStroke: "transparent",
+                            outlineWidth: 4,
+                            dashstyle: vm.chartData.map[i.split('_')[0]].nodeType === 'note' || vm.chartData.map[i.split('_')[1]].nodeType === 'note' ? "2 4" : null
+                        }
+                        me.setPaintStyle(connectorStyle);
+                    }
+                }
+            },
+            calPosition(item) {
+                if (item.x && item.y) {
+                } else {
+                    item.x = Math.ceil(Math.random() * 1000);
+                    item.y = Math.ceil(Math.random() * 700);
+                }
+                if (item.w && item.h) {
+                } else {
+                    item.w = 60
+                    item.h = 60
+                }
+                return {
+                    left: item.x + 'px',
+                    top: item.y + 'px',
+                    width: item.w + 'px',
+                    height: item.h ? item.h + 'px' : ''
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+    .workplace {
+        height: 100%;
+        width: 100%;
+        position: relative;
+    }
+
+    .workplace-chart {
+        cursor: pointer;
+        position: absolute;
+    }
+
+    .workplace-chart div {
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: center;
+        font-size: 20px;
+        color: #FFB90F;
+        cursor: pointer;
+        margin-bottom: 1px;
+        touch-action: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+    }
+
+    .workplace-chart div .icon-class {
+        font-size: 14px;
+        color: #000;
+        position: absolute;
+        left: 0;
+    }
+
+    .workplace-chart div.manual {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid gray;
+    }
+
+    .workplace-chart div.toolapp {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid gray;
+    }
+
+    .workplace-chart div.subflow {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid gray;
+    }
+
+    .workplace-chart div.route {
+        width: 100%;
+        height: 100%;
+        background-image: url(res_engine/flow_graph_1/images/diamond.png);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .workplace-chart div.el-icon-s-tools {
+        width: 100%;
+        height: 100%;
+        color: #FFB90F;
+    }
+
+    .workplace-chart div.note {
+        width: 100%;
+        height: 100%;
+        border: gray 1px solid;
+        background: #808080;
+    }
+
+    .workplace-chart div.start {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid gray;
+        border-radius: 100%;
+    }
+
+    .workplace-chart div.finish {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #808080;
+        border-radius: 100%;
+    }
+
+    .workplace-chart span {
+        display: block;
+        word-break: break-all;
+        color: gray;
+    }
+
+    .workplace-chart:hover .ep {
+        opacity: 1;
+    }
+
+    .workplace-chart:hover .delete {
+        opacity: 1;
+    }
+
+    .workplace-chart.dragHover .ep {
+        opacity: 0;
+    }
+</style>

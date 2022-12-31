@@ -1,0 +1,284 @@
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="file-right-control scollY" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="文档" name="1">
+                    <div>
+                        <!-- 填充 -->
+                        <div class="file-public-box">
+                            <span class="file-public-title">填充样式</span>
+                            <div>
+                                <el-select v-model="fillStyle" placeholder="请选择" class="fill-patterns" @change="handleFillStyleChange">
+                                    <el-option v-for="item in fillStyleOptions" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div>
+                        <!-- 切换 -->
+                        <div class="file-public-box">
+                            <span class="file-public-title">自动切换</span>
+                            <div class="picture-switch">
+                                <el-switch v-model="docSwitch" @change="handleDocSwitchChange">
+                                </el-switch>
+                            </div>
+                        </div>
+                        <!-- 文档 -->
+                        <div>
+                            <div v-for="(item,index) in docListData">
+                                <div class="file-box">
+                                    <div class="file-title">{{item.fileName}}</div>
+                                    <div class="file-size">{{(item.fileSize / 1024000).toFixed(2)}}M</div>
+                                </div>
+                                <div class="file-img-box" v-for="(img,key) in item.fileImgList">
+                                    <div class="file-inner-box">
+                                        <img :src="img" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bottom_addvideo" @click="addDoc">
+                            <el-button class="addvideo_btn" :plain=false slot="trigger" size="small"><img
+                                    :src="imagesMap.addBotVideo" class="video-img-operation" /></el-button>
+                        </div>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                currentControl: {},
+                activeNames: '1', //展开的选项
+                // 自动切换
+                docSwitch: true,
+                // 填充类型
+                fillStyleOptions: [{
+                    value: '1',
+                    label: '原始比例'
+                }, {
+                    value: '2',
+                    label: '100%'
+                }],
+                fillStyle: '',
+
+                slbHeight: '',
+                rightToolbarData:{},
+                imagesMap: {
+                    addBotVideo: oui.getContextPath() + 'res_engine/ppt_design/images/add_video.png',
+                },
+                docListData:[],
+                docImgUrlList:[]
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.otherAttrs.fillStyle) {
+                this.fillStyle = this.currentControl.otherAttrs.fillStyle;
+            }
+            if (typeof this.currentControl.otherAttrs.docSwitch !=='undefined') {
+                this.docSwitch = this.currentControl.otherAttrs.docSwitch;
+            }
+            if (this.currentControl.otherAttrs.docListData) {
+                this.docListData = this.currentControl.otherAttrs.docListData;
+            }
+            if (this.currentControl.otherAttrs.docImgUrlList) {
+                this.docImgUrlList = this.currentControl.otherAttrs.docImgUrlList;
+            }
+        },
+        methods: {
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                // Design.setCurrPropsData4page('props', 'down2selectPage');
+                if(pptControl&&pptControl.id&&pptControl.controlType){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //填充样式改变事件
+            handleFillStyleChange: function () {
+                this.currentControl.otherAttrs.fillStyle = this.fillStyle;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.fillStyle = this.currentControl.otherAttrs.fillStyle;
+                this.updateCurrentControl();
+            },
+            //自动切换改变事件
+            handleDocSwitchChange: function () {
+                this.currentControl.otherAttrs.docSwitch = this.docSwitch;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.docSwitch = this.currentControl.otherAttrs.docSwitch;
+                this.updateCurrentControl();
+            },
+            addDoc:function() {
+                let me = this;
+                com.oui.absolute.AbsoluteDesign.showFileDialog({
+                    fileType:4,
+                    fileTypes:['doc'],
+                    callback:function (res) {
+                        let arr = [];
+                        oui.eachArray(res, function (item) {
+                            me.docListData.push(item);
+                            oui.eachArray(item.fileImgList, function (e) {
+                                me.docImgUrlList.push(e)
+                            })
+                        });
+                        me.currentControl.otherAttrs.docListData = me.docListData;
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.docListData = oui.parseJson(oui.parseString(me.currentControl.otherAttrs.docListData));
+                        me.currentControl.otherAttrs.docImgUrlList = me.docImgUrlList;
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.docImgUrlList = oui.parseJson(oui.parseString(me.currentControl.otherAttrs.docImgUrlList));
+                        me.updateCurrentControl();
+                    }
+                })
+            },
+        }
+    }
+
+</script>
+<style>
+    body {
+        background: #666;
+    }
+    .scollY{
+        overflow-y:auto;
+        height: calc(100vh - 66px);
+        width: 100%;
+    }
+    .el-collapse{
+        border: none;
+    }
+    .file-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .file-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .file-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .file-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .file-public-box>div {
+        flex: 1;
+        margin-right: 20px;
+    }
+
+    .file-public-title {
+        color: #fff;
+        width: 30%;
+        padding-left: 20px;
+        text-align: left;
+    }
+
+    /* 填充下拉 */
+
+    .fill-patterns .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .fill-patterns .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .fill-patterns .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 文档 */
+
+    .file-box {
+        background: #777;
+        margin: 20px;
+        border-radius: 4px;
+        padding: 5px 10px;
+    }
+
+    .file-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .file-size {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .file-img-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .file-inner-box {
+        width: 120px;
+        height: 120px;
+        background: #555;
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .file-inner-box>img {
+        height: 100%;
+    }
+    .bottom_addvideo {
+        width: 271px;
+        height: 25px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+        margin-top: 10px;
+    }
+    .addvideo_btn {
+        width: 271px;
+        height: 25px;
+        padding: 0;
+        background: #464646;
+        border: none;
+    }
+    .video-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+</style>

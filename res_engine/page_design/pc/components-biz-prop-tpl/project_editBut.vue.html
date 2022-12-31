@@ -1,0 +1,112 @@
+
+<template >
+    <div style="font-size: 14px;display: flex;align-items: center;justify-content: center;">
+        <div>新增按钮:</div>
+        <el-select v-model="typeValue" placeholder="请选择" size='mini' style="width: 70px;margin-left: 10px;" @change='changeType'>
+            <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+        </el-select>
+        <div>=</div>
+        <el-select v-model="resultValue" placeholder="请选择" size='mini' style="width: 80px;margin-left: 10px;">
+            <el-option
+            v-for="item in resultList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+        </el-select>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                typeList:[
+                    {
+                        value:'单击',
+                        label:'单击'
+                    },
+                    {
+                        value:'双击',
+                        label:'双击'
+                    },
+                    {
+                        value:'鼠标移入',
+                        label:'鼠标移入'
+                    },
+                    {
+                        value:'鼠标移出',
+                        label:'鼠标移出'
+                    },
+                    {
+                        value:'按下',
+                        label:'按下'
+                    },
+                    {
+                        value:'松开',
+                        label:'松开'
+                    },
+                    {
+                        value:'选中',
+                        label:'选中'
+                    },
+                    {
+                        value:'未选中',
+                        label:'未选中'
+                    }
+                ],
+                resultList:[
+                    {
+                        value:'模板一',
+                        label:'模板一'
+                    }
+                ],
+                typeValue:'',
+                resultValue:''
+            }
+        },
+        mounted:function(){
+            let editButobj = com.oui.absolute.AbsoluteDesign.data.otherAttrs.editButobj
+            if(addButobj) {
+                this.typeValue = editButobj.typeValue
+                this.resultValue = editButobj.resultValue
+            }
+        },
+        methods:{
+            changeType() {
+                let obj = {
+                    typeValue:this.typeValue,
+                    resultValue:this.resultValue
+                }
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.editButobj = obj
+                this.updateCurrentControl()
+            },
+            //更新
+            updateCurrentControl () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+ 
+</style>

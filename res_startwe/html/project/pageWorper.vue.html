@@ -1,0 +1,244 @@
+<!-- 项目设计公共侧边栏 -->
+<template>
+    <div class="">
+        <!-- 权限弹框 -->
+        <div class="powerModal" v-if='powerModalShow'>
+            <div class="contentModal">
+                <div class="power_title">
+                    <div>页面权限设置</div>
+                    <div><i class="el-icon-close" @click='powerModalShow = false'></i></div>
+                </div>
+                <el-tabs v-model="activeName" @tab-click="handleClick">
+                    <el-tab-pane label="操作权限" name="first">
+                        <div class="tab_table_pading">
+                            <el-table :data="tableData" style="width: 100%">
+                                <el-table-column prop="date" label="控件类型" width="180">
+                                </el-table-column>
+                                <el-table-column prop="name" label="业务id" width="180">
+                                </el-table-column>
+                                <el-table-column prop="address" label="字段名称">
+                                </el-table-column>
+                                <el-table-column label="编辑">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="浏览">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="隐藏">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="不可见">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="必填">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="默认值">
+                                    <template slot-scope="scope">
+                                        <el-input v-model="scope.row.fixedTel" @change="setFixedTel(scope.row)"></el-input>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="数据权限" name="second">
+
+                        <div class="box_flex">
+                            <div class="flex_left_table">
+                                <el-table :data="tableData" style="width: 100%">
+                                    <el-table-column prop="date" label="模板名称" width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="address" label="是否启用">
+                                        <template scope="scope">
+                                            <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                                @change=change(scope.$index,scope.row)>
+                                            </el-switch>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="address" label="操作">
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                            <div class="flex_right_table"></div>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="列表权限" name="third">
+                        <div class="tab_table_pading">
+                            <el-table :data="tableData" style="width: 100%">
+                                <el-table-column prop="date" label="控件类型" width="180">
+                                </el-table-column>
+                                <el-table-column prop="name" label="业务id" width="180">
+                                </el-table-column>
+                                <el-table-column prop="address" label="字段名称">
+                                </el-table-column>
+                                <el-table-column label="编辑">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="浏览">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="隐藏">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="不可见">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="必填">
+                                    <template scope="scope">
+                                        <el-switch on-color="#5B7BFA" off-color="#dadde5" v-model="scope.row.menusstate"
+                                            @change=change(scope.$index,scope.row)>
+                                        </el-switch>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="address" label="默认值">
+                                    <template slot-scope="scope">
+                                        <el-input v-model="scope.row.fixedTel" @change="setFixedTel(scope.row)"></el-input>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                powerModalShow: false,
+                activeName: 'first',
+                tableData: [{
+                    date: 'sdjkljsa',
+                    name: 'sadjksalj153132132132',
+                    address: '单行输入框'
+                }, {
+                    date: 'sdjkljsa',
+                    name: 'sadjksalj153132132132',
+                    address: '数字输入框'
+                }]
+            }
+        },
+       
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+            window.addEventListener("message", (event) => {
+                var data = event.data;
+                if (data.cmd == 'powerPage') {
+                    this.powerModalShow = true
+                }
+            });
+
+        },
+        methods: {
+            handleClick(tab, event) {
+                console.log(tab, event);
+            },
+        }
+    }
+
+</script>
+<style>
+    .powerModal {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
+
+    .contentModal {
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        bottom: 40px;
+        left: 40px;
+        background: #fff;
+    }
+
+    .power_title {
+        background-color: #F2F2F2;
+        height: 60px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .power_title div,
+    .power_title>div>i {
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .el-tabs__nav-scroll {
+        padding-left: 20px;
+    }
+
+    .tab_table_pading {
+        padding: 0 20px;
+    }
+    .box_flex{
+        display: flex;
+        width: 100%;
+    }
+    .flex_left_table{
+        width: 50%;
+        padding: 0 20px;
+        border-right: 1px solid;
+    }
+    .flex_right_table{
+        width: 50%;
+    }
+    .el-tabs__active-bar{
+        background-color: #f56c6c;
+    }
+    .el-tabs__item.is-active,.el-tabs__item:hover{
+        color: #f56c6c;
+    }
+</style>

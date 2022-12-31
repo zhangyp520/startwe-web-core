@@ -1,0 +1,155 @@
+html,body {
+    margin: 0;
+}
+
+.bg-gray {
+    /*background: #f5f5f5;*/
+    background: white;
+}
+
+/******** 导航菜单 ********/
+
+.pg-nav-menu {
+    background: #fff;
+}
+.pg-nav-menu:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.pg-nav-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.pg-nav-menu a {
+    text-decoration: none;
+}
+
+/****** 一级菜单 ******/
+.pg-nav-menu > ul > li {
+    float: left;
+    position: relative;
+}
+.pg-nav-menu > ul > li a {
+    display: block;
+    padding: 12px 20px;
+    color: #333;
+    font-size: 14px;
+    position: relative;
+}
+.pg-nav-menu > ul > li > a > .menu-icon-arrow {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    background: url('../img/icon-arrow-down.png') center no-repeat;
+    background-size: 100%;
+    width: 14px;
+    height: 14px;
+    margin-left: 12px;
+    -o-transition: 0.2s;
+    transition: 0.2s;
+    -webkit-transition: 0.2s;
+    -moz-transition: 0.2s;
+}
+.pg-nav-menu > ul > li:hover > a > .menu-icon-arrow {
+    -webkit-transform: rotate(-180deg);
+        -ms-transform: rotate(-180deg);
+            transform: rotate(-180deg);
+}
+.pg-nav-menu > ul > li:hover {
+    background: #f5f5f5;
+}
+
+/****** 二级菜单 ******/
+.pg-nav-menu > ul > li > ul {
+    display: none;
+    min-width: 150px;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    padding: 10px 0;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    -webkit-box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+}
+.pg-nav-menu > ul > li:hover > ul {
+    display: block;
+} 
+.pg-nav-menu > ul > li > ul > li {
+    position: relative;
+}
+.pg-nav-menu > ul > li > ul > li:hover {
+    background: #f5f5f5;
+}
+.pg-nav-menu > ul > li > ul > li > a > .menu-icon-arrow {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    background: url('../img/icon-arrow-right.png') center no-repeat;
+    background-size: 100%;
+    width: 14px;
+    height: 14px;
+    margin-left: 12px;
+}
+
+/****** 三级菜单 ******/
+.pg-nav-menu > ul > li > ul > li > ul {
+    display: none;
+    min-width: 150px;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    padding: 10px 0;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    -webkit-box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+}
+.pg-nav-menu > ul > li > ul > li:hover > ul {
+    display: block;
+}
+.pg-nav-menu > ul > li > ul > li:hover > ul > li {
+    position: relative;
+}
+.pg-nav-menu > ul > li > ul > li > ul > li:hover {
+    background: #f5f5f5;
+}
+
+.pg-nav-menu > ul > li > ul > li > ul > li > a > .menu-icon-arrow {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    background: url('../img/icon-arrow-right.png') center no-repeat;
+    background-size: 100%;
+    width: 14px;
+    height: 14px;
+    margin-left: 12px;
+}
+
+
+/****** 四级菜单 ******/
+.pg-nav-menu > ul > li > ul > li > ul > li > ul {
+    display: none;
+    min-width: 150px;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    padding: 10px 0;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    -webkit-box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
+}
+.pg-nav-menu > ul > li > ul > li > ul > li:hover > ul {
+    display: block;
+}
+.pg-nav-menu > ul > li > ul > li > ul > li > ul > li:hover {
+    background: #f5f5f5;
+}
+

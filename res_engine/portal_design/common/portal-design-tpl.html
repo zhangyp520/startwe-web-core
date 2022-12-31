@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <script type="text/html" id="htmlTypes">
+        image:{
+        name:'image'
+        },
+        qrcode:{
+        name:'qrcode'
+        },
+        barcode:{
+        name:'barcode'
+        },
+        label: {
+        name: 'label'
+        },//文本输入
+        //------- 外部接口传入控件类型 ---------------------
+        textInput: {
+        name: 'textInput'
+        },
+        selectInput: {
+        name: 'selectInput'
+        },
+        repeatSelect: {
+        name: 'repeatSelect'
+        },
+        read: {
+        name: 'read'
+        },
+        other: {
+        name: 'other'
+        }
+    </script>
+
+    <!--表格类-->
+    <script type="text/html" id="page_design_control_tableLine">
+        {{if control.controlType=='detail'}}
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/art-components/detailTable.art.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+        {{/if}}
+    </script>
+    <script type="text/html" id="page_runtime_control_tableLine">
+        {{if control.controlType=='detail'}}
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/art-components/detailTable.art.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+        {{/if}}
+    </script>
+
+
+    <!--文本输入类-->
+    <!--<textarea  placeholder="请输入" class="control-field-value-abs" style="{{AbsoluteDesign.findFieldStyle4Dom(control)}}">{{AbsoluteDesign.startTemplateTag}}{{control.name}}{{AbsoluteDesign.endTemplateTag}}</textarea>-->
+    <script type="text/html" id="page_design_control_textInput">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_textInput">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+    <!--选择输入类-->
+    <script type="text/html" id="page_design_control_selectInput">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_selectInput">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+    <!--平铺输入类-->
+    <script type="text/html" id="page_design_control_repeatSelect">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_repeatSelect">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+    <script type="text/html" id="page_design_control_containerBox">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_containerBox">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+
+    <script type="text/html" id="page_design_control_page">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_page">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+    <!--查看类-->
+    <script type="text/html" id="page_design_control_read">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_read">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+    <!--other-->
+    <script type="text/html" id="page_design_control_other">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_other">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <!--扩展一个html类型试试
+        1、检查htmlType是否在 res_engine/page_design/pc/js/page-design.js的 findControlTypes 方法中定义 、如果没有增加htmlType枚举类型，并在findControlTypes中增加htmlType分类项
+        2、在 res_engine/page_design/common/page-design-tpl.html 中检查是否有htmlType分类项，如果没有则增加
+        3、在res_common/oui/ui/ui_{{oui.util.getClientType()}}/components中增加组件
+        4、在res_engine/page_design/pc/components-biz-prop-art-tpl中增加 属性面板
+    -->
+    <script type="text/html" id="page_design_control_button">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="__data().getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+    <script type="text/html" id="page_runtime_control_button">
+        <oui-include url="res_common/oui/ui/ui_{{oui.util.getClientType()}}/components/{{control.controlType}}.vue.html"
+                     ref="{{control.id}}"
+                     type="module"
+                     data="pageData.getControlRenderDataById('{{control.id}}')"></oui-include>
+    </script>
+
+
+    <!--列表页面模板-->
+    <!--设计态列表模板-->
+    <script type="text/html" id="list_design_content_tpl">
+        <div class="toolbar">
+            <div class="header">
+                <div class="button-wrap">
+                    <button oui-e-click="event2new" type="button" class="btn">
+                        <span>新增</span>
+                    </button>
+                    <button oui-e-click="event2edit" type="button" class="btn">
+                        <span>编辑</span>
+                    </button>
+                    <button oui-e-click="event2remove" type="button" class="btn">
+                        <span>删除</span>
+                    </button>
+                </div>
+                <div class="search">
+                    <oui-condition id="simple-search-condition" showType="10" type="condition" callback="" cancelback="">
+
+                    </oui-condition>
+                </div>
+            </div>
+        </div>
+        <div class="table-details">
+            <oui-table id="list-{{AbsoluteDesign.data.id}}"
+                       type="tablegrid"
+                       showHLines="false"
+                       style="height: 100%"
+                       allowColumnResize="true"
+                       allowAlternating="true"
+                       multiSelect="true"
+                       onCelldblclick=""
+                       onAfterLoad=""
+                       onCellClick=""
+                       lockColumnSize="2"
+                       showHeaderLines="false"
+                       showColumnsMenu="false"
+                       dataUrl="{{AbsoluteDesign.startTemplateTag}}logic4query{{AbsoluteDesign.endTemplateTag}}"
+                       emptyTips="暂无数据">
+                <oui-columns>
+                    <oui-column-checkbox width="40" headerAlign="center" align="center"></oui-column-checkbox>
+                    <oui-column fieldName="id"  hideable4menu="true" visible="false"></oui-column>
+                    <oui-column fieldName="eid"  hideable4menu="true" visible="false"></oui-column>
+
+                    {{each AbsoluteDesign.findItems4list() as item index}}
+                    <oui-column allowSort="true" width="120" fieldName="{{item.bizId||item.id}}" align="left" headerAlign="left">{{item.name}}</oui-column>
+                    {{/each}}
+                </oui-columns>
+                <oui-pager id="oui-pager" type="pager" showPageNumSize="10" pageIndex="1" pageSize="10" total="1" class="oui-class-pager text-right"></oui-pager>
+            </oui-table>
+        </div>
+    </script>
+
+    <!--运行态列表页面-->
+    <script type="text/html" id="list_runtime_content_tpl">
+        <div class="toolbar">
+            <div class="header" style="display: inline-block;">
+                <div class="button-wrap" style="float: left">
+                    <button oui-e-click="event2new" menu-id="{{AbsoluteDesign.data.id}}" new-save-url="{{AbsoluteDesign.startTemplateTag}}logic4new{{AbsoluteDesign.endTemplateTag}}" type="button" class="btn">
+                        <span>新增</span>
+                    </button>
+                    <button oui-e-click="event2edit" menu-id="{{AbsoluteDesign.data.id}}" type="button" class="btn">
+                        <span>编辑</span>
+                    </button>
+                    <button oui-e-click="event2remove" menu-id="{{AbsoluteDesign.data.id}}"  type="button" class="btn">
+                        <span>删除</span>
+                    </button>
+                </div>
+                <div class="search" style="float: right">
+                    <oui-condition id="simple-search-condition" showType="10" type="condition" callback="" cancelback="">
+
+                    </oui-condition>
+                </div>
+            </div>
+        </div>
+        <div class="table-details">
+            <oui-table id="list-{{AbsoluteDesign.data.id}}"
+                       type="tablegrid"
+                       showHLines="false"
+                       style="height: 100%"
+                       allowColumnResize="true"
+                       allowAlternating="true"
+                       multiSelect="true"
+                       onCelldblclick=""
+                       onAfterLoad=""
+                       onCellClick=""
+                       lockColumnSize="2"
+                       showHeaderLines="false"
+                       showColumnsMenu="false"
+                       dataUrl="{{AbsoluteDesign.startTemplateTag}}logic4query{{AbsoluteDesign.endTemplateTag}}"
+                       emptyTips="暂无数据">
+                <oui-columns>
+                    <oui-column-checkbox width="40" headerAlign="center" align="center"></oui-column-checkbox>
+                    <oui-column fieldName="id"  hideable4menu="true" visible="false"></oui-column>
+                    <oui-column fieldName="eid"  hideable4menu="true" visible="false"></oui-column>
+
+                    {{each AbsoluteDesign.findItems4list() as item index}}
+                    <oui-column allowSort="true" width="120" fieldName="{{item.bizId||item.id}}" align="left" headerAlign="left">{{item.name}}</oui-column>
+                    {{/each}}
+                </oui-columns>
+                <oui-pager id="oui-pager" type="pager" showPageNumSize="10" pageIndex="1" pageSize="10" total="1" class="oui-class-pager text-right"></oui-pager>
+            </oui-table>
+        </div>
+    </script>
+</body>
+</html>
+

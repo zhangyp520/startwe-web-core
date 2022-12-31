@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title></title>
+    <script src="/res_common/third/jquery/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            /*** 多模板生成字符串配置*****/
+            $.get("/res_common/oui/ui/ui_common/controls/calendar/calendar.tpl.html", function (resultHtml) {
+                var arr= [];
+                $(resultHtml).each(function(){
+                    if(!$(this).is('script')){
+                        return ;
+                    }
+                    var id = $(this).attr('id');
+                    if(!id){
+                        return ;
+                    }
+                    id = id.split('-');
+                    id = id[id.length-1];
+
+                    var targetId = $(this).attr('target-tpl-id');
+                    if(targetId){
+                        targetId = targetId.split('-');
+                        targetId = targetId[targetId.length-1];
+                        arr.push('Calendar.templateHtml['+id+']=Calendar.templateHtml['+targetId+'];\n');
+                        return;
+                    }
+                    arr.push('Calendar.templateHtml['+id+']=');
+                    var result= this.innerHTML;
+                    var parameters = result.split(/\n/);
+                    var contentStr = "";
+                    for (var i = 0, len = parameters.length; i < len; i++) {
+                        //去掉换行符
+                        contentStr += '\n\t';
+                        while (parameters[i].indexOf(' ') == 0) {
+                            parameters[i] = parameters[i].substring(1, parameters[i].length);
+                            contentStr += " ";
+                        }
+                        while (parameters[i].indexOf('\t') == 0) {
+                            parameters[i] = parameters[i].substring(1, parameters[i].length);
+                            contentStr += "\t";
+                        }
+                        contentStr += '\'' + parameters[i].replace(/[\r\n]/g, "").replace(/\'/g,"\"") + '\'+';
+                    }
+                    contentStr = contentStr.substring(0, contentStr.length - 1) + "";
+                    arr.push(contentStr+';\n');
+                });
+                $("#test").val(arr.join(''));
+            }, "text");
+
+        });
+    </script>
+</head>
+<body>
+<textarea id="test" name="t" style="width: 100%;height: 300px;"></textarea>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,178 @@
+<!-- 文本 -->
+<template > 
+      <div class="oui-class-select" >
+          <el-select @clearable :style="style" :size="size"
+                     collapse-tags
+                     :multiple="multiple" v-model="selectValue" placeholder="请选择"  @change="_controlOnUpdate">
+              <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.display"
+                      :value="item.value">
+              </el-option>
+          </el-select>
+      </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                options:[],
+                size:'',
+                multiple:false,
+                value:'',
+                selectValue:'',
+                rowSpacing: "",
+                textPadding: "",
+                rollingSpeed: "",
+                textEffect: "",
+                textContent:"",
+                otherAttrs: {},
+                showTypes:[{
+                    showType:0,
+                    multiple: false
+                },{
+                    showType:1,
+                    multiple:true
+                }]
+            }
+        },
+        watch:{
+            showType:{
+                handler:function (){
+                   this.updateShowTypeOptions();
+                }
+            },
+            multiple:{
+                handler:function (){
+                    this.showType=1;
+                }
+            },
+            otherAttrs:{
+                handler:function () {
+                    this.updateOptions();
+                },
+                deep:true
+            },
+            value:{
+                handler:function () {
+                    if(this.multiple){
+                        this.selectValue = this.value.split(',');
+                    }else{
+                        this.selectValue = this.value;
+                    }
+                }
+            }
+        },
+        mounted: function () {
+          // // let currentControl = com.oui.absolute.AbsoluteDesign.data;
+          // console.log('select view',this,this.otherAttrs);
+            if(!this.showType){
+                this.showType =0;
+            }
+            if(this.multiple){
+                this.showType=1;
+            }
+            this.updateShowTypeOptions();
+            this.updateOptions();
+            if(this.multiple){
+                if(this.value){
+                    this.selectValue = this.value.split(',');
+                }else{
+                    this.selectValue = [];
+                }
+            }else{
+                this.selectValue = this.value;
+
+            }
+        },
+        methods:{
+            updateShowTypeOptions:function (){
+                var showType = this.showType;
+                var one = oui.findOneFromArrayBy(this.showTypes,function (item){
+                    if(item.showType == showType){
+                        return true;
+                    }
+                });
+                if(one){
+                    for(var k in one ){
+                        this[k] = one[k];
+                    }
+                }
+            },
+            updateOptions:function (){
+                var me = this;
+                if(this.otherAttrs){
+                    switch(this.otherAttrs.sourceType){
+                        case "diy":{
+
+                            this.options = this.otherAttrs.sourceDiyValues.items;
+                            break;
+                        }
+                        case "1":{
+                            break;
+                        }
+                        default:{
+                        }
+                    }
+                }else{
+                    this.options=[];
+                }
+
+
+            },
+            triggerUpdate:function (lastValue){
+                var me = this;
+                var key = this.bindProp;
+                var display = '';
+
+                var one = oui.findOneFromArrayBy(this.options,function (item){
+                    if(item.value ==me.value){
+                        return true;
+                    }
+                });
+                if(one){
+                    display = one.display;
+                }
+                if(typeof lastValue =='undefined'){
+                    lastValue = me.value;
+                }
+                this.onUpdate&&this.onUpdate(key,this.value,lastValue,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:this.value, //值
+                    data4DB:one,//提交到后端的额外数据
+                    display:display //显示值
+                }); //外部构造的方法调用
+            },
+            _controlOnUpdate:function(){
+                var lastValue = this.value;
+                var me = this;
+                if(this.multiple){
+                    var values = [];
+                     oui.findManyFromArrayBy(this.options,function (item){
+                       if(me.selectValue.indexOf(item.value)>-1){
+                           values.push(item.value);
+                           return true;
+                       }
+                    });
+                    this.value = values.join(',');
+                }else{
+                    this.value = this.selectValue;
+                }
+                this.triggerUpdate(lastValue);
+                console.log('select.vue.html update',this.value,lastValue);
+
+            }
+        }
+    }
+</script>
+
+<style>
+    .oui-class-select .el-select__tags {
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 150px!important;;
+    }
+
+</style>

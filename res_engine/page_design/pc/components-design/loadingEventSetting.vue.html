@@ -1,0 +1,1128 @@
+<template>
+    <div>
+        <el-dialog :visible.sync="centerDialogVisible" custom-class="s-dialog-box" width="60%"
+                   :before-close="handleClose" center>
+            <div slot="title" class="title" style="text-align: left;">设置 {{componentName}} 动作交互</div>
+
+            <el-button  @click="addInteraction()">添加事件</el-button>
+            <el-button  @click="removeAllInteractions()">清空</el-button>
+
+            <table class="actionTable">
+                <thead>
+                <tr>
+                    <td class="triggerType">触发方式<span class="icon">>></span></td>
+                    <td class="actionName">执行动作<span class="icon">>></span></td>
+                    <td class="systemMethod">参数配置<span class="icon">>></span></td>
+                    <td class="completed">执行完成后<span class="icon">>></span></td>
+                    <td class="completed">操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                <template v-if="  callBackData.length > 0 ">
+                    <tr v-for="(item,index) in callBackData" :key="'callback_data_'+index" style="min-height:20px">
+                        <td valign="top" :rowspan="item.childIds.length+1" v-if="(item.id == item.superId)">
+                            <el-select v-if="(item.id == item.superId)" v-model="item.trigMethod"  @change="change2setEventParams(item)" :ref="'select_trigMethod'+index" placeholder="请选择触发方式">
+                                <el-option v-for="itemTrig in triggerTypeData" :key="itemTrig.value" :label="itemTrig.display"
+                                           :value="itemTrig.value">
+                                </el-option>
+                            </el-select>
+                        </td>
+                        <td valign="top">
+
+                            <div class="action-select">
+                                    <span v-if="item.executeAction == 'pageTurn'"
+                                          class="s-icon s-icon-18 s-gotourl"></span>
+                                <el-select
+                                        v-model="item.executeAction"
+                                        placeholder="选择执行动作" >
+                                    <el-option v-for="temp in executeActionTypeData" :key="temp.value" :label="temp.display"
+                                               :value="temp.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+
+                        </td>
+                        <td valign="top">
+
+
+
+                            <div v-if="!item.executeAction || item.executeAction == 'backEndLogic'"
+                                 class="logicBack">
+                                <div style="display: flex; align-items: center;">
+
+                                    <div>
+
+                                        <el-select class="treeselect" v-if="systemMethodData" :ref="'select'+index"
+                                                   v-model="item.executeActionConfig.logicId" placeholder="选择逻辑"
+                                                   @visible-change="visibleChange($event,'select'+index)" clearable
+                                                   style="width: 100%;" @clear="clear($event,'select'+index,index)">
+                                            <el-option ref="option" class="option" :value="item.executeActionConfig.logicId"
+                                                       :label="item.executeActionConfig.logicName">
+                                                <el-tree ref="tree" class="tree" node-key="name"
+                                                         :data="systemMethodData"
+                                                         :props="{ label: 'name', children: 'children' } "
+                                                         :default-expanded-keys='[item.executeActionConfig.logicId]'
+                                                         highlight-current :expand-on-click-node="false"
+                                                         @node-click="handleNodeClick($event,'select' + index,index)"
+                                                         default-expand-all>
+                                                </el-tree>
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+                                    <div v-if="item.executeActionConfig.logicId" style="margin-left: 5px;"
+                                         @click="showBindLogic(item.executeActionConfig.logicId)">
+                                        <span class="s-icon s-icon-setting s-icon-16"></span>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <!-- <div
+                                    style="display: flex; align-items: center; justify-content: space-between; margin: 10px 0;">
+                                    <div>
+                                        显示加载图标
+                                    </div>
+                                    <div>
+
+                                        <el-switch v-model="showLoadIcon"></el-switch>
+                                    </div>
+                                </div> -->
+                            </div>
+
+                            <div v-if="item.executeAction == 'pageTurn'">
+
+                                <div class="system-item">
+
+                                    <div class="system-item-label">
+                                        打开位置
+                                    </div>
+
+                                    <div>
+
+                                        <el-select v-model="item.executeActionConfig.pageLocation" placeholder="打开位置">
+                                            <el-option v-for="item in pageLocationData" :key="item.value"
+                                                       :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="system-item">
+
+                                    <div class="system-item-label">
+                                        执行路径
+                                    </div>
+
+                                    <div>
+
+                                        <el-select v-model="item.executeActionConfig.executePath" placeholder="执行路径"
+                                                   @change="changeExecute(item)">
+                                            <el-option v-for="item in executePathData" :key="item.value"
+                                                       :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <div class="system-item" v-if="item.executeActionConfig.executePath=='externalLink'">
+
+                                    <div class="system-item-label">
+                                        外部链接
+                                    </div>
+
+                                    <div>
+
+                                        <el-input v-model="linkAddress" placeholder="http://"></el-input>
+
+                                    </div>
+
+                                </div>
+                                <div class="system-item" v-if="item.executeActionConfig.executePath=='innerLink'">
+
+                                    <div class="system-item-label">
+                                        内部链接
+                                    </div>
+
+                                    <div>
+
+                                        <el-input v-model="linkAddress" placeholder="/list.html"></el-input>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="system-item" v-if="item.executeActionConfig.executePath=='pageModel'">
+
+                                    <div class="system-item-label">
+                                        显示呈现页
+                                    </div>
+
+                                    <div>
+
+
+
+
+                                        <el-select class="treeselect" v-if="renderPageData" :ref="'renderSelectInnerPage'+index"
+                                                   v-model="item.executeActionConfig.renderPage" placeholder="选择呈现页"
+                                                   @visible-change="visibleRenderChange($event,'renderSelectInnerPage'+index)"
+                                                   clearable style="width: 100%;"
+                                                   @clear="clearRenderPage($event,'renderSelectInnerPage'+index,index)">
+                                            <el-option  ref="optionRenderPage" class="option"
+                                                       :value="item.executeActionConfig.renderPage" :label="item.executeActionConfig.renderPageName">
+
+                                                <el-tree ref="renderPageDataTree" class="tree" node-key="name"
+                                                         :data="renderPageData"
+                                                         :props="{ label: 'name', children: 'children' } "
+                                                         :default-expanded-keys='[item.executeActionConfig.renderPage]' highlight-current
+                                                         :expand-on-click-node="false"
+
+                                                         @node-click="handleRenderNodeClick($event,'renderSelectInnerPage'+index,index)"
+                                                         default-expand-all>
+                                                </el-tree>
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div v-if="item.executeAction == 'uploadFile' || item.executeAction == 'impExcel' "
+                                 class="logicBack">
+                                <div style="display: flex; align-items: center;">
+
+                                    <div>上传导入逻辑</div>
+                                    <div>
+
+                                        <el-select class="treeselect" v-if="systemMethodData" :ref="'select'+index"
+                                                   v-model="item.executeActionConfig.logicId" placeholder="选择逻辑"
+                                                   @visible-change="visibleChange($event,'select'+index)" clearable
+                                                   style="width: 100%;" @clear="clear($event,'select' + index,index)">
+                                            <el-option ref="option" class="option" :value="item.executeActionConfig.logicId"
+                                                       :label="item.executeActionConfig.logicName">
+                                                <el-tree ref="tree" class="tree" node-key="name"
+                                                         :data="systemMethodData"
+                                                         :props="{ label: 'name', children: 'children' } "
+                                                         :default-expanded-keys='[item.executeActionConfig.logicId]'
+                                                         highlight-current :expand-on-click-node="false"
+                                                         @node-click="handleNodeClick($event,'select' + index,index)"
+                                                         default-expand-all>
+                                                </el-tree>
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+                                    <div v-if="item.executeActionConfig.logicId" style="margin-left: 5px;"
+                                         @click="showBindLogic(item.executeActionConfig.logicId)">
+                                        <span class="s-icon s-icon-setting s-icon-16"></span>
+                                    </div>
+
+
+
+                                </div>
+                                <div style="display: flex; align-items: center;">
+
+                                    <div>下载模板逻辑</div>
+                                    <div>
+
+                                        <el-select class="treeselect" v-if="systemMethodData" :ref="'select_downloadLogic_'+index"
+                                                   v-model="item.executeActionConfig.downloadLogicId" placeholder="选择逻辑"
+                                                   @visible-change="visibleChange($event,'select_downloadLogic_'+index)" clearable
+                                                   style="width: 100%;" @clear="clearDownLoad($event,'select_downloadLogic_' + index,index)">
+                                            <el-option ref="downloadLogic_option" class="option" :value="item.executeActionConfig.downloadLogicId"
+                                                       :label="item.executeActionConfig.downloadLogicName">
+                                                <el-tree ref="download_tree" class="tree" node-key="name"
+                                                         :data="systemMethodData"
+                                                         :props="{ label: 'name', children: 'children' } "
+                                                         :default-expanded-keys='[item.executeActionConfig.downloadLogicId]'
+                                                         highlight-current :expand-on-click-node="false"
+                                                         @node-click="handleNodeClick($event,'select_downloadLogic_' + index,index)"
+                                                         default-expand-all>
+                                                </el-tree>
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+                                    <div v-if="item.executeActionConfig.downloadLogicId" style="margin-left: 5px;"
+                                         @click="showBindLogic(item.executeActionConfig.downloadLogicId)">
+                                        <span class="s-icon s-icon-setting s-icon-16"></span>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <!-- <div
+                                    style="display: flex; align-items: center; justify-content: space-between; margin: 10px 0;">
+                                    <div>
+                                        显示加载图标
+                                    </div>
+                                    <div>
+
+                                        <el-switch v-model="showLoadIcon"></el-switch>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div v-if="item.executeAction == 'downloadFile' || item.executeAction == 'expExcel'"
+                                 class="logicBack">
+                                <div style="display: flex; align-items: center;">
+
+                                    <div>
+
+                                        <el-select class="treeselect" v-if="systemMethodData" :ref="'select'+index"
+                                                   v-model="item.executeActionConfig.logicId" placeholder="选择逻辑"
+                                                   @visible-change="visibleChange($event,'select'+index)" clearable
+                                                   style="width: 100%;" @clear="clear($event,'select'+index,index)">
+                                            <el-option ref="option" class="option" :value="item.executeActionConfig.logicId"
+                                                       :label="item.executeActionConfig.logicName">
+                                                <el-tree ref="tree" class="tree" node-key="name"
+                                                         :data="systemMethodData"
+                                                         :props="{ label: 'name', children: 'children' } "
+                                                         :default-expanded-keys='[item.executeActionConfig.logicId]'
+                                                         highlight-current :expand-on-click-node="false"
+                                                         @node-click="handleNodeClick($event,'select' + index,index)"
+                                                         default-expand-all>
+                                                </el-tree>
+                                            </el-option>
+                                        </el-select>
+
+                                    </div>
+
+
+                                    <div v-if="item.executeActionConfig.logicId" style="margin-left: 5px;"
+                                         @click="showBindLogic(item.executeActionConfig.logicId)">
+                                        <span class="s-icon s-icon-setting s-icon-16"></span>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <!-- <div
+                                    style="display: flex; align-items: center; justify-content: space-between; margin: 10px 0;">
+                                    <div>
+                                        显示加载图标
+                                    </div>
+                                    <div>
+
+                                        <el-switch v-model="showLoadIcon"></el-switch>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </td>
+                        <td valign="top">
+                            <el-select v-model="item.afterExecuteFinish" placeholder="请选择" :disabled="true" @change="changeComplete">
+                                <el-option v-for="i in completedData" :key="i.value" :label="i.label"
+                                           :value="i.value">
+                                </el-option>
+                            </el-select>
+                        </td>
+                        <td valign="top">
+                            <el-link type="primary" @click="addInteraction(index)" >添加交互动作</el-link>
+                            <el-link type="primary" class="item-delete" @click="removeInteraction(index)" >删除</el-link>
+                        </td>
+                    </tr>
+                </template>
+
+                </tbody>
+            </table>
+
+
+
+
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="handleClose">取 消</el-button>
+                <el-button type="primary" @click="saveActionSetting()">保存</el-button>
+            </span>
+
+
+
+
+        </el-dialog>
+
+
+
+
+
+        <el-dialog :visible.sync="bindingLogicValVisible" custom-class="s-dialog-box" width="950px"
+                   :before-close="handleBindLogicValClose" center>
+            <div slot="title" class="title" style="text-align: left;">绑定逻辑字段设置</div>
+
+            <el-tabs v-model="logicValTab">
+                <el-tab-pane label="输入参数" name="input">
+
+
+                    <el-table :data="logicInputParams" style="width: 100%; margin-bottom: 10px;"
+                              :header-cell-style="{background:'#3A3B3F' }">
+                        <el-table-column prop="valname" label="参数名称" width="250">
+                            <template slot-scope="scope">
+                                <el-select v-model="condition_field[scope.$index]" placeholder="请选择" size="mini" style="width:200px">
+                                    <el-option v-for="item in condition_field_options" :key="item.value" :label="item.label"
+                                               :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+
+                        </el-table-column>
+
+                        <el-table-column prop="name" label="类型" width="150" align="center">
+                            <template slot-scope="scope">
+                                {{oui.fieldTypeEnum[scope.row.fieldType].desc}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="fieldType" label="来源" align="center">
+                            <template slot-scope="scope">
+                                输入变量
+                            </template>
+
+                        </el-table-column>
+
+                        <el-table-column prop="logicval" label="绑定逻辑定义的输入变量" align="center">
+                            <template slot-scope="scope">
+                                {{scope.row.name}}:
+                                {{oui.fieldTypeEnum[scope.row.fieldType].desc}}
+                            </template>
+
+                        </el-table-column>
+
+
+                    </el-table>
+
+                </el-tab-pane>
+                <el-tab-pane label="输出参数" name="output">
+
+
+
+
+
+                    <el-table :data="logicOutputParams" style="width: 100%; margin-bottom: 10px;"
+                              :header-cell-style="{background:'#3A3B3F' }">
+                        <el-table-column prop="valname" label="参数名称" width="250">
+                            <template slot-scope="scope">
+                                <el-select v-model="condition_field[scope.$index]" placeholder="请选择" size="mini" style="width:200px">
+                                    <el-option v-for="item in condition_field_options" :key="item.value" :label="item.label"
+                                               :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column prop="name" label="类型" width="150" align="center">
+                            <template slot-scope="scope">
+                                {{oui.fieldTypeEnum[scope.row.fieldType].desc}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="fieldType" label="来源" align="center">
+                            <template slot-scope="scope">
+                                输入变量
+                            </template>
+
+                        </el-table-column>
+
+                        <el-table-column prop="logicval" label="绑定逻辑定义的输入变量" align="center">
+                            <template slot-scope="scope">
+                                {{scope.row.name}}:
+                                {{oui.fieldTypeEnum[scope.row.fieldType].desc}}
+                            </template>
+
+                        </el-table-column>
+
+
+                </el-tab-pane>
+            </el-tabs>
+
+
+
+        </el-dialog>
+
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data() {
+            return {
+                componentName: "",
+                Design: com.oui.absolute.AbsoluteDesign,
+                subscribelist: [],
+                centerDialogVisible: false,
+                logicInputParams: [],
+                logicOutputParams: [],
+                bindingLogicValVisible: false,
+                trigMethod: '',
+                afterExecuteFinish: '',
+                renderPageData: null,
+                renderMethodValue: '',
+                renderPage: '',
+                executeAction: '',
+                linkAddress: '',
+                systemMethodData: null,
+                executePath: 'externalLink',
+                pageLocation: "newTab",
+                showLoadIcon: "1",
+                optionData: {},
+                renderOptionData: {},
+                pageLocationData: [{
+                    value: 'newTab',
+                    label: '新页签'
+                },
+                    {
+                        value: 'newPage',
+                        label: '新页面'
+                    },
+                    {
+                        value: 'currentPage',
+                        label: '当前页'
+                    }
+                ],
+                executePathData: [{
+                    value: 'externalLink',
+                    label: '外部链接'
+                    },
+                    {
+                        value: 'innerLink',
+                        label: '内部链接'
+                    },
+                    {
+                        value: 'pageModel',
+                        label: '页面模型'
+                    }
+                ],
+                completedData: [{
+                    value: 'executeFinish',
+                    label: '执行完毕'
+                },
+                    {
+                        value: 'executeCallback',
+                        label: '执行回调'
+                    }
+                ],
+                executeActionTypeData:oui.util.findExecuteActionTypeArray(),
+                triggerTypeData: [  ],
+                condition_field: [],
+                condition_field_options: [{
+                    value: 'fromData',
+                    label: 'fromData'
+                }, {
+                    value: 'entity',
+                    label: 'entity'
+                }],
+                logicValTab: 'input',
+                callBackData: [  ]
+            }
+        },
+        methods: {
+            //选择执行完成后
+            changeComplete(e) {
+                console.info(e)
+                if (e == 'executeCallback') { //选择回调
+                    var temp = this.newInteraction();
+                    this.callBackData.push(temp);
+                    this.$set(this,'callBackData',this.callBackData);
+                }
+            },
+            addInteraction:function (idx){
+                var temp = this.newInteraction();
+                if(typeof idx=='undefined'){
+                    //添加交互事件
+                    temp.superId = temp.id;
+                    this.callBackData.push(temp);
+                }else{
+                    //指定行后增加
+                    temp.superId = this.callBackData[idx].superId;
+                    this.callBackData.splice(idx+1,0,temp);
+                }
+                //添加交互动作后，更新交互动作的状态
+                var superId = temp.superId;
+                //找到所有同组的交互动作
+                var arr = oui.findManyFromArrayBy(this.callBackData,function (temp){
+                    if(temp.superId==superId  ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                });
+                //更新所有同组的动作
+                if(arr.length>0){
+                    var root= arr[0];
+                    var cIds = [];
+                    oui.eachArray(arr,function (temp,index){
+                        temp.afterExecuteFinish= 'executeCallback'; //执行回调
+                        if(index>0){
+                            cIds.push(temp.id);
+                        }
+                    });
+                    root.childIds = cIds;
+                    arr[arr.length-1].afterExecuteFinish = 'executeFinish';//最后一个执行结束
+                }
+            },
+            removeAllInteractions:function (){
+                this.callBackData = [];
+            },
+            removeInteraction:function (idx){
+                var item = this.callBackData[idx];
+                if(item){
+                    //存在
+                    //判断是否是根节点
+                    if(item.id == item.superId){
+                        //需要找出同一组的的所有动作
+                        //找到所有同组的交互动作
+                        var arr = oui.findManyFromArrayBy(this.callBackData,function (temp){
+                            if(temp.superId==item.superId && (temp.id !=temp.superId) ){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        });
+                        //更新所有同组的动作
+                        if(arr.length>0){
+                            var superId = arr[0].id;
+                            var cIds = [];
+                            oui.eachArray(arr,function (temp,index){
+                                temp.superId = superId;
+                                temp.afterExecuteFinish= 'executeCallback'; //执行回调
+                                if(index>0){
+                                    cIds.push(temp.id);
+                                }
+                            });
+                            arr[0].childIds = cIds;//指定所有孩子
+                            arr[arr.length-1].afterExecuteFinish = 'executeFinish';//最后一个执行结束
+
+                        }
+                        //删除当前动作
+                        this.callBackData.splice(idx,1);
+                    }else{
+                        var superId = item.superId;
+                        //直接删除当前动作
+                        this.callBackData.splice(idx,1);
+                        //然后找出当前所在组的 所有并更新状态；
+
+                        //找到所有同组的交互动作
+                        var arr = oui.findManyFromArrayBy(this.callBackData,function (temp){
+                            if(temp.superId==superId  ){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        });
+                        //更新所有同组的动作
+                        if(arr.length>0){
+                            var cIds = [];
+                            oui.eachArray(arr,function (temp,index){
+                                temp.afterExecuteFinish= 'executeCallback'; //执行回调
+                                if(index>0){
+                                    cIds.push(temp.id);
+                                }
+                            });
+                            arr[0].childIds = cIds;
+                            arr[arr.length-1].afterExecuteFinish = 'executeFinish';//最后一个执行结束
+                        }
+                    }
+                }
+            },
+            newInteraction:function (){
+                var temp ={
+
+                    "trigMethod": '',
+                    "executeAction": 'pageTurn',
+                    "executeActionConfig":{
+                        "logicId":  '',
+                        "logicName":"",
+                        downloadLogicId: '',
+                        downloadLogicName:'',
+                        "pageLocation": '',
+                        "executePath": '',
+                        "linkAddress": '',
+                        "renderPage":  '',
+                        "renderPageName":'',
+                        "pageType" : '',
+                        "viewType":'',
+                        "inputParams":  '',
+                        "outputParams":  [],
+                        "targetInputParams": [],
+                        "targetOutputParams": [],
+                        eventInputParams: [],
+                        eventOutputParams: [],
+                        eventTempParams: []
+                    },
+                    "afterExecuteFinish":'',
+                    "id": oui.getUUIDLong(),
+                    "superId": '',
+                    "childIds":[] //获取当前节点的所有子节点
+                };
+                return temp;
+            },
+            showBindAct(data) {
+                this.componentName = data.componentName || '未知';
+                this.centerDialogVisible = true;
+                var temp =[];
+                if(data.msgType&&data.msgType=='page'){
+                    temp = oui.JsonPathUtil.getJsonByPath("events.interaction",this.Design.data);
+                    this.triggerTypeData = oui.util.findEventTypes(this.Design.data); //处理事件数据
+
+                }else{
+                    temp = oui.JsonPathUtil.getJsonByPath("events.interaction",this.Design.data.currentControl);
+                    this.triggerTypeData = oui.util.findEventTypes(this.Design.data.currentControl); //处理事件数据
+                }
+
+                var callBackData = this.interactions2list(temp);
+                console.log('当前的交互列表转为 数组平铺的结构',callBackData);
+
+                this.callBackData = callBackData;
+                this.$set(this,'callBackData',callBackData); //处理回调
+               
+                //处理页面的事件渲染
+
+
+            },
+            //将所有交互动作,平铺成数组结构
+            interactions2list:function (interactions){
+                var arr = [];
+                var me = this;
+                oui.eachArray(interactions,function (item){
+                    arr = arr.concat(me.children2list(item));
+                });
+                return arr;
+            },
+            /**
+             * 将全部平铺的数组结构转换成按照事件分组的层级对象结构
+             * @param list
+             */
+            list2interactions:function (list){
+                var map = {}; //转为map
+                var arr= [];
+                var me = this;
+                oui.eachArray(list,function (item){
+                    var tempConfig = item.executeActionConfig ||{};
+                    map[item.id] = {
+                        "trigMethod":  item.trigMethod,
+                        "executeAction":item.executeAction,
+                        "executeActionConfig":{
+                            "logicId": tempConfig.logicId||'',
+                            "logicName":tempConfig.logicName||"",
+                            downloadLogicId:tempConfig.downloadLogicId||'',
+                            downloadLogicName:tempConfig.downloadLogicName||'',
+
+                            "pageLocation": tempConfig.pageLocation||'',
+                            "executePath": tempConfig.executePath||'',
+                            "linkAddress": tempConfig.linkAddress||'',
+                            "renderPage": tempConfig.renderPage||'',
+                            "renderPageName":tempConfig.renderPageName||'',
+                            "pageType":tempConfig.pageType||'',
+                            "viewType":tempConfig.viewType||'',
+                            "inputParams": tempConfig.inputParams||'',
+                            "outputParams": tempConfig.outputParams||[],
+                            "targetInputParams":tempConfig.targetInputParams||[],
+                            "targetOutputParams":tempConfig.targetOutputParams||[],
+                            eventInputParams:tempConfig.eventInputParams||[],
+                            eventOutputParams:tempConfig.eventOutputParams||[],
+                            eventTempParams:tempConfig.eventTempParams||[]
+                        },
+                        "afterExecuteFinish":item.afterExecuteFinish,
+                        "id": item.id,
+                        "superId": item.superId,
+                        "childIds":item.childIds //获取当前节点的所有子节点
+                    };
+                    if(item.trigMethod){ //按照事件进行分组处理
+                        arr.push( map[item.id]);
+                    }
+                });
+                //递归处理对象结构
+                oui.eachArray(arr,function (item){
+                    me.updateObjectChildren(item,map);
+                });
+                return arr;
+
+            },
+            //更新所有对象结构
+            updateObjectChildren:function (item,map){
+                if(item.childIds&&item.childIds.length){
+                    item.callbackInteractive = map[item.childIds[0]];
+                    for(var i=0,len=item.childIds.length;i<len-1;i++){
+                        var cId = item.childIds[i];
+                        var nId = item.childIds[i+1];
+                        var curr = map[cId];
+                        var next = map[nId];
+                        curr.callbackInteractive = next;
+                    }
+                }
+            },
+            children2list:function (item){
+                var me = this;
+                var arr = [];
+                var tempConfig = item.executeActionConfig||{};
+                arr.push({
+                    "trigMethod":  item.trigMethod,
+                    "executeAction":item.executeAction,
+                    "executeActionConfig":{
+                        "logicId": tempConfig.logicId||'',
+                        "logicName":tempConfig.logicName||"",
+                        downloadLogicId:tempConfig.downloadLogicId||'',
+                        downloadLogicName:tempConfig.downloadLogicName||'',
+
+                        "pageLocation": tempConfig.pageLocation||'',
+                        "executePath": tempConfig.executePath||'',
+                        "linkAddress": tempConfig.linkAddress||'',
+                        "renderPage": tempConfig.renderPage||'',
+                        "renderPageName":tempConfig.renderPageName||'',
+                        "pageType":tempConfig.pageType||'',
+                        "viewType":tempConfig.viewType||'',
+                        "inputParams": tempConfig.inputParams||'',
+                        "outputParams": tempConfig.outputParams||[],
+                        "targetInputParams":tempConfig.targetInputParams||[],
+                        "targetOutputParams":tempConfig.targetOutputParams||[],
+                        eventInputParams:tempConfig.eventInputParams||[],
+                        eventOutputParams:tempConfig.eventOutputParams||[],
+                        eventTempParams:tempConfig.eventTempParams||[]
+
+                    },
+                    "afterExecuteFinish":item.afterExecuteFinish,
+                    "id": item.id,
+                    "superId": item.superId,
+                    "childIds":me.findChildIds(item) //获取当前节点的所有子节点
+                });
+                if(item.callbackInteractive && item.callbackInteractive.id){
+                    arr = arr.concat(me.children2list(item.callbackInteractive));
+                }
+                return arr;
+            },
+            findChildIds:function (item){
+                var me = this;
+                var ids = [];
+                if(item.callbackInteractive && item.callbackInteractive.id){
+                    ids.push(item.callbackInteractive.id);
+                    ids = ids.concat(me.findChildIds(item.callbackInteractive));
+                }
+                return ids;
+            },
+            changeExecute(item) {
+
+                if (item.executeActionConfig.executePath== 'pageModel') {
+                    // this.loadPageDataSource()
+                }
+            },
+            handleClose() {
+                this.centerDialogVisible = false
+            },
+            handleBindLogicValClose() {
+                this.bindingLogicValVisible = false
+            },
+            saveActionSetting() {
+                //保存交互动作配置
+                let current = null;
+                if (this.componentName == '页面') {
+                    current = com.oui.absolute.AbsoluteDesign.data;
+                } else {
+                    current = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                }
+                var interactions = this.list2interactions(this.callBackData);
+                console.log(interactions,'保存的交互动作');
+                //1.保存交互动作
+                //2.保存私有事件
+                //3.保存自定义事件
+
+                oui.JsonPathUtil.setObjByPath('events.interaction', current, interactions, true);
+
+                var d = oui.getTop().oui.alert('保存成功');
+                setTimeout(function () {
+                    d.hide();
+                }, 800);
+
+            },
+            change2setEventParams:function (item){
+                var trigMethod = item.trigMethod;
+                var one = oui.findOneFromArrayBy(this.triggerTypeData,function (curr){
+                    if(curr.value == trigMethod){
+                        return true;
+                    }
+                })
+                if(one){
+                    item.executeActionConfig.eventInputParams = one.eventInputParams||[]; //输入参数
+                    item.executeActionConfig.eventOutputParams = one.eventOutputParams||[]; //输出参数
+                    item.executeActionConfig.eventTempParams = one.eventTempParams||[]; //临时参数
+                }
+            },
+            //逻辑选择
+            handleNodeClick(data, select, index) {
+
+                if(select.indexOf('downloadLogic')>-1){
+                    this.callBackData[index]['executeActionConfig'].downloadLogicId = data['id']
+                    this.callBackData[index]['executeActionConfig'].downloadLogicName = data['name']
+                }else{
+                    this.callBackData[index]['executeActionConfig'].logicId = data['id']
+                    this.callBackData[index]['executeActionConfig'].logicName = data['name']
+                }
+
+                this.$refs[select][0].visible = false
+            },
+            handleRenderNodeClick(data,select,index) {
+                this.$emit('input', data['id']);
+                this.callBackData[index]['executeActionConfig'].renderPage = data['id'];
+                this.callBackData[index]['executeActionConfig'].renderPageName = data['name'];
+                this.callBackData[index]['executeActionConfig'].viewType = data.data.otherAttrs.viewType;
+                this.callBackData[index]['executeActionConfig'].pageType =data.nodeType;
+
+                this.$refs[select][0].visible = false
+            },
+            clear:function(data,select,index) {
+                this.$emit('input', '');
+                this.callBackData[index]['executeActionConfig'].logicId = ''
+                this.callBackData[index]['executeActionConfig'].logicName = ''
+                console.info('clear')
+            },
+            clearRenderPage:function (data,select,index){
+                this.$emit('input', '');
+                this.callBackData[index]['executeActionConfig'].renderPage = ''
+                this.callBackData[index]['executeActionConfig'].renderPageName = ''
+            },
+            clearDownLoad:function (data,select,index){
+                this.$emit('input', '');
+                this.callBackData[index]['executeActionConfig'].downloadLogicId = '';
+                this.callBackData[index]['executeActionConfig'].downloadLogicName = '';
+            },
+            showBindLogic(data) {
+                this.bindingLogicValVisible = true
+                oui.postData(this.Design.getLogicByIdUrl, {
+                    logicId: data
+                }, (res) => {
+
+                    if (res.success) {
+                        var inputParamsJson = oui.parseJson(res.logicComponentBean.inputParamsJson)
+                        var outputParamsJson = oui.parseJson(res.logicComponentBean.outputParamsJson)
+
+                        //这么写有问题，需要把输入输出绑定到 交互动作行上 TODO
+                        this.logicInputParams = inputParamsJson
+                        this.logicOutputParams = outputParamsJson
+                    }
+
+                }, function (res) {
+                    console.log(res);
+                }, '加载中...');
+            },
+            visibleChange(e, select) {
+                if (e) {
+                    let selectDom = document.querySelector('.is-current')
+                    setTimeout(() => {
+                        this.$refs[select][0].scrollToOption({
+                            $el: selectDom
+                        })
+                    }, 0)
+                }
+            },
+            visibleRenderChange(e,select) {
+                if (e) {
+                    let selectDom = document.querySelector('.is-current')
+                    setTimeout(() => {
+                        this.$refs[select][0].scrollToOption({
+                            $el: selectDom
+                        })
+                    }, 0)
+                }
+            },
+            //加载逻辑 树选择
+            loadLogicDataTree:function(callback) {
+                // this.systemMethodData
+
+                var param = oui.getParam()
+                var url = this.Design.queryCurrentModelLogicUrl
+
+                var me = this
+
+                oui.postData(url, {
+                        moduleId: com.oui.absolute.AbsoluteDesign.data.moduleId,
+                        projectId: param.projectId
+                    },
+                    function (res) {
+
+
+                        res.logicTreeNodeList.map((item, index) => {
+                            if (item.children.length > 0) {
+                                item.disabled = true
+                            }
+                        })
+
+                        me.systemMethodData = res.logicTreeNodeList
+                        callback&&callback(); 
+                        console.log(res.logicTreeNodeList,'逻辑资源');
+
+
+                    },
+                    function (res) {
+
+                    }, '加载中...');
+
+            },
+            //读取呈现页
+            loadPageDataSource(callback) {
+
+                var param = oui.getParam()
+                var url = this.Design.findPageViewUrl
+
+                var me = this
+
+                oui.postData(url, {
+                        projectId: param.projectId,//根据当前模块进行过滤
+                        includeNodeType:'form,list,edit,detail,report,print'
+                    },
+                    function (res) {
+                        me.renderPageData = res.projectDesign[0].children||[]
+                        callback&&callback();
+                    },
+                    function (res) {
+
+                    }, '加载中...');
+
+            },
+            loadLogicsAndPages:function (callback){
+                var me = this;
+                this.loadLogicDataTree(function (){
+                    me.loadPageDataSource(callback);
+                });      
+            }
+        },
+        mounted() {
+
+
+            let that = this;
+          
+            this.subscribelist.push(PubSub.subscribe("com.startwe.loadingevent.msg", function (token, data) {
+                console.log(token, data)
+                debugger
+                //初始化数据
+                console.info(that.Design.data,'Design')
+
+
+
+                switch (token) {
+                    case "com.startwe.loadingevent.msg.show": {
+
+                        //加载好数据后，再显示
+                        that.loadLogicsAndPages(function (){
+                            that.showBindAct(data);
+                        });
+                        break;
+                    }
+                }
+            }))
+
+
+
+        },
+        destoryed() {
+            console.log("已订阅消息列表", this.subscribelist)
+            this.subscribelist.forEach(sub => {
+                PubSub.unsubscribe(sub)
+            });
+        }
+    }
+</script>
+<style>
+    .ghost {
+        border: 1px dashed indianred;
+    }
+
+    .item {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+
+    .item-move {
+        cursor: move;
+    }
+
+    .item-delete {
+        padding-left: 5px;
+        color: red;
+    }
+
+    .item-add {
+        padding-left: 5px;
+        color: blue;
+    }
+
+    .actionTable {
+        width: 100%;
+        border-collapse: collapse;
+        height: 340px;
+        border-radius: 4px 4px 0px 0px;
+        border: 1px solid #7F7F7F;
+
+    }
+
+    .actionTable thead {
+        height: 34px;
+        line-height: 34px;
+        background: #3A3B3F;
+    }
+
+    .actionTable thead td {
+        font-size: 14px;
+    }
+
+    .actionTable td {
+        padding: 5px 10px;
+        border: 1px solid #7F7F7F;
+    }
+
+    .actionTable .completed {
+        width: 150px;
+    }
+
+    .option {
+        height: auto;
+        line-height: 1;
+        padding: 0;
+        background-color: #fff;
+    }
+
+    .tree {
+        padding: 4px 20px;
+        font-weight: 400;
+    }
+
+    .action-select {
+        display: flex;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .system-item {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+    }
+
+    .system-item .system-item-label {
+        margin: 0 5px;
+        width: 80px;
+    }
+    .el-input.is-disabled .el-input__inner {
+         background-color: #3E72C03D;
+         border-color: #8ca9e3;
+        color: #8CA9E3FF;
+        cursor: not-allowed;
+    }
+</style>

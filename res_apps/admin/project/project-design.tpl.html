@@ -1,0 +1,323 @@
+<link type="text/css" rel="stylesheet" href="../../res_engine/graph-common/css/orgchart.css" />
+<link type="text/css" rel="stylesheet" href="../../res_engine/graph-common/css/font-awesome.min.css" />
+
+<oui-view id="project-design"
+          data="com.oui.models.project.web.ProjectController4Design.getData()"
+          class="oui-class-ouiview" style="height: 100%" >
+</oui-view>
+<script id="project-design-tpl" type="text/html" charset="utf-8">
+    <div class="pg-block" oui-controller="com.oursui.models.project.web.ProjectController4Design" style="height: 100%">
+        <style>
+            .pg-container{
+                height:100%;
+            }
+            .pg-body{
+                height: 100%;
+            }
+        </style>
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'project-design'})}}
+        </div>
+        <div class="pg-block-header">
+            <a href="#" oui-e-{{ProjectController4Design.treeMap.clickName}}="event2exportGraph">项目架构图</a>
+            <a style="visibility: hidden" href="#" class="download"></a>
+            <!--<a href="#" oui-e-{{ProjectController4Design.treeMap.clickName}}="event2saveDesign" >保存设计 </a>-->
+        </div>
+        <div class="pg-block-cont project-design-graph" style="overflow: hidden;height: 100%">
+            <div class="orgchart">
+                {{include 'design-table-tpl' ({treeMap:ProjectController4Design.treeMap,nodeId:ProjectController4Design.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+</script> 
+<script type="text/html" id="design-table-tpl">
+    <table table-node-id="{{nodeId}}">
+        <tbody>
+        <tr>
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="node" draggable="true"  node-id="{{nodeId}}" oui-e-{{treeMap.clickName}}="event2showMenu" oui-e-dblclick="event2editNodeName"  >
+                    <div class="title" title="{{treeMap.findNodeName(nodeId)}}" >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        {{treeMap.findNodeName(nodeId)}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.hasChildren(nodeId) && treeMap.isExpand(nodeId)}}
+        <tr class="lines" >
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down"></div>
+            </td>
+        </tr>
+        <tr class="lines">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" class="">
+                {{include 'design-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-tpl">
+    <div class="second-menu">
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.project.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editProjectConfig" oui-e-{{treeMap.clickName}}="event2menuAction">
+            项目配置
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addModule" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加模块
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出项目
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导入项目
+        </div>
+
+        {{/if}}
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.module.name}}
+
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="unExpandBrothers" oui-e-{{treeMap.clickName}}="event2menuAction">
+            折叠兄弟节点
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addApp" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加应用
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addAppByGuide" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加预制应用(自动创建应用交互、页面、逻辑)
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出模块
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导入模块
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designRelations" oui-e-{{treeMap.clickName}}="event2menuAction">
+            业务关系设计
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designFlow" oui-e-{{treeMap.clickName}}="event2menuAction">
+            业务流程设计
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除模块
+        </div>
+
+        {{/if}}
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.app.name}}
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="unExpandBrothers" oui-e-{{treeMap.clickName}}="event2menuAction">
+            折叠兄弟节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加页面
+        </div>
+        <!-- <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic" oui-e-{{treeMap.clickName}}="event2menuAction">
+            添加逻辑
+        </div> -->
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="interactionDesign" oui-e-{{treeMap.clickName}}="event2menuAction">
+            交互设计(前后端流转交互设计)
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出应用
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导入应用
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除应用
+        </div>
+        {{/if}}
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.page.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            设计页面
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="createLogicsAndInteractionsByPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            为页面创建逻辑(含交互设计)
+        </div>
+
+
+
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出页面
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导入页面
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="showListPageUrl" oui-e-{{treeMap.clickName}}="event2menuAction">
+            获取列表访问地址
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="showEditPageUrl" oui-e-{{treeMap.clickName}}="event2menuAction">
+            获取表单访问地址
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除页面
+        </div>
+        {{/if}}
+
+        {{if treeMap.findSourceNode(nodeId).nodeType==ProjectController4Design.nodeTypeEnum.logic.name}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="designLogic" oui-e-{{treeMap.clickName}}="event2menuAction">
+            设计逻辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="exportPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导出逻辑
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="importPkg" oui-e-{{treeMap.clickName}}="event2menuAction">
+            导入逻辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="editName" oui-e-{{treeMap.clickName}}="event2menuAction">
+            编辑名称
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4ajax" oui-e-{{treeMap.clickName}}="event2menuAction">
+            删除逻辑
+        </div>
+        {{/if}}
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        <!--swapSort,swap,addParentByTarget,addBrotherByTarget,addChildByTarget,hideMenu4DragEnd -->
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" style="display: none" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swap" oui-e-{{treeMap.clickName}}="event2menuAction">
+            交换位置
+        </div>
+        {{if !treeMap.isChild(nodeId,targetNodeId)}}
+        {{if !treeMap.hasParents(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="addChildByTarget" oui-e-{{treeMap.clickName}}="event2menuAction">
+            变更为目标节点的子节点
+        </div>
+        {{/if}}
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+
+<!--编辑节点名称模板-->
+<script type="text/html" id="node-name-edit-tpl">
+    <input type="text" node-id="{{nodeId}}" style="position: absolute;left:0;top:0;height: 40px;color:#000000" value="{{treeMap.findNodeName(nodeId)}}" bindProp="temp" blur4change="event2updateCurrNodeName" />
+</script>
+
+<!--查询逻辑资源绑定-->
+<script type="text/html" id="bindLogic-temp-tpl">
+    {{if bindLogic&&bindLogic.name}}
+    <div class="pg-pb-header title-left">
+        <span class="desp-text">
+        输入参数
+        </span>
+    </div>
+    <div class="pg-pb-item">
+        {{each bindLogic.inputParams as propDefine index}}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">变量名称</label>
+                        <div class="col-sm-9">
+                            {{propDefine.name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">变量值</label>
+                        <div class="col-sm-9">
+                            <oui-form id="varValue-inputParams-{{index}}" type="{{ProjectController4Design.findControlType4param(propDefine)}}"
+                                name="bindLogic.paramMap.{{propDefine.name}}"
+                                showType="{{ProjectController4Design.findShowType4param(propDefine)}}"
+                                validate="{{ProjectController4Design.findValidate4param(propDefine)}}"
+                                value="{{bindLogic.paramMap[propDefine.name]}}" placeholder="请输入变量值"></oui-form>
+                        </div>
+                    </div>
+                </div>
+                <div id="varFieldType-inputParams-{{index}}-error"></div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+</script>
+<!--逻辑调用-->
+<script type="text/html" id="node-edit-bindLogic">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title title-left">
+                <span>绑定页面逻辑入口</span>
+            </h3>
+        </div>
+
+        <div class="panel-body" style="padding-bottom: 0">
+            <div class="pg-pb-header title-left">
+                <span class="desp-text">
+                    选择逻辑
+                </span>
+            </div>
+            <div class="pg-pb-item">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <oui-form type="outercontrol" onAfterUpdate="com.oursui.models.project.web.ProjectController4Design.onUpdate4logic"
+                                  value="{{bindLogic&&bindLogic.name}}"
+                                  name="bindLogic.name" url="{{queryLogicsUrl}}"
+                                  isReadOnly="false"
+                                  dataType="array"
+                                  id="logics-select"
+                                  doScriptMethod="com.oursui.models.project.web.ProjectController4Design.logicSelectCallback"></oui-form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <oui-view oui-controller="com.oursui.models.project.web.ProjectController4Design" id="bindLogic-temp" class="panel-body" data="getCurrNodeData('{{nodeId}}')"></oui-view>
+    </div>
+</script>

@@ -1,0 +1,1133 @@
+html {
+    line-height: 1.15;
+    /* 1 */
+    -webkit-text-size-adjust: 100%;
+    /* 2 */
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    background-color: #191B1C;
+    height: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+a {
+    text-decoration: none;
+    background-color: transparent;
+    color: #181818;
+}
+
+img {
+    border-style: none;
+}
+
+li,
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: inherit;
+    /* 1 */
+    font-size: 100%;
+    /* 1 */
+    line-height: 1.15;
+    /* 1 */
+    margin: 0;
+    /* 2 */
+}
+
+button,
+input {
+    /* 1 */
+    overflow: visible;
+}
+
+input:focus {
+    outline: none;
+}
+
+button,
+select {
+    /* 1 */
+    text-transform: none;
+}
+
+textarea {
+    overflow: auto;
+}
+
+[type="checkbox"],
+[type="radio"] {
+    box-sizing: border-box;
+    /* 1 */
+    padding: 0;
+    /* 2 */
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+
+[hidden] {
+    display: none;
+}
+
+
+/*css主要部分的样式*/
+
+
+/*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+  
+.scrollbar::-webkit-scrollbar {
+    width: 5px;
+    /*对垂直流动条有效*/
+    height: 5px;
+    /*对水平流动条有效*/
+}
+
+.scrollbar:hover ::-webkit-scrollbar-track-piece {
+    /*鼠标移动上去再显示滚动条*/
+    background-color: #3a3c41;
+    /* 滚动条的背景颜色 */
+    border-radius: 0px;
+    /* 滚动条的圆角宽度 */
+}
+
+.scrollbar:hover::-webkit-scrollbar-thumb:hover {
+    background-color: #3a3c41;
+}
+
+.scrollbar:hover::-webkit-scrollbar-thumb:vertical {
+    background-color: #3a3c41;
+    border-radius: 6px;
+    outline: 2px solid #3a3c41;
+    outline-offset: -2px;
+    border: 2px solid #3a3c41;
+}
+
+.scrollbar::-webkit-scrollbar {
+    width: 5px;
+    /*对垂直流动条有效*/
+    height: 5px;
+    /*对水平流动条有效*/
+}
+
+
+ 
+
+
+#logic-drawer .el-drawer.logic-drawer .api-setting-form::-webkit-scrollbar {
+    width: 5px;
+    /*对垂直流动条有效*/
+    height: 5px;
+    /*对水平流动条有效*/
+}
+
+#logic-drawer .el-drawer.logic-drawer .api-setting-form:hover ::-webkit-scrollbar-track-piece {
+    /*鼠标移动上去再显示滚动条*/
+    background-color: #3a3c41;
+    /* 滚动条的背景颜色 */
+    border-radius: 0px;
+    /* 滚动条的圆角宽度 */
+}
+
+#logic-drawer .el-drawer.logic-drawer .api-setting-form:hover::-webkit-scrollbar-thumb:hover {
+    background-color: #3a3c41;
+}
+
+#logic-drawer .el-drawer.logic-drawer .api-setting-form:hover::-webkit-scrollbar-thumb:vertical {
+    background-color: #3a3c41;
+    border-radius: 6px;
+    outline: 2px solid #3a3c41;
+    outline-offset: -2px;
+    border: 2px solid #3a3c41;
+}
+
+
+/*定义滚动条的轨道颜色、内阴影及圆角*/
+
+
+/* ::-webkit-scrollbar-track{
+   -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,.3);
+   background-color: #3a3c41;
+   border-radius: 0px;
+   } */
+
+
+/*定义滑块颜色、内阴影及圆角*/
+
+
+/* ::-webkit-scrollbar-thumb{
+   border-radius: 0px;
+   -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,.3);
+   background-color: rgb(143, 143, 143);
+   } */
+
+
+/*定义两端按钮的样式*/
+
+
+/* ::-webkit-scrollbar-button {
+   background-color:cyan;
+   } */
+
+
+/*定义右下角汇合处的样式*/
+
+
+/* ::-webkit-scrollbar-corner {
+   background:khaki;
+   } */
+
+@media print {
+    body {
+        border: 0 !important;
+        margin: 0 !important;
+    }
+    .paper-area {
+        box-shadow: none !important;
+        overflow: hidden !important;
+    }
+}
+
+
+/*复选&单选公用样式*/
+
+
+/*文字信息*/
+
+.button-wrapper-info {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+.checkbox-wrapper,
+.radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    float: left;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 1px 3px 0 0;
+}
+
+.selected-icon {
+    cursor: pointer;
+}
+
+.radio-button-wrapper input[type=radio],
+.checkbox-wrapper input[type=checkbox] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+
+.checkbox-wrapper input[type="checkbox"]+.selected-icon,
+.radio-button-wrapper input[type="radio"]+.selected-icon {
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #aab2bd;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,
+.radio-button-wrapper input[type="radio"]+.selected-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon,
+.radio-button-wrapper input[type="radio"]:checked+.selected-icon {
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+}
+
+
+/*单选样式*/
+
+.radio-button-wrapper input[type="radio"]+.selected-icon {
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.radio-button-wrapper input[type="radio"]+.selected-icon:after {
+    background: #FFF;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+
+.radio-button-wrapper input[type="radio"]:checked+.selected-icon:after {
+    -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
+    -o-transform: scale(0.4);
+    transform: scale(0.4);
+}
+
+
+/*复选*/
+
+.checkbox-wrapper input[type="checkbox"]+.selected-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon:after,
+.radio-button-wrapper input[type="checkbox"]:checked+.selected-icon:after {
+    border-bottom-color: #FFF;
+    border-right-color: #FFF;
+}
+
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,
+.radio-button-wrapper input[type="checkbox"]+.selected-icon:after {
+    top: 1px;
+    left: -1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid transparent;
+    -webkit-transform: rotate(43deg);
+    -ms-transform: rotate(43deg);
+    -o-transform: rotate(43deg);
+    transform: rotate(43deg);
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+
+
+/*表格控件设计态处理*/
+
+.control-abs-html-tableLine {
+    overflow: visible !important;
+}
+
+
+/*明细表*/
+
+.cell-detail-abs {
+    font-size: 14px;
+    color: #515151;
+    border: 0 !important;
+}
+
+
+/*控件显示态*/
+
+.control-abs-component {
+    /*background-color: rgba(255,255,255,.7);避免设置了控件背景为透明还是有半透明背景*/
+    width: 140px;
+    height: 42px;
+    padding: 5px;
+    font-size: 0;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.control-inner-abs {
+    width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.control-abs-component.control-abs-component-canvas {
+    padding: 0;
+}
+
+.control-abs-component:after {
+    content: "";
+    width: 0;
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.control-abs-component .design-text-content {
+    line-height: 1.6;
+    font-size: 14px;
+    color: #515151;
+    display: block;
+    overflow: hidden;
+    max-height: 100%;
+}
+
+
+/*控件版式--横向--换行--隐藏标题--只显示标题*/
+
+
+/*control-abs-oneLine 横向
+control-abs-twoLine 换行
+control-abs-hideTitle 隐藏标题
+control-abs-onlyTitle 只显示标题*/
+
+.control-abs-oneLine .control-title-abs,
+.control-abs-oneLine .control-container-abs {
+    display: inline-block;
+}
+
+.control-abs-twoLine .control-title-abs,
+.control-abs-twoLine .control-container-abs {
+    width: 100% !important;
+    display: block;
+}
+
+.control-abs-hideTitle .control-title-abs,
+.control-abs-onlyTitle .control-container-abs {
+    display: none;
+}
+
+.control-abs-hideTitle .control-container-abs,
+.control-abs-onlyTitle .control-title-abs {
+    width: 100% !important;
+    display: block;
+}
+
+
+/*控件-s*/
+
+.control-abs {
+    overflow: hidden;
+    font-size: 0;
+}
+
+.control-title-abs {
+    width: 40%;
+    min-height: 22px;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    padding: 0 10px 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.control-container-abs {
+    width: 60%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.control-container-abs input,
+.control-container-abs textarea {
+    width: 100%;
+    padding: 0 10px;
+    border: 1px solid #e6e6e6;
+    min-height: 30px;
+    line-height: 24px;
+    font-size: 14px;
+    outline: none;
+    pointer-events: none;
+}
+
+.control-container-abs textarea {
+    height: 60px;
+    padding: 3px 10px;
+}
+
+.control-label-abs {
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.6;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.control-field-value-abs {
+    min-height: 22px;
+}
+
+
+/*插入图片--s*/
+
+.control-abs-html-image {
+    padding: 0;
+}
+
+.control-abs-html-image .control-container-abs {
+    position: relative;
+}
+
+.control-abs-html-image .control-inner-abs,
+.control-abs-html-image .control-inner-abs .control-container-abs,
+.control-abs-html-image .control-field-value-abs {
+    height: 100%;
+}
+
+.control-abs-html-image .control-field-value-abs .control-field-html-image,
+.control-abs-html-image .control-field-value-abs img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    max-width: 100%;
+    border: 0 !important;
+}
+
+
+/*插入图片--e*/
+
+
+/*条形码--s--*/
+
+.control-abs-component.control-abs-html-barcode {
+    padding: 0;
+}
+
+.control-abs-html-barcode .control-inner-abs,
+.control-abs-html-barcode .control-inner-abs .control-container-abs {
+    height: 100%;
+}
+
+.control-abs-html-barcode .control-field-code-default {
+    background-image: url("../images/barcode-default.svg");
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    border: 0 !important;
+}
+
+.control-abs-html-barcode .control-container-abs img {
+    width: 100%;
+    vertical-align: top;
+}
+
+
+/*条形码--e--*/
+
+
+/*二维码--s--*/
+
+.control-abs-html-qrcode .control-inner-abs,
+.control-abs-html-qrcode .control-inner-abs .control-container-abs {
+    height: 100%;
+}
+
+.control-abs-html-qrcode .control-container-abs img {
+    width: 100%;
+    vertical-align: top;
+}
+
+
+/*二维码--e--*/
+
+
+/*控件-e*/
+
+
+/*选取区域底层-s*/
+
+.control-abs-selection-area {
+    display: none;
+}
+
+.control-abs-selection-box {
+    z-index: 0;
+    position: absolute;
+}
+
+
+/*选取区域底层-e*/
+
+
+/*背景属性-s*/
+
+.bg-center {
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.bg-repeat {
+    background-repeat: repeat;
+}
+
+.bg-cover {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+
+/*背景属性-e*/
+
+
+/*
+纸张宽度*/
+
+.paper-area,
+.paper-area-canvas {
+    background-color: #ffffff;
+    z-index: 1;
+    position: relative;
+    margin: 0 auto;
+    /*overflow: hidden;控件移动到最左侧，操作按钮被隐藏*/
+    display: block;
+    /* box-shadow: rgba(0, 0, 0, 0.31) 0 0 13px; */
+}
+
+
+/** 打印使用****/
+
+.paper-area {
+    margin-bottom: 0mm;
+    page-break-after: always;
+}
+
+.paper-area .paper-area {
+    background-color: transparent;
+    margin: 0 auto;
+    z-index: 0;
+}
+
+.A2 {
+    width: 420mm;
+    height: 594mm;
+}
+
+.A3 {
+    width: 297mm;
+    height: 420mm;
+}
+
+.A4 {
+    width: 210mm;
+    height: 297mm;
+}
+
+.A5 {
+    width: 148mm;
+    height: 210mm;
+}
+
+.A6 {
+    width: 105mm;
+    height: 148mm;
+}
+
+.B2 {
+    width: 500mm;
+    height: 707mm;
+}
+
+.B3 {
+    width: 353mm;
+    height: 500mm;
+}
+
+.B4 {
+    width: 250mm;
+    height: 353mm;
+}
+
+.B5 {
+    width: 176mm;
+    height: 250mm;
+}
+
+.B6 {
+    width: 125mm;
+    height: 176mm;
+}
+
+.control-abs-table-view {
+    border-collapse: collapse;
+}
+
+.control-abs-table-view td {
+    border: 1px solid #e6e6e6;
+}
+
+.control-table-head-row th {
+    border: 1px solid #e6e6e6;
+}
+
+.control-abs-table-view .control-abs {
+    position: static;
+    overflow: visible;
+    height: auto !important;
+}
+
+
+/*瀑布流*/
+
+.page-abs-normalForm .control-abs-component {
+    position: static;
+    left: auto !important;
+    top: auto !important;
+    display: block;
+}
+
+.s-icon-takeon {
+    background: url(../../images/1.6/icons/takeon.svg) center no-repeat;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+}
+
+.s-icon-takeon.active {
+    background: url(../../images/1.6/icons/takeon-active.svg) center no-repeat;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+}
+
+.s-icon-logic {
+    background: url(../../images/1.6/icons/logic.svg) center no-repeat;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+}
+
+.s-icon-logic.active {
+    background: url(../../images/1.6/icons/logic-active.svg) center no-repeat;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+}
+
+.s-icon-folder-open {
+    background: url(../../images/1.6/icons/folder-open.svg) center no-repeat;
+    width: 13px;
+    height: 10px;
+    display: inline-block;
+}
+
+.s-icon-arrow-expand {
+    background: url(../../images/1.6/icons/arrow-expand.svg) center no-repeat;
+    width: 6px;
+    height: 4px;
+    display: inline-block;
+}
+
+.s-icon-arrow-right {
+    background: url(../../images/1.6/icons/arrow-right.svg) center no-repeat;
+    width: 6px;
+    height: 4px;
+    display: inline-block;
+}
+
+.s-icon-tabmore {
+    background: url(../../images/1.6/icons/tabmore.svg) center no-repeat;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.s-icon-tabmore-active {
+    background: url(../../images/1.6/icons/tabmore-active.svg) center no-repeat;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.s-icon-addtab {
+    background: url(../../images/1.6/icons/addtab.svg) center no-repeat;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+}
+
+.s-icon-page {
+    background: url(../../images/1.6/icons/icon-page.svg) center no-repeat;
+    width: 8px;
+    height: 10px;
+    display: inline-block;
+}
+
+.s-icon {
+    display: inline-block;
+    vertical-align: text-bottom;
+    background-size: contain !important;
+  
+}
+.s-icon-btn{
+    cursor: pointer;
+}
+.s-icon-move{
+    cursor: move;
+}
+
+.s-icon-12 {
+    width: 12px;
+    height: 12px;
+}
+
+.s-icon-14 {
+    width: 14px;
+    height: 14px;
+}
+
+.s-icon-16 {
+    width: 16px;
+    height: 16px;
+}
+.s-icon-18 {
+    width: 18px;
+    height: 18px;
+}
+
+.s-icon-import {
+    background: url(../../images/1.6/icons/import.svg) center no-repeat;
+}
+
+.s-icon-import-act {
+    background: url(../../images/1.6/icons/import-act.svg) center no-repeat;
+}
+
+.s-icon-export {
+    background: url(../../images/1.6/icons/export.svg) center no-repeat;
+}
+
+.s-icon-revoke {
+    background: url(../../images/1.6/icons/revoke.svg) center no-repeat;
+}
+
+.s-icon-forward {
+    background: url(../../images/1.6/icons/forward.svg) center no-repeat;
+}
+.s-icon-forward-page {
+    background: url(../../images/1.6/icons/forward_page.svg) center no-repeat;
+}
+
+.s-icon-daily {
+    background: url(../../images/1.6/icons/daily.svg) center no-repeat;
+}
+
+.s-icon-delete {
+    background: url(../../images/1.6/icons/delete.svg) center no-repeat;
+}
+
+.s-icon-delete2 {
+    background: url(../../images/1.6/icons/delete2.svg) center no-repeat;
+}
+.s-icon-delete3 {
+    background: url(../../images/1.6/icons/delete3.svg) center no-repeat;
+}
+
+.s-icon-delete4 {
+    background: url(../../images/1.6/icons/delete4.svg) center no-repeat;
+}
+.s-icon-ruler {
+    background: url(../../images/1.6/icons/ruler.svg) center no-repeat;
+}
+
+.s-icon-pc {
+    background: url(../../images/1.6/icons/pc.svg) center no-repeat;
+}
+
+.s-icon-toolsphone {
+    background: url(../../images/1.6/icons/phone.svg) center no-repeat;
+}
+
+.s-icon-attribute {
+    background: url(../../images/1.6/icons/attribute.svg) center no-repeat;
+}
+
+.s-icon-theme {
+    background: url(../../images/1.6/icons/theme.svg) center no-repeat;
+}
+
+.s-icon-setting {
+    background: url(../../images/1.6/icons/setting.svg) center no-repeat;
+}
+
+.s-icon-textfield {
+    background: url(../../images/1.6/icons/textfield.svg) center no-repeat;
+}
+
+.s-icon-textarea {
+    background: url(../../images/1.6/icons/textarea.svg) center no-repeat;
+}
+
+.s-icon-title {
+    background: url(../../images/1.6/icons/title.svg) center no-repeat;
+}
+
+.s-icon-describe {
+    background: url(../../images/1.6/icons/describe.svg) center no-repeat;
+}
+
+.s-icon-number {
+    background: url(../../images/1.6/icons/number.svg) center no-repeat;
+}
+
+.s-icon-phone {
+    background: url(../../images/1.6/icons/phone2.svg) center no-repeat;
+}
+
+.s-icon-email {
+    background: url(../../images/1.6/icons/email.svg) center no-repeat;
+}
+
+.s-icon-link {
+    background: url(../../images/1.6/icons/link.svg) center no-repeat;
+}
+
+.s-icon-date {
+    background: url(../../images/1.6/icons/date.svg) center no-repeat;
+}
+
+.s-icon-timepicker {
+    background: url(../../images/1.6/icons/timepicker.svg) center no-repeat;
+}
+
+.s-icon-button {
+    background: url(../../images/1.6/icons/button.svg) center no-repeat;
+}
+
+.s-icon-attach {
+    background: url(../../images/1.6/icons/attach.svg) center no-repeat;
+}
+
+.s-icon-radio {
+    background: url(../../images/1.6/icons/radio.svg) center no-repeat;
+}
+
+.s-icon-checkbox {
+    background: url(../../images/1.6/icons/checkbox.svg) center no-repeat;
+}
+
+.s-icon-switch {
+    background: url(../../images/1.6/icons/switch.svg) center no-repeat;
+}
+
+.s-icon-dropdown {
+    background: url(../../images/1.6/icons/dropdown.svg) center no-repeat;
+}
+
+.s-icon-select {
+    background: url(../../images/1.6/icons/select.svg) center no-repeat;
+}
+
+.s-icon-splitline {
+    background: url(../../images/1.6/icons/splitline.svg) center no-repeat;
+}
+
+.s-icon-richtext {
+    background: url(../../images/1.6/icons/richtext.svg) center no-repeat;
+}
+
+.s-icon-counter {
+    background: url(../../images/1.6/icons/counter.svg) center no-repeat;
+}
+
+.s-icon-position {
+    background: url(../../images/1.6/icons/position.svg) center no-repeat;
+}
+.s-icon-add {
+    background: url(../../images/1.6/icons/add.svg) center no-repeat;
+}
+
+.s-icon-address {
+    background: url(../../images/1.6/icons/address.svg) center no-repeat;
+}
+
+.s-icon-back {
+    background: url(../../images/1.6/icons/back.svg) center no-repeat;
+}
+
+.s-icon-next {
+    background: url(../../images/1.6/icons/next.svg) center no-repeat;
+}
+.s-icon-copy2 {
+    background: url(../../images/1.6/icons/copy2.svg) center no-repeat;
+}
+
+
+.s-icon-refresh {
+    background: url(../../images/1.6/icons/refresh.svg) center no-repeat;
+}
+.s-icon-rename {
+    background: url(../../images/1.6/icons/rename.svg) center no-repeat;
+}
+
+
+.s-icon-files-file {
+    background: url(../../images/1.6/icons/icon-file.svg) center no-repeat;
+}
+
+.s-icon-files-music {
+    background: url(../../images/1.6/icons/icon-music.svg) center no-repeat;
+}
+
+.s-icon-files-video {
+    background: url(../../images/1.6/icons/icon-video.svg) center no-repeat;
+}
+
+.s-icon-files-pic {
+    background: url(../../images/1.6/icons/icon-pic.svg) center no-repeat;
+}
+
+.s-icon-files-zip {
+    background: url(../../images/1.6/icons/icon-zip.svg) center no-repeat;
+}
+
+.s-icon-files-other {
+    background: url(../../images/1.6/icons/icon-other.svg) center no-repeat;
+}
+
+.s-icon-files-upload {
+    background: url(../../images/1.6/icons/icon-upload.svg) center no-repeat;
+}
+
+.s-icon-files-newfloder {
+    background: url(../../images/1.6/icons/icon-newfloder.svg) center no-repeat;
+}
+.s-icon-child-node {
+    background: url(../../images/1.6/icons/child-node.svg) center no-repeat;
+}
+.s-icon-add-node {
+    background: url(../../images/1.6/icons/add-node2.svg) center no-repeat;
+} 
+.s-icon-container {
+    background: url(../../images/1.6/icons/container.svg) center no-repeat;
+}
+.s-icon-grid {
+    background: url(../../images/1.6/icons/grid.svg) center no-repeat;
+}
+.s-icon-container2 {
+    background: url(../../images/1.6/icons/container2.svg) center no-repeat;
+}
+.s-icon-tab {
+    background: url(../../images/1.6/icons/tab.svg) center no-repeat;
+}
+.s-icon-divider {
+    background: url(../../images/1.6/icons/divider.svg) center no-repeat;
+}
+.s-icon-paragraph {
+    background: url(../../images/1.6/icons/paragraph.svg) center no-repeat;
+}
+.s-icon-gutter {
+    background: url(../../images/1.6/icons/gutter.svg) center no-repeat;
+}
+.s-icon-iframe {
+    background: url(../../images/1.6/icons/iframe.svg) center no-repeat;
+}
+
+.s-icon-sort{
+    background: url(../../images/1.6/icons/sort.png) center no-repeat;
+}
+.s-icon-tableList{
+    background: url(../../images/1.6/icons/biaoge.svg) center no-repeat;
+}
+.s-icon-binding{
+    background: url(../../images/1.6/icons/bangding.svg) center no-repeat;
+}
+.s-icon-advanced-search{
+    background: url(../../images/1.6/icons/gjss.svg) center no-repeat;
+}
+.s-gotourl{
+    background: url(../../images/1.6/icons/gotourl.svg) center no-repeat;
+}
+
+.s-button {
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #dcdfe6;
+    color: #606266;
+    -webkit-appearance: none;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    margin: 0;
+    transition: .1s;
+    font-weight: 500;
+    padding: 8px 20px;
+    height: 32px;
+    font-size: 14px;
+    border-radius: 2px;
+}
+
+.s-button--primary {
+    color: #fff;
+    background-color: #409eff;
+    border-color: #409eff;
+}
+
+.is-plain {
+    color: #7F7F7F;
+    background: transparent;
+    border-color: #7F7F7F;
+}
+
+.s-button+.s-button {
+    margin-left: 10px;
+}
+
+.s-button--primary:focus,
+.s-button--primary:hover {
+    background: #66b1ff;
+    border-color: #66b1ff;
+    color: #fff
+}
+
+.s-button--primary.is-plain:focus,
+.s-button--primary.is-plain:hover {
+    background: #409eff;
+    border-color: #409eff;
+    color: #fff
+}
+
+.s-button.is-plain:focus,
+.s-button.is-plain:hover {
+    background: rgb(73, 73, 73);
+    border-color: #7F7F7F;
+    color: #7F7F7F
+}

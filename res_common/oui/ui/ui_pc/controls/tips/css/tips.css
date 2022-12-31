@@ -1,0 +1,119 @@
+@charset "UTF-8";
+.oui-class-tips{
+	position:fixed;
+	z-index: 110;
+}
+.tips-padding-top{
+	padding-top: 15px;
+}
+.tips-padding-bottom{
+	padding-bottom: 15px;
+}
+.oui-tipbox{
+	background:#fff;
+	border-radius:4px;
+	margin:0 auto; 
+	position:relative;
+	padding:2px;
+	color:rgba(81,81,81,.8);
+	font-size: 12px;
+	border:solid 1px #ccc;
+	box-shadow:1px 1px 2px #dfdfdf;
+	box-sizing:border-box;
+	-webkit-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-o-box-sizing:border-box;
+	/*z-index:999;*/
+	/* 改为200 防止覆盖 alert 等 */
+	z-index: 200;
+}
+.oui-tipbox-content{
+	background:#fff;
+}
+.oui-tipbox-hide{
+	display:none;
+}
+.oui-tipbox-show{
+	
+}
+.oui-tipbox>span{
+	display:block;
+	width:8px;
+	height:8px;
+	background-color:#fff;
+	border-top:solid 1px #ccc;
+	border-right:solid 1px #ccc;
+	position:absolute;
+	top:-5px;
+	left:50%;
+	margin-left:-4px;
+	transform:rotate(-45deg);
+	-webkit-transform:rotate(-45deg);
+	-moz-transform:rotate(-45deg);
+	-ms-transform:rotate(-45deg);
+	-o-transform:rotate(-45deg);
+	z-index: -1;
+}
+
+/***autoTips ***/
+.oui-class-tips-1{
+	/*background-color:#84c9ab;*/
+	width: 100%;
+	height: 35px;
+	line-height: 35px;
+	position: fixed;
+	top:0;
+	font-size: 0;
+	color: #ffffff;
+	z-index: 999;
+	text-align: center;
+	opacity:0;
+}
+
+.oui-class-tips-1 .oui-autotips{
+	display: inline-block;
+	background-color:#84c9ab;
+	font-size: 14px;
+	color: #ffffff;
+	padding: 0 24px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	box-shadow:0 2px 8px 0 rgba(0,0,0,0.12);
+}
+.oui-tipbox-content .option-btn{
+	white-space: nowrap;
+	width:auto;
+	text-align: center;
+	display: block;
+}
+.oui-tipbox-content .option-btn dl{
+	width: 100%;
+}
+.oui-tipbox-content .option-btn dl dd{
+	min-width: 80px;
+	padding: 0 15px;
+	height: 28px;
+	line-height: 28px;
+	font-size: 14px;
+    color:rgba(81,81,81,.8);
+	display: block;
+}
+.oui-tipbox-content .option-btn dl dd:hover{
+	background: #e6e6e6;
+	cursor: pointer;
+}
+.oui-tipbox-content .option-btn dl dd.delete-btn{
+	/*color: #e17366;*/
+    color:rgba(81,81,81,.8);
+}
+.oui-tipbox-content .option-btn dl dd.delete-btn:hover{
+    background: #e17366;
+    color: #ffffff;
+}
+
+
+
+
+

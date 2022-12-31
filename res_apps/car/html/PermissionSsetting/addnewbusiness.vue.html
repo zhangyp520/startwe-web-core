@@ -1,0 +1,479 @@
+<template>
+    <div id="customer">
+        <!-- 面包屑头部盒子开始 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>项目设置</el-breadcrumb-item>
+                <el-breadcrumb-item>添加新的业务</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 仓库中心，物资出入库记录 -->
+
+        <!-- 面包屑头部盒子结束 -->
+        <el-main>
+
+            <!-- 右侧内部表单布局容器开始-- -->
+            <!-- 第一行数据 -->
+            <div class="content">
+
+                <!-- 第二层 -->
+
+                <div class="list_form">
+
+                    <el-form :model="addMaintainFormValue" :rules="rules" ref="addMaintainFormValue" :inline="true" label-position="top" label-width="80px">
+                        <!-- 第一层 -->
+                        <div class="customer_name">
+                            <ul>
+                                <li>
+                                    <el-form-item label="项目类型" prop="itemType">
+                                        <el-select v-model="addMaintainFormValue.itemType" clearable placeholder="请选择"
+                                                   style="width: 300px;">
+                                            <el-option v-for="item in itemType" :key="item.value"
+                                                       :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                </li>
+                                <li>
+                                    <el-form-item label="项目名称" style="width: 300px;" prop="itemName">
+                                        <el-input v-model="addMaintainFormValue.itemName"
+                                                  placeholder="请输入项目名称"></el-input>
+                                    </el-form-item>
+                                </li>
+                                <li>
+                                    <el-form-item label="工时数" style="width: 300px;" prop="itemWorkHours">
+                                        <el-input v-model="addMaintainFormValue.itemWorkHours"
+                                                  placeholder="请输入工时数,只能输入数字"></el-input>
+                                    </el-form-item>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 第二层 -->
+                        <div class="Price">
+                            <!-- 状态 -->
+                            <span>状态：</span>
+                            <el-switch  class="switch_box" v-model="addMaintainFormValue.status" :active-value="Y" :inactive-value='N'
+                                       active-color="#1890FF" inactive-color="#eee" active-text="启用" inactive-text="禁用"></el-switch>
+                        </div>
+                        <!-- 返回和提交 -->
+                        <div class="return_and_save">
+                            <el-form-item>
+                                <el-button @click='backToMaintainItemList'>返回</el-button>
+                                <el-button type="primary" @click='addMaintainItemInfo'>提交</el-button>
+                            </el-form-item>
+                        </div>
+
+                    </el-form>
+                </div>
+            </div>
+            <!-- 右侧内部表单布局容器结束 -->
+        </el-main>
+        <!-- </el-main> -->
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                Y: "Y",
+                N: "N",
+                addMaintainFormValue: {
+                    comments: "",
+                    itemCost: 0,
+                    itemName: "",
+                    itemPrice: 0,
+                    itemType: "",
+                    itemWorkHours: "",
+                    requirePeopleNo: 0,
+                    status: "Y"
+                },
+                // 每个对象的验证规则
+                rules: {
+                    itemType: [
+                        {required: true, message: '请选择项目类型', trigger: 'blur'},
+                    ],
+                    itemName: [
+                        {required: true, message: '请输入项目名称', trigger: 'blur'},
+                        {min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur'}
+                    ],
+                    itemWorkHours: [
+                        {required: true, message: '请输入项目所需工时数', trigger: 'blur'},
+                        { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确的格式,可保留两位小数' }
+                    ]
+                },
+                // 项目类型
+                itemType: [{
+                    value: 1,
+                    label: '维修项目'
+                }, {
+                    value: 2,
+                    label: '保养项目'
+                }, {
+                    value: 3,
+                    label: '其他项目'
+                }]
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+        },
+        methods: {
+            // 添加项目信息
+            addMaintainItemInfo: function () {
+                var that = this;
+                this.$refs["addMaintainFormValue"].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost('company/maintainItem/addMaintainItem', {
+                                "comments": this.addMaintainFormValue.comments,
+                                "itemCost": this.addMaintainFormValue.itemCost,
+                                "itemName": this.addMaintainFormValue.itemName,
+                                "itemPrice": this.addMaintainFormValue.itemPrice,
+                                "itemType": this.addMaintainFormValue.itemType,
+                                "itemWorkHours": this.addMaintainFormValue.itemWorkHours,
+                                "requirePeopleNo": this.addMaintainFormValue.requirePeopleNo,
+                                "status": this.addMaintainFormValue.status
+                            },
+                            function (res) {
+                                that.$message.success('新增项目成功');
+                                oui.router.push('res_apps/car/html/PermissionSsetting/addnewbusiness.vue.html')
+                            },
+                            function (res) {
+                                that.$message.error(res.message)
+                            }
+                        )
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            // 返回到项目设置
+            backToMaintainItemList() {
+                oui.router.push('res_apps/car/html/PermissionSsetting/projectsettings.vue.html')
+            }
+
+        }
+    }
+</script>
+<style>
+    .customer {
+        width: 1040px;
+        height: 700px;
+    }
+
+    html {
+        margin: 0 0px;
+        /* width: 1040px; */
+        /* height: 700px; */
+        /* background-color: rgb(243, 228, 21); */
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+    .el-main {
+        width: 100%;
+        height: 100%;
+        background-color: #f5f5f5;
+        color: #333;
+
+    }
+
+
+    /* 自己的样式 */
+
+
+        .switch_box .el-switch__label {
+        position: absolute;
+        display: none;
+        color: #fff;
+    }
+    /* 开关状态样式 */
+    /*打开时文字位置设置*/
+
+    .switch_box .el-switch__label--right {
+        z-index: 1;
+        right: -5px;
+    }
+
+    /*关闭时文字位置设置*/
+
+    .switch_box .el-switch__label--left {
+        z-index: 1;
+        left: 20px;
+    }
+
+    /*显示文字*/
+
+    .switch_box .el-switch__label.is-active {
+        display: block;
+    }
+
+    .switch_box.el-switch .el-switch__core,
+    .el-switch .el-switch__label {
+        width: 55px !important;
+        /*开关按钮的宽度大小*/
+    }
+    /* 文字盒子span */
+    .el-icon-menu > span {
+        margin-left: 1px;
+    }
+
+
+    .el-menu {
+        border: 0;
+        margin: 0 0;
+        padding: 0 0;
+    }
+
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+    /* 内容主体区域 */
+    /* 内容区域的头部为空白 */
+    /* 设置右侧头部盒子的边框阴影 */
+    .blank_head {
+        background-color: #fff;
+        height: 60px !important;
+        box-shadow: #fff 0px 0px 0px 0px;
+        line-height: 60px;
+
+    }
+
+    .blank_head > div > span {
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .el-checkbox-group {
+        display: inline;
+
+    }
+
+    /* 内容侧边栏每一项结束---- */
+    /* 内部盒子的内容主体区域 */
+    .inside_box {
+        background-color: #fff;
+        /* line-height: 160px; */
+        text-align: left !important;
+    }
+
+    /* 关键字的样式设置开始 */
+    /* 关键字区域 */
+    .keyword {
+        /* width: 1000px; */
+        height: 60px;
+        font-weight: 700;
+        line-height: 60px;
+        display: flex;
+        justify-content: left;
+    }
+
+    .keyword_content {
+        display: inline;
+        height: 30px;
+        font-size: 14px;
+
+    }
+
+
+    /* 正文区域 */
+    .content {
+        background-color: #fff;
+        padding: 20px;
+
+    }
+
+    /* 第一行内容 */
+    .billing_time > ul {
+        display: flex;
+        justify-content: left;
+        line-height: 30px;
+    }
+
+    .billing_time > ul > li > div {
+        display: inline-block;
+    }
+
+    .billing_time > ul > li > span {
+        font-size: 14px;
+        color: rgb(0, 0, 0, 0.5);
+
+    }
+
+    /* 第二行 */
+    .billing_time > ul > li {
+        width: 300px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .customer_name > ul {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .customer_name > ul > li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第三行 */
+    .vehicle_fuel_volume > ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .vehicle_fuel_volume > ul > li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第四行 */
+    .source_of_customers > ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .source_of_customers > ul > li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 第五行 */
+    .Price > ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .Price > ul > li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 状态 */
+    .state {
+        text-align: left;
+        line-height: 112px;
+    }
+
+    /* 修改全局文本框的样式 */
+    .el-textarea {
+        width: 765px;
+
+    }
+
+    /* 修改全局文本框内部的input的样式 */
+    .el-textarea__inner {
+        width: 100%;
+        height: 35px;
+    }
+
+
+    /* 返回和保存 */
+    .return_and_save {
+        display: flex;
+        justify-content: center;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .el-button {
+        width: 180px;
+    }
+
+
+    /* 物资出入库记录 */
+
+    .material_delivery {
+        margin: 24px 0;
+        padding-top: 24px;
+        background-color: #fff;
+    }
+
+    .material_delivery_content {
+        font-weight: 700;
+        margin-left: 24px;
+    }
+
+
+    /* 栅格栏布局自带样式 */
+    .el-row {
+        margin-bottom: 20px;
+
+    }
+
+    .el-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+
+    .bg-purple {
+        background: #d3dce6;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+
+    /* 我的工单区域开始 */
+
+    /* 表格处 */
+
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+    /* 分页区域结束----- */
+</style>

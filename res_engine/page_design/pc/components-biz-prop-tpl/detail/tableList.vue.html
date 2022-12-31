@@ -1,0 +1,969 @@
+<template>
+  <div>
+    <div class="detail-tabs">
+      <div class="detail-tabs-item" v-for="(item,index) in DataList" :key="index" :label="item.label" :name="item.name"
+        @click="changeTabs(index)">
+        {{item.label}}
+      </div>
+      <div class="active-bar" :style="{ transform: 'translateX('+(76 * tabActiveIndex)+'px)'}"></div>
+    </div>
+
+    <div class="design-attribute-item" v-show='tabActive=="first"'>
+      <oui-include :data="getData4BaseProps()" type="module" ref="basePropsData"
+        url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+    </div>
+    <div class="design-attribute-item" v-show='tabActive=="style"'>
+
+      <oui-include :data="getData4StyleProps()" type="module" ref="stylePropsData"
+        url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+    </div>
+    <div class="design-attribute-item" v-show='tabActive=="advanced"'>
+
+      <oui-include :data="getData4AdvanceProps()" type="module" ref="advancePropsData"
+        url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"></oui-include>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  exports = {
+    data: function () {
+      return {
+        tableData: [ ],
+        logicValTab: 'input',
+        condition_field: [],
+        condition_field_options: [{
+          value: 'fromData',
+          label: 'fromData'
+        }, {
+          value: 'entity',
+          label: 'entity'
+        }],
+
+        Design: com.oui.absolute.AbsoluteDesign,
+        getData4BaseProps: this.getData4BaseProps,
+        getData4StyleProps: this.getData4StyleProps,
+        getData4AdvanceProps: this.getData4AdvanceProps,
+        // basePropsData: "",
+        // stylePropsData: "",
+        // advancePropsData: "",
+        cache4vue: {},
+        cache4vueStylePropsData: {},
+        cache4advancePropsData: {},
+        projects: ["999"],
+        tabActiveIndex: 0,
+        tabActive: "first",
+        activeName: "first",
+        centerDialogVisible: false,
+        bindingLogicValVisible: false,
+        DataList: [{
+            label: "属性",
+            name: "first",
+            content: "first",
+          },
+          {
+            label: "样式",
+            name: "style",
+            content: "style",
+          },
+          {
+            label: "高级",
+            name: "advanced",
+            content: "advanced",
+          }
+        ],
+        property: [{
+            type: "string",
+            name: "id",
+            zhName: "控件id",
+            group: "基础设置",
+            required: false,
+            disabled: true,
+            placeholder: oui.util.componentRandomGenKeyId('tableList'),
+            default: "",
+            suffix: "",
+            max: 30,
+            prepend: "",
+          }
+          ,
+          {
+            type: "string",
+            name: "bizId",
+            zhName: "业务id",
+            group: "基础设置",
+            required: false,
+            disabled: false,
+            placeholder: "业务id",
+            default: "",
+            suffix: "",
+            max: 30,
+            prepend: "",
+          },
+          {
+            type: "array",
+            name: "otherAttrs.dataSource",
+            zhName: "数据源",
+            group: "基础设置",
+            default: "未绑定",
+            isEvent: true,
+            data:[],
+            actionFun: this.dataSourceFun
+
+          },
+          {
+            type: "array",
+            name: "otherAttrs.pageSize",
+            zhName: "每页数量",
+            group: "基础设置",
+            default: "10",
+            data:[{
+                  value:'25',
+                  display:'25'
+              },{
+                  value:'50',
+                  display:'50'
+              },{
+                  value:'75',
+                  display:'75'
+              },{
+                  value:'100',
+                  display:'100'
+              } ]
+
+          },
+          {
+            type: "radiogroupselect",
+            name: "otherAttrs.searchType",
+            zhName: "搜索条件\n呈现方式",
+            group: "基础设置",
+            default: "simple",
+            data:[
+                {value:'simple',display:'简单'},
+                {value:'repeat',display:'平铺'},
+                {value:'advanced',display:'高级'}
+            ]
+
+          },
+          {
+            type: "radiogroupselect",
+            name: "otherAttrs.branchStyle",
+            zhName: "分割样式",
+            group: "基础设置",
+            default: "line",
+            data:[{"value":"line","display":"分割线"},{"value":"stripe","display":"斑马纹"},{"value":"none","display":"无"}]
+
+          },
+          {
+            type: "string",
+            name: "otherAttrs.toolsTitle",
+            zhName: "列名称",
+            group: "操作栏",
+            default: "操作栏"
+          },
+          {
+            type: "switch",
+            name: "otherAttrs.toolsEnable",
+            zhName: "启用",
+            group: "操作栏",
+            radio: true,
+            default: true
+          },
+          {
+            type: "radiogroupselect",
+            name: "otherAttrs.toolsAlign",
+            zhName: "对齐方式",
+            group: "操作栏",
+            default: 'center',
+            data:[{"value":"left","display":"居左"},{"value":"center","display":"居中"},{"value":"right","display":"居右"}]
+          }
+          // ,
+          // {
+          //   type: "tableListTools",
+          //   name: "otherAttrs.detailPagebtn",
+          //   zhName: "",
+          //   group: "操作栏",
+          //   SourceList: [],
+          //   tableListToolsTitle: '详情',
+          //   needPage: true,
+          //   needDataSource: false,
+          //   default: '',
+          //   data:[],
+          //   pageData: [],
+          // },
+          // {
+          //   type: "tableListTools",
+          //   name: "otherAttrs.toolsEditbtn",
+          //   zhName: "",
+          //   group: "操作栏",
+          //   SourceList: [],
+          //   tableListToolsTitle: '编辑',
+          //   needPage: true,
+          //   needDataSource: false,
+          //   default: '',
+          //   data:[],
+          //   pageData: [],
+          // },
+          // {
+          //   type: "tableListTools",
+          //   name: "otherAttrs.toolsDeleteBtn",
+          //   isEvent: true,
+          //   zhName: "",
+          //   group: "操作栏",
+          //   SourceList: [],
+          //   tableListToolsTitle: '删除',
+          //   default: '',
+          //   isAddBtn: false, //是否显示添加按钮
+          //   data:[],
+          //   needDataSource: true,
+          //   actionFun: this.deleteSourceFun
+          // },
+          // {
+          //   type: "tableListTools",
+          //   name: "otherAttrs.toolsAddBtn",
+          //   zhName: "",
+          //   group: "工具栏",
+          //   SourceList: [],
+          //   tableListToolsTitle: '新增',
+          //   default: '',
+          //   data:[],
+          //   needDataSource: true
+          // },
+          // {
+          //   type: "tableListTools",
+          //   name: "otherAttrs.toolsDelAllBtn",
+          //   zhName: "",
+          //   group: "工具栏",
+          //   SourceList: [],
+          //   tableListToolsTitle: '批量删除',
+          //   default: '',
+          //   isAddBtn: false, //是否显示添加按钮
+          //   data:[],
+          //   needDataSource: true
+          // }
+
+
+
+        ],
+        propertyStyle: [{
+            type: "iconselect",
+            name: "otherAttrs.icon",
+            zhName: "头部图标",
+            group: "样式设置",
+            clearable: true,
+            iconlistvisible: false,
+            iconlist: [
+              "el-icon-edit",
+              "el-icon-share",
+              "el-icon-delete",
+              "el-icon-remove",
+              "el-icon-remove-outline",
+              "el-icon-minus",
+              "el-icon-plus",
+              "el-icon-check",
+              "el-icon-picture",
+              "el-icon-user",
+              "el-icon-phone",
+            ]
+            // 其他属性
+          },
+
+          {
+            type: "radiogroupselect",
+            name: "otherAttrs.bjkd",
+            zhName: "布局宽度%",
+            group: "样式设置",
+            required: false,
+            placeholder: "我是占位符",
+            default: "100",
+            data:[{
+                  value:'25',
+                  display:'25'
+              },{
+                  value:'50',
+                  display:'50'
+              },{
+                  value:'75',
+                  display:'75'
+              },{
+                  value:'100',
+                  display:'100'
+              } ],
+            suffix: "",
+            max: 10,
+            prepend: "",
+          },
+          {
+            type: "string",
+            name: "otherAttrs.fontSize",
+            zhName: "文本字号",
+            group: "样式设置",
+            required: false,
+            placeholder: "文本字号",
+            default: "14",
+            append: "PX",
+
+          },
+          {
+            type: "colorPicker",
+            name: "otherAttrs.fontColor",
+            zhName: "文字颜色",
+            group: "样式设置",
+            required: false,
+            placeholder: "",
+            default: "#000000",
+            suffix: "",
+            max: 0,
+            prepend: "",
+          },
+          {
+            type: "switch",
+            name: "otherAttrs.fontWeight",
+            zhName: "文字加粗",
+            group: "样式设置",
+            radio: true,
+            default: false,
+            // 其他属性
+          }
+        ],
+        propertyAdvanced: [{
+            type: "radiogroupselect",
+            name: "otherAttrs.bjkd",
+            zhName: "显示设备",
+            group: "基础设置",
+            required: false,
+            placeholder: "我是占位符",
+            default: "pc",
+            data:[
+                  {value:'pc',display:'电脑'},
+                  {value:'mobile',display:'手机'},
+            ],
+            labelsicon: ["el-icon-s-platform", "el-icon-mobile"],
+            max: 10,
+            prepend: "",
+          },
+          {
+            type: "button",
+            name: "otherAttrs.newbtn",
+            zhName: "动作事件",
+            btnText: "新建动作",
+            group: "动作",
+            btnType: "primary",
+            actionFun: this.showActionDialog,
+            isBlock: true,
+            // 其他属性
+          }
+
+        ],
+        currentAppLogic: [],
+        currentAppLogicValue: [],
+        triggerTypeValue: '',
+        optionData: {},
+        showLoadIcon: "1",
+        logicInputParams: [],
+        logicOutputParams: [],
+        newEvents: {
+          interaction: []
+        }
+      };
+    },
+    mounted: function () {
+
+      this.currentControl = this.Design.data.currentControl;
+      if (
+        this.currentControl &&
+        this.currentControl.otherAttrs &&
+        this.currentControl.otherAttrs.webPageSrc
+      ) {
+        this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+      }
+
+      if (
+        this.currentControl &&
+        this.currentControl.otherAttrs &&
+        this.currentControl.otherAttrs.webPageSrcs
+      ) {
+        this.webPageSrcs = this.currentControl.otherAttrs.webPageSrcs;
+      }
+      //更新复制删除工具条标题
+
+
+      var me = this;
+
+      this.loadDataSource4Cache(function (){
+
+        var dataSourceIdx = -1;
+        oui.findOneFromArrayBy(me.property,function (item,index){
+          if(item.name =='otherAttrs.dataSource'){
+            dataSourceIdx = index;
+            return true;
+          }
+
+        });
+
+        me.loadDataSource('query,union', dataSourceIdx); //查询资源
+
+        //otherAttrs.toolsAddBtn
+        var toolsAddBtnIdx =-1;
+        oui.findOneFromArrayBy(me.property,function (item,index){
+          if(item.name =='otherAttrs.toolsAddBtn'){
+            toolsAddBtnIdx = index;
+            return true;
+          }
+        });
+        me.loadDataSource(oui.LogicTypeEnum.insert.name, toolsAddBtnIdx); //新增资源
+
+        //otherAttrs.toolsDeleteBtn
+        var toolsDeleteBtnIdx =-1;
+        oui.findOneFromArrayBy(me.property,function (item,index){
+          if(item.name =='otherAttrs.toolsDeleteBtn'){
+            toolsDeleteBtnIdx = index;
+            return true;
+          }
+        });
+        me.loadDataSource(oui.LogicTypeEnum.remove.name, toolsDeleteBtnIdx); //删除资源
+
+
+
+
+        me.loadPageDataSource4Cache(function (){
+          me.loadPageDataSource(oui.PageTypeEnum.edit.name, 'otherAttrs.toolsEditbtn');
+          me.loadPageDataSource(oui.PageTypeEnum.detail.name, 'otherAttrs.detailPagebtn');
+        });
+      });
+
+    },
+    methods: {
+      dataSourceFun(ref) {
+        let itemdata = ref.data.filter((item) => {
+          return item.id == ref.default
+        })
+
+        //保存关联的逻辑为事件
+        if (itemdata[0]) {
+
+          let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+
+          //查询系统加载事件 是否存在
+          let postData = {
+            "trigMethod": "beforeInit",
+            "executeAction": "backEndLogic",
+            "systemMethod": "logicId",
+            "pageLocation": "",
+            "executePath": "",
+            "linkAddress": "",
+            "renderPage": "",
+            "afterExecuteFinish": "executeFinish",
+            "id": oui.getUUIDLong(),
+            "logicId": itemdata[0].id,
+            "inputParams": JSON.parse(itemdata[0].inputParamsJson),
+            "outputParams": JSON.parse(itemdata[0].outputParamsJson),
+            "superId": ""
+          }
+
+          this.newEvents.interaction.push(postData)
+
+          //postData = Object.assign({},currentControl.events,postData) 
+
+
+          //更新到page中
+          oui.JsonPathUtil.setObjByPath('events', currentControl, this.newEvents, true);
+        }
+
+
+
+      },
+      //删除次逻辑绑定
+      deleteSourceFun(ref) {
+        let itemdata = ref.data.filter((item) => {
+          return item.id == ref.default
+        })
+
+        //保存关联的逻辑为事件
+        if (itemdata[0]) {
+          let currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+
+          let postData = {
+            "trigMethod": "systemDeleteEvent",
+            "executeAction": "backEndLogic",
+            "systemMethod": "logicId",
+            "pageLocation": "",
+            "executePath": "",
+            "linkAddress": "",
+            "renderPage": "",
+            "afterExecuteFinish": "executeFinish",
+            "id": oui.getUUIDLong(),
+            "logicId": itemdata[0].id,
+            "inputParams": JSON.parse(itemdata[0].inputParamsJson),
+            "outputParams": JSON.parse(itemdata[0].outputParamsJson),
+            "superId": ""
+          }
+
+          //判断是否有删除事件
+          this.newEvents.interaction = this.updateInteractionObj(currentControl.events.interaction,
+            'systemDeleteEvent', postData)
+          //更新到page中
+          oui.JsonPathUtil.setObjByPath('events', currentControl, this.newEvents, true);
+        }
+      },
+
+      //搜索属性配置并更新 
+      searchSettingObj(settings, name) {
+
+        if (settings.length > 0) {
+          var _data = [];
+          settings.forEach((setting, index) => {
+            if (setting.name === name) {
+              _data = setting
+            }
+          })
+
+          return _data
+        }
+      },
+      //更新交互事件
+      updateInteractionObj(interactions, name, data) {
+
+        let update_status = false
+        interactions.forEach((interaction, index) => {
+          if (interaction.trigMethod === name) {
+            interaction = data
+            update_status = true //更新
+          }
+        })
+
+        if (!update_status) { //未更新 新增一条 
+          interactions.push(data)
+        }
+
+        return interactions
+
+      },
+      /***
+       * 加载页面资源 并缓存
+       * @param callback
+       */
+      loadPageDataSource4Cache:function (callback){
+          var me = this;
+          if(com.oui.absolute.AbsoluteDesign.appPagesCache){
+             callback&&callback();
+             return;
+          }
+          var url = this.Design.findPageViewListUrl;
+          var viewTypes = oui.PageTypeEnum.findEnumValues();
+          var enumNames = oui.PageTypeEnum.findEnumNames();
+          var cfg = {};
+          oui.eachArray(enumNames,function (name){
+            cfg[name] = [];
+          });
+          var param = oui.getParam();
+          oui.postData(url, {
+            projectId: param.projectId,
+            moduleId:this.Design.data.moduleId,
+            appId:this.Design.data.appId,
+            viewType: enumNames.join(',') //查询所有
+          },
+          function (res) {
+            if (res.success) {
+              oui.eachArray(res.pageViewList ||[],function (item){
+                var currEnum = oui.PageTypeEnum.findPageTypeEnumByValue(item.pageType);
+                cfg[currEnum.name].push({
+                  value:item.id,
+                  display:item.name,
+                  data:item
+                });
+              });
+              com.oui.absolute.AbsoluteDesign.appPagesCache = cfg;
+              callback&&callback();
+            }
+
+          },
+          function (res) {
+
+          }, '加载中...');
+      },
+      //加载呈现页页面树
+      loadPageDataSource(enumName, name) {
+        var me = this
+        let setting = me.searchSettingObj(me.property, name)
+        setting.pageData = me.Design.appPagesCache[enumName] ||[];
+      },
+
+      showActionDialog() {
+        PubSub.publish("com.startwe.loadingevent.msg.show", { componentName:"列表" })
+      },
+      handleNodeClick(data) {
+        this.systemMethodValue = data.name
+        this.$emit('input', data['id'])
+        this.optionData.id = data['id']
+        this.optionData.name = data['name']
+        this.$refs.select.visible = false
+      },
+      visibleChange(e) {
+        if (e) {
+          let selectDom = document.querySelector('.is-current')
+          setTimeout(() => {
+            this.$refs.select.scrollToOption({
+              $el: selectDom
+            })
+          }, 0)
+        }
+      },
+      clear() {
+        this.$emit('input', '')
+        console.info('clear')
+      },
+      //设置逻辑变量
+      showBindLogic(data) {
+        this.bindingLogicValVisible = true
+
+        var param = oui.getParam()
+        oui.postData(param.getLogicByIdUrl, {
+          logicId: data
+        }, (res) => {
+
+          if (res.success) {
+            var inputParamsJson = oui.parseJson(res.logicComponentBean.inputParamsJson)
+            var outputParamsJson = oui.parseJson(res.logicComponentBean.outputParamsJson)
+
+            this.logicInputParams = inputParamsJson
+            this.logicOutputParams = outputParamsJson
+          }
+
+        }, function (res) {
+          console.log(res);
+        }, '加载中...');
+
+
+
+      },
+      saveActionSetting() {
+
+        //选择的触发方式
+        if (this.triggerTypeValue == 'click') {
+
+        }
+
+        var d = oui.getTop().oui.alert('保存成功');
+        setTimeout(function () {
+          d.hide();
+        }, 800);
+      },
+      handleClose() {
+        this.centerDialogVisible = false
+      },
+      handleBindLogicValClose() {
+        this.bindingLogicValVisible = false
+      },
+
+      loadDataSource4Cache:function (callback){
+        if(com.oui.absolute.AbsoluteDesign.appLogicsCache){
+            callback&&callback();
+            return ;
+        }
+        var logicTypes = oui.LogicTypeEnum.findEnumValues();
+        var logicTypeNames = oui.LogicTypeEnum.findEnumNames();
+        var cfg = {};
+        oui.eachArray(logicTypeNames,function (name){
+          cfg[name] = [];
+        });
+        var param = oui.getParam();
+        oui.postData(this.Design.queryCurrentListQueryLogicUrl, {
+          moduleId: com.oui.absolute.AbsoluteDesign.data.moduleId,
+          projectId: param.projectId,
+          appId:com.oui.absolute.AbsoluteDesign.data.appId,
+          logicType: logicTypes.join(",") //查询应用下所有
+        }, (res) => {
+          if (res.success) {
+            oui.eachArray(res.currentAppLogic,function (item){
+              var currEnum = oui.LogicTypeEnum.findEnumByValue(item.logicType);
+              cfg[currEnum.name].push({
+                value:item.id,
+                display:item.name,
+                data:item
+              });
+            });
+            debugger;
+            com.oui.absolute.AbsoluteDesign.appLogicsCache = cfg;
+            callback&&callback();
+          }
+        }, function (res) {
+          console.log(res);
+        }, '加载中...');
+      },
+      //读取绑定数据源的列表
+      loadDataSource(logicType, dataindex) {
+        if (!logicType) {
+          logicType = '';
+        }
+        var arr = [];
+        var logicTypes = [];
+        if(logicType.indexOf(',')>-1){
+          logicTypes = logicType.split(',');
+        }else{
+          logicTypes = [logicType];
+        }
+
+        var cfg = com.oui.absolute.AbsoluteDesign.appLogicsCache;
+        oui.eachArray(logicTypes,function (type){
+          var temp = oui.parseJson(oui.parseString(cfg[type]));
+          arr = arr.concat(temp);
+        });
+        this.property[dataindex].data = arr;
+      },
+      changeTabs(index) {
+        this.tabActive = this.DataList[index].name;
+        this.tabActiveIndex = index;
+      },
+      getData4BaseProps: function () {
+        var me = this;
+        var cache4vue = this.getCache(this.cache4vue);
+        var bindKey = "basePropsData";
+        if (!cache4vue[bindKey]) {
+          cache4vue[bindKey] = {
+            notClone4Component: true,
+            clearable: false,
+            id: "basePropsData",
+            name: "basePropsData",
+            bindProp: "basePropsData",
+            value: {
+              name: "baseProps",
+            },
+            property: this.property,
+            data: this.projects || [],
+            onUpdate: function (key, v) {
+              me.onUpdate(key, v);
+            },
+          };
+          console.log(this.property,'属性列表');
+          me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+        }
+        return cache4vue[bindKey];
+      },
+      getCache: function (v) {
+        if (!v) {
+          v = {};
+          v = v;
+        }
+        return v;
+      },
+
+      getData4StyleProps: function () {
+        var me = this;
+        var cache4vue = this.getCache(this.cache4vueStylePropsData);
+        var bindKey = "stylePropsData";
+        if (!cache4vue[bindKey]) {
+          cache4vue[bindKey] = {
+            notClone4Component: true,
+            clearable: false,
+            id: "stylePropsData",
+            name: "stylePropsData",
+            bindProp: "stylePropsData",
+            value: {
+              name: "styleProps",
+            },
+            property: this.propertyStyle,
+            data: this.projects || [],
+            onUpdate: function (key, v) {
+              me.onUpdate(key, v);
+            },
+          };
+          // me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+        }
+        me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+
+        return cache4vue[bindKey];
+      },
+      getData4AdvanceProps: function () {
+        var me = this;
+        var cache4vue = this.getCache(this.cache4advancePropsData);
+        var bindKey = "advancePropsData";
+        if (!cache4vue[bindKey]) {
+          cache4vue[bindKey] = {
+            notClone4Component: true,
+            clearable: false,
+            id: "advancePropsData",
+            name: "advancePropsData",
+            bindProp: "advancePropsData",
+            value: {
+              name: "advanceProps"
+            },
+            property: this.propertyAdvanced,
+            webPageSrc: this.webPageSrc,
+            data: this.projects || [],
+            onUpdate: function (key, v) {
+              me.onUpdate(key, v);
+            },
+          };
+          me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+        }
+        return cache4vue[bindKey];
+      },
+      onUpdate: function (key, v) {
+        var me = this;
+        if (key == "basePropsData") {
+          me.basePropsData = v;
+          if (v) {
+            var one = oui.findOneFromArrayBy(me.projects, function (temp) {
+              if (temp.value == v) {
+                return true;
+              }
+            });
+            if (one) {
+              me.queryPageFieldsByFormIdUrl = one.queryPageFieldsByFormIdUrl;
+            }
+
+            oui.getData(
+              me.queryPagesByProjectIdUrl, {
+                projectId: v,
+              },
+              function (res) {
+                var pages = res.pages || [];
+                //组织模型所属项目变更后，更新控件数据项
+                oui.eachArray(me.options || [], function (item) {
+                  var data4tableModels = me.findData4tableModels(item);
+
+                  data4tableModels.queryParams = {
+                    projectId: v,
+                  };
+                  var refKey = "tableModelId_" + item.id;
+                  if (me.$refs[refKey]) {
+                    me.$refs[refKey][0].comp.value = "";
+                    me.$refs[refKey][0].comp.data = oui.parseJson(
+                      oui.parseString(pages)
+                    );
+                    me.$refs[refKey][0].comp.queryParams.projectId = v;
+                  }
+                  //idKey
+                  var refKey4bindId = "tableModelId_id_" + item.id;
+                  if (me.$refs[refKey4bindId]) {
+                    me.$refs[refKey4bindId][0].comp.value = "";
+                    me.$refs[refKey4bindId][0].comp.data = [];
+                  }
+
+                  //nameKey
+                  var refKey4bindNameId = "tableModelId_name_" + item.id;
+                  if (me.$refs[refKey4bindNameId]) {
+                    me.$refs[refKey4bindNameId][0].comp.value = "";
+                    me.$refs[refKey4bindNameId][0].comp.data = [];
+                  }
+                });
+              }
+            );
+          } else {
+            me.queryPageFieldsByFormIdUrl = "";
+          }
+        }
+        this.$set(this, key, v);
+      },
+
+      handleWebPageSrcChange: function (val) {
+        this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc =
+          this.currentControl.otherAttrs.webPageSrc;
+      },
+      handleWebPageSrcChangeText: function (val) {
+        this.currentControl.otherAttrs.webPageSrcs = this.webPageSrcs;
+        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrcs =
+          this.currentControl.otherAttrs.webPageSrcs;
+
+        com.oui.absolute.AbsoluteDesign.changed4props(
+          this.currentControl,
+          function () {}
+        );
+      },
+      _controlOnUpdate: function (bindProp, config) {
+        console.log(config.id);
+        var me = this;
+        if (!config.id) {
+          return;
+        }
+        //获取当前配置变更的对象
+        var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(
+          config.id
+        );
+
+        if (
+          bindProp &&
+          config &&
+          currentControl &&
+          currentControl.id === config.id
+        ) {
+          //根据当前配置的值改变 更新当前控件的值
+          oui.JsonPathUtil.setObjByPath(
+            bindProp,
+            currentControl,
+            oui.JsonPathUtil.getJsonByPath(bindProp, config),
+            true
+          );
+          //清除关系连线
+          me._controlOnUpdate4clearRelation(bindProp, config, currentControl);
+        }
+      }
+
+    }
+  };
+</script>
+
+<style>
+  .ghost {
+    border: 1px dashed indianred;
+  }
+
+  .item {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    /*height: 30px;*/
+    /*font-size: 14px;*/
+  }
+
+  .item-move {
+    cursor: move;
+  }
+
+  .item-delete {
+    padding-left: 5px;
+    color: red;
+  }
+
+  .item-add {
+    padding-left: 5px;
+    color: blue;
+  }
+
+  .actionTable {
+    width: 100%;
+    border-collapse: collapse;
+    height: 340px;
+    border-radius: 4px 4px 0px 0px;
+    border: 1px solid #7F7F7F;
+
+  }
+
+  .actionTable thead {
+    height: 34px;
+    line-height: 34px;
+    background: #3A3B3F;
+  }
+
+  .actionTable thead td {
+    font-size: 14px;
+  }
+
+  .actionTable td {
+    padding: 5px 10px;
+    border: 1px solid #7F7F7F;
+  }
+
+  .option {
+    height: auto;
+    line-height: 1;
+    padding: 0;
+    background-color: #fff;
+  }
+
+  .tree {
+    padding: 4px 20px;
+    font-weight: 400;
+  }
+</style>

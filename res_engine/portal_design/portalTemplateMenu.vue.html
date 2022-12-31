@@ -1,0 +1,294 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div>
+        <div>
+            <div class="right_title">门户模板</div>
+            <div>
+                <div>
+                    <div class="module-title">
+                        <div>
+                            <i class="el-icon-caret-right" v-if='traditionshow' @click='stateIconFun'></i>
+                            <i class="el-icon-caret-bottom" v-else @click='stateIconFun'></i>
+                            传统门户</div>
+                        <div @click="queryPortalTemplates">更多>></div>
+                    </div>
+                    <div class="TypesettingBox" v-show='!traditionshow'>
+                        <div>
+                            <oui-include type="module" url="res_startwe/html/DesignPages/HomepageSkin_2.vue.html">
+                            </oui-include>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="module-title">
+                        <div>
+                        <i class="el-icon-caret-right" v-if='webshow' @click='stateTypeWeb'></i>
+                        <i class="el-icon-caret-bottom" v-else @click='stateTypeWeb'></i>    
+                        门户官网</div>
+                        <div @click="queryPortalTemplates">更多>></div>
+                    </div>
+                    <div class="TypesettingBox" v-show='!webshow'>
+                        <div>
+                            <img src="/res_startwe/assets/bg22.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="module-title">
+                        <div>
+                            <i class="el-icon-caret-right"></i>
+                            智能终端</div>
+                        <div @click="queryPortalTemplates">更多>></div>
+                    </div>
+                    <div class="TypesettingBox">
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                bgColor: '#fff',
+                imageUrl: '',
+                checked: false,
+                input: 0,
+                value1: 0,
+                traditionshow:false,
+                webshow:false
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            queryPortalTemplates: function () {
+                
+            },
+            changeBgColor: function () {
+
+            },
+            bgImgSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeBgImgUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            stateIconFun() {
+                this.traditionshow = !this.traditionshow
+            },
+            stateTypeWeb() {
+                this.webshow = !this.webshow
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .el-color-picker__trigger {
+        border: none;
+        width: 74px;
+        height: 40px;
+    }
+
+    .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    .el-color-picker__color-inner {
+        width: 62px;
+        height: 28px;
+        border-radius: 4px;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        margin-top: 10px;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 50px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 78%;
+    }
+
+    .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    }
+</style>

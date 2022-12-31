@@ -1,0 +1,545 @@
+<template>
+    <!-- 组件最大容器 -->
+    <div id="customer">
+        <!-- element组件的布局容器开始 -->
+        <div class="product">
+
+
+            <!-- 面包屑头部盒子 -->
+            <div class="crumbs">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item> <a  href="index4vue.html#res_apps/car/project/html/compnents/home.vue.html">首页</a></el-breadcrumb-item>
+                    <el-breadcrumb-item>系统设置</el-breadcrumb-item>
+                    <el-breadcrumb-item>基础信息</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <!-- 主体内容区域 -->
+            <el-main >
+                <div class="basic_information_box1">
+                    <div class=" information_box">
+                        <!-- 放置路由占位符，渲染组件部分 -->
+                        <!-- <router-link ></router-link> -->
+                        <!-- 主体内容区域 -->
+                        <!-- 基础信息区域开始 -->
+                        <div class="name_box">
+                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                                     class="demo-ruleForm">
+                                <!-- 名称 -->
+                                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                                         class="demo-ruleForm">
+                                    <el-form-item label="名称" prop="name">
+                                        <el-input v-model="ruleForm.name"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <!-- 地址 -->
+                                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                                         class="demo-ruleForm">
+                                    <el-form-item label="地址" prop="region">
+                                        <el-input v-model="ruleForm.region"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <!-- 负责人 -->
+                                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                                         class="demo-ruleForm">
+                                    <el-form-item label="负责人" prop="people">
+                                        <el-input v-model="ruleForm.people"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                                <!-- 手机号 -->
+                                <!-- 这个地方要加一个修改按钮 -->
+                                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                                         class="demo-ruleForm">
+                                    <el-form-item label="手机号" prop="tel">
+                                        <el-input v-model="ruleForm.tel"> </el-input>
+                                    </el-form-item>
+                                </el-form>
+
+                                <!-- 营业范围 -->
+
+                                <el-form-item label="营业范围" prop="scope">
+                                    <el-input type="textarea" v-model="ruleForm.scope" resize="none" maxlength="100">
+                                    </el-input>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <!-- log区域 -->
+
+                        <div class="picture_box">
+
+                            <!-- 二维码上传区域 -->
+                            <span>二维码:</span>
+                            <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/"
+                                       :show-file-list="false" :on-success="handleAvatarSuccess"
+                                       :before-upload="beforeAvatarUpload">
+                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                <i v-else class="el-icon-circle-plus avatar-uploader-icon"></i>
+                            </el-upload>
+
+                            <!-- logo上传区域 -->
+                            <span>LOGO:</span>
+                            <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/"
+                                       :show-file-list="false" :on-success="logohandleAvatarSuccess"
+                                       :before-upload="beforeAvatarUploadlogo">
+                                <img v-if="logoImageUrl" :src="logoImageUrl" class="avatar">
+                                <i v-else class="el-icon-circle-plus avatar-uploader-icon"></i>
+                            </el-upload>
+
+
+
+                            <!-- <div class="picture_box">
+                                <span>二维码:</span>
+                                <div class="block" v-for="fit in fits" :key="fit">
+                                    <span class="demonstration">{{ fit.fill }}</span>
+                                    <el-image style="width: 100px; height: 100px" :src="url" :fit="fit"></el-image>
+                                </div>
+                            </div>
+
+                            <span>LOGO:</span>
+                            <div class="block" v-for="fit in log" :key="fit">
+                                <span class="demonstration">{{ fit.cent }}</span>
+                                <el-image style="width: 100px; height: 100px" :src="url" :fit="fit"></el-image>
+                            </div> -->
+
+
+                        </div>
+                        <div class="basics_button">
+                            <el-row>
+                                <el-button>返回</el-button>
+                                <el-button type="primary" style="margin-left: 60px;">保存</el-button>
+                            </el-row>
+
+                        </div>
+
+
+                    </div>
+                    <!-- 基础信息区域结束 -->
+                </div>
+            </el-main>
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+                // 主体内容的基本信息名称验证所绑定的数据名开始
+                ruleForm: {
+                    // 绑定名称项
+                    name: '',
+                    // 绑定地址
+                    region: '',
+                    // 绑定负责人
+                    people: "",
+                    // 绑定手机号
+                    tel: "",
+                    // 营业范围
+                    scope: ""
+
+                },
+
+                // 每个对象的验证规则
+                rules: {
+                    // 验证名称
+                    name: [
+                        { required: true, message: '请输入名称', trigger: 'blur' },
+                        { min: 2, max: 40, message: '长度在 3 到 40 个字符', trigger: 'blur' }
+                    ],
+                    // 验证地址
+                    region: [
+                        { required: true, message: '请选择地址', trigger: 'change' },
+                        { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+                    ],
+                    // 验证负责人
+                    people: [
+                        { required: true, message: '请输入负责人', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    // 验证电话号码
+                    tel: [
+                        { required: true, message: '请输入电话号码', trigger: 'blur' },
+                        { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+                    ],
+                    // 验证营业
+                    scope: [
+                        { required: true, message: '请输入营业范围', trigger: 'blur' },
+                        { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
+                    ]
+                },
+                // 主体内容的基本信息名称验证所绑定的数据名结束
+
+                // 二维码和log图片的数据
+                // 二维码的
+                imageUrl: '',
+                // log图片
+                logoImageUrl: ''
+
+
+
+
+            }
+        },
+        created() {
+            // // 加载 css3布局样式和首页样式
+            // oui.require([
+            //     '/res_apps/car-1/project/css/css3-flex.css',
+            //     '/res_apps/car-1/project/css/home.css'
+            // ])
+        },
+        mounted: function () {
+            // 加载 echarts 进行图表渲染
+            // oui.require([
+            //     '/res_common/third/echarts/echarts.min.js'
+            // ], (res) => {
+            //     this.$nextTick(() => {
+            //         var myChart = echarts.init(document.getElementById('main'));
+            //         myChart.setOption(this.option);
+            //     })
+            // })
+        },
+        methods: {
+            // 点击按钮跳转地砖
+            handleClick: function (url, param) {
+                // this.$router.push(url,param||{});
+                this.$router.push("/res_apps/car-1/project/html/user/user.vue.html")
+
+            },
+
+
+
+            // 上传二维码和logo图片——————————————————————————————
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+
+            // 上传logo图片的函数-----------
+            logohandleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+
+            beforeAvatarUploadlogo(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            }
+
+
+
+        }
+    }
+</script>
+<style>
+    /* 自定义input按钮 */
+
+    .my-autocomplete>li {
+        line-height: normal;
+        padding: 7px;
+    }
+
+    .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .addr {
+        font-size: 12px;
+        color: #b4b4b4;
+    }
+
+    .highlighted .addr {
+        color: #ddd;
+    }
+
+
+    /* 结束 */
+
+
+
+
+
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* element组件自带样式设置开始------- */
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        height: 900px;
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    /* element组件自带样式设置开始------- */
+
+    /* 自己的样式 */
+    /* 侧边栏开始-------- */
+    /* 侧边栏log图片 */
+
+
+    /* .el-menu-vertical-demo el-menu{
+      width: 39px;
+    }
+  
+    .tac.el-col.el-menu.el-menu-item{
+      width: 39px;
+    } */
+
+    /* 文字盒子span */
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+    .el-menu {
+        border: 0;
+    }
+
+    .el-menu-item>img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .el-menu-item>span {
+        margin-left: 10px;
+    }
+
+    /* 侧边栏样式结束------ */
+
+    /* 右侧头部区域个人信息区域开始------ */
+    /* .navbar {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 右侧头部区域个人信息区域结束------ */
+
+    /* 必须修改部分 */
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 主体区域最外边的容器 */
+    .el-main {
+        line-height: normal;
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .basic_information_box1 {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+    }
+
+
+    /* 基础信息最外边的容器 */
+    .information_box {
+        padding: 0 30px;
+        background-color: #fff;
+        margin: 24px 0px;
+        /* width: 1184px;
+        height: 741px; */
+        /* 临时用 */
+        width: 600px;
+        height: 600px;
+
+    }
+
+    .name_box {
+        margin-top: 24px;
+    }
+
+    /* 二维码 LOGO 区域---------------*/
+    .picture_box {
+        display: flex;
+        justify-content: center;
+
+    }
+
+    .picture_box>span {
+        margin: 0 20px 0 30px;
+        font-size: 14px;
+    }
+
+    /* 二维码和logo头像开始区域--- */
+
+    .avatar-uploader .el-upload {
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 126px;
+        height: 126px;
+        line-height: 126px;
+        text-align: center;
+    }
+
+    /* 设置放置照片的盒子大小 */
+    .avatar {
+        width: 126px;
+        height: 126px;
+        display: block;
+    }
+
+    /* 二维码和logo头像区域结束 */
+
+    /* 按钮区域返回和保存 */
+    .basics_button {
+        text-align: center;
+        margin-top: 58px;
+    }
+
+    .basics_button>.el-row>.el-button {
+        width: 180px;
+        height: 32px;
+        line-height: 0;
+
+    }
+
+
+    /* 表单基础信息结束------- */
+
+    /* 待出库列表区域开始----- */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+
+    .table_box {
+        margin-bottom: 21px;
+        background-color: #fff;
+        padding: 24px 24px;
+    }
+
+
+    .Tobedelivered_box {
+        margin: 20px 0;
+        height: 30px;
+        line-height: 30px;
+        font-weight: 700;
+    }
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+        margin: 20px 0px 20px 500px;
+    } */
+
+    /* 分页区域结束----- */
+    /* 待出库列表区域结束------ */
+</style>

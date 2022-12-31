@@ -1,0 +1,243 @@
+<!-- 菜单栏样式>>>>>>>>>>>>>>>>4444444444444-->
+<template>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="logo">
+                <!-- logo -->
+                <img src="/res_startwe/html/DesignPages/assets/shangchuan_w.png" alt="">
+            </div>
+            <div class="userMsg">
+                <img src="/res_startwe/html/DesignPages/assets/headPortrait.png" alt="">
+                <span>用户名</span>
+            </div>
+        </div>
+        <div class="content">
+            <ul class="aside_menu">
+                <li :class="checkClick==index?'menu_active':''" v-for="(item,index) in menuList">
+                    <div @click="changeMenu(item,index)">
+                        <img :src="checkClick==index?item.imgChange:item.imgUrl" alt="">
+                        <div>{{item.text}}</div>
+                    </div>
+
+                    <ul class="inner_menu" v-if="item.isShow">
+                        <li v-for="sub in item.sub">{{sub.text}}</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                menuList: [{
+                    imgChange: '/res_startwe/html/DesignPages/assets/dabianji1.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/dabianji2.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    },]
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/dabianji1.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/dabianji2.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    },]
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/dabianji1.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/dabianji2.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    },]
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/dabianji1.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/dabianji2.png',
+                    text: '一级菜单',
+                    isShow: false,
+                    sub: [{
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    }, {
+                        text: '二级菜单'
+                    },]
+                }],
+                checkClick: 0,
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            changeMenu: function (item, index) {
+                var that = this;
+                that.checkClick = index;
+                item.isShow = !item.isShow;
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* elementui样式修改 */
+
+    /* 头部 */
+
+    .header {
+        height: 48px;
+        display: flex;
+        justify-content: space-between;
+        background: #1890FF;
+        box-shadow: 0 2px 6px 0 rgba(0, 21, 41, 0.12);
+
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .logo>img {
+        height: 40px;
+    }
+
+    .userMsg {
+        margin-right: 80px;
+        display: flex;
+        align-items: center;
+    }
+
+    .userMsg>img {
+        width: 28px;
+        height: 28px;
+        border-radius: 14px;
+        margin-right: 10px;
+    }
+
+    .userMsg>span {
+        color: #fff;
+    }
+
+    .content {
+        height: 100%;
+    }
+
+    /* 侧边栏 */
+
+    .left_aside {
+        height: 100%;
+    }
+
+
+    .aside_menu {
+        height: 100%;
+        ;
+        width: 88px;
+        background: #001529;
+        color: #fff;
+        font-size: 14px;
+        position: relative;
+    }
+
+    .aside_menu>li {
+        height: 80px;
+        width: 88px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .aside_menu>li img {
+        width: 28px;
+        height: 28px;
+        margin-right: 10px;
+        margin: auto;
+        margin-top: 20px;
+    }
+
+    .aside_menu>li div {
+        text-align: center;
+    }
+
+    .menu_active {
+        font-size: 14px;
+        color: #1890FF;
+        line-height: 22px;
+        font-weight: 500;
+    }
+
+    .inner_menu {
+        position: absolute;
+        top: 0;
+        right: -88px;
+        color: #979797;
+    }
+</style>

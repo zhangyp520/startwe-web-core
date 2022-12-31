@@ -1,0 +1,3872 @@
+@charset "UTF-8";
+label:after{
+    content: "";
+    display: block;
+    clear: both;
+}
+/*防止用户操作过快导致数据重复提交*/
+.submit-button-disabled{
+    pointer-events: none;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.submit-button-disabled:after{
+    content: "";
+    background: rgba(255,255,255,.5);
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    cursor: default;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/*span模拟*/
+.form-simulation,
+.oui-readOnly,
+.oui-edit4ReadOnly,
+.oui-edit4View,
+.oui-readonly{
+    background: #f5f5f5;
+    padding: 5px !important;
+    margin: 0;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-size: 14px;
+    display: inline-block;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    text-align: left;
+    color: rgba(81,81,81,.8);
+    word-wrap: break-word;
+    word-break: normal;
+    vertical-align: top;
+}
+.form-simulation .oui-readOnly-canclick,
+.oui-readOnly .oui-readOnly-canclick,
+.oui-edit4ReadOnly .oui-readOnly-canclick,
+.oui-readonly .oui-readOnly-canclick{
+    width: auto;
+    display: inline-block;
+    border-bottom: 1px solid #2C82FC;
+    color: #2C82FC;
+    cursor: pointer;
+}
+.form-simulation{
+    word-break: keep-all;
+}
+.form-viewType-0 .form-simulation{
+    width: 80%;
+    display: inline-block;
+    vertical-align: middle;
+}
+span.form-simulation img {
+    padding:0 10px 10px 0;
+}
+.form-simulation.oui-relation-readOnly .oui-relation,
+.oui-readOnly.oui-relation-readOnly .oui-relation{
+    min-height: auto;
+    line-height: inherit;
+    padding: 0;
+    border: 0;
+    padding-left: 25px;
+}
+/*查看全部内容*/
+.form-collapse-item{
+    position: relative;
+    width: 100%;
+}
+.form-collapse-item .form-collapse-area{
+    display: block;
+    padding-bottom: 18px;
+}
+.collapse-hidden{
+    max-height: 155px;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+}
+.collapse-more{
+    position: absolute;
+    bottom: -5px;
+    left: -5px;
+    right: -5px;
+    height: 70px;
+    z-index: 5;
+    border-radius: 3px;
+    overflow: hidden;
+    border: none;
+    text-align: center;
+}
+.form-collapse-area + .collapse-more{
+    background: none;
+}
+.form-collapse-area.collapse-hidden + .collapse-more{
+    background: url("../images/linearlayer.png") repeat-x;
+    background: linear-gradient(-180deg,rgba(255,255,255,0.00) 0%,rgba(255,255,255,0.60) 49%,#FFFFFF 85%);
+}
+.form-collapse-area.collapse-hidden + .collapse-more .collapse-btn-info,
+.form-collapse-area + .collapse-more .collapse-btn-info{
+    background: url("../images/arrow-down.png") center no-repeat;
+    background-size: 24px auto;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+    font-size: 14px;
+    color: #2C82FC;
+    margin: 40px auto 0 auto;
+    cursor: pointer;
+}
+.form-collapse-area.collapse-hidden + .collapse-more .collapse-btn-info{
+    -webkit-transform:rotate(0deg);
+    -moz-transform:rotate(0deg);
+    -ms-transform:rotate(0deg);
+    transform:rotate(0deg);
+}
+.form-collapse-area + .collapse-more .collapse-btn-info{
+    -webkit-transform:rotate(180deg);
+    -moz-transform:rotate(180deg);
+    -ms-transform:rotate(180deg);
+    transform:rotate(180deg);
+}
+/*控件标题大小*/
+.oui-fontsize-title-1{
+    font-size: 12px !important;
+}
+.oui-fontsize-title-2{
+    font-size: 14px !important;
+}
+.oui-fontsize-title-3{
+    font-size: 18px !important;
+}
+/*控件内文字大小*/
+.oui-fontsize-1 input,
+.oui-fontsize-1 textarea,
+.oui-fontsize-1 select,
+.oui-fontsize-1 .oui-number-split-area,
+.oui-fontsize-1 .button-wrapper-info,
+.oui-fontsize-1.form-simulation,
+.oui-fontsize-1.oui-readOnly,
+.oui-fontsize-1.oui-readonly,
+.oui-fontsize-1.oui-readOnly .oui-relation{
+    font-size: 12px !important;
+}
+.oui-fontsize-2 input,
+.oui-fontsize-2 textarea,
+.oui-fontsize-2 select,
+.oui-fontsize-2 .oui-number-split-area,
+.oui-fontsize-2 .button-wrapper-info,
+.oui-fontsize-2.form-simulation,
+.oui-fontsize-2.oui-readOnly,
+.oui-fontsize-2.oui-readonly,
+.oui-fontsize-2.oui-readOnly .oui-relation{
+    font-size: 14px !important;
+}
+.oui-fontsize-3 input,
+.oui-fontsize-3 textarea,
+.oui-fontsize-3 select,
+.oui-fontsize-3 .oui-number-split-area,
+.oui-fontsize-3 .button-wrapper-info,
+.oui-fontsize-3.form-simulation,
+.oui-fontsize-3.oui-readOnly,
+.oui-fontsize-3.oui-readonly,
+.oui-fontsize-3.oui-readOnly .oui-relation{
+    font-size: 18px !important;
+}
+.oui-fontsize-1 .multiSelect-wrapper,
+.oui-fontsize-1 .radio-button-wrapper{
+    margin-top: 1px !important;
+}
+.oui-fontsize-2 .multiSelect-wrapper,
+.oui-fontsize-2 .radio-button-wrapper{
+    margin-top: 3px !important;
+}
+.oui-fontsize-3 .multiSelect-wrapper,
+.oui-fontsize-3 .radio-button-wrapper{
+    margin-top: 6px !important;
+}
+.oui-class-signature.oui-readOnly img{
+    max-width: 100%;
+    vertical-align: top;
+}
+/* 控件与控件的间距*/
+.form-space-1{
+    padding: 6px 0 !important;
+}
+.form-space-2{
+    padding:12px 0 !important;
+}
+.form-space-3{
+    padding:20px 0 !important;
+}
+article .form-ctrl{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+/**
+ * <i class="oui-error-info"></i>
+ * 错误消息的公共样式 
+ */
+/*复选&单选公用样式*/
+.checkbox-wrapper,.radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    float: left;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 3px 7px 0 0;
+    z-index: 5;
+}
+.selected-icon{
+    cursor: pointer;
+}
+.radio-button-wrapper input[type=radio],.checkbox-wrapper input[type=checkbox]{
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon,.radio-button-wrapper input[type="radio"]+.selected-icon{
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #aab2bd;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="radio"]+.selected-icon:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon,.radio-button-wrapper input[type="radio"]:checked+.selected-icon{
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+}
+/*单选样式*/
+
+.radio-button-wrapper input[type="radio"]+.selected-icon {
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+.radio-button-wrapper input[type="radio"]+.selected-icon:after {
+    background: #FFF;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+.radio-button-wrapper input[type="radio"]:checked+.selected-icon:after {
+    -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
+    -o-transform: scale(0.4);
+    transform: scale(0.4);
+}
+.button-wrapper-info {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+/*复选*/
+.checkbox-wrapper input[type="checkbox"]+.selected-icon{
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]:checked+.selected-icon:after {
+    border-bottom-color: #FFF;
+    border-right-color: #FFF;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]+.selected-icon:after {
+    top: 1px;
+    left: -1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid transparent;
+    -webkit-transform: rotate(43deg);
+    -ms-transform: rotate(43deg);
+    -o-transform: rotate(43deg);
+    transform: rotate(43deg);
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+/*CSS3模拟Switch*/
+.oui-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    -ms-flex-item-align: center;
+    -webkit-align-self: center;
+    align-self: center
+}
+.oui-checkbox input[type=checkbox] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox {
+    background: #2C82FC;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:before {
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0)
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(42px);
+    -ms-transform: translateX(42px);
+    transform: translateX(42px)
+}
+.oui-checkbox .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    background: #e5e5e5;
+    z-index: 0;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox .checkbox:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 28px;
+    background: #fff;
+    z-index: 1;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1)
+}
+.oui-checkbox .checkbox:after {
+    content: ' ';
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    background: #fff;
+    position: absolute;
+    z-index: 2;
+    top: 2px;
+    left: 2px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox.large,.oui-checkbox.large .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+}
+.oui-checkbox.large input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(22px);
+    -ms-transform: translateX(22px);
+    transform: translateX(22px)
+}
+.oui-checkbox.large .checkbox:before {
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    height: 28px
+}
+.oui-checkbox.large .checkbox:after {
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    top: 2px;
+    left: 2px
+}
+.oui-checkbox.middle,.oui-checkbox.middle .checkbox {
+    width: 46px;
+    height: 24px;
+    border-radius: 16px;
+}
+.oui-checkbox.middle input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(21px);
+    -ms-transform: translateX(21px);
+    transform: translateX(21px)
+}
+.oui-checkbox.middle .checkbox {
+    display: inline-block;
+}
+.oui-checkbox.middle .checkbox:before {
+    left: 1px;
+    top: 1px;
+    width: 44px;
+    border-radius: 16px;
+    height: 22px;
+}
+.oui-checkbox.middle .checkbox:after {
+    height: 22px;
+    width: 22px;
+    border-radius: 22px;
+    top: 1px;
+    left: 1px
+}
+.oui-checkbox input[type=checkbox] {
+    display: inline \9;
+    zoom: 1 \9
+}
+.oui-checkbox .checkbox {
+    display: none \9
+}
+.oui-checkbox.disabled {
+    opacity: .4
+}
+
+.oui-error-info{
+    background-color: #d92424;
+    color: #ffeae6;
+    padding: 2px 5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    margin: 5px 0 5px 0;
+    display: inline-block;
+    word-break: break-all;
+}
+.error-info{
+    font-size: 12px;
+    color: #e4393c;
+    font-style: normal;
+    display: inline;
+}
+.error-light-tips{
+    background: url("../images/error.png") left center no-repeat;
+    background-size: 14px 14px;
+    margin: 5px 0;
+    padding-left: 16px;
+    line-height: 20px;
+    font-size: 12px;
+    color: #e4393c;
+    font-style: normal;
+    display: inline-block;
+}
+/*
+问号--白色-开始*/
+div.question{
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    text-align: center;
+    line-height: 14px;
+    font-size: 12px !important;
+    font-style: normal !important;
+    font-family: Arial, sans-serif, Helvetica, Tahoma;
+    display: inline-block;
+    font-weight: 600;
+    vertical-align: baseline;
+    margin-left: 5px;
+    position: relative;
+}
+div.question i.triangle-up{
+    width: 8px;
+    height: 8px;
+    background-color: #b7b7b7;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    z-index: 3;
+    margin-left: -4px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    display: none;
+}
+div.question p{
+    background: #b7b7b7;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    border: 1px solid #e6e6e6;
+    line-height: 1.5;
+    padding: 5px;
+    font-size: 12px !important;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    width: 170px;
+    color: #ffffff;
+    position: absolute;
+    text-align: left;
+    left: 50%;
+    margin-left: -85px;
+    top: 20px;
+    z-index: 2;
+    display: none;
+}
+div.question:hover i,
+div.question:hover p{
+    display: block;
+}
+/*
+问号--白色--结束*/
+
+/*
+问号灰色*/
+div.question-webrobot,
+span.question-webrobot{
+    background: #b9b9b9;
+    width: 16px;
+    height: 16px;
+    color: #ffffff;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    line-height: 16px;
+    text-align: center;
+    font-family: arial, verdana, sans-serif;
+    display: inline-block;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    cursor: default;
+    position: relative;
+    /*z-index: 300;*/
+    top: 0;
+    margin: 0 0 0 5px;
+    text-indent: 0;
+}
+div.question-webrobot div.question-content,
+span.question-webrobot span.question-content{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    background: #b7b7b7;
+    padding: 5px 10px;
+    width: 160px;
+    min-height: 30px;
+    font-size: 13px !important;
+    font-weight: normal !important;
+    line-height: 1.4;
+    position: absolute;
+    left: 26px;
+    top: -6px;
+    color: #ffffff;
+    z-index: 300;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-align: left;
+    white-space: normal;
+    display: none;
+}
+div.question-webrobot div.question-content div.question-wapper,
+span.question-webrobot span.question-content span.question-wapper{
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #b7b7b7;
+    position: absolute;
+    left: -8px;
+    top: 7px;
+}
+div.question-webrobot:hover div.question-content,
+span.question-webrobot:hover span.question-content{
+    display: block;
+}
+/*
+问号灰色*/
+/*针对下拉条件组件的选项被页面底部遮住，向上浮动选项*/
+.dropdown-float-top{
+    border-top-left-radius: 3px !important;
+    border-top-right-radius: 3px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.guide-mask{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.7);
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 9998;
+}
+.guide-mask #guide-content{
+    position: absolute;
+    color: #ffffff;
+    z-index: 9999;
+}
+/*-------Toolbar***button***--开始------*/
+.oui-toolbar-content{
+    padding: 6px 10px 6px 0;
+    margin-bottom: 8px;
+}
+.oui-toolbar-content .toolbar-search-area{
+    float: right;
+    width: 240px;
+}
+.oui-toolbar-content button {
+    padding: 0 10px;
+    min-width: 80px;
+    height: 34px;
+    font-size: 14px;
+    line-height: 32px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.toolbar-icon{
+    background: url("../images/oui-toolbar-icon.png") no-repeat;
+    background-size: 126px 42px;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -3px;
+}
+.toolbar-icon-delete{
+    background-position: -14px -28px; /*删除*/
+}
+.toolbar-icon-edit{
+    background-position: 0 -28px; /*编辑*/
+}
+.toolbar-icon-move{
+    background-position: -56px -28px; /*移动*/
+}
+.toolbar-icon-add{
+    background-position: -28px -28px; /*添加*/
+}
+.toolbar-icon-invite{
+    background-position: -42px -28px; /*邀请*/
+}
+.toolbar-icon-batchImport{
+    background-position: -98px -28px; /*批量导入*/
+}
+.toolbar-icon-more{
+    background-position: -70px -28px; /*更多操作*/
+}
+.toolbar-icon-auditing{
+
+}
+.oui-toolbar-content button:hover .toolbar-icon-delete{
+    background-position: -14px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-edit{
+    background-position: 0 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-move{
+    background-position: -56px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-add{
+    background-position: -28px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-invite{
+    background-position: -42px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-batchImport{
+    background-position: -98px 0
+}
+.oui-toolbar-content button:hover .toolbar-icon-more{
+    background-position: -70px 0;
+}
+.button-default{
+    background: none;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+    position: relative;
+}
+.button-default:hover{
+    background: #2C82FC;
+    color: #FFFFFF;
+}
+/*-------Toolbar***button***--结束------*/
+/*内容区域常用框架--开始*/
+.oui-content-layout{
+    background: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 30px;
+    right: 30px;
+    bottom: 0;
+    text-align: center;
+}
+.oui-content-layout.noTop{
+    top: 30px;
+}
+.oui-content-layout-left{
+    background: #f6f6f7;
+    width: 250px;
+    border: 1px solid #ebebeb;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 0;
+    overflow-y: auto;
+}
+.oui-content-layout-right{
+    padding-left: 10px;
+    position: absolute;
+    left: 260px;
+    right: 10px;
+    top: 10px;
+    bottom: 0;
+    text-align: left;
+}
+.oui-content-layout-right .layout-right-content{
+    position: absolute;
+    top: 56px;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.fixed-nav{
+    background: none;
+}
+.fixed-nav .oui-content-layout-left{
+    background:#ffffff;
+    width: 200px;
+    left: 0;
+    top: 0;
+    bottom: auto;
+}
+.fixed-nav .oui-content-layout-right{
+    background: #ffffff;
+    left: 220px;
+    top: 0;
+}
+/*内容区域常用框架--结束*/
+.display_none{
+    display: none;
+}
+/*必填*/
+.required-icon {
+    color: red;
+    position: relative;
+    top: 2px;
+    font-style: normal;
+}
+/*必填*/
+
+/*列表toolbar*/
+.oui-toolbar-area {
+    display: block;
+    padding: 10px 0;
+    position: relative;
+}
+.oui-toolbar-area:after{
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/*.oui-toolbar-area button {
+    background: none;
+    padding: 0 10px;
+    min-width: 80px;
+    height: 30px;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+    font-size: 14px;
+    line-height: 28px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 7px;
+}
+.oui-toolbar-area button:hover {
+    background: #2C82FC;
+    color: #ffffff;
+}
+.oui-toolbar-area button.btn-disable{
+    background:#b8b8b8;
+    border-color:#b8b8b8;
+    color: #eee;
+}
+.btn-icon{
+    background: url("../images/btn-option-icon.png") no-repeat;
+    background-size: 210px 105px;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 2px;
+    margin-top: -3px;
+}*/
+/*编辑*/
+.btn-icon-edit{
+    background-position: 0 -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-edit{
+    background-position: 0 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-edit,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-edit{
+    background-position: 0 -14px;
+}
+/*删除*/
+.btn-icon-delete{
+    background-position: -14px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-delete{
+    background-position: -14px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-delete,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-delete{
+    background-position: -14px -14px;
+}
+/*添加*/
+.btn-icon-add{
+    background-position: -28px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-add{
+    background-position: -28px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-add,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-add{
+    background-position: -28px -14px;
+}
+/*更多*/
+.btn-icon-more{
+    background-position: -70px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-more{
+    background-position: -70px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-more,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-more{
+    background-position: -70px -14px;
+}
+/*批量导入*/
+.btn-icon-batchImport{
+    background-position: -98px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-batchImport{
+    background-position: -98px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-batchImport,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-batchImport{
+    background-position: -98px -14px;
+}
+/*导入*/
+.btn-icon-leadIn{
+    background-position: -112px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-leadIn{
+    background-position: -112px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-leadIn,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-leadIn{
+    background-position: -112px -14px;
+}
+/*导出*/
+.btn-icon-leadOut{
+    background-position: -126px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-leadOut{
+    background-position: -126px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-leadOut,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-leadOut{
+    background-position: -126px -14px;
+}
+/*查看*/
+.btn-icon-see{
+    background-position: -140px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-see{
+    background-position: -140px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-see,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-see{
+    background-position: -140px -14px;
+}
+/*打印*/
+.btn-icon-print{
+    background-position: -154px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-print{
+    background-position: -154px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-print,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-print{
+    background-position: -154px -14px;
+}
+
+/*日志*/
+.btn-icon-log{
+    background-position: -168px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-log{
+    background-position: -168px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-log,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-log{
+    background-position: -168px -14px;
+}
+/*撤銷*/
+.btn-icon-revoke{
+    background-position: -182px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-revoke{
+    background-position: -182px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-revoke,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-revoke{
+    background-position: -182px -14px;
+}
+.oui-toolbar-area .toolbar-search-area{
+    float: right;
+}
+/*重新提交*/
+.btn-icon-againSub{
+    background-position: -196px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-againSub{
+    background-position: -196px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-againSub,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-againSub{
+    background-position: -196px -14px;
+}
+/*取回*/
+.btn-icon-getBack{
+    background-position: 0 -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-getBack{
+    background-position: 0 -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-getBack,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-getBack{
+    background-position: 0 -56px;
+}
+/*批量下载*/
+.btn-icon-batchDown{
+    background-position: -28px -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-batchDown{
+    background-position: -28px -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-batchDown,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-batchDown{
+    background-position: -28px -56px;
+}
+/*审核*/
+.btn-icon-auditing{
+    background-position: -42px -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-auditing{
+    background-position: -42px -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-auditing,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-auditing{
+    background-position: -42px -56px;
+}
+@media screen and (max-width: 1024px) {
+    .oui-toolbar-area button .btn-icon{
+        display: none !important;
+    }
+}
+@media screen and (max-width: 1130px) {
+    .oui-toolbar-area button .btn-icon{
+        display: none !important;
+    }
+}
+/*列表toolbar*/
+/*全选*/
+.multi-select-all {
+    display: block;
+    margin-top: 16px;
+    text-align: left;
+}
+.multi-select-all button{
+    background: transparent;
+    height: 24px;
+    line-height: 22px;
+    padding: 0 15px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border:0;
+    outline: none;
+    margin-right: 20px;
+    cursor: pointer;
+}
+.multi-select-all button.btn-select-all{
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+}
+.multi-select-all button.btn-select-all:hover{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.multi-select-all button.btn-select-clear{
+    border: 1px solid #c4c4c4;
+    color: #515151;
+}
+.multi-select-all button.btn-select-clear:hover{
+    background: #c4c4c4;
+    color: #ffffff;
+}
+/*地图返回按钮*/
+.map-back-btn{
+    background: url("../images/map-back-icon.png") rgba(0,0,0,.35) center no-repeat;
+    background-size: auto 14px;
+    background-position: 10px 8px;
+    width: 70px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,.8);
+    padding-left: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 99;
+}
+.map-back-btn:hover{
+    background-color: rgba(0,0,0,.5);
+    color: #ffffff;
+    cursor: pointer;
+}
+@charset "UTF-8";
+/**
+ * 弹窗类
+ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, div, h3, h4, button {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    line-height: 1.5;
+    /*-webkit-user-select: none;*/
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    outline: 0;
+}
+
+h3, h4 {
+    font-size: 100%;
+    font-weight: normal;
+}
+.oui-body-bar-hidden{
+    overflow: hidden;
+}
+.oui-border-b {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.oui-dialog {
+    /*display: table;*/
+    background: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-align: center;
+    position: fixed;
+    z-index: 400;
+    top: 0;
+    left: 0
+}
+.oui-dialog:after{
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 0;
+    vertical-align: middle;
+}
+.oui-dialog-box {
+    vertical-align: middle;
+    display: inline-block;
+    text-align: center;
+}
+
+.oui-dialog-area, .oui-dialog-cnt {
+    width: 500px;
+    background: #ffffff;
+    vertical-align: middle;
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+    -webkit-transition: all .25s ease-in-out;
+    -moz-transition: all .25s ease-in-out;
+    -ms-transition: all .25s ease-in-out;
+    -o-transition: all .25s ease-in-out;
+    transition: all .25s ease-in-out
+}
+.show-close-btn{
+    background: url("../images/show-close-btn.png") rgba(0,0,0,.5) center no-repeat;
+    background-position: 13px 7px;
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+    border-bottom-left-radius: 60px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.oui-dialog-hd, .oui-dialog-hd-1 {
+    line-height: 40px;
+    height: 40px;
+    padding:0 36px 0 20px;
+    font-size: 14px;
+    position: relative;
+    text-align: left;
+}
+
+.oui-dialog-hd {
+    background: #e5e5e5;
+}
+
+.oui-dialog-hd-1 {
+    background: #fff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.oui-dialog-hd h3, .oui-dialog-hd-1 h3 {
+    font-size: 14px;
+    font-weight: normal;
+    padding-right: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #515151;
+    /*overflow: hidden*//*为了给title后面加问号故注释掉*/
+}
+
+.oui-dialog-close {
+    background: url(../images/list-newform-close.png) no-repeat;
+    background-size: 12px 12px;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    margin-top: -6px;
+    cursor: pointer;
+}
+.fullScreen-close{
+    background-image: url("../images/dialog-commonclose-icon.png");
+    background-size: 18px 18px;
+    background-color: rgba(0, 0, 0, .5);
+    background-repeat: no-repeat;
+    background-position: 12px 6px;
+    width: 36px;
+    height: 36px;
+    border-bottom-left-radius: 50px;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+.oui-dialog-bd {
+    background: #ffffff;
+    padding: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.oui-dialog-bd img {
+    display: -webkit-box;
+    display: -moz-box;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 15px;
+}
+
+.oui-dialog-ft, .oui-dialog-ft-1 {
+    background: #ffffff;
+    width: 100%;
+    padding: 20px 0;
+    display: block;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+}
+
+.oui-dialog-cnt .oui-dialog-ft {
+    position: static;
+}
+.oui-dialog-ft-1 {
+    border-top: 1px solid #eaeaea;
+}
+
+.oui-dialog-ft-1 .oui-dialog-ok, .oui-dialog-ft-1 .oui-dialog-cancel {
+    margin: 0 20px;
+}
+.oui-dialog-ft:after{
+    content: "";
+    width: 0;
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.oui-dialog-ok,
+.oui-dialog-cancel,
+.oui-dialog-button-l,
+.oui-dialog-button-c,
+.oui-dialog-button-r,
+.oui-dialog-more-option {
+    min-width: 90px;
+    height: 34px;
+    padding: 0 20px;
+    margin: 0 25px;
+    line-height: 34px;
+    text-align: center;
+    display: inline-block;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    border: 0;
+    outline: none;
+}
+
+.oui-dialog-button-l {
+    float: left;
+}
+
+.oui-dialog-button-r {
+    float: right;
+}
+
+.oui-dialog-ok {
+    background: #2C82FC;
+    color: #ffffff;
+}
+
+.oui-dialog-ok:hover {
+    background: #63a4ed;
+    color: #ffffff;
+}
+.oui-dialog-ok.disable,
+.oui-dialog-ok:hover.disable{
+    background: #b4b4b4;
+    color: #ffffff;
+}
+.oui-dialog-cancel{
+    background: #e6e6e6;
+    color: #515151;
+}
+.oui-dialog-cancel:hover {
+    background: #e1e1e1;
+}
+.oui-dialog-more-option{
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+}
+.oui-dialog-more-option:hover{
+    background: #2C82FC;
+    border: 1px solid #2C82FC;
+    color: #ffffff;
+}
+.oui-dialog-ok, .oui-dialog-cancel, .oui-dialog-more-option{
+    min-width: 90px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    padding: 0 20px;
+    display: inline-block;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+/*输入框通用*/
+.oui-dialog-item {
+    width: 100%;
+    float: left;
+    margin-bottom: 16px;
+}
+
+.oui-dialog-item-words {
+    width: 100px;
+    float: left;
+    line-height: 34px;
+    color: #444444;
+    font-size: 14px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.oui-dialog-item-button {
+    background: #2C82FC;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    display: inline-block;
+    cursor: pointer;
+
+}
+
+.oui-dialog-item .text, .oui-dialog-item .text-code {
+    width: 55%;
+    font-size: 14px;
+    color: rgb(153, 153, 153);
+    overflow: hidden;
+    padding: 8px 25px 8px 5px;
+    border: 1px solid rgb(204, 204, 204);
+    outline: none;
+    line-height: 14px;
+    float: left;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+.oui-dialog-item .text-code {
+    width: 30%;
+}
+
+.oui-dialog-item .text:focus, .thickbox-form .text:focus, .oui-dialog-item .text-code:focus {
+    border: 1px solid rgb(44, 130, 252);
+}
+
+/*图片上传预览*/
+.oui-dialog-imgproview {
+    padding-left: 110px;
+    margin-top: 20px;
+}
+
+.oui-dialog-imgproview span {
+    width: 100px;
+    height: 80px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.oui-dialog-imgproview span img {
+    width: 100%;
+    height: 100%;
+}
+
+.oui-dialog-imgproview-delete {
+    background: #ffffff;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    color: #FF0000;
+    font-style: normal;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 16px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.proview-info {
+    background: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    position: absolute;
+    top: 0%;
+    left: 0;
+    display: none;
+    color: #ffffff;
+    font-size: 14px;
+    z-index: 3;
+    padding-top: 30%;
+}
+
+.oui-dialog-imgproview:hover .proview-info {
+    display: block;
+    cursor: pointer;
+}
+
+/********上传组件 公共样式 start********/
+/**
+     * 上传区域表格样式
+     */
+#thumbnails table {
+    width: 100%;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+#thumbnails table td {
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 10px 0;
+}
+
+#thumbnails {
+    margin-top: 5px;
+}
+
+#thumbnails table {
+    width: 100%;
+}
+
+#content form {
+    margin-top: 10px;
+}
+
+.oui-dialog-upload-button {
+    display: inline;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    color: #ffffff;
+    font-size: 14px;
+    background-color: #2C82FC;
+    padding: 8px;
+}
+
+#thumbnails table tr td:nth-child(1) {
+    width: 100px;
+    text-align: center;
+}
+
+#thumbnails table tr td:nth-child(2) {
+    width: 300px;
+    text-align: left;
+    font-size: 12px;
+}
+
+#thumbnails table tr td:nth-child(3) {
+    width: 100px;
+    text-align: center;
+}
+
+#thumbnails table tr td:nth-child(4) {
+    width: 40px;
+    text-align: center;
+}
+
+#thumbnails table tr:nth-child(2n) {
+    background: #ebf1f7;
+}
+
+/**
+ * 上传队列区域
+ */
+.oui-dialog-upload-area {
+    max-height: 300px;
+    margin-top: 10px;
+    overflow-y: auto;
+}
+
+/********上传组件 公共样式 end********/
+
+/*dialog-iframe弹窗样式*/
+.oui-class-dialog-11 {
+
+}
+
+.oui-dialog-area {
+    width: 96%;
+    height: 94%;
+}
+
+.oui-dialog-iframe {
+    width: 100%;
+    height: 100%;
+    float: left;
+    overflow-y: auto;
+}
+
+.oui-dialog-content {
+    height: 100%;
+    background-color: #ffffff;
+    color: #515151;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.oui-dialog-iframe-content {
+    width: 100%;
+    position: absolute;
+    top: 40px;
+    bottom: 71px;
+    background-color: #ffffff;
+    float: left;
+    overflow-y: auto;
+}
+
+.oui-dialog-iframe iframe, .oui-dialog-iframe-content iframe {
+    width: 100%;
+    height: 100%;
+    float: left;
+    border: 0;
+    position: absolute;
+    left: 0;
+}
+
+/**
+ * 公共控件进度条 开始
+ */
+.oui-class-dialog-9 .oui-dialog {
+    background: rgba(0, 0, 0, 0);
+}
+
+.oui-class-dialog-9 .oui-dialog .oui-dialog-cnt {
+	    width: auto;
+    min-width: 130px;
+    max-width: 90%;
+    display: inline-block;
+    padding: 55px 35px;
+    background: rgba(0, 0, 0, .5);
+    border-radius: 5px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+
+}
+
+/** 公共控件进度条 结束*/
+@-webkit-keyframes box-fade-up {
+    0% {
+        -webkit-transform: translate(0, 20px);
+        -moz-transform: translate(0, 20px);
+        -ms-transform: translate(0, 20px);
+        transform: translate(0, 20px);
+    }
+    100% {
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes box-fade-up {
+    0% {
+        -webkit-transform: translate(0, 20px);
+        -moz-transform: translate(0, 20px);
+        -ms-transform: translate(0, 20px);
+        transform: translate(0, 20px);
+    }
+    100% {
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+}
+
+.oui-zoomIn {
+    -webkit-animation: box-fade-up .25s ease-out;
+    -moz-animation: box-fade-up .25s ease-out;
+    -o-animation: box-fade-up .25s ease-out;
+    animation: box-fade-up .25s ease-out;
+}
+
+@-webkit-keyframes box-share-up {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes box-share-up {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.nicEdit-main {
+    padding: 11px 15px;
+}
+input.input-dialog-text,textarea.input-dialog-text{
+    display: block;
+    width: 100%;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+textarea.input-dialog-text{
+    height: 120px;
+}
+input:read-only.input-dialog-text,
+textarea:read-only.input-dialog-text{
+    border-color: transparent;
+}
+.dialog-input{
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+}
+.dialog-input label{
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #515151;
+    text-align: left;
+}
+.dialog-input:last-child{
+    margin-bottom: 0;
+}
+input.input-dialog-text {
+    min-height: 36px;
+}
+/*textarea.input-dialog-text{
+    min-height: 120px;
+
+}*/
+.dialog-textarea{
+    background: #ffffff;
+    width: 85%;
+    height: 80px;
+    border: 1px solid #c9c9c9;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 8px;
+    margin: 0 auto;
+    margin-top: 18px;
+    font-size: 14px;
+}
+.oui-dialog-width-1{
+    width: 640px !important;
+}
+.oui-dialog-width-2{
+    width: 65% !important;
+}
+.oui-dialog-width-3{
+    width: 85% !important;
+}
+/*点击查看图片*/
+.oui-dialog-viewImage{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    display: table;
+}
+.oui-dialog-viewImage .view-image-bg{
+    background: rgba(0,0,0,.5);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+}
+.oui-dialog-viewImage .view-image-content{
+    vertical-align: middle;
+    display: table-cell;
+    text-align: center;
+    _position: absolute;
+    _top: 50%;
+    _left: 50%;
+}
+.view-image-content .view-image-box{
+    background: #ffffff;
+    max-width: 66%;
+    padding: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+    _position: relative;
+    _top: -50%;
+    _left: -50%;
+    z-index: 10;
+}
+.view-image-box .images-area-info{
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+}
+.view-image-box img{
+    max-width: 100%;
+    max-height: 520px;
+    vertical-align: top;
+}
+.image-box-close{
+    background:url("../images/dialog-commonclose-icon.png") rgba(0,0,0,.5) no-repeat;
+    background-size: 16px 16px;
+    background-position: 14px 6px;
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+    border-bottom-left-radius: 60px;
+    cursor: pointer;
+}
+/*点击查看图片*/
+@charset "UTF-8";
+/*输入框/文本框/下拉框通用背景色*/
+input, textarea, select{
+    background: #ffffff;
+}
+/**在线编辑器*/
+oui-form[type='htmleditor']{
+    display: none;
+}
+/*防止省市区等下方的输入框出现小人*/
+input::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+/*清除浮动*/
+.oui-class-radio label:after,
+.oui-class-multiselect label:after,
+.oui-class-radio-1 label:after,
+.oui-class-multiselect-1 label:after{
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/*-----------------------控件样式区域开始------------------------*/
+/*流水号*/
+.oui-class-serialnumber input[type="text"] {
+    background: #f5f5f5;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+/*单行文本*/
+.oui-class-textfield{
+    position: relative;/*扫码录入*/
+}
+.oui-class-textfield input[type="text"] {
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-textfield input[type="text"]:focus{
+    border: 1px solid #2C82FC;
+}
+/*多行文本*/
+.oui-class-textarea textarea {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+    word-break: break-all;
+    word-wrap: break-word;
+    border: 1px solid #cccccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+    vertical-align: top;
+}
+.oui-class-textarea textarea:focus{
+    border: 1px solid #2C82FC;
+}
+/*数字*/
+.oui-class-number{
+    position: relative;
+}
+.oui-class-number .oui-form {
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-number input[type="text"]:focus,.oui-class-number input[type="number"]:focus{
+    border: 1px solid #2C82FC;
+}
+.oui-class-number .oui-form.oui-number-percent{
+    padding-right: 25px;
+}
+.oui-class-number .oui-form.oui-number-percent+.oui-number-percent-char{
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    width: 25px;
+    height: 26px;
+    text-align: center;
+    display: inline-block;
+    line-height: 26px !important;
+    font-size: 18px;
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -13px;
+}
+.oui-form.oui-number-split+.oui-number-split-area{
+    background: #fff;
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+    width: 100%;
+    min-height: 36px;
+    line-height: 34px !important;
+    color: #515151;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+/*数字-在途*/
+.oui-class-numberonline .oui-form {
+    background: #f5f5f5;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    /*border: 1px solid #e6e6e6;*/
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-numberonline input[type="text"]:focus,.oui-class-numberonline input[type="number"]:focus{
+    border: 1px solid #2C82FC;
+}
+/*下拉框*/
+.oui-class-singleselect select{
+    width: 100%;
+    height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-singleselect select:focus{
+    border: 1px solid #2C82FC;
+}
+@-moz-document url-prefix() { .oui-class-singleselect select{
+    padding: 6px 5px;
+    padding-top: 7px;
+} }
+/*单选多选文字信息*/
+.button-wrapper-info{
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+/*复选&单选公用样式*/
+.multiSelect-wrapper, .radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    float: left;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 3px 7px 0 0;
+}
+.selected-icon {
+    cursor: pointer;
+}
+.radio-button-wrapper input[type=radio], .multiSelect-wrapper input[type=checkbox] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.multiSelect-wrapper input[type="checkbox"] + .selected-icon, .radio-button-wrapper input[type="radio"] + .selected-icon {
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #aab2bd;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+.multiSelect-wrapper input[type="checkbox"] + .selected-icon:after, .radio-button-wrapper input[type="radio"] + .selected-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.multiSelect-wrapper input[type="checkbox"]:checked + .selected-icon, .radio-button-wrapper input[type="radio"]:checked + .selected-icon {
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+}
+.multiSelect-wrapper input[type="checkbox"]:checked + .selected-icon:after, .radio-button-wrapper input[type="checkbox"]:checked + .selected-icon:after {
+    border-bottom-color: #FFF;
+    border-right-color: #FFF;
+}
+.multiSelect-wrapper input[type="checkbox"] + .selected-icon:after, .radio-button-wrapper input[type="checkbox"] + .selected-icon:after {
+    top: 1px;
+    left: -1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid transparent;
+    -webkit-transform: rotate(43deg);
+    -ms-transform: rotate(43deg);
+    -o-transform: rotate(43deg);
+    transform: rotate(43deg);
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+/*单选*/
+.radio-button-wrapper input[type="radio"] + .selected-icon {
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.radio-button-wrapper input[type="radio"] + .selected-icon:after {
+    background: #FFF;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+
+.radio-button-wrapper input[type="radio"]:checked + .selected-icon:after {
+    -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
+    -o-transform: scale(0.4);
+    transform: scale(0.4);
+}
+/*多选*/
+.multiSelect-wrapper input[type="checkbox"] + .selected-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+/*单选&多选公用其他*/
+.oui-class-other{
+    display: inline-block;
+}
+.oui-input-others{
+    background: #ffffff;
+    width: 70%;
+    height: 28px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-top: -3px;
+    margin-left: -10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-radio label + input.oui-input-others,
+.oui-class-radio-1 label + input.oui-input-others,
+.oui-class-multiselect label + input.oui-input-others,
+.oui-class-multiselect-1 label + input.oui-input-others{
+    margin-left: 4px;
+}
+.oui-input-others:focus{
+    border:1px solid #2C82FC;
+}
+/*模拟下拉单选（oui-class-singleselect-（）或者下拉多选(oui-class-multiselect-（）)*/
+.oui-class-singleselect-2,
+.oui-class-singleselect-3,
+.oui-class-multiselect-2,
+.oui-class-multiselect-3,
+.oui-class-singleselect-4,
+.oui-class-singleselect-5,
+.oui-class-multiselect-4,
+.oui-class-multiselect-5{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    width: 100%;
+    position: relative;
+    font-size: 14px;
+}
+.oui-class-singleselect-3,.oui-class-multiselect-3,.oui-class-singleselect-4,.oui-class-singleselect-5{
+    border: 1px solid #bdbdbd;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-singleselect-2 input[type="text"],
+.oui-class-singleselect-3 input[type="text"],
+.oui-class-multiselect-2 input[type="text"],
+.oui-class-multiselect-3 input[type="text"],
+.oui-class-singleselect-4 input[type="text"],
+.oui-class-singleselect-5 input[type="text"],
+.oui-class-multiselect-4 input[type="text"],
+.oui-class-multiselect-5 input[type="text"]{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    color: #515151;
+    border: 1px solid #cccccc;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding-right: 30px;
+}
+.oui-class-singleselect-3 input[type="text"],.oui-class-multiselect-3 input[type="text"],.oui-class-singleselect-4 input[type="text"],.oui-class-singleselect-5 input[type="text"]{
+    border: 0;
+    min-height: 28px;
+}
+.oui-class-singleselect-2 input[type="text"]:focus,.oui-class-multiselect-2 input[type="text"]:focus{
+    border: 1px solid #2C82FC;
+}
+.singleselect-arrow,.multiselect-arrow{
+    background: url("../images/xiajianjiao-arrow.png") no-repeat !important;
+    width: 13px;
+    height: 10px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-top: -5px !important;
+}
+.oui-class-singleselect-2 .singleselect-arrow{
+    top:17px !important;
+}
+/*数字2是默认展开，数字3是浮动展开*/
+.oui-class-singleselect-2 .oui-select-mask-layer,
+.oui-class-singleselect-3 .oui-select-mask-layer,
+.oui-class-multiselect-2 .oui-select-mask-layer,
+.oui-class-multiselect-3 .oui-select-mask-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 5;
+    display: none;
+}
+.oui-class-singleselect-2 ul,.oui-class-multiselect-2 ul{
+    background-color: #ffffff;
+    padding: 3px 0;
+    border: 1px solid #e6e6e6;
+    border-top: 0;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-top:1px;
+    z-index: 6;
+}
+.oui-class-singleselect-3 ul,.oui-class-multiselect-3 ul,.oui-class-singleselect-4 ul,.oui-class-singleselect-5 ul{
+    background: #ffffff;
+    padding: 5px 0;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    position: absolute;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e6e6e6;
+    left: 0;
+    right: 0;
+    top: 41px;
+    z-index: 1000;
+    -webkit-box-shadow: 0 1px 6px 0 rgba(0,0,0,.3);
+    box-shadow: 0 1px 6px 0 rgba(0,0,0,.3);
+}
+.oui-class-singleselect-4 ul,.oui-class-singleselect-5 ul{
+    padding: 8px 0;
+}
+.oui-class-singleselect-2 ul li,.oui-class-singleselect-3 ul li,.oui-class-multiselect-2 ul li,.oui-class-multiselect-3 ul li,.oui-class-singleselect-4 ul li,.oui-class-singleselect-5 ul li{
+    width: 100%;
+    display: block;
+    float: none !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    overflow: hidden;
+}
+.oui-class-singleselect-2 ul li:hover,
+.oui-class-singleselect-3 ul li:hover,
+.oui-class-multiselect-2 ul li:hover,
+.oui-class-multiselect-3 ul li:hover,
+.oui-class-singleselect-4 ul li:hover,
+.oui-class-singleselect-5 ul li:hover {
+    background: #e6e6e6;
+}
+.oui-class-singleselect-4 ul li,.oui-class-singleselect-5 ul li{
+    display: block;
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 6px 8px;
+}
+.oui-class-singleselect-4 ul li:hover,.oui-class-singleselect-5 ul li:hover{
+    background: #eeeeee;
+}
+.oui-class-singleselect-2 ul li>label,.oui-class-singleselect-3 ul li>label,.oui-class-multiselect-2 ul li>label,.oui-class-multiselect-3 ul li>label{
+    display: block;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 8px;
+    cursor: pointer;
+}
+ul.singleselect-hidden-radio li label>div.radio-button-wrapper{
+    display: none;
+}
+/*单选&多选平铺*/
+.oui-class-multiselect-6,
+.oui-class-radio-4{
+    font-size: 0;
+    display: block;
+    margin-right: -10px;
+}
+.oui-class-multiselect-6 > label,
+.oui-class-radio-4 > span{
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    margin: 5px 10px 5px 0;
+    padding: 5px 12px;
+    line-height: normal;
+}
+.oui-class-radio-4 > span label{
+    display: inline-block;
+}
+.oui-class-multiselect-6 .multiSelect-wrapper,
+.oui-class-radio-4 .radio-button-wrapper{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    z-index: 20;
+}
+.oui-class-multiselect-6 .button-wrapper-info,
+.oui-class-radio-4 .button-wrapper-info{
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+}
+.oui-class-multiselect-6 .multiSelect-wrapper input[type="checkbox"] + .selected-icon,
+.oui-class-radio-4 .radio-button-wrapper input[type="radio"] + .selected-icon{
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    border-color: #ccc;
+    border-radius: 2px;
+}
+.oui-class-multiselect-6 .multiSelect-wrapper input[type="checkbox"]:checked + .selected-icon,
+.oui-class-radio-4 .radio-button-wrapper input[type="radio"]:checked + .selected-icon{
+    background: rgba(44,130,252,.1);
+    border-color: #2C82FC;
+}
+.oui-class-multiselect-6 .multiSelect-wrapper input[type="checkbox"] + .selected-icon:after,
+.oui-class-radio-4 .radio-button-wrapper input[type="radio"] + .selected-icon:after{
+    visibility: hidden;
+}
+/*日期时间*/
+.oui-class-datepicker,
+.oui-class-datepicker-1,
+.oui-class-datepicker-2,
+.oui-class-datepicker-4,
+.oui-class-datepicker-5{
+    position: relative;
+}
+.oui-class-datepicker input,
+.oui-class-datepicker-1 input,
+.oui-class-datepicker-2 input,
+.oui-class-datepicker-4 input,
+.oui-class-datepicker-5 input{
+    background: url("../images/datepicker-icon.png") #ffffff no-repeat;
+    background-position: left 4px center;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px 0 31px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.oui-class-datepicker input:focus,
+.oui-class-datepicker-1 input:focus,
+.oui-class-datepicker-2 input:focus,
+.oui-class-datepicker-4 input:focus,
+.oui-class-datepicker-5 input:focus{
+    border:1px solid #2C82FC;
+}
+.oui-class-datepicker-6{
+    width: 100%;
+}
+.oui-class-datepicker-6 .layui-laydate-main{
+    width: 100%;
+}
+.oui-class-datepicker-6 .layui-laydate, .oui-class-datepicker-6 .layui-laydate-hint{
+    box-shadow: none;
+    display: block;
+}
+/*时间*/
+.oui-class-timepicker{
+    position: relative;
+}
+.oui-class-timepicker input{
+    width: 80px;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 28px 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.oui-class-timepicker input:focus{
+    border:1px solid #2C82FC;
+}
+.oui-class-timepicker i{
+    font-style: normal;
+    padding: 0 5px;
+    font-size: 20px;
+}
+/*清空时间*/
+.design-ctl-datettr .design-datectl i ,.oui-class-datepicker-2 i,.design-ctl-datettr .design-datectrltime i{
+    background: #bbbbbb;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 16px;
+    font-style: normal;
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    font-style: normal;
+    -webkit-transform: translateX(0) translateY(-50%);
+    -moz-transform: translateX(0) translateY(-50%);
+    -ms-transform: translateX(0) translateY(-50%);
+    transform: translateX(0) translateY(-50%);
+    cursor: pointer;
+}
+.oui-class-datepicker-2 i{
+    right: 5px;
+}
+.oui-class-timepicker .time-picker-clear{
+    background: url(../images/delete-info.png) center no-repeat;
+    background-size: 16px 16px;
+    width: 28px;
+    height: 100%;
+    font-size: 0 !important;
+    padding: 0 !important;
+    text-align: center;
+    line-height: 16px;
+    font-style: normal;
+    cursor: pointer;
+    margin-left: 6px;
+    display: none;
+}
+.oui-class-timepicker:hover .time-picker-clear{
+    display: inline-block;
+}
+/*插入图片*/
+.oui-upload-img-item{
+    width: 23.5%;
+    height: 103px;
+    padding: 2px;
+    display: inline-block;
+    border: 1px solid #ceced0;
+    position: relative;
+    margin:5px 0;
+    margin-right: 2%;
+    vertical-align: top;
+}
+.oui-upload-img-item:hover{
+    border: 1px dashed #ceced0;
+}
+.oui-upload-img-item:nth-child(4n+1){
+    margin-right: 0;
+}
+/*.oui-upload-img-item:nth-child(2),.oui-upload-img-item:nth-child(3),.oui-upload-img-item:nth-child(4),.oui-upload-img-item:nth-child(5){
+    margin-bottom: 0;
+}*/
+.oui-upload-img-item a{
+    display: inline-block;
+    width: 100%;
+    height: 75px;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+    position: relative;
+}
+.oui-upload-img-item a img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+    border: 0;
+    cursor: pointer;
+}
+.oui-upload-img-item span{
+    width: 100%;
+    height: 25px;
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    line-height: 25px;
+    color: #87898e;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.oui-upload-img-item i.download-img{
+    background: url("../images/download-icon.png") no-repeat;
+    background-position: 4px 0;
+    width: 20px;
+    height: 16px;
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    margin-top: -8px;
+    display: none;
+}
+.oui-upload-img-item:hover span{
+    padding-right: 20px;
+}
+.oui-upload-img-item:hover i.download-img{
+    display: inline-block;
+}
+.oui-upload-img-item i.download-img:hover{
+    background-position: 4px -21px;
+    cursor: pointer;
+}
+
+.oui-upload-img-item i{
+    background: url("../images/oui-upload-img-delete.png") no-repeat;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: -6px;
+    right: -7px;
+    cursor: pointer;
+    display: none;
+}
+.oui-upload-img-item:hover i{
+    display: block;
+}
+.oui-upload-img-button,.oui-image-default{
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    background: url("../images/form-uploadfile-default.png") #ededee no-repeat;
+    -ms-background-position-y: 30px;
+    background-position: center 18px;
+    cursor: pointer;
+    text-align: center;
+    padding-top: 65px;
+    font-size: 14px;
+    color: #87898e;
+    background-position: center 18px;
+}
+.oui-image-default{
+    background-position: center 25px;
+    padding-top: 75px;
+    min-height: 115px;
+}
+.oui-upload-img-button:hover{
+    color: #2C82FC;
+}
+/*插入附件*/
+.oui-class-uploadfile a{
+    display: inline-block;
+    width: 100%;
+    height: 75px;
+}
+.oui-upload-item{
+    background: #f2f2f2;
+    width: 48%;
+    height: 50px;
+    display: inline-block;
+    padding: 5px 8px;
+    margin: 5px 0;
+    position: relative;
+    vertical-align: top;
+}
+.oui-upload-item:nth-child(2n){
+    margin-right: 4%;
+}
+.oui-upload-item:nth-child(2n+1){
+    margin-bottom: 0;
+    margin-right: 0;
+}
+.oui-upload-item a{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: #515151;
+    cursor: pointer;
+    display: inline-block;
+}
+.oui-upload-item-button{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #8e8e8e;
+    font-size: 14px;
+    cursor: pointer;
+}
+.oui-upload-item-button:hover,.oui-upload-item a:hover{
+    color: #2C82FC;
+}
+.oui-upload-item span{
+    width: 100%;
+    display: inline-block;
+    font-size: 12px;
+    color: #b7b7b7;
+    margin-top: -4px;
+    float: left;
+}
+.oui-upload-item i{
+    background: url("../images/oui-upload-img-delete.png") no-repeat;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    cursor: pointer;
+    display: none;
+}
+.oui-upload-item-button span{
+    font-size: 30px;
+    display: inline-block;
+    vertical-align: top;
+}
+.oui-upload-item:hover i{
+    display: block;
+}
+/*图片组*/
+/*开关*/
+.oui-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    -ms-flex-item-align: center;
+    -webkit-align-self: center;
+    align-self: center
+}
+.oui-checkbox input[type=checkbox] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox {
+    background: #2C82FC;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:before {
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0)
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(42px);
+    -ms-transform: translateX(42px);
+    transform: translateX(42px)
+}
+.oui-checkbox .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    background: #e5e5e5;
+    z-index: 0;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox .checkbox:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 28px;
+    background: #fff;
+    z-index: 1;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1)
+}
+.oui-checkbox .checkbox:after {
+    content: ' ';
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    background: #fff;
+    position: absolute;
+    z-index: 2;
+    top: 2px;
+    left: 2px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox.large,.oui-checkbox.large .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+}
+.oui-checkbox.large input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(22px);
+    -ms-transform: translateX(22px);
+    transform: translateX(22px)
+}
+.oui-checkbox.large .checkbox:before {
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    height: 28px
+}
+.oui-checkbox.large .checkbox:after {
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    top: 2px;
+    left: 2px
+}
+.oui-checkbox.middle,.oui-checkbox.middle .checkbox {
+    width: 46px;
+    height: 24px;
+    border-radius: 16px;
+}
+.oui-checkbox.middle input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(21px);
+    -ms-transform: translateX(21px);
+    transform: translateX(21px)
+}
+.oui-checkbox.middle .checkbox {
+    display: inline-block;
+}
+.oui-checkbox.middle .checkbox:before {
+    left: 1px;
+    top: 1px;
+    width: 44px;
+    border-radius: 16px;
+    height: 22px;
+}
+.oui-checkbox.middle .checkbox:after {
+    height: 22px;
+    width: 22px;
+    border-radius: 22px;
+    top: 1px;
+    left: 1px
+}
+.oui-checkbox input[type=checkbox] {
+    display: inline \9;
+    zoom: 1 \9
+}
+.oui-checkbox .checkbox {
+    display: none \9
+}
+.oui-checkbox.disabled {
+    opacity: .4
+}
+/*评分*/
+.oui-class-score,.oui-class-score ul{
+    width: 100%;
+}
+.oui-class-score ul li{
+    background: url("../images/form-ico-star.png") no-repeat;
+    background-position: 0 0;
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    margin-right: 8px;
+}
+.oui-class-score ul li:hover{
+    background-position: 0 -30px;
+}
+.oui-score-active{
+    background-position: 0 -30px !important;
+}
+
+/*文字说明*/
+
+
+/*地理位置*/
+.oui-class-lbs,.oui-class-lbs-error{
+    background: #f2f2f2;
+    position: relative;
+    padding: 13px;
+    font-size: 0;
+}
+.oui-class-lbs{
+    padding-right: 30px;
+}
+.oui-class-lbs .lbs-item,.oui-class-lbs-error .lbs-item{
+    background: url("../images/lbs-pc-icon.png") no-repeat;
+    padding-left: 25px;
+    min-height: 24px;
+    line-height: 24px;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    font-size: 14px;
+}
+.oui-class-lbs .lbs-item{
+    background-position: 0 0;
+}
+.oui-class-lbs-error .lbs-item{
+    background-position: 0 -24px;
+}
+.oui-class-lbs .lbs-info,.oui-class-lbs-error .lbs-info{
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+    color: #2C82FC;
+}
+.oui-class-lbs .lbs-info.lbs-info-left,
+.oui-class-lbs-error .lbs-info.lbs-info-left{
+    text-align: left;
+    color: #515151;
+}
+.oui-class-lbs-error .lbs-info{
+    color: #ed3d26;
+}
+.oui-dialog-bd.oui-class-lbs-map-dialog{
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 40px;
+    bottom: 70px;
+    right: 0;
+}
+.oui-dialog-bd.oui-class-lbs-map-dialog + .oui-dialog-ft{
+    position: absolute;
+    left: 0;
+    bottom: 0
+}
+/*地理位置浮动层*/
+.lbs-float-layer{
+    background: #ffffff;
+    width: 100%;
+    height: 100%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.lbs-search{
+    background: #efeff4;
+    width: 100%;
+    height: 42px;
+    padding: 8px;
+    padding-right: 80px;
+    padding-top: 6px;
+    border-bottom: 1px solid #d6d7dc;
+    font-size: 0;
+    position: relative;
+
+}
+.lbs-search input{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    background:#ffffff;
+    width: 100%;
+    height: 30px;
+    border: 1px solid #dadbdf;
+    outline: none;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-align: left;
+    color: #333333;
+    text-indent: 5px;
+}
+.lbs-search input:focus{
+    text-align: left;
+}
+.lbs-search button{
+    background: #ff943e;
+    width: 60px;
+    height: 30px;
+    color: #ffffff;
+    border: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: absolute;
+    right: 10px;
+    top: 6px;
+    font-size: 14px;
+    outline: none;
+}
+.lbs-search button:active{
+    background: #fea156;
+}
+.lbs-map{
+    width: 100%;
+    height: 160px;
+    background: #333;
+}
+.lbs-list{
+    position: absolute;
+    top: 202px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.lbs-poi-search{
+    position: absolute;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #ffffff;
+    z-index: 1000;
+    display: none;
+}
+.lbs-poi-search ul, .lbs-list ul{
+    width: 100%;
+    overflow: hidden;
+    font-size: 0;
+}
+.lbs-poi-search ul li,.lbs-list ul li{
+    width: 100%;
+    padding-top: 7px;
+    display: inline-block;
+    padding-left: 20px;
+    padding-right: 0;
+}
+.lbs-poi-search ul li div, .lbs-list ul li div{
+    width: 100%;
+    position: relative;
+    padding-right: 30px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #f2f2f2;
+}
+.lbs-poi-search ul li div .lbs-b-name, .lbs-list ul li div .lbs-b-name{
+    font-size: 16px;
+    color: #333333;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.lbs-poi-search ul li div .lbs-s-name , .lbs-list ul li div .lbs-s-name{
+    font-size: 12px;
+    color: #b9b9b9;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.lbs-poi-search ul li div i, .lbs-list ul li div i {
+    /*width: .2px;*/
+    /*height: .2px;*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*right: .05px;*/
+    /*margin-top: -.13px;*/
+}
+.lbs-cancle{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 47px;
+    text-align: center;
+    line-height: 47px;
+    font-size: 16px;
+    color: #ff9e24;
+    border-top: 1px solid #f2f2f2;
+}
+.lbs-map-area{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.lbs-map-area .oui-map-search{
+    height: auto;
+    bottom: 64px !important;
+}
+.lbs-map-footer{
+    background: #f5f6f8;
+    width: 320px;
+    padding: 10px 0;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+.lbs-map-footer .oui-class-multiselect{
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    height: 21px;
+    text-align: left;
+}
+.lbs-map-footer .oui-class-multiselect label{
+    margin: 0 10px;
+    display: inline-block;
+}
+.lbs-map-footer .lbs-map-example{
+    display: block;
+    padding: 5px 5px 0 10px;
+    font-size: 12px;
+    text-align: left;
+}
+/*单行文本*/
+.oui-class-hidden-1 input[type="text"] {
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-hidden-1 input[type="text"]:focus{
+    border: 1px solid #2C82FC;
+}
+/*暂无数据*/
+.lbs-nodata{
+    font-size: 14px;
+    padding-top: 20px;
+    text-align: center;
+    color: #515151;
+}
+.lbs-dialog .oui-dialog-bd{
+    padding: 0;
+    position: absolute;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom:0;
+    text-align: left;
+
+}
+.lbs-dialog .oui-dialog-cnt{
+    width: 640px;
+    height: 85%;
+    position: relative;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+/*手机号码*/
+.oui-class-cellphone input[type="text"] {
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-cellphone input[type="text"]:focus{
+    border: 1px solid #2C82FC;
+}
+
+/*图片单选(imagesingle)--图片单选(imagemulti)*/
+.oui-class-imagesingle,.oui-class-imagemulti,
+.oui-class-imagesingle-1,.oui-class-imagemulti-1{
+    width: 100%;
+    font-size: 0;
+}
+.oui-class-imagesingle,
+.oui-class-imagemulti{
+    text-align: left;
+}
+.oui-class-imagesingle-1,
+.oui-class-imagemulti-1{
+    text-align: center;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item,
+.oui-class-imagemulti .oui-class-imagemulti-item,
+.oui-class-imagesingle-1 .oui-class-imagesingle-item,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item,
+.oui-class-imagesingle .oui-class-imagesingle-item-1,
+.oui-class-imagemulti .oui-class-imagemulti-item-1,
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-1,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-1,
+.oui-class-imagesingle .oui-class-imagesingle-item-2,
+.oui-class-imagemulti .oui-class-imagemulti-item-2,
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-2,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-2{
+    background: #ffffff;
+    padding: 2px;
+    text-align: center;
+    display: inline-block;
+    border: 1px solid #ceced0;
+    position: relative;
+    margin-bottom: 10px;
+    vertical-align: top;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item-1,
+.oui-class-imagemulti .oui-class-imagemulti-item-1,
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-1,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-1,
+.oui-class-imagesingle .oui-class-imagesingle-item-2,
+.oui-class-imagemulti .oui-class-imagemulti-item-2,
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-2,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-2{
+    height: 125px;
+}
+.oui-class-imagesingle .images-border-active,
+.oui-class-imagemulti .images-border-active,
+.oui-class-imagesingle-1 .images-border-active,
+.oui-class-imagemulti-1 .images-border-active,
+.oui-class-imagesingle-2 .images-border-active,
+.oui-class-imagemulti-2 .images-border-active{
+    border: 1px solid #2C82FC;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item,
+.oui-class-imagemulti .oui-class-imagemulti-item{
+    width: 100%;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item-1,
+.oui-class-imagemulti .oui-class-imagemulti-item-1{
+    width: 49%;
+    margin-right: 2%;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item-2,
+.oui-class-imagemulti .oui-class-imagemulti-item-2{
+    width: 32%;
+    margin-right: 2%;
+}
+.oui-class-imagesingle-1 .oui-class-imagesingle-item,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item{
+    width: 100%;
+}
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-1,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-1{
+    width: 50%;
+    display: block;
+    margin: 10px auto;
+}
+.oui-class-imagesingle-1 .oui-class-imagesingle-item-2,
+.oui-class-imagemulti-1 .oui-class-imagemulti-item-2{
+    width: 32%;
+    display: block;
+    margin: 10px auto;
+}
+.oui-class-imagesingle-item:hover,
+.oui-class-imagemulti-item:hover,
+.oui-class-imagesingle-item-1:hover,
+.oui-class-imagemulti-item-1:hover,
+.oui-class-imagesingle-item-2:hover,
+.oui-class-imagemulti-item-2:hover{
+    border: 1px dashed #2C82FC;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item-1:nth-child(2n),
+.oui-class-imagemulti .oui-class-imagemulti-item-1:nth-child(2n){
+    margin-right: 0;
+}
+.oui-class-imagesingle .oui-class-imagesingle-item-2:nth-child(3n),
+.oui-class-imagemulti .oui-class-imagemulti-item-2:nth-child(3n){
+    margin-right: 0;
+}
+.oui-class-imagesingle-item a,
+.oui-class-imagemulti-item a,
+.oui-class-imagesingle-item-1 a,
+.oui-class-imagemulti-item-1 a,
+.oui-class-imagesingle-item-2 a,
+.oui-class-imagemulti-item-2 a{
+    display: inline-block;
+    background: #ffffff;
+    width: 100%;
+    height: 90px;
+    text-align: center;
+    vertical-align: middle;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+.oui-class-imagesingle-item a img,
+.oui-class-imagemulti-item a img,
+.oui-class-imagesingle-item-1 a img,
+.oui-class-imagemulti-item-1 a img,
+.oui-class-imagesingle-item-2 a img,
+.oui-class-imagemulti-item-2 a img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+    border: 0;
+}
+.oui-class-imagesingle-item label,
+.oui-class-imagemulti-item label,
+.oui-class-imagesingle-item-1 label,
+.oui-class-imagemulti-item-1 label,
+.oui-class-imagesingle-item-2 label,
+.oui-class-imagemulti-item-2 label{
+    max-width: 100%;
+    height: 30px;
+    display: inline-block;
+    text-align: center;
+    font-size: 12px;
+    line-height: 30px;
+    margin: 0 auto;
+    color: #87898e;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+.oui-class-imagesingle-item label .radio-button-wrapper,
+.oui-class-imagemulti-item label .checkbox-wrapper,
+.oui-class-imagesingle-item-1 label .radio-button-wrapper,
+.oui-class-imagemulti-item-1 label .checkbox-wrapper,
+.oui-class-imagesingle-item-2 label .radio-button-wrapper,
+.oui-class-imagemulti-item-2 label .checkbox-wrapper{
+    margin-top: 7px !important;
+}
+/*选人控件*/
+.oui-class-selectperson,
+.oui-class-selectperson-1,
+.oui-class-selectperson-2,
+.oui-class-selectperson-3,
+.oui-class-selectperson-4,
+.oui-class-selectperson-5,
+.oui-class-selectperson-6{
+    width: 100%;
+}
+.oui-class-selectperson .personarea,
+.oui-class-selectperson-1 .personarea,
+.oui-class-selectperson-2 .personarea,
+.oui-class-selectperson-3 .personarea,
+.oui-class-selectperson-4 .personarea,
+.oui-class-selectperson-5 .personarea,
+.oui-class-selectperson-6 .personarea,
+.oui-class-selectperson-3 .multi-personarea,
+.oui-class-selectperson-4 .multi-personarea,
+.oui-class-selectperson-5 .multi-personarea,
+.oui-class-selectperson-6 .multi-personarea{
+    background: url("../images/selectPerson-icon.png") #ffffff center left 4px no-repeat;
+    background-size: 23px auto;
+    width: 100%;
+    height: 36px;
+    line-height: 34px;
+    text-align: left;
+    padding: 0 5px;
+    padding-left: 31px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.oui-class-selectperson-4 .personarea{
+    background: url("../images/selectorg-icon.png") #ffffff center left 4px no-repeat;
+    background-size: 23px auto;
+}
+.oui-class-selectperson-3 .multi-personarea{
+    background: url("../images/multi-selectPerson-icon.png") #ffffff center left 4px no-repeat;
+    background-size: 23px auto;
+}
+.oui-class-selectperson-4 .multi-personarea,
+.oui-class-selectperson-5 .multi-personarea,
+.oui-class-selectperson-6 .multi-personarea{
+    background: url("../images/multi-selectorg-icon.png") #ffffff center left 4px no-repeat;
+    background-size: 19px auto;
+}
+/*-----------------------控件样式区域结束------------------------*/
+.oui-design{
+	pointer-events: none;
+}
+
+/*CSS3模拟Switch内容区*/
+.pub-content-checkbox,.design-content-checkbox {
+    width: 46px;
+    height: 24px;
+    position: relative;
+    border: 1px solid #dfdfdf;
+    background-color: #fdfdfd;
+    box-shadow: #dfdfdf 0 0 0 0 inset;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-clip: content-box;
+    display: inline-block;
+    -webkit-appearance: none;
+    user-select: none;
+    outline: none;
+}
+.pub-content-checkbox {
+    float: left;
+    margin-top: 3px;
+}
+.pub-content-checkbox:before,.design-content-checkbox:before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.pub-content-checkbox:checked,.design-content-checkbox:checked {
+    border-color: #2C82FC;
+    box-shadow: #2C82FC 0 0 0 16px inset;
+    background-color: #2C82FC;
+}
+.pub-content-checkbox:checked:before,.design-content-checkbox:checked:before {
+    left: 22px;
+}
+.pub-content-checkbox.pub-content-checkbox-animbg,.design-content-checkbox.design-content-checkbox-animbg {
+    transition: background-color ease 0.4s;
+}
+.pub-content-checkbox.pub-content-checkbox-animbg:before,.design-content-checkbox.design-content-checkbox-animbg:before {
+    transition: left 0.3s;
+}
+.pub-content-checkbox.pub-content-checkbox-animbg:checked,.design-content-checkbox.design-content-checkbox-animbg:checked {
+    box-shadow: #dfdfdf 0 0 0 0 inset;
+    background-color: #64bd63;
+    transition: border-color 0.4s, background-color ease 0.4s;
+}
+.pub-content-checkbox.pub-contentswitch-animbg:checked:before,.design-content-checkbox.design-contentswitch-animbg:checked:before {
+    transition: left 0.3s;
+}
+.pub-content-checkbox.pub-content-checkbox-anim,.design-content-checkbox.design-content-checkbox-anim {
+    transition: border cubic-bezier(0, 0, 0, 1) 0.4s, box-shadow cubic-bezier(0, 0, 0, 1) 0.4s;
+}
+.pub-content-checkbox.pub-content-checkbox-anim:before,.design-content-checkbox.design-content-checkbox-anim:before {
+    transition: left 0.3s;
+}
+.pub-content-checkbox.pub-content-checkbox-anim:checked,.design-content-checkbox.design-content-checkbox-anim:checked {
+    box-shadow: #2C82FC 0 0 0 16px inset;
+    background-color: #2C82FC;
+    transition: border ease 0.4s, box-shadow ease 0.4s, background-color ease 1.2s;
+}
+.pub-content-checkbox.pub-content-checkbox-anim:checked:before,.design-content-checkbox.design-content-checkbox-anim:checked:before {
+    transition: left 0.3s;
+}
+
+.nicEdit-main{
+	outline:none;
+}
+/**
+ * 弹出查询框
+ */
+.single-select-search,
+.multi-select-search{
+    width: 100%;
+    border:1px solid #e6e6e6;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    padding: 4px;
+    padding-left: 37px;
+    position: relative;
+}
+.select-result{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+}
+.single-select-search .inputSearch,
+.multi-select-search .inputSearch{
+    width: 98%;
+    min-height: 27px;
+    line-height: 24px;
+    border: 0;
+    font-size: 14px;
+    color: #515151;
+    outline: none;
+}
+.single-select-search .single-select-search-icon,
+.multi-select-search .multi-select-search-icon{
+    background: url("../images/singleSelect-search-icon.png") no-repeat;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+.single-select-search-ul,
+.multi-select-search-ul{
+    text-align: left;
+    margin-top: 10px;
+    max-height:300px;
+    overflow-y: auto;
+    font-size: 15px;
+}
+.single-select-search-ul li,
+.multi-select-search-ul li{
+    padding: 4px 0;
+}
+
+.single-select-search-ul li label,
+.multi-select-search-ul li label{
+    width: 100%;
+    display: block;
+}
+.single-select-current,
+.multi-select-current{
+    text-align: left;
+    color: #777777;
+    font-size: 14px;
+    margin-top: 10px;
+}
+.single-select-current .single-select-display,
+.multi-select-current .multi-select-display{
+    color: #2C82FC;
+    margin-left: 3px;
+    font-weight: 700;
+}
+
+/*
+手机验证*/
+.oui-cellphone-check{
+    width: 100%;
+    margin-top: 15px;
+}
+.oui-cellphone-check input{
+    width: 70%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: top;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-cellphone-check input:focus{
+    border-color: #2C82FC;
+}
+.oui-cellphone-check .oui-cellphone-resend-btn,.oui-cellphone-check .oui-cellphone-resend{
+    width: 26%;
+    background: #2C82FC;
+    color: #ffffff;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 0;
+    outline: none;
+    font-size: 14px;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: top;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin-left: 4%;
+    cursor: pointer;
+}
+.oui-cellphone-check .oui-cellphone-resend{
+    background: #bdbdbd;
+    line-height: 36px;
+    display: inline-block;
+    text-align: center;
+}
+.oui-cellphone-check .oui-cellphone-resend .timeout{
+    font-weight: 500;
+    font-family: Arial, sans-serif, Helvetica, Tahoma;
+}
+
+/*省市区控件--开始*/
+.oui-class-address,
+.oui-class-address-1,
+.oui-class-address-2,
+.oui-class-address-3,
+.oui-class-address-4{
+    font-size: 0;
+    margin-left: -5px;
+    margin-right: -5px;
+}
+.oui-class-address .oui-class-singleselect,
+.oui-class-address .oui-class-textfield,
+.oui-class-address-1 .oui-class-singleselect,
+.oui-class-address-2 .oui-class-singleselect,
+.oui-class-address-3 .oui-class-singleselect,
+.oui-class-address-4 .oui-class-singleselect{
+    padding-right: 5px !important;
+    padding-left: 5px;
+}
+.oui-class-address .oui-class-singleselect,
+.oui-class-address-1 .oui-class-singleselect,
+.oui-class-address-2 .oui-class-singleselect,
+.oui-class-address-3 .oui-class-singleselect,
+.oui-class-address-4 .oui-class-singleselect{
+    min-height: 1px;
+    display: inline-block !important;
+    vertical-align: top;
+}
+.oui-class-address .oui-class-singleselect,
+.oui-class-address-1 .oui-class-singleselect{
+    width: 33.33333333%;
+}
+.oui-class-address-2 .oui-class-singleselect{
+    width: 50%;
+}
+.oui-class-address-3 .oui-class-singleselect,
+.oui-class-address-4 .oui-class-singleselect{
+    width: 100%;
+}
+.oui-class-address .oui-class-textfield{
+    width: 100%;
+    margin-top: 10px;
+}
+/*省市区控件--结束*/
+/*处理意见控件--开始*/
+.oui-handlesuggestion{
+    background: #ffffff;
+    width: 100%;
+    min-height: 70px;
+    max-height: 180px;
+    padding: 5px;
+    font-size: 14px;
+    word-break: break-all;
+    word-wrap: break-word;
+    border: 1px solid #cccccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    vertical-align: top;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.oui-handlesuggestion ul{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+.oui-handlesuggestion ul li{
+    display: block;
+    padding: 8px 5px;
+    text-align: left;
+    border-bottom: 1px dashed #cccccc;
+}
+.oui-handlesuggestion ul li .handlesuggestion-name{
+    display: inline-block;
+    color: rgba(81,81,81,.8);
+    margin-right: 5px;
+}
+.oui-handlesuggestion ul li .handlesuggestion-time{
+    display: inline-block;
+    color: rgba(81,81,81,.8);
+}
+.oui-handlesuggestion ul li .handlesuggestion-info{
+    display: block;
+    color: rgba(81,81,81,1);
+    word-break: break-all;
+
+}
+/*处理意见控件--结束*/
+/*删除图标*/
+.form-delete-info{
+    background: url("../images/delete-info.png") center no-repeat;
+    background-size: 16px 16px;
+    width: 28px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 1px;
+    z-index: 1;
+    display: none;
+    cursor: pointer;
+}
+/*控件关联--开始*/
+.oui-relation-readOnly{
+    display: block;
+    position: relative;
+    padding: 0;
+}
+.oui-relation-readOnly .oui-relation{
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px !important;
+    padding: 5px 5px 5px 31px;
+    border: 1px solid #bdbdbd;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-relation-readOnly .oui-relation-icon{
+    background: url("../images/oui-relation-icon.png") center no-repeat;
+    width: 31px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -16px;
+    cursor: pointer;
+}
+/*控件关联--结束*/
+/*扫码*/
+.form-scanCode-info{
+    background: url("../images/scanCode-icon.png") #ffffff center left 4px no-repeat;
+    background-size: 23px auto;
+    width: 31px;
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left:1px;
+    z-index: 1;
+}
+.form-scanCode-info + .oui-form{
+    padding-left: 31px !important;
+}
+/*单图片控件--开始*/
+.oui-class-img{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: table;
+}
+.oui-class-img .oui-img-content{
+    width: 100%;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+.oui-img-content img{
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: top;
+}
+.oui-class-img .form-iconfont{
+    display: table-cell;
+    vertical-align: middle;
+}
+/*单图片控件--结束*/
+/*外部控件--开始*/
+.oui-class-outercontrol{
+    position: relative;
+}
+.oui-class-outercontrol .outercontrol-btn,
+.oui-class-outercontrol .outercontrol-search{
+    width: 31px;
+    height: 36px;
+    font-size: 0;
+    position: absolute;
+    top: 0;
+    outline: none;
+    border: 0;
+    cursor: pointer;
+    z-index: 101;
+}
+.oui-class-outercontrol .outercontrol-btn{
+    background: url("../images/outercontrol-btn.png") transparent 4px center no-repeat;
+    background-size: 23px 23px;
+    left: 0;
+}
+.oui-class-outercontrol .outercontrol-search{
+    background: url("../images/singleSelect-search-icon.png") transparent left center no-repeat;
+    background-size: 16px 16px;
+    width: 20px;
+    right: 0;
+}
+.oui-class-outercontrol .form-delete-info{
+    background-position: left center;
+    width: 20px;
+    height: 36px;
+    right: 0;
+    bottom: inherit;
+    z-index: 101;
+}
+.oui-class-outercontrol input[type="text"] {
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 3px 0 31px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+    z-index: 99;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.oui-class-outercontrol input[type="text"]:focus{
+    border-color: #2C82FC;
+}
+.oui-class-outercontrol input[type="text"]:read-only{
+    border-color: #e1e1e1;
+}
+.oui-class-outercontrol input[type="text"]:disabled{
+    border-color: #e6e6e6;
+    background: #fdfdfd;
+}
+.oui-class-outercontrol .outercontrol-select-mask{
+    background: transparent;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    display: none;
+}
+.oui-class-outercontrol .outercontrol-select{
+    background: #ffffff;
+    padding: 0 3px;
+    position: absolute;
+    top: 36px;
+    left: 0;
+    right: 0;
+    z-index: 103;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 6px 0 rgba(0,0,0,.3);
+    box-shadow: 0 1px 6px 0 rgba(0,0,0,.3);
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+.oui-class-outercontrol.show-select .outercontrol-select{
+    opacity: 1;
+    visibility: visible;
+    padding: 5px 3px 5px 3px;
+    height: auto;
+}
+.oui-class-outercontrol.show-select .outercontrol-select-mask{
+    display: block;
+}
+.outercontrol-select ul{
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 180px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.outercontrol-select ul li{
+    display: block;
+    padding: 0 5px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 14px;
+    color: #515151;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.outercontrol-select ul li:hover{
+    background: #e1e1e1;
+    cursor: pointer;
+}
+/*外部控件--开始*/
+/*手写签名--开始*/
+.oui-class-signature .signature-inner img{
+    display: block;
+    vertical-align: top;
+}
+.oui-class-signature .signature-inner.signature-inner-result{
+    max-width: 100%;
+    height: 80px;
+    padding: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+    position: relative;
+    border: 1px solid #bdbdbd;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-signature .signature-inner.signature-inner-result img{
+    max-width: 100%;
+    height: 100%;
+}
+.oui-class-signature button.button{
+    background: #F2F2F2;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #2C82FC;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+}
+.oui-class-signature button.button .signature-button-icon{
+    background: url("../images/icon-signature.svg") left center no-repeat;
+    background-size: 18px 18px;
+    width: 22px;
+    height: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+.signature-delete-icon{
+    background: url("../images/delete-info.png") #ffffff no-repeat;
+    background-size: 18px auto;
+    width: 18px;
+    height: 18px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    z-index: 1;
+    margin-top: -9px;
+}
+.signature-inner.signature-inner-result .signature-delete-icon{
+    display: inline-block;
+    cursor: pointer;
+}
+/*手写签名--结束*/
+/*城市组件--开始*/
+.oui-class-city{
+    display: block;
+}
+.oui-class-city input.oui-form{
+    background: url("../images/citySelectIcon.png") #ffffff no-repeat;
+    background-position: center right 6px;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    padding: 0 5px;
+    border: 1px solid #bdbdbd;
+    outline: none;
+    font-size: 14px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+.oui-class-city input.oui-form:focus{
+    border-color: #2C82FC;
+}
+/*城市组件--结束*/
+
+
+
+
+

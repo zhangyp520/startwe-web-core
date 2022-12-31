@@ -1,0 +1,100 @@
+<!-- 输入框 -->
+<template>
+    <div class="button-outer"> 
+         <el-input  
+            :tempStyle="style" 
+            :title="title"
+            :id="id" 
+            :bindProp="bindProp" 
+            :class="cls"
+            v-model="value" 
+            @click="event2click" 
+            :placeholder="placeholder"
+            :icon="iconCls" 
+            :plain="plain"
+            :round="round" 
+            :circle="circle" 
+            :disabled="disabled" 
+            :size="buttonSize"
+            :type="buttonShowType"></el-input>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return { 
+                id: '',
+                name: '',
+                data: {},
+                bindProp: '',
+                style: '',
+                cls: '',
+                placeholder: '',
+                iconCls: '',
+                title: '', 
+                value: '',
+                display: '',
+                buttonLayout: 'onlyText', //onlyText,leftIcon,rightIcon,onlyIcon
+                buttonShowType: 'primary', //default,primary,success,info,warning,danger,text
+                plain: false,
+                round: false,
+                circle: false,
+                disabled: false,
+                events: {},
+                detailTableFullName: '',
+                rowIndex: -1,
+                buttonSize: 'default'
+            }
+        },
+        mounted: function () {
+            console.log('------当前组件ID--->',this.id);
+            console.log('button.vue.html');
+            console.log('接受的参数',this.control);
+			 
+            this.title = this.title || this.display;
+           let sss  = this.value  || this.control.otherAttrs.webPageSrcs 
+            
+            
+            console.log(this.bindProp,'bindProp')
+            this.bindEvents()
+            this.value =sss
+        },
+        methods: {
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            },
+            bindEvents: function () {
+                if (this.events && this.events.click) {
+                    this.onClick = oui.parseJson2Function(this.events.click);
+                }
+            },
+            //获取明细对象
+            getDetail: function () {
+                if (this.detailTableFullName) { //明细表处理
+                    return oui.util.eval(this.detailTableFullName);
+                }
+                return null;
+            },
+            getDisplay: function () {
+                if (this.buttonLayout == 'onlyIcon') {
+                    return '';
+                }
+                return this.title || this.display;
+            },
+            event2click: function () { //icon图标点击事件
+                this.onClick && this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style >
+  
+</style>

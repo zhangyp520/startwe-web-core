@@ -1,0 +1,90 @@
+<!-- 日期时间 -->
+<template>
+
+    <!--<el-date-picker
+            v-model="value"
+            type="date"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            :format="format" :value-format="format"
+            @change="_controlOnUpdate"
+            >
+    </el-date-picker>-->
+    <span>
+        <mt-button type="primary" size="small" @click="openPicker">选择日期时间</mt-button>
+        <span class="picker-value">{{value}}</span>
+        <mt-datetime-picker
+                ref="picker"
+                type="datetime"
+                @confirm="handleConfirm"
+                :id="id"
+                :name="name"
+                :bindProp="bindProp"
+                :tempStyle="style"
+                :class="cls"
+                :placeholder="placeholder"
+                :format="format" :value-format="format"
+                @change="_controlOnUpdate">
+        </mt-datetime-picker>
+    </span>
+
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                format: 'yyyy-MM-dd HH:mm:ss',
+                id: '',
+                name: '',
+                data: [],
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: '请选择日期时间'
+            }
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            },
+            openPicker: function()
+            {
+                this.$refs.picker.open();
+            },
+            handleConfirm: function(value)
+            {
+                var date = new Date(value);
+                var year = date.getFullYear(),
+                    month = date.getMonth() + 1,
+                    day = date.getDate(),
+                    hour = date.getHours(),
+                    minute = date.getMonth(),
+                    second = date.getSeconds();
+
+                this.value = this.formatNum(year) + '/' + this.formatNum(month) + '/' + this.formatNum(day) + ' ' + this.formatNum(hour) + ':' + this.formatNum(minute) + ':' + this.formatNum(second);
+            },
+            formatNum: function(num)
+            {
+                return num > 9? num: '0' + num;
+            }
+        }
+    }
+</script>
+
+<style>
+    .picker-value {
+        padding: 0 10px;
+        font-size: 13px;
+        color: #333;
+    }
+</style>

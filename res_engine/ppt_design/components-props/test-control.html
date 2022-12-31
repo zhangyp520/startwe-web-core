@@ -1,0 +1,748 @@
+<div class="activeBar pictureMeun" style="display: none;">
+    <div class="edit_item">
+        <span>图片</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="customSwitch autoTab" onclick="tabSwitch(this,'IsAutoPlay')">
+                        <div class="switch_bot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">填充样式</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'fill')">
+                    <div class="selected">任意比例</div>
+
+                </div>
+            </div>
+
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title" onclick="closeViewPicture('up')">预览图片</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 menuItemBox">
+
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+                <!-- <input type="file" multiple="multiple" onchange="getFiles(event,2,'insert')" multiple> -->
+                <span class="iconfont icon-jia1" style="margin-left: 10px;" onclick="insertElement(2,2,2)"></span>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 音乐菜单 -->
+<div class="activeBar musicMeun" style="display: none;">
+    <div class="edit_item">
+        <span>背景音乐</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="customSwitch autoTab" onclick="tabSwitch(this,'IsAutoPlay')">
+                        <div class="switch_bot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">音量</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="audioNum" style="margin-top: 7px;margin-left: 4px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">智能检测</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+
+                    <div class="customSwitch martycheck" onclick="tabSwitch(this,'martycheck')">
+                        <div class="switch_bot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 menuItemBox">
+
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+                <span class="iconfont icon-jia1" style="margin-left: 10px;" onclick="insertElement(2,2,2)"></span>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 视频菜单 -->
+<div class="activeBar videoMeun" style="display: block;">
+    <div class="edit_item">
+        <span>视频</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">填充样式</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'fill')">
+                    <div class="selected">任意比例</div>
+                    <!-- <select class="fillType">
+                      <option value="1">原始比例</option>
+                      <option value="2" selected>任意比例</option>
+                      <option value="3">宽度自适应</option>
+                      <option value="4">高度自适应</option>
+                    </select> -->
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+                <div class="grid-demo">
+                    <div class="customSwitch autoTab checked" style="transform: translateY(-8px);" onclick="tabSwitch(this,'IsAutoPlay')">
+                        <div class="switch_bot"></div>
+                    </div>
+                    <input class="base_box_input" type="number" style="width: 60px;" value="3">
+                </div>
+
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">音量</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="audioNum" style="margin-top: 7px;margin-left: 4px;"><div class="layui-slider "><div class="layui-slider-tips" style="left: 3.14465%; display: none;">音量3</div><div class="layui-slider-bar" style="background:black; width:3%;left:0;"></div><div class="layui-slider-wrap" style="left:3%;"><div class="layui-slider-wrap-btn" style="border: 2px solid black;"></div></div></div></div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 menuItemBox">
+                    <div class="imgItem" onclick="selectElementItem(event,4,0)">
+                        <div class="imgItem_left">
+                            <video src="https://monkey-program.oss-accelerate.aliyuncs.com/adminFile/202011192151544405.mp4" style="width:100%;height:100%;object-fit:fill">
+                            </video> <span class="iconfont icon-shipin videoTag"></span>
+                        </div>
+                        <div class="imgItem_right">
+                            <div class="div1">1163757968.mp4</div>
+                            <div class="div2">2.03kb</div>
+                            <div class="div3">
+                                <span class="iconfont icon-uparrow" style="font-size: 12px;margin-right: 10px;"></span>
+                                <span class="iconfont icon-uparrow1" style="font-size: 12px;margin-right: 10px"></span>
+                                <span class="iconfont icon-shanchu" style="font-size: 12px;margin-right: 10px"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+                <span class="iconfont icon-jia1" style="margin-left: 10px;" onclick="insertElement(4,1,2)"></span>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- 混播菜单 -->
+<div class="activeBar hunboMeun" style="display: none;">
+    <div class="edit_item">
+        <span>混播</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">填充样式</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'fill')">
+                    <div class="selected">任意比例</div>
+
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+
+                    <div class="customSwitch autoTab" onclick="tabSwitch(this,'IsAutoPlay')">
+                        <div class="switch_bot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">音量</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="audioNum" style="margin-top: 7px;margin-left: 4px;"></div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 menuItemBox">
+
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+                <span class="iconfont icon-jia1" style="margin-left: 10px;" onclick="insertElement(11,4,2)"></span>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 文本菜单 -->
+<div class="activeBar textMeun" style="display: none;">
+    <div class="edit_item">
+        <span>文本</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="backgroundColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="fontColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">字体样式</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'fontFamily')">
+                    <div class="selected">请选择样式</div>
+
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字大小</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="fontSize lineHeight" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">行间距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="spacing lineHeight" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">内边距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="padding lineHeight" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 fontStyle" onclick="selectFontStyle(event,'.textMeun')">
+                    <span class="iconfont icon-jiacu IsBold" data-type="1"></span>
+                    <span class="iconfont icon-xieti IsQinxie" data-type="2"></span>
+                    <span class="iconfont icon-underline IsBottomLine" data-type="3"></span>
+                    <span class="iconfont icon-shanchuxian IsCenterLine" data-type="4"></span>
+                    <span class="iconfont icon-zuoduiqi AlignText AlignText_left" data-type="5"></span>
+                    <span class="iconfont icon-juzhongduiqi AlignText AlignText_center" data-type="6"></span>
+                    <span class="iconfont icon-youduiqi AlignText AlignText_right" data-type="7"></span>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 倒计时 -->
+<div class="activeBar countDownMeun" style="display: none;">
+    <div class="edit_item">
+        <span>倒计时</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="FontColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="BackColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">字体大小</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <select class="fillType">
+                        <option value="12">12px</option>
+                        <option value="14">14px</option>
+                        <option value="16">16px</option>
+                    </select>
+                    <!-- <input class="base_box_input" type="text" value="页面1" disabled> -->
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字效果</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <select class="fillType">
+                        <option value="1">无</option>
+                        <option value="2">我擦</option>
+                    </select>
+                    <!-- <input class="base_box_input" type="text" value="页面1" disabled> -->
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">行间距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <input class="base_box_input" type="text" value="12">
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">内边距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <input class="base_box_input" type="text" value="12">
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1" style="display: flex;justify-content: space-around;align-items: center;margin-left: 10px;">
+                    <span class="iconfont icon-jiacu IsBold"></span>
+                    <span class="iconfont icon-xieti IsQinxie"></span>
+                    <span class="iconfont icon-underline IsBottomLine"></span>
+                    <span class="iconfont icon-shanchuxian IsCenterLine"></span>
+                    <span class="iconfont icon-zuoduiqi AlignText_left"></span>
+                    <span class="iconfont icon-juzhongduiqi AlignText_center"></span>
+                    <span class="iconfont icon-youduiqi AlignText_right"></span>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 字幕菜单 -->
+<div class="activeBar zimuMeun" style="display: none;">
+    <div class="edit_item">
+        <span>字幕</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="fontColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="backgroundColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">滚动特效</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'texiao')">
+                    <div class="selected selectedTexiao"></div>
+
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">特效速度</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'speed')">
+                    <div class="selected selectedSpeed">快</div>
+
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">字体大小</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="fontSize" style="height: 20px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">内边距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="padding" style="height: 20px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">行间距</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="spacing" style="height: 20px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 fontStyle" onclick="selectFontStyle(event,'.zimuMeun')">
+                    <span class="iconfont icon-jiacu IsBold" data-type="1"></span>
+                    <span class="iconfont icon-xieti IsQinxie" data-type="2"></span>
+                    <span class="iconfont icon-underline IsBottomLine" data-type="3"></span>
+                    <span class="iconfont icon-shanchuxian IsCenterLine" data-type="4"></span>
+                    <span class="iconfont icon-zuoduiqi AlignText AlignText_left" data-type="5"></span>
+                    <span class="iconfont icon-juzhongduiqi AlignText AlignText_center" data-type="6"></span>
+                    <span class="iconfont icon-youduiqi AlignText AlignText_right" data-type="7"></span>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 时间菜单 -->
+<div class="activeBar timeMeun" style="display: none;">
+    <div class="edit_item">
+        <span>时间</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="fontColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="backgroundColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">类型</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'dateType')">
+                    <!-- <select class="fillType">
+                      <option value="1">yyyy-mm-dd</option>
+                      <option value="2">yyyy</option>
+                    </select> -->
+                    <div class="selected">年-月</div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">字体大小</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="fontSize" style="height: 20px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 fontStyle" onclick="selectFontStyle(event,'.timeMeun')">
+                    <span class="iconfont icon-jiacu IsBold" data-type="1"></span>
+                    <span class="iconfont icon-xieti IsQinxie" data-type="2"></span>
+                    <span class="iconfont icon-underline IsBottomLine" data-type="3"></span>
+                    <span class="iconfont icon-shanchuxian IsCenterLine" data-type="4"></span>
+                    <span class="iconfont icon-zuoduiqi AlignText AlignText_left" data-type="5"></span>
+                    <span class="iconfont icon-juzhongduiqi AlignText AlignText_center" data-type="6"></span>
+                    <span class="iconfont icon-youduiqi AlignText AlignText_right" data-type="7"></span>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 天气菜单 -->
+<div class="activeBar weatherMeun" style="display: none;">
+    <div class="edit_item">
+        <span>天气</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">天气城市</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <input class="base_box_input" type="text" value="成都">
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">定位</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="customSwitch location" onclick="tabSwitch(this,'IsLocation')">
+                    <div class="switch_bot"></div>
+                </div>
+
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">日期</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'weatherType')">
+                    <div class="selected selectedWeatherType"></div>
+
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">文字颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="fontColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="backgroundColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">字体大小</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="fontSize" style="height: 20px;"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 fontStyle" onclick="selectFontStyle(event,'.weatherMeun')">
+                    <span class="iconfont icon-jiacu IsBold" data-type="1"></span>
+                    <span class="iconfont icon-xieti IsQinxie" data-type="2"></span>
+                    <span class="iconfont icon-underline IsBottomLine" data-type="3"></span>
+                    <span class="iconfont icon-shanchuxian IsCenterLine" data-type="4"></span>
+                    <span class="iconfont icon-zuoduiqi AlignText AlignText_left" data-type="5"></span>
+                    <span class="iconfont icon-juzhongduiqi AlignText AlignText_center" data-type="6"></span>
+                    <span class="iconfont icon-youduiqi AlignText AlignText_right" data-type="7"></span>
+                </div>
+            </div>
+            <!-- 显示 -->
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动定位</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+
+                <div class="customSwitch autoLocation" onclick="tabSwitch(this,'IsAutoLoaction')">
+                    <div class="switch_bot"></div>
+                </div>
+
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">内容</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+                <div class="customSwitch showContent" onclick="tabSwitch(this,'IsShowContent')">
+                    <div class="switch_bot"></div>
+                </div>
+                <span class="lowerFont">空气质量，湿度</span>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">温度天气</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="customSwitch showWeather" onclick="tabSwitch(this,'IsShowWeather')">
+                    <div class="switch_bot"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">图标</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+                <div class="customSwitch showIcon" onclick="tabSwitch(this,'IsShowIcon')">
+                    <div class="switch_bot"></div>
+                </div>
+            </div>
+            <div class="layui-col-xs4 weatherIconSwitch">
+                <div class="grid-demo grid-demo-bg1 base_title"> </div>
+            </div>
+            <div class="layui-col-xs8 base_content weatherIconSwitch" style="margin-bottom: 60px;">
+                <div class="iconType" onclick="tabWeatherIconType(event)">
+                    <div class="iconTypeItem1 iconTypeActive iconTypeItem" data-icontype="1">
+                        <div class="stopClick">
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-taiyang"></use>
+                            </svg>
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-duoyun1"></use>
+                            </svg>
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-yujiaxue1"></use>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- 防止事件捕获穿透，加上一层div -->
+                    <div class="iconTypeItem2 iconTypeItem" data-icontype="0">
+                        <div class="stopClick">
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-iconset0451"></use>
+                            </svg>
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-duoyun"></use>
+                            </svg>
+                            <svg class="icon" aria-hidden="true" style="width:30px;height:30px">
+                                <use xlink:href="#icon-yujiaxue"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 富文本菜单 -->
+<div class="activeBar richMeun" style="display: none;">
+    <div class="edit_item">
+        <span>富文本</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="backgroundColor" style="height: 20px;"></div>
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">超长滚动</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo" onclick="toSelect(event,this,'speed')">
+                    <div class="selected selectedSpeed">快</div>
+
+                </div>
+                <!-- <div class="grid-demo">
+                  <select class="fillType">
+                    <option value="1">低速</option>
+                    <option value="2">中速</option>
+                    <option value="3">高速</option>
+                    <option value="4">超高速</option>
+                  </select>
+                </div> -->
+            </div>
+            <div class="layui-col-xs4">
+                <div class="grid-demo grid-demo-bg1 base_title">自动切换</div>
+            </div>
+            <div class="layui-col-xs8 base_content">
+                <div class="grid-demo">
+                    <div class="customSwitch autoTab" onclick="tabSwitch(this,'IsAutoPlay')">
+                        <div class="switch_bot"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-xs12">
+                <div class="grid-demo grid-demo-bg1 menuItemBox">
+
+                </div>
+            </div>
+            <div class="layui-col-xs4 addElement">
+                <span class="iconfont icon-jia1" onclick="addRich()" style="margin-left: 10px;"></span>
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 网页菜单 -->
+<div class="activeBar networkMeun" style="display: none;">
+    <div class="edit_item">
+        <span>网页</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 流媒体菜单 -->
+<div class="activeBar streamMeun" style="display: none;">
+    <div class="edit_item">
+        <span>流媒体</span>
+        <span class="iconfont icon-shang"></span>
+    </div>
+    <div class="space_content" style="display: none;">
+        <div class="layui-row base_box">
+            <div class="layui-col-xs4 addElement">
+            </div>
+            <div class="layui-col-xs8 base_content">
+
+            </div>
+        </div>
+    </div>
+</div>

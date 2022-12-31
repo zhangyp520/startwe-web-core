@@ -1,0 +1,145 @@
+<!--多选组 TODO -->
+<template>
+    <div class="qqq">
+        
+        <div id="container">
+            <div>yellow</div>
+            <div>green</div>
+            <div>blue</div>
+            <div>black</div>
+        </div>
+
+        <div draggable="true" id="div"></div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                num: 1
+            }
+        },
+        mounted: function () {
+
+            setTimeout(()=>{
+                const [div, conatiner] = [
+                document.getElementById('div'),
+                document.getElementById('container')
+            ];
+            div.ondragstart = function (e) {
+                console.log(e,'拖拽进入')
+                div.innerHTML = 'dragstart';
+                conatiner.style.backgroundColor = 'rgba(255,0,0,.1)';
+                e.dataTransfer.setData('id', 'div');
+            }
+            div.ondrag = function (e) {
+                div.innerHTML = 'dragging';
+            }
+            div.ondragend = function (e) {
+                div.innerHTML = 'dragend';
+                conatiner.style.backgroundColor = 'rgba(255,0,0,0)';
+            }
+            conatiner.ondragenter = function (e) {
+                e.preventDefault();
+                e.target.style.backgroundColor = 'rgba(255,0,0,.3)';
+                //drop之前没有获取不到data对象
+                div.style.backgroundColor = e.target.innerHTML;
+            }
+            conatiner.ondragleave = function (e) {
+                e.preventDefault();
+                e.target.style.backgroundColor = 'rgba(255,0,0,0)';
+            }
+            //目标对象容许被拖拽元素拖拽进来 默认不容许
+            conatiner.ondragover = function (e) {
+                e.preventDefault();
+            }
+            //目标对象接受被拖拽元素放下
+            conatiner.ondrop = function (e) {
+                const target = e.target;
+                const id = e.dataTransfer.getData('id');
+                const div = document.getElementById(id);
+                div.style.backgroundColor = target.innerHTML;
+                target.appendChild(div);
+
+
+            
+            }
+            },100)
+        },
+        methods: {
+
+        }
+    }
+</script>
+
+<style>
+    .qqq{
+        font-size: 14px;
+    }
+    .border_box {
+        border: 1px solid red;
+        height: 100px;
+    }
+
+    .border_box :hover {
+        background-color: red;
+    }
+
+    .el-col {
+        border-radius: 4px;
+    }
+
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+
+    .bg-purple {
+        background: #d3dce6;
+    }
+
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+
+    .grid-content :hover {
+        background-color: red;
+    }
+
+    .bg-purple :hover {
+        background-color: red;
+        cursor: pointer;
+    }
+
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+    #div{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ff0000;
+            margin: 40px auto 0 auto;
+            line-height: 100px;
+            text-align: center;
+            color: #fff0df;
+        }
+        #container{
+            display: flex;
+        }
+        #container>div{
+            height: 200px;
+            width: 200px;
+            flex:1;
+            border: 1px solid #000000;
+            padding-top: 20px;
+            text-align: center;
+        }
+</style>

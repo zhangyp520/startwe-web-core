@@ -1,0 +1,140 @@
+<!-- 文本 -->
+<template>
+
+    <div class="timepick-width-prepend">
+        <el-button type="default" class="prepend-text" v-if="prepend">{{prepend}}</el-button>
+
+        <el-date-picker 
+            v-model="value" 
+            :id="id" 
+            :type="type" 
+            :prefixIcon="prefixIcon" 
+            placeholder="选择日期"
+            range-separator="至" 
+            start-placeholder="开始日期" 
+            end-placeholder="结束日期"
+            :disabled="disabled"
+            :format="format"
+            :readonly="readonly"
+            :style="{'width':inputWidth + '%', textAlign:'left', color:'#009900' }"
+            >
+        </el-date-picker>
+        <el-button type="default" class="append-text" v-if="append">{{append}}</el-button>
+
+    </div>
+
+
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                value: "",
+                type: "date",
+                inputtype:'',
+                prefixIcon: '', //头部图标
+                prepend: '', //前置内容
+                append: '', //后置内容
+                inputWidth:'', //输入框宽度
+                status:'',
+                format:'yyyy-MM-dd',
+                disabled:false,
+                readonly:false
+            }
+        },
+        mounted: function () {
+            if (this.otherAttrs.defaultText) { //默认内容
+                this.value = this.otherAttrs.defaultText;
+            }
+            if (this.otherAttrs.dateType) { //日期类型
+                if (this.otherAttrs.dateType == 'date') {
+                    this.type = 'date'
+                }
+                if (this.otherAttrs.dateType == 'daterange') {
+                    this.type = 'daterange'
+                }
+            }
+
+            if (this.otherAttrs.headIcon) {
+                this.prefixIcon = this.otherAttrs.headIcon;
+            }
+            if (this.otherAttrs.dateFormat) {
+                this.format = this.otherAttrs.dateFormat;
+            }
+            if (this.otherAttrs.prepend) {
+                this.prepend = this.otherAttrs.prepend;
+            }
+            if (this.otherAttrs.append) {
+                this.append = this.otherAttrs.append;
+            }
+
+            if( this.otherAttrs.status ){
+ 
+                if(this.otherAttrs.status == '禁用'){
+                    this.disabled = true;
+                }
+                if(this.otherAttrs.status == '只读'){
+                    this.readonly = true;
+                } 
+                if(this.otherAttrs.status == '隐藏'){
+                    this.inputtype = "hidden";
+                }
+
+            }
+
+
+        },
+        methods: {
+
+        }
+    }
+</script>
+
+<style>
+    .timepick-width-prepend {
+        display: flex;
+        align-items: center;
+    }
+
+    .prepend-text{
+        background: #F5F7FA;
+        color: #909399;
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        cursor: default; 
+
+    } 
+    .append-text {
+        background: #F5F7FA;
+        color: #909399;
+        border-left: none;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        cursor: default; 
+
+    } 
+    .prepend-text:focus,
+    .prepend-text:hover,
+    .append-text:focus,
+    .append-text:hover {
+        border-color: #DCDFE6 !important;
+    }
+
+    .prepend-text:focus,
+    .prepend-text:hover,
+    .append-text:focus,
+    .append-text:hover {
+        border-color: #DCDFE6 !important;
+    }
+
+    .el-input__inner {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+   
+</style>

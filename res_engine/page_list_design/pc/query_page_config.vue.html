@@ -1,0 +1,1282 @@
+
+<template >
+    <div>
+
+        <el-row class="el-row" >
+            <el-col :span="8" >查询条件呈现方式</el-col>
+            <el-col :span="16" >
+                <el-radio-group v-model="config.queryConditionShowType" @change="_controlOnUpdate('queryConditionShowType',config)">
+                    <el-radio :label="1">1.简单查询</el-radio>
+                    <el-radio :label="2">2.多条件平铺</el-radio>
+                    <el-radio :label="3">3.高级查询</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+        <el-row class="el-row" >
+            <el-col :span="8" >设置查询关联表模型</el-col>
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setRelationTablesTree">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea"  :value="findRelationTablesTreeDisplay()"></el-input>
+            </el-col>
+        </el-row>
+        <el-row class="el-row" >
+            <el-col :span="8" >查询列表字段别名设置</el-col>
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setQueryFields4Trans">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea" :value="findFields4QueryListDisplay()"></el-input>
+            </el-col>
+        </el-row>
+        <el-row class="el-row"  >
+            <el-col :span="8" >动态查询条件字段别名设置</el-col>
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setDynamicConditionFields4Trans">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea" :value="findDynamicConditionFieldsDisplay()"></el-input>
+            </el-col>
+        </el-row>
+
+        <el-row class="el-row">
+            <el-col :span="8" >过滤条件设置(根据固定查询条件字段设置)</el-col>
+
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setFilterConditions">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea" :value="findFilterConditionsInfo()"></el-input>
+            </el-col>
+        </el-row>
+        <el-row class="el-row" >
+            <el-col :span="8" >排序字段</el-col>
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setFields4sort">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea" :value="findFields4sortDisplay()"></el-input>
+            </el-col>
+
+        </el-row>
+
+
+
+        <el-row class="el-row" >
+            <el-col :span="8" >排序类型</el-col>
+            <el-col :span="4" >
+                <el-button size="medium" icon="el-icon-setting" @click="event2setFields4sortType">设置</el-button>
+            </el-col>
+            <el-col :span="12" >
+                <el-input type="textarea" :value="findFields4sortTypeDisplay()"></el-input>
+            </el-col>
+
+        </el-row>
+
+        <el-row class="el-row" >
+            <el-col :span="8" >分页设置(最低分页条数)</el-col>
+            <el-col :span="16" >
+                <el-radio-group v-model="config.minPagerSize" @change="_controlOnUpdate('minPagerSize',config)">
+                    <el-radio :label="5">5条</el-radio>
+                    <el-radio :label="10">10条</el-radio>
+                    <el-radio :label="15">15条</el-radio>
+                    <el-radio :label="20">20条</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+        <el-row class="el-row"  >
+            <el-col :span="8" >查询列表呈现方式</el-col>
+            <el-col :span="16" >
+                <el-radio-group v-model="config.queryListShowType" @change="_controlOnUpdate('queryListShowType',config)">
+                    <el-radio :label="1">1.普通列表</el-radio>
+                    <el-radio :label="2">2.左右主次列表</el-radio>
+                    <el-radio :label="3">3.上下主次列表</el-radio>
+                </el-radio-group>
+            </el-col>
+        </el-row>
+
+
+
+        <el-row class="el-row" >
+            <el-col :span="8" >Toolbar功能设置</el-col>
+            <el-col :span="16" >
+
+
+                <el-checkbox-group v-model="config.toolbarValues" @change="_controlOnUpdate4checkboxGroup">
+                <el-checkbox v-for="btn in config.toolbarButtons"  :label="btn.value" :key="btn.value">{{btn.display}}</el-checkbox>
+                </el-checkbox-group>
+
+            </el-col>
+        </el-row>
+        <el-row class="el-row">
+            <el-col :span="8" >Toolbar自定义按钮设置</el-col>
+            <el-col :span="16" >
+
+            </el-col>
+        </el-row>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                treeMap:null,
+                config:{
+                    formId:'',
+                    minPagerSize:10,//默认10条
+                    relationTablesTree:{},
+                    queryConditionShowType:1, //查询条件的呈现方式
+                    queryListShowType:1,//
+                    toolbarButtons:[], //toolbar所有功能列表
+                    toolbarValues:[], //可用的toolbar的按钮功能值列表
+                    dynamicConditionFields:[],//动态条件字段列表
+                    filterConditions:[],//固定过滤条件
+                    filterConditionsInfo:'',//固定过滤条件的文本显示
+                    queryFields:[],//查询列表的字段
+                    fields4sort:[],//排序字段
+                    fields4sortType:[]//排序类型设置
+
+                }
+            }
+        },
+        mounted:function(){
+            if(!oui.defaultButtons){
+                oui.defaultButtons = [
+                    {value:'new',display:'新增'},
+                    {value:'edit',display:'编辑'},
+                    {value:'remove',display:'删除'},
+                    {value:'start',display:'发起申请'},
+                    {value:'importData',display:'导入'},
+                    {value:'exportData',display:'导出'}
+                ];
+            }
+            var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+
+            if(queryPageTpl){
+                if(!queryPageTpl.queryConditionShowType){
+                    queryPageTpl.queryConditionShowType= 1; //默认为 简单查询条件
+                }
+                if(!queryPageTpl.queryListShowType){
+                    queryPageTpl.queryListShowType = 1;//默认为 普通列表
+                }
+                if(!queryPageTpl.minPagerSize){
+                    queryPageTpl.minPagerSize = 10;
+                }
+                if(!queryPageTpl.toolbarButtons){
+                    queryPageTpl.toolbarButtons = oui.parseJson(oui.parseString(oui.defaultButtons));
+                }
+
+                if(!queryPageTpl.toolbarValues){
+                    queryPageTpl.toolbarValues = ["new","edit","remove"];
+                }
+                if(!queryPageTpl.dynamicConditionFields){
+                    queryPageTpl.dynamicConditionFields = [];
+                }
+                if(!queryPageTpl.filterConditions){
+                    queryPageTpl.filterConditions = [];
+                }
+                if(!queryPageTpl.filterConditionsInfo){
+                    queryPageTpl.filterConditionsInfo = '';
+                }
+                if(!queryPageTpl.queryFields){
+                    queryPageTpl.queryFields = [];
+                }
+                if(!queryPageTpl.fields4sort){
+                    queryPageTpl.fields4sort = [];
+                }
+                if(!queryPageTpl.fields4sortType){
+                    queryPageTpl.fields4sortType = [];
+                }
+                if(!queryPageTpl.relationTablesTree){
+                    queryPageTpl.relationTablesTree = {};
+                }
+            }
+
+            for(var k in queryPageTpl){
+                this.config[k] = queryPageTpl[k];
+            }
+            this.config.formId = com.oui.absolute.AbsoluteDesign.data.id;
+            var me = this;
+            oui.require([oui.getContextPath()+'res_engine/graph-common/js/tree-map.js'],function(){
+                me.treeMap = com.oui.TreeMap.newTreeMap(oui.parseJson(oui.parseString(me.config.relationTablesTree)));
+            });
+        },
+        methods:{
+
+            /***
+             * 获取关联表自动生成的sql显示信息
+             */
+            findRelationTablesTreeDisplay:function(){
+                var me = this;
+                var treeMap = me.treeMap;
+                if(!treeMap){
+                    return '';
+                }
+                treeMap = com.oui.TreeMap.newTreeMap(oui.parseJson(oui.parseString(me.config.relationTablesTree)));
+                if((!treeMap.rootIds) || (!treeMap.rootIds.length)){
+                    return '';
+                }
+                var rootId = treeMap.rootIds[0];
+                var ids = treeMap.findChildIdsAll(rootId); //获取所有子节点
+                var rootNode = treeMap.findNode(rootId);
+
+                var arr = ['from '+rootNode.node.name+' '+rootNode.node.name];
+
+                oui.eachArray(ids,function(currId){
+                    var node = treeMap.findNode(currId);
+                    if(node.node.nodeType=='field'){
+                        var str = ' ';
+
+                        var pnode = treeMap.findParent(node.id);
+                        var pFormVarName ='';
+                        if(pnode.id ==rootId){
+                            pFormVarName = rootNode.node.name; //本表别名
+                        }else{
+                            if(pnode.node.varName){
+                                pFormVarName = pnode.node.varName;
+                            }else{
+                                if(pnode.node.varCount==1){
+                                    pFormVarName = pnode.node.name;
+                                }else{
+                                    pFormVarName = pnode.node.name+'_'+pnode.node.varCount;
+                                }
+                            }
+                        }
+                        var childNode = treeMap.findChildren(node.id)[0];
+                        var tableNameVar ='';
+                        if(childNode.node.varName){
+                            tableNameVar = childNode.node.varName;
+                        }else{
+                            if(childNode.node.varCount==1){
+                                tableNameVar = childNode.node.name;
+                            }else{
+                                tableNameVar = childNode.node.name+'_'+childNode.node.varCount;
+                            }
+                        }
+                        str= node.node.fieldJoinType+' join '+childNode.node.name+' as '+ tableNameVar+' on '+tableNameVar+'.'+node.node.targetFieldName+'='+pFormVarName+'.'+node.node.fieldName;
+
+                        arr.push(str);
+                    }
+                });
+                return arr.join('\n');
+            },
+
+            /***
+             * 获取过滤条件的显示内容
+             */
+            findFilterConditionsInfo:function(){
+                return this.config.filterConditionsInfo;
+            },
+            /***
+             *  获取固定查询字段的显示信息
+             */
+            findFields4filterConditionsDisplay:function(){
+                var displays=[];
+                var fields4filterConditions = this.config.fields4filterConditions||[];
+                oui.eachArray(fields4filterConditions,function(item){
+                    displays.push(item.display);
+                });
+                return displays.join("，");
+            },
+
+            /**
+             * 查询条件动态列显示
+             * @returns {string}
+             */
+            findDynamicConditionFieldsDisplay:function(){
+                var displays=[];
+                var fields4queryList = this.config.dynamicConditionFields||[];
+
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields= [];
+                var fieldsMap = {};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                var endFields= [];
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.dynamicConditionFields){
+                            oui.eachArray(curr.node.dynamicConditionFields,function(item){
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm ='';
+                                if(curr.node.varName){
+                                    displayForm = curr.node.varName;
+                                }else{
+                                    if(curr.node.varCount ==1){
+                                        displayForm = curr.node.formName;
+                                    }else{
+                                        displayForm = curr.node.formName+'_'+curr.node.varCount;
+                                    }
+                                }
+                                if(!cfgFieldName[item.fieldName]){
+                                    cfgFieldName[item.fieldName] = 1;
+                                }else{
+                                    cfgFieldName[item.fieldName] = cfgFieldName[item.fieldName] + 1;
+                                }
+                                if(!temp.varName){ //处理字段名称别名
+
+                                    if(cfgFieldName[item.fieldName]==1){
+                                        temp.varName = item.fieldName;
+                                    }else{
+                                        temp.varName = item.fieldName+'_'+cfgFieldName[item.fieldName];
+                                    }
+                                }
+
+                                // 处理字段名称变量名
+                                if(!temp.varName4api){ //处理字段变量名
+
+                                    var fieldBizIdKey = temp.fieldBizId;
+                                    if(temp.fieldBizId =='id') {
+                                        fieldBizIdKey = 'id_f';
+                                    }
+                                    if(!cfgFieldBizId[fieldBizIdKey]){
+                                        cfgFieldBizId[fieldBizIdKey] =1;
+                                    }else{
+                                        cfgFieldBizId[fieldBizIdKey]=cfgFieldBizId[fieldBizIdKey]+1;
+                                    }
+                                    if(cfgFieldBizId[fieldBizIdKey] ==1){
+                                        temp.varName4api = fieldBizIdKey;
+                                    }else{
+                                        temp.varName4api = fieldBizIdKey+"_"+cfgFieldBizId[fieldBizIdKey];
+                                    }
+
+                                }
+
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+                                if(fields4queryList.indexOf(temp.value)<0){
+                                    endFields.push(temp);
+                                }
+                                fieldsMap[temp.value] = temp;
+                            });
+                        }
+                    }
+                });
+                oui.eachArray(fields4queryList,function(value){
+                    if(fieldsMap[value]){
+                        fields.push(fieldsMap[value]);
+                    }
+                });
+                fields = fields.concat(endFields);
+                oui.eachArray(fields,function(item){
+                    displays.push(item.display+' as '+ item.varName+' as ' +item.varName4api+'\n');
+                });
+                return displays.join("，");
+            },
+
+            /***
+             * 查询列表字段列显示
+             */
+            findFields4QueryListDisplay:function(){
+                var displays=[];
+                var fields4queryList = this.config.queryFields||[];
+
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields= [];
+                var fieldsMap = {};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                var endFields= [];
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.queryFields){
+                            oui.eachArray(curr.node.queryFields,function(item){
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm ='';
+                                if(curr.node.varName){
+                                    displayForm = curr.node.varName;
+                                }else{
+                                    if(curr.node.varCount ==1){
+                                        displayForm = curr.node.formName;
+                                    }else{
+                                        displayForm = curr.node.formName+'_'+curr.node.varCount;
+                                    }
+                                }
+                                if(!cfgFieldName[item.fieldName]){
+                                    cfgFieldName[item.fieldName] = 1;
+                                }else{
+                                    cfgFieldName[item.fieldName] = cfgFieldName[item.fieldName] + 1;
+                                }
+                                if(!temp.varName){ //处理字段名称别名
+
+                                    if(cfgFieldName[item.fieldName]==1){
+                                        temp.varName = item.fieldName;
+                                    }else{
+                                        temp.varName = item.fieldName+'_'+cfgFieldName[item.fieldName];
+                                    }
+                                }
+
+                                // 处理字段名称变量名
+                                if(!temp.varName4api){ //处理字段变量名
+                                    var tempKey = item.fieldBizId;
+                                    if(tempKey =='id'){
+                                        tempKey ='id_f';
+                                    }
+                                    if(!cfgFieldBizId[tempKey]){
+                                        cfgFieldBizId[tempKey] =1;
+                                    }else{
+                                        cfgFieldBizId[tempKey]=cfgFieldBizId[tempKey]+1;
+                                    }
+                                    if(cfgFieldBizId[tempKey] ==1){
+                                        temp.varName4api = tempKey;
+                                    }else{
+                                        temp.varName4api = tempKey+"_"+cfgFieldBizId[tempKey];
+                                    }
+                                }
+
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+                                if(fields4queryList.indexOf(temp.value)<0){
+                                    endFields.push(temp);
+                                }
+                                fieldsMap[temp.value] = temp;
+                            });
+                        }
+                    }
+                });
+                oui.eachArray(fields4queryList,function(value){
+                    if(fieldsMap[value]){
+                        fields.push(fieldsMap[value]);
+                    }
+                });
+                fields = fields.concat(endFields);
+                oui.eachArray(fields,function(item){
+                    displays.push(item.display+' as '+ item.varName+' as ' +item.varName4api+'\n');
+                });
+                return displays.join("，");
+            },
+            /**获取排序字段显示信息 **/
+            findFields4sortDisplay:function(){
+                var displays=[];
+                var fields4sort = this.config.fields4sort||[];
+                oui.eachArray(fields4sort,function(item){
+                    displays.push(item.display);
+                });
+                return displays.join("，");
+            },
+            /***
+             * 获取排序字段类型的显示信息
+             */
+            findFields4sortTypeDisplay:function(){
+                var fields4sortType = this.config.fields4sortType||[];
+                var fields4sort = this.config.fields4sort||[];
+                var cfg = {};
+                oui.eachArray(fields4sortType,function(item){
+                    cfg[item.field] = item;
+                });
+                var arr = [];
+                oui.eachArray(fields4sort,function(item){
+
+                    if(cfg[item.value]){
+                        var temp = cfg[item.value];
+                        arr.push(item.display+' '+(temp.value=='desc'?'降序':'升序'));
+                    }else{
+
+                        arr.push(item.display+' 顺序');
+                    }
+                });
+                return arr.join('，');
+            },
+            //设置关联关系表规则
+            event2setRelationTablesTree:function(){
+                var me = this;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var relationTablesTree =  this.config.relationTablesTree||{};
+                //res_apps/project/project-design.tpl.html
+                var url = oui.getContextPath()+'portal.html';
+                url = oui.setParam(url,'loadMenusUrl','res_engine/portal/menus/join-tree.json');
+                var dialog = oui.showUrlDialog({
+                    title:'设置关联查询表模型',
+                    url:url,
+                    useIFrame:true,
+                    actions: [
+                    {
+                        cls:'oui-dialog-ok',
+                        text:'确定',
+                        action:function(){
+                            var json = dialog.attr('relationTablesTreeJson');
+                            me.config.relationTablesTree = oui.parseJson(json);
+                            queryPageTpl.relationTablesTree =  oui.parseJson(json);
+                            //查询字段
+                            //动态查询条件字段
+
+
+                            var fields4queryList = me.config.queryFields||[]; //${nodeId}_${formId}_${fieldId} 节点结构
+                            var dynamicConditionFields = me.config.dynamicConditionFields||[];
+                            //根据动态条件字段 获取已经选择的字段值
+                            //获取根当前表相关的表和字段列表;
+                            var relationTablesTree = me.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                            var ids = relationTablesTree.ids ||[];
+                            var map = relationTablesTree.map ||{};
+                            oui.eachArray(ids,function(currId){
+                                var curr = map[currId] ||{};
+                                if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                                    if(curr.node.queryFields){
+                                        oui.eachArray(curr.node.queryFields,function(item){
+                                            var value4queryFields =   currId+"_"+item.value;
+                                            if(fields4queryList.indexOf(value4queryFields)<0){
+                                                fields4queryList.push(value4queryFields);
+                                            }
+                                        });
+                                    }
+                                    if(curr.node.dynamicConditionFields){
+                                        oui.eachArray(curr.node.dynamicConditionFields,function(item){
+                                            var value4dyna =   currId+"_"+item.value;
+                                            if(dynamicConditionFields.indexOf(value4dyna)<0){
+                                                dynamicConditionFields.push(value4dyna);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            me.config.queryFields = fields4queryList;
+                            me.config.dynamicConditionFields = dynamicConditionFields;
+                            queryPageTpl.queryFields = oui.parseJson(oui.parseString(me.config.queryFields));
+                            queryPageTpl.dynamicConditionFields = oui.parseJson(oui.parseString(me.config.dynamicConditionFields));
+
+                            dialog&&dialog.hide();
+                            return false;
+                        }
+                    },
+                    {
+                        cls:'oui-dialog-cancel',
+                        text:'取消',
+                        action:function(){
+                            dialog&&dialog.hide();
+                            return false;
+                        }
+                    }]
+                });
+
+                dialog.attr({
+                    pageId:com.oui.absolute.AbsoluteDesign.data.id,
+                    relationTablesTreeJson:oui.parseString(relationTablesTree)
+                });
+                com.oui.absolute.AbsoluteDesign.dialog4relationTables = dialog;
+
+            },
+            //设置动态查询条件
+            event2setDynamicConditionFields:function(){
+                var me = this;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var dynamicConditionFields = this.config.dynamicConditionFields||[];
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var values = [];
+                oui.eachArray(dynamicConditionFields,function(item){
+                    values.push(item.value);
+                });
+                //获取当前表单的字段数据和 当前表单关联的字段数据
+                var url =  com.oui.absolute.AbsoluteDesign.paramCfg.params.queryPageFieldsAndAssociationFieldsUrl;
+                //queryPageFieldsAndAssociationFieldsUrl
+
+
+                oui.postData(url,{//ajax获取数据
+                    formId:this.config.formId
+                },function(res){
+                    var fields = res.fields||[]; //查询出所有直接关联和间接关联的字段
+
+                    oui.getTop().oui.showOptionsDialog({
+                        isShowSearch:true,
+                        value:values.join(','),
+                        data:fields,
+                        confirm:function(value,selects,obj){//确定后回填到当前配置上
+                            console.log(value);
+                            console.log(selects);
+                            me.config.dynamicConditionFields = oui.parseJson(oui.parseString(selects));
+                            queryPageTpl.dynamicConditionFields =  oui.parseJson(oui.parseString(selects));
+                        }
+                    });
+                },function(res){},'加载中...');
+            },
+            updateFieldsVars:function(nodeFieldsType,fields){
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                var fieldMap = {};
+                var arr = [];
+                oui.eachArray(fields,function(field){
+                    arr.push(field.value);
+                    fieldMap[field.value] = field;
+                });
+                this.config[nodeFieldsType] = arr;
+                //TODO 保存时需要处理 校验重名的情况 ,校验非空
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node[nodeFieldsType]){
+                            oui.eachArray(curr.node[nodeFieldsType],function(item){
+                                var key = currId+'_'+curr.node.formId+'_'+item.fieldId;
+                                if(fieldMap[key]){
+                                    item.varName = fieldMap[key].varName ||"";
+                                    item.varName4api = fieldMap[key].varName4api||"";
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            refreshFieldsVars:function(nodeFieldsType){
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node[nodeFieldsType]){
+                            oui.eachArray(curr.node[nodeFieldsType],function(item){
+                                if(!cfgFieldName[item.fieldName]){
+                                    cfgFieldName[item.fieldName] = 1;
+                                }else{
+                                    cfgFieldName[item.fieldName] = cfgFieldName[item.fieldName] + 1;
+                                }
+                                var varName= '';
+                                if(cfgFieldName[item.fieldName]==1){
+                                    varName = item.fieldName;
+                                }else{
+                                    varName = item.fieldName+'_'+cfgFieldName[item.fieldName];
+                                }
+                                var tempKey = item.fieldBizId;
+                                if(item.fieldBizId =='id'){
+                                    tempKey = 'id_f';
+                                }
+                                // 处理字段名称变量名
+                                if(!cfgFieldBizId[tempKey]){
+                                    cfgFieldBizId[tempKey] =1;
+                                }else{
+                                    cfgFieldBizId[tempKey]=cfgFieldBizId[tempKey]+1;
+                                }
+                                var varName4api ='';
+
+                                if(cfgFieldBizId[tempKey] ==1){
+                                    varName4api = tempKey;
+                                }else{
+                                    varName4api = tempKey+"_"+cfgFieldBizId[tempKey];
+                                }
+                                item.varName = varName;
+                                item.varName4api = varName4api;
+                            });
+                        }
+                    }
+                });
+            },
+            event2setQueryFields4Trans:function(){
+                var me = this;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var fields4queryList = this.config.queryFields||[]; //${nodeId}_${formId}_${fieldId} 节点结构
+
+                var endFields = [];
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields= [];
+                var fieldsMap = {};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.queryFields){
+                            oui.eachArray(curr.node.queryFields,function(item){
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm ='';
+                                if(curr.node.varName){
+                                    displayForm = curr.node.varName;
+                                }else{
+                                    if(curr.node.varCount ==1){
+                                        displayForm = curr.node.formName;
+                                    }else{
+                                        displayForm = curr.node.formName+'_'+curr.node.varCount;
+                                    }
+                                }
+                                if(!cfgFieldName[item.fieldName]){
+                                    cfgFieldName[item.fieldName] = 1;
+                                }else{
+                                    cfgFieldName[item.fieldName] = cfgFieldName[item.fieldName] + 1;
+                                }
+                                if(!temp.varName){ //处理字段名称别名
+
+                                    if(cfgFieldName[item.fieldName]==1){
+                                        temp.varName = item.fieldName;
+                                    }else{
+                                        temp.varName = item.fieldName+'_'+cfgFieldName[item.fieldName];
+                                    }
+                                }
+
+                                // 处理字段名称变量名
+                                if(!temp.varName4api){ //处理字段变量名
+                                    var tempKey = item.fieldBizId;
+                                    if(tempKey =='id'){
+                                        tempKey ='id_f';
+                                    }
+                                    if(!cfgFieldBizId[tempKey]){
+                                        cfgFieldBizId[tempKey] =1;
+                                    }else{
+                                        cfgFieldBizId[tempKey]=cfgFieldBizId[tempKey]+1;
+                                    }
+                                    if(cfgFieldBizId[tempKey] ==1){
+                                        temp.varName4api = tempKey;
+                                    }else{
+                                        temp.varName4api = tempKey+"_"+cfgFieldBizId[tempKey];
+                                    }
+                                }
+
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+                                if(fields4queryList.indexOf(temp.value)<0){
+                                    endFields.push(temp);
+                                }
+                                fieldsMap[temp.value] = temp;
+                            });
+                        }
+                    }
+                });
+                oui.eachArray(fields4queryList,function(value){
+                    if(fieldsMap[value]){
+                        fields.push(fieldsMap[value]);
+                    }
+                });
+                fields = fields.concat(endFields);
+
+                var html = '<style type="text/css">' +
+                        '.oui-dialog-content{' +
+                        '   height:500px;overflow-y:scroll;' +
+                        '}' +
+                        '</style>' +
+                        '<oui-include url="res_engine/page_design/pc/page_fields_trans.vue.html" type="module"></oui-include>';
+                var dialog = oui.showHTMLDialog({
+                    title:'字段映射设置',
+                    contentStyle:'width:840px;max-height:700px',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+
+                                //更新 所有查询字段 的varName和varName4api
+                                //遍历id列表,更新所有 relationTablesTree
+                                //更新别名配置
+                                var json = com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans.attr('fieldsJson');
+                                me.updateFieldsVars('queryFields',oui.parseJson(json)); //刷新jointree中的变量
+                                queryPageTpl.queryFields = oui.parseJson(oui.parseString(me.config.queryFields));
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'重置默认命名',
+                            action:function(){
+                                //更新 所有查询字段 的varName和varName4api
+                                //遍历id列表,更新所有 relationTablesTree
+                                me.refreshFieldsVars('queryFields'); //刷新jointree中的变量
+                                dialog&&dialog.hide();
+                                me.event2setQueryFields4Trans(); //重新打开默认设置
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-cancel',
+                            text:'取消',
+                            action:function(){
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        }]
+                });
+                //查询字段
+                //查询动态条件字段
+                //查询固定条件字段
+                com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans = dialog;
+                com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans.attr('fieldsJson',oui.parseString(fields));
+                oui.parse({container:dialog.getEl()});
+
+
+            },
+            //设置动态查询条件字段 别名转换
+            event2setDynamicConditionFields4Trans:function(){
+                var me = this;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var fields4queryList = this.config.dynamicConditionFields||[]; //${nodeId}_${formId}_${fieldId} 节点结构
+
+                var endFields = [];
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields= [];
+                var fieldsMap = {};
+                var cfgFieldName = {};
+                var cfgFieldBizId = {};
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.queryFields){
+                            oui.eachArray(curr.node.dynamicConditionFields,function(item){
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm ='';
+                                if(curr.node.varName){
+                                    displayForm = curr.node.varName;
+                                }else{
+                                    if(curr.node.varCount ==1){
+                                        displayForm = curr.node.formName;
+                                    }else{
+                                        displayForm = curr.node.formName+'_'+curr.node.varCount;
+                                    }
+                                }
+                                if(!cfgFieldName[item.fieldName]){
+                                    cfgFieldName[item.fieldName] = 1;
+                                }else{
+                                    cfgFieldName[item.fieldName] = cfgFieldName[item.fieldName] + 1;
+                                }
+                                if(!temp.varName){ //处理字段名称别名
+
+                                    if(cfgFieldName[item.fieldName]==1){
+                                        temp.varName = item.fieldName;
+                                    }else{
+                                        temp.varName = item.fieldName+'_'+cfgFieldName[item.fieldName];
+                                    }
+                                }
+
+                                // 处理字段名称变量名
+                                if(!temp.varName4api){ //处理字段变量名
+                                    var tempKey =item.fieldBizId;
+                                    if(tempKey =='id'){
+                                        tempKey ='id_f';
+                                    }
+                                    if(!cfgFieldBizId[tempKey]){
+                                        cfgFieldBizId[tempKey] =1;
+                                    }else{
+                                        cfgFieldBizId[tempKey]=cfgFieldBizId[tempKey]+1;
+                                    }
+                                    if(cfgFieldBizId[tempKey] ==1){
+                                        temp.varName4api = tempKey;
+                                    }else{
+                                        temp.varName4api = tempKey+"_"+cfgFieldBizId[tempKey];
+                                    }
+                                }
+
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+                                if(fields4queryList.indexOf(temp.value)<0){
+                                    endFields.push(temp);
+                                }
+                                fieldsMap[temp.value] = temp;
+                            });
+                        }
+                    }
+                });
+                oui.eachArray(fields4queryList,function(value){
+                    if(fieldsMap[value]){
+                        fields.push(fieldsMap[value]);
+                    }
+                });
+                fields = fields.concat(endFields);
+
+                var html = '<style type="text/css">' +
+                        '.oui-dialog-content{' +
+                        '   height:500px;overflow-y:scroll;' +
+                        '}' +
+                        '</style>' +
+                        '<oui-include url="res_engine/page_design/pc/page_fields_trans.vue.html" type="module"></oui-include>';
+                var dialog = oui.showHTMLDialog({
+                    title:'动态查询条件字段映射设置',
+                    contentStyle:'width:840px;max-height:700px',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+
+                                //更新 所有查询字段 的varName和varName4api
+                                //遍历id列表,更新所有 relationTablesTree
+                                //更新别名配置
+                                var json = com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans.attr('fieldsJson');
+                                me.updateFieldsVars('dynamicConditionFields',oui.parseJson(json)); //刷新jointree中的变量
+                                queryPageTpl.dynamicConditionFields = oui.parseJson(oui.parseString(me.config.dynamicConditionFields));
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'重置默认命名',
+                            action:function(){
+                                //更新 所有查询字段 的varName和varName4api
+                                //遍历id列表,更新所有 relationTablesTree
+                                me.refreshFieldsVars('dynamicConditionFields'); //刷新jointree中的变量
+                                queryPageTpl.dynamicConditionFields = oui.parseJson(oui.parseString(me.config.dynamicConditionFields));
+                                dialog&&dialog.hide();
+                                me.event2setDynamicConditionFields4Trans(); //重新打开默认设置
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-cancel',
+                            text:'取消',
+                            action:function(){
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        }]
+                });
+                //查询字段
+                //查询动态条件字段
+                //查询固定条件字段
+                com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans = dialog;
+                com.oui.absolute.AbsoluteDesign.dialog4FieldsTrans.attr('fieldsJson',oui.parseString(fields));
+                oui.parse({container:dialog.getEl()});
+            },
+
+
+            //设置过滤条件
+            event2setFilterConditions:function(){
+                var me = this;
+
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields= [];
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.conditionFields){
+                            oui.eachArray(curr.node.conditionFields,function(item){
+                                //TODO 处理  可支持的条件字段
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm='';
+                                if(curr.node.varCount ==1){
+                                    displayForm= curr.node.varName?(''+curr.node.formName+' as '+curr.node.varName):(curr.node.formName);
+                                }else{
+                                    displayForm= curr.node.varName?(''+curr.node.formName+' as '+curr.node.varName):(curr.node.formName+'_'+curr.node.varCount+'');
+                                }
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+
+                                fields.push(temp);
+                            });
+                        }
+                    }
+                });
+                var fields4filterConditions =fields;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var tplUrl = oui.getContextPath()+'res_engine/page_design/pc/query-page-condition.tpl.html';
+                var html = oui.loadUrl(tplUrl);
+                var dialog = oui.showHTMLDialog({
+                    title:'固定过滤条件设置',
+                    contentStyle:'width:940px;max-height:700px',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+                                var obj= oui.getTop().oui.getById('edit4filterCondition');
+                                var filterConditions = obj.getConditions();
+                                me.config.filterConditions = filterConditions;
+                                me.config.filterConditionsInfo = obj.getConditionInfo();
+                                queryPageTpl.filterConditions = filterConditions;
+                                queryPageTpl.filterConditionsInfo = me.config.filterConditionsInfo;
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-cancel',
+                            text:'取消',
+                            action:function(){
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        }]
+                });
+                com.oui.absolute.AbsoluteDesign.dialog4condition = dialog;
+                dialog.fields4filterConditions = fields4filterConditions;
+                dialog.getData = function(){
+                    return {
+                        fields:this.fields4filterConditions
+                    };
+                };
+                dialog.findDefaultFieldTypeEnum = function(fieldType){
+                    var typeEnum = oui.fieldTypeEnum[fieldType];
+                    if(!typeEnum){
+                        if(fieldType =='number'){//number的情况
+                            typeEnum = oui.fieldTypeEnum.decimal_type;
+                        }else{
+                            typeEnum = oui.fieldTypeEnum.string_type;
+                        }
+                    }
+                    return typeEnum;
+                };
+                dialog.findDefaultDataTypeEnum = function(dataType){
+                    var defaultDataType = 'STRING';
+                    var typeEnum = oui.dataTypeEnum[dataType];
+                    if(!typeEnum){
+
+                        typeEnum = oui.dataTypeEnum[defaultDataType];
+                    }
+                    return typeEnum;
+                };
+
+                oui.eachArray( fields4filterConditions,function(item){
+                    var fieldTypeEnum = dialog.findDefaultFieldTypeEnum(item.fieldType);
+                    var dataTypeEnum = dialog.findDefaultDataTypeEnum(fieldTypeEnum.dataType);
+                    item.dataType = fieldTypeEnum.dataType;//处理数据类型
+                    item.opt = dataTypeEnum.opt; //处理 表达式
+                    item.showType = dataTypeEnum.showType ||0;//处理默认显示类型
+                });
+                dialog.isShow4Conditions=false;
+
+                dialog.event2showOrHidePreview = function(cfg){
+                    var me_dialog = this;
+                    if(me_dialog.isShow4Conditions){
+                        me_dialog.isShow4Conditions= false;
+                    }else{
+                        me_dialog.isShow4Conditions= true;
+                    }
+                    var obj= oui.getTop().oui.getById('edit4filterCondition');
+                    if(me_dialog.isShow4Conditions){
+                        $(obj.getEl()).find('.group-condition-preview').show();
+                        $(cfg.el).find('.glyphicon').addClass('glyphicon-eye-open');
+                        $(cfg.el).find('label').text('预览规则');
+                    }else{
+
+                        $(obj.getEl()).find('.group-condition-preview').hide();
+                        $(cfg.el).find('.glyphicon').removeClass('glyphicon-eye-open');
+                        $(cfg.el).find('label').text('隐藏规则');
+                    }
+                };
+                dialog.showConditionInfoAfter =  function(info,obj){
+                    var me_dialog = this;
+                    if(me_dialog.isShow4Conditions){
+                        $(obj.getEl()).find('.group-condition-preview').show();
+                    }else{
+                        $(obj.getEl()).find('.group-condition-preview').hide();
+                    }
+                };
+                dialog.filterField4SysVar = function(){
+                    //todo
+                };
+
+                oui.parse({container:dialog.getEl(),callback:function(){
+                    var control =oui.getTop().oui.getById('edit4filterCondition');
+                    control.fillback(me.config.filterConditions);
+                }});
+            },
+
+            /**设置排序字段 */
+            event2setFields4sort:function(){
+                var me = this;
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+
+                //orderFields
+
+                var relationTablesTree = this.config.relationTablesTree ||{};//获取当前tree中表单中存储的字段信息
+                var ids = relationTablesTree.ids ||[];
+                var map = relationTablesTree.map ||{};
+                var fields4sort = [];
+                oui.eachArray(ids,function(currId){
+                    var curr = map[currId] ||{};
+                    if(curr.node &&(curr.node.nodeType=='mainForm' ||curr.node.nodeType=='form')){
+                        if(curr.node.orderFields){
+                            oui.eachArray(curr.node.orderFields,function(item){
+                                var temp = oui.parseJson(oui.parseString(item));
+                                temp.value=   currId+"_"+item.value; //节点id_表单id_字段id
+                                var displayForm='';
+                                if(curr.node.varCount ==1){
+                                    displayForm= curr.node.varName?(''+curr.node.formName+' as '+curr.node.varName):(curr.node.formName);
+                                }else{
+                                    displayForm= curr.node.varName?(''+curr.node.formName+' as '+curr.node.varName):(curr.node.formName+'_'+curr.node.varCount+'');
+                                }
+                                temp.display=item.fieldName+'['+displayForm+'] '; //字段名称[表单名称] as  [节点名称]
+                                fields4sort.push(temp);
+                            });
+                        }
+                    }
+                });
+
+                //根据动态条件字段 获取已经选择的字段值
+                //获取根当前表相关的表和字段列表;
+                var selectdFields4sort = this.config.fields4sort||[];
+                var values = [];
+                oui.eachArray(selectdFields4sort,function(item){
+                    values.push(item.value);
+                });
+
+                var fields4sortType = me.config.fields4sortType||[];
+                var fields4sortTypeMap =  {};
+                oui.eachArray(fields4sortType,function(item){
+                    fields4sortTypeMap[item.field] = item;
+                });
+
+                oui.getTop().oui.showOptionsDialog({
+                    isShowSearch:true,
+                    value:values.join(','),
+                    data:fields4sort,
+                    confirm:function(value,selects,obj){//确定后回填到当前配置上
+
+                        me.config.fields4sort = oui.parseJson(oui.parseString(selects));
+                        queryPageTpl.fields4sort =  oui.parseJson(oui.parseString(selects));
+                        //处理默认排序字段类型
+                        var fields4sortTypeUpdated=[];
+                        oui.eachArray(selects,function(item){
+                            if(fields4sortTypeMap[item.value]){ //存在
+                                fields4sortTypeUpdated.push(fields4sortTypeMap[item.value]);
+                            }else{//不存在给默认值
+                                fields4sortTypeUpdated.push({
+                                    dataType: "STRING",
+                                    display: item.display,
+                                    expression: "=",
+                                    type:1,
+                                    field: item.value,
+                                    value: "asc"
+                                });
+                            }
+                        });
+                        me.config.fields4sortType = fields4sortTypeUpdated;
+                        queryPageTpl.fields4sortType = oui.parseJson(oui.parseString(fields4sortTypeUpdated));
+
+                    }
+                });
+            },
+            /**设置字段排序类型 */
+            event2setFields4sortType:function(){
+                var me = this;
+                var fields4sortType = me.config.fields4sortType||[];
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                var tplUrl = oui.getContextPath()+'res_engine/page_design/pc/query-page-sort-types.tpl.html';
+                var html = oui.loadUrl(tplUrl);
+                var dialog = oui.showHTMLDialog({
+                    title:'排序字段类型设置',
+                    contentStyle:'width:540px;max-height:700px',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+                                var obj= oui.getTop().oui.getById('edit4settingFields');
+                                var temp = obj.getConditions();
+
+
+                                //处理默认排序字段类型
+                                var fields4sortType = temp||[];
+                                var fields4sort = me.config.fields4sort||[];
+                                var cfg = {};
+                                oui.eachArray(fields4sortType,function(item){
+                                    cfg[item.field] = item;
+                                });
+                                var arr = [];
+                                oui.eachArray(fields4sort,function(item){
+                                    if(cfg[item.value]){
+                                        arr.push(cfg[item.value]);
+                                    }else{
+                                        arr.push({
+                                            dataType: "STRING",
+                                            display: item.display,
+                                            expression: "=",
+                                            type:1,
+                                            field: item.value,
+                                            value: "asc"
+                                        });
+                                    }
+                                });
+
+                                me.config.fields4sortType = arr;
+                                queryPageTpl.fields4sortType = arr;
+
+
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                            cls:'oui-dialog-cancel',
+                            text:'取消',
+                            action:function(){
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        }]
+                });
+                com.oui.absolute.AbsoluteDesign.dialog4condition = dialog;
+                dialog.fields4sort = me.config.fields4sort;
+                dialog.fields4sortType = fields4sortType;
+                dialog.getData = function(){
+                    return {
+                        sortTypesEnumData:[{value:'asc',display:'升序'},{value:'desc',display:'降序'}],
+                        fields:this.fields4sort
+                    };
+                };
+                dialog.findDefaultFieldTypeEnum = function(fieldType){
+
+                };
+                dialog.findDefaultDataTypeEnum = function(dataType){
+
+                };
+
+
+                dialog.event2showOrHidePreview = function(cfg){
+
+                };
+                dialog.showConditionInfoAfter =  function(info,obj){
+
+                };
+                dialog.filterField4SysVar = function(){
+                };
+
+                oui.parse({container:dialog.getEl(),callback:function(){
+                    setTimeout(function(){
+                        var control =oui.getTop().oui.getById('edit4settingFields');
+                        control.fillback(me.config.fields4sortType);
+                    },50);
+                }});
+            },
+            _controlOnUpdate4checkboxGroup:function(v,ov){
+                //数组赋值存bug的解决办法
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+                queryPageTpl.toolbarValues =  oui.parseJson(oui.parseString(v));
+            },
+            _controlOnUpdate:function(bindProp,config){
+
+                var queryPageTpl = com.oui.absolute.AbsoluteDesign.dialog4queryPage.queryPageTpl;
+
+                if(bindProp &&config && (queryPageTpl)){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,queryPageTpl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-row{
+        padding: 5px;
+    }
+    .el-col{
+        text-align: left;
+    }
+</style>

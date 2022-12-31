@@ -1,0 +1,174 @@
+<!-- 更新进度 弹框页面-->
+<template>
+    <!-- <div class="pop_box"> -->
+    <!-- 是否更新进度 -->
+    <!-- <div class="confirm_box">确定<span>更新进度？</span></div> -->
+    <!-- <div class="Tips_box">更新进度后，会提示在车主订单详情</div> -->
+    <!-- <div class="confirm">
+            <el-row> 
+                <el-button @click="backToWorkOrderDetailPage">取消</el-button>
+                <el-button type="primary" @click="updateProgress">确定</el-button>
+            </el-row>
+        </div> -->
+
+    <!-- </div> -->
+    <div>
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+                <el-table :data="maintainItems" style="width: 100%">
+                    <el-table-column label="序号" type="index">
+                    </el-table-column>
+                    <el-table-column prop="itemName" label="维修项目">
+                    </el-table-column>
+                    <el-table-column prop="materialName" label="维修材料">
+                    </el-table-column>
+                    <el-table-column v-if="show" prop="status" label="状态">
+                        <template slot-scope="scope">
+                            <el-checkbox @change="statusChange(scope.row)" :checked="scope.row.checked"
+                            :disabled="scope.row.isUpdated" label="已完成"></el-checkbox>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                selectedDots:[],
+                dots:[],
+                //要更新的项目
+                updateWorkOrderMatertialIds:[],
+                maintainItems: [],
+                workOrderId: "",
+                show: false,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return ;
+            }
+            this.isLoading = true;
+            this.getWorkOrderData();
+            
+        },
+        methods: {
+            getWorkOrderData: function () {
+                this.selectedDots = [];
+                let me = this;     
+                var workOrderIdJson = oui.getTop().oui.getPageParam('workOrderId');        
+                oui.ajaxPost('workorder/projectWorkOrder/findOneWorkOrder', {
+                    "workOrderId": workOrderIdJson,
+                }, function (res) {
+                    me.workOrderDetails = res.resultObj;
+                    var workStatus=me.workOrderDetails.workOrderStatus;
+                    if(workStatus==10||workStatus==15||workStatus==20){
+                        me.statusCla = '';
+                        me.show = true;
+                    }
+                    me.maintainItems = res.resultObj.carExecutionProjects || [];
+                    oui.eachArray(me.maintainItems, function (item) {
+                        if (item.status == 2) {
+                            item.isUpdated = true;
+                            item.checked = true;
+                        } else {
+                            item.isUpdated = false;
+                            item.checked = false;
+                        }
+                    });
+                });
+            },
+
+            statusChange: function (row) {
+                var idx = this.updateWorkOrderMatertialIds.indexOf(row);
+                if (idx < 0) {
+                    row.checked = true;
+                    this.updateWorkOrderMatertialIds.push(row);
+                } else {
+                    row.checked = false;
+                    this.updateWorkOrderMatertialIds.splice(idx, 1);
+                }
+                console.log(this.updateWorkOrderMatertialIds);
+                oui.getTop().oui.setPageParam('updateWorkOrderMatertialIds',this.updateWorkOrderMatertialIds);
+            },
+            selectDot:function(dot){
+                var me = this;
+                var idx = me.selectedDots.indexOf(dot);
+                if(idx>-1){
+                    me.selectedDots.splice(idx,1);
+                }else{
+                    me.selectedDots.push(dot);
+                }
+                me.$forceUpdate();
+            }
+        }
+
+
+
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .pop_box {
+        width: 300px;
+        height: 130px;
+        margin: 35px auto;
+        box-sizing: border-box;
+        /* background-color: rgb(156, 175, 166); */
+    }
+
+    .pop_box>div {
+        width: 100%;
+        text-align: center;
+    }
+
+    .confirm_box {
+        font-size: 14px;
+    }
+
+    .confirm_box>span {
+        font-size: 18px;
+    }
+
+    .Tips_box {
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    .Tips_box {
+        font-size: 14px;
+        color: #a3a3a3;
+        text-align: center;
+    }
+
+    /* 确认和取消 */
+
+    .confirm {
+        display: flex;
+        justify-content: center;
+        height: 60px;
+        line-height: 60px;
+        margin-top: 48px;
+        /* background-color: rgb(163, 12, 12); */
+    }
+
+    .confirm .el-button {
+        width: 96px;
+        margin-right: 34px;
+    }
+</style>

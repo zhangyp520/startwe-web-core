@@ -1,0 +1,169 @@
+
+<template >
+    <div style="font-size:14px;">
+        <div style="display: flex;align-items: center;justify-content: center;margin-top: 20px;">
+            <div>数据结果类型选择</div>
+            <el-select v-model="value" placeholder="请选择" size='mini' style="width: 120px;margin-left: 10px;">
+                <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select>
+       </div>
+
+       <div style="display: flex;align-items: center;justify-content: center;margin-top: 20px;">
+            <div>数据结果类型选择</div>
+            <el-select v-model="value" placeholder="请选择" size='mini' style="width: 120px;margin-left: 10px;">
+                <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+
+       <div style="padding: 20px;">
+           结果字段映射  <span style="margin-left: 10px;cursor: pointer;" @click='addField'>增加</span>
+           <div style="display: flex;justify-content: space-between;">
+                <div v-for='(item,index) in tableList'>
+                    <div>{{item.name}}</div>
+                    <div style="display:flex;" v-for='(i,key) in list'>
+                        <div v-if='index == 0'>
+                            <input type="text" v-model='i.label' style="width: 80px;border: 1px solid;outline: none;">
+                        </div>
+                        <div v-if='index == 1'>
+                            <select>
+                                <option>字段1</option>
+                                <option>字段2</option>
+                                <option>字段3</option>
+                                <option>字段4</option>
+                            </select>
+                        </div>
+                        <div v-if='index == 2' style="text-align: center;">
+                            <el-checkbox v-if='key == 0' v-model='display' @change='changeCheckbox($event,1)'></el-checkbox>
+                        </div>
+                        <div v-if='index == 3' style="text-align: center;">
+                            <el-checkbox v-if='key == 0' v-model='listSort' @change='changeCheckbox($event,2)'></el-checkbox>
+                        </div>
+                        <div v-if='index == 4'>
+                            <div style="text-align: center;cursor: pointer;" @click='deleteField(key)'>
+                                删除
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+       </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                options: [{
+                value: '选项1',
+                label: '查询条件的输出'
+                }, {
+                value: '选项2',
+                label: '选择在线逻辑接口'
+                }, {
+                value: '选项3',
+                label: '选择逻辑模板'
+                }, {
+                value: '选项3',
+                label: '自定义逻辑接口'
+                }
+                ],
+                value:'',
+                tableData: [],
+                tableList:[
+                    {
+                        name:'字段名',
+                    },
+                    {
+                        name:'字段结果',
+                    },
+                    {
+                        name:'操作',
+                    },
+                    {
+                        name:'排序', 
+                    },
+                    {
+                        name:'操作',
+                    },
+                   
+                ],
+                checked:true,
+                list:[],
+                display:false,
+                listSort:false
+            }
+        },
+        mounted:function(){
+            console.log(com.oui.absolute.AbsoluteDesign.data,'业务逻辑')
+            let fieldList = com.oui.absolute.AbsoluteDesign.data.otherAttrs.fieldList
+            this.display = com.oui.absolute.AbsoluteDesign.data.otherAttrs.display
+            this.listSort = com.oui.absolute.AbsoluteDesign.data.otherAttrs.listSort
+            if(fieldList && fieldList.length > 0) {
+                this.list = fieldList
+            }else{
+                this.list = []
+            }
+        },
+        methods:{
+            //增加
+            addField () {
+                let obj = {
+                    label:'字段' + (this.list.length + 1),
+                    display:true,
+                    sort:false,
+                    resultList:[]
+                }
+                this.list.push(obj) 
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.fieldList = this.list
+                
+                this.updateCurrentControl()
+
+            },
+            deleteField(index) {
+                this.list.splice(index,1)
+            },
+            changeCheckbox (data,type) {
+                console.log(data,type)
+                if(type == 1) {
+                    com.oui.absolute.AbsoluteDesign.data.otherAttrs.display = data
+                }else{
+                    com.oui.absolute.AbsoluteDesign.data.otherAttrs.listSort = data
+                }
+                this.updateCurrentControl()
+                
+            },
+            //更新
+            updateCurrentControl () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+ 
+</style>

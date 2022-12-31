@@ -1,0 +1,575 @@
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right scollY">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="天气" name="1">
+                    <!-- 天气城市 -->
+                    <div class="public-box">
+                        <span>天气城市</span>
+                        <div class="weather-city">
+                            <el-input v-model="city" class="weather-city-input" @change="handleCityChange"></el-input>
+                        </div>
+                    </div>
+                    <!-- 自动定位 -->
+                    <div class="public-box">
+                        <span>自动定位</span>
+                        <div class="automatic-positioning">
+                            <el-switch v-model="positioning" @change="handlePositioningChange">
+                            </el-switch>
+                        </div>
+                        <div class="positioning-text">设备所在城市天气</div>
+                    </div>
+                    <!-- 日期 -->
+                    <div class="public-box">
+                        <span>日期&emsp;&emsp;</span>
+                        <div class="date-time-box">
+                            <!-- <el-date-picker v-model="dateTime" type="datetime" placeholder="选择日期时间">
+                            </el-date-picker> -->
+                            <el-select v-model="dateTime" class="font-size-select" @change="handleDateTimeChange">
+                                <el-option v-for="item in dateTimes" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <!-- 文字颜色 -->
+                    <div class="public-box">
+                        <span>文字颜色</span>
+                        <div class="text-color-piker">
+                            <el-color-picker v-model="textColor" @change="handleTextColorChange"></el-color-picker>
+                        </div>
+                    </div>
+                    <!-- 背景颜色 -->
+                    <div class="public-box">
+                        <span>背景颜色</span>
+                        <div class="bgcolor-color-piker">
+                            <el-color-picker v-model="backgroundColor" @change="changeWeatherBackgroundColor"></el-color-picker>
+                        </div>
+                    </div>
+                    <!-- 字体 -->
+                    <div class="public-box">
+                        <span>字体&emsp;&emsp;</span>
+                        <div class="font-family-input-box">
+                            <el-select class="font-family-input" v-model="fontFamily" filterable placeholder="请选择" @change="handleFontFamilyChange">
+                                <el-option
+                                        v-for="item in fontFamilies"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div class="font-size-select-box">
+                            <el-select v-model="fontSize" class="font-size-select" @change="handleFontSizeChange">
+                                <el-option v-for="item in font" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+
+                    <div class="text-icon">
+                        <el-tooltip class="item" effect="dark" content="加粗" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/bold.png" @click='Bold'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="倾斜" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/italic.png" @click='italic'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="下划线" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/underscore.png" @click='underline'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除线" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/strikethrough.png" @click='linethrough'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="左对齐" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/alignLeft.png" @click='textstyle(1)'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="右对齐" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/alignRight.png" @click='textstyle(2)'></img>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="居中" placement="bottom-start">
+                            <img src="/res_engine/ppt_design/images/centered.png" @click='textstyle(3)'></img>
+                        </el-tooltip>
+                    </div>
+
+                    <div class="public-box">
+                        <span style="color: #cccccc;font-size: 12px;">显示</span>
+                    </div>
+                    <!-- 定位 -->
+                    <div class="public-box">
+                        <span>定位&emsp;&emsp;</span>
+                        <div>
+                            <el-switch v-model="showPosition" @change="handleShowPositionChange">
+                            </el-switch>
+                        </div>
+                    </div>
+                    <!-- 内容 -->
+                    <div class="public-box">
+                        <span>内容&emsp;&emsp;</span>
+                        <div>
+                            <el-switch v-model="showWeatherContent" @change="handleWeatherContentChange">
+                            </el-switch>
+                        </div>
+                        <div class="positioning-text">空气质量、湿度、风力</div>
+                    </div>
+                    <!-- 温度天气 -->
+                    <div class="public-box">
+                        <span>温度天气</span>
+                        <div>
+                            <el-switch v-model="showTemperature" @change="handleTemperatureChange">
+                            </el-switch>
+                        </div>
+                    </div>
+                    <!-- 图标 -->
+                    <div class="public-box">
+                        <span>图标&emsp;&emsp;</span>
+                        <div>
+                            <el-switch v-model="showWeatherIcon" @change="handleWeatherIconChange">
+                            </el-switch>
+                        </div>
+                    </div>
+                    <div class="public-box">
+                        <span>&emsp;&emsp;&emsp;&emsp;</span>
+                        <div class="weather-icon-box">
+                            <div v-for="(item,index) in weatherIcons" :key="item">
+                                <img :src="item" alt="" @click="weatherIconClick(index)">
+                            </div>
+                        </div>
+                    </div>
+                </el-collapse-item>
+                
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                activeNames:'1',
+                slbHeight: '',
+                rightToolbarData: {},
+                // 城市输入框
+                city: '成都',
+                // 定位开关
+                positioning: true,
+                showPosition: true,
+                // 日期时间
+                dateTimes:[{
+                    value: 'today',
+                    label: '今日实时'
+                },{
+                    value: 'threeDays',
+                    label: '连续三天'
+                },{
+                    value: 'fiveDays',
+                    label: '连续五天'
+                }],
+                dateTime: 'today',
+                // 天气内容开关
+                showWeatherContent: true,
+                // 温度
+                showTemperature: true,
+                // 图标
+                showWeatherIcon: true,
+                weatherIcons: [
+                    oui.getContextPath() + 'res_engine/ppt_design/images/sunny.png',
+                    oui.getContextPath() + 'res_engine/ppt_design/images/cloudy.png',
+                    oui.getContextPath() + 'res_engine/ppt_design/images/rain.png',
+                ],
+                // 字体颜色
+                textColor: '#000',
+                // 背景颜色
+                backgroundColor: '',
+                // 字体大小
+                font: [{
+                    value: '12',
+                    label: '12'
+                }, {
+                    value: '14',
+                    label: '14'
+                }, {
+                    value: '16',
+                    label: '16'
+                }, {
+                    value: '18',
+                    label: '18'
+                }],
+                fontSize: '14',
+                // 字体样式
+                fontFamily: 'SimSun',
+                fontFamilies: [{
+                    value: 'SimSun',
+                    label: '宋体 SimSun'
+                }, {
+                    value: 'SimHei',
+                    label: '黑体 SimHei'
+                }, {
+                    value: 'Microsoft YaHei',
+                    label: '微软雅黑 Microsoft YaHei'
+                }, {
+                    value: 'Microsoft JhengHei',
+                    label: '微软正黑体 Microsoft JhengHei'
+                }],
+                bold:true,
+            }
+        },
+        created(){
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.otherAttrs.city) {
+                this.city = this.currentControl.otherAttrs.city;
+            }
+            if (this.currentControl.otherAttrs.dateTime) {
+                this.dateTime = this.currentControl.otherAttrs.dateTime;
+            }
+            if (this.currentControl.innerStyle.styleField.color) {
+                this.textColor = this.currentControl.innerStyle.styleField.color;
+            }
+            if (this.currentControl.style.backgroundColor) {
+                this.backgroundColor = this.currentControl.style.backgroundColor;
+            }
+            if (this.currentControl.innerStyle.styleField.fontFamily) {
+                this.fontFamily = this.currentControl.innerStyle.styleField.fontFamily;
+            }
+            if (this.currentControl.innerStyle.styleField.fontSize) {
+                this.fontSize = this.currentControl.innerStyle.styleField.fontSize;
+            }
+            if (typeof this.currentControl.otherAttrs.showPosition !=='undefined') {
+                this.showPosition = this.currentControl.otherAttrs.showPosition;
+            }
+            if (typeof this.currentControl.otherAttrs.showWeatherContent !=='undefined') {
+                this.showWeatherContent = this.currentControl.otherAttrs.showWeatherContent;
+            }
+            if (typeof this.currentControl.otherAttrs.showTemperature !=='undefined') {
+                this.showTemperature = this.currentControl.otherAttrs.showTemperature;
+            }
+            if (typeof this.currentControl.otherAttrs.showWeatherIcon !=='undefined') {
+                this.showWeatherIcon = this.currentControl.otherAttrs.showWeatherIcon;
+            }
+            if (typeof this.currentControl.otherAttrs.positioning !=='undefined') {
+                this.positioning = this.currentControl.otherAttrs.positioning;
+            }
+
+            
+        },
+        methods: {
+            updateCurrentControl:function(){
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if(currentControl&&currentControl.id){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+
+            weatherIconClick: function (index) {
+                console.log(index);
+
+            },
+            //城市改变事件
+            handleCityChange: function () {
+                this.currentControl.otherAttrs.city = this.city;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.city = this.currentControl.otherAttrs.city;
+                this.updateCurrentControl();
+            },
+            //时间改变事件
+            handleDateTimeChange: function () {
+                this.currentControl.otherAttrs.dateTime = this.dateTime;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.dateTime = this.currentControl.otherAttrs.dateTime;
+                this.updateCurrentControl();
+            },
+            //字体颜色改变
+            handleTextColorChange: function () {
+                this.currentControl.innerStyle.styleField.color = this.textColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.color = this.currentControl.innerStyle.styleField.color;
+                this.updateCurrentControl();
+            },
+            //整体背景颜色改变事件
+            changeWeatherBackgroundColor: function () {
+                this.currentControl.style.backgroundColor = this.backgroundColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.backgroundColor = this.currentControl.style.backgroundColor;
+                this.updateCurrentControl();
+            },
+            //字体样式选择改变事件
+            handleFontFamilyChange: function () {
+                this.currentControl.innerStyle.styleField.fontFamily = this.fontFamily;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontFamily = this.currentControl.innerStyle.styleField.fontFamily;
+                this.updateCurrentControl();
+            },
+            //字体大小格式选择改变事件
+            handleFontSizeChange: function () {
+                this.currentControl.innerStyle.styleField.fontSize = this.fontSize;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontSize = this.currentControl.innerStyle.styleField.fontSize;
+                this.updateCurrentControl();
+            },
+            //是否显示位置改变事件
+            handleShowPositionChange: function () {
+                this.currentControl.otherAttrs.showPosition = this.showPosition;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.showPosition = this.currentControl.otherAttrs.showPosition;
+                this.updateCurrentControl();
+            },
+            //天气显示内容改变事件
+            handleWeatherContentChange: function () {
+                this.currentControl.otherAttrs.showWeatherContent = this.showWeatherContent;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.showWeatherContent = this.currentControl.otherAttrs.showWeatherContent;
+                this.updateCurrentControl();
+            },
+            //温度天气显示改变事件
+            handleTemperatureChange: function () {
+                this.currentControl.otherAttrs.showTemperature = this.showTemperature;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.showTemperature = this.currentControl.otherAttrs.showTemperature;
+                this.updateCurrentControl();
+            },
+            //天气图标显示事件
+            handleWeatherIconChange: function () {
+                this.currentControl.otherAttrs.showWeatherIcon = this.showWeatherIcon;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.showWeatherIcon = this.currentControl.otherAttrs.showWeatherIcon;
+                this.updateCurrentControl();
+            },
+            //天气图标显示事件
+            handlePositioningChange: function () {
+                this.currentControl.otherAttrs.positioning = this.positioning;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.positioning = this.currentControl.otherAttrs.positioning;
+                this.updateCurrentControl();
+            }, 
+            //加粗
+            Bold() {
+                this.currentControl.otherAttrs.bold = this.currentControl.otherAttrs.bold ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.bold = this.currentControl.otherAttrs.bold;
+                this.updateCurrentControl();
+            },
+            //倾斜
+            italic() {
+                this.currentControl.otherAttrs.italic = this.currentControl.otherAttrs.italic ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.italic = this.currentControl.otherAttrs.italic;
+                this.updateCurrentControl();
+            },
+            //下划线
+            underline() {
+                this.currentControl.otherAttrs.underline = this.currentControl.otherAttrs.underline ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.underline = this.currentControl.otherAttrs.underline;
+                this.updateCurrentControl();
+            },
+            //删除线 
+            linethrough() {
+                this.currentControl.otherAttrs.linethrough = this.currentControl.otherAttrs.linethrough ? false : true
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.linethrough = this.currentControl.otherAttrs.linethrough;
+                this.updateCurrentControl();
+                
+            },
+            //文字对齐
+            textstyle(type) {
+                this.currentControl.otherAttrs.textstyle = type
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textstyle = this.currentControl.otherAttrs.textstyle;
+                this.updateCurrentControl();
+            },
+            
+        }
+    }
+
+</script>
+
+<style scoped>
+    body {
+        background: #666;
+    }
+    .scollY{
+        overflow-y:auto;
+        height: calc(100vh - 66px);
+        width: 100%;
+    }
+    .el-collapse{
+        border:none;
+    }
+    .el-icon-arrow-down:before {
+        content: none;
+    }
+
+    /* 文字颜色选择器 */
+
+    .text-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .text-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .text-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    /* 外层公共盒子 */
+
+    .public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+        padding-right: 20px;
+    }
+    .public-box>span {
+        color: #fff;
+        width: 30%;
+        text-align: center;
+    }
+
+    /* 天气输入框 */
+    .weather-city{
+        width: 70%;
+    }
+    .weather-city-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    /* 日期选择框 */
+    .date-time-box{
+        width: 76%;
+    }
+    .date-time-box .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .date-time-box .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* .date-time-box .el-date-editor.el-input,
+    .el-date-editor.el-input__inner {
+        width: 200px;
+    } */
+
+    /* 字体类型 */
+
+    .font-family-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-family-input-box {
+        margin-right: 10px;
+        width: 47%;
+    }
+
+    /* 字体大小 */
+
+    .font-size-select .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-size-select .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__icon {
+        line-height: 30px;
+    }
+
+    .font-size-select-box {
+        width: 25%;
+    }
+
+    /* 富文本编辑器 */
+
+    .textContent-box {
+        display: flex;
+        justify-content: center;
+        padding: 0 !important;
+    }
+
+    .textContent-box .layui-layedit-tool .layui-icon {
+        color: #fff;
+        width: 25px;
+    }
+
+    .textContent-box .layui-layedit {
+        border: none;
+    }
+
+    .textContent-box .layui-layedit-iframe {
+        display: none;
+    }
+
+    .textContent-box .layui-layedit-tool {
+        border-bottom: 1px solid #999;
+        ;
+    }
+
+    .positioning-text {
+        margin-left: 10px;
+        color: #cccccc;
+        font-size: 12px;
+    }
+
+    /* 天气图标 */
+
+    .weather-icon-box {
+        flex: 1;
+        display: flex;
+        justify-content: space-around
+    }
+
+    .weather-icon-box>div>img {
+        width: 30px;
+        height: 30px;
+    }
+    .text-icon{
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+        height: 50px;
+        border-bottom: 1px solid #fff;
+        margin: 10px 10px 0 10px;
+        cursor: pointer;
+    }
+</style>

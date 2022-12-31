@@ -1,0 +1,164 @@
+<template>
+    <div class="tel_box">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="151px" class="demo-ruleForm">
+            <!-- 新的手机号码 -->
+            <el-form-item label="请输入新的手机号码:" prop="newTel">
+                <el-input v-model="ruleForm.newTel" style="width: 224px; height: 32px;" placeholder="请输入你的号码">
+                </el-input>
+            </el-form-item>
+            <!-- 请确认新的手机号码 -->
+            <el-form-item label="请确认新的手机号码:" prop="confirmTel">
+                <el-input v-model="ruleForm.confirmTel" style="width: 224px; height: 32px;" placeholder="请确认你的号码">
+                </el-input>
+            </el-form-item>
+        </el-form>
+        <el-button type="primary" @click="confirmTel">确认</el-button>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+                // 主体内容的基本信息名称验证所绑定的数据名开始
+                ruleForm: {
+                    // 新的手机号码
+                    newTel: '',
+                    // 确认新号码
+                    confirmTel: ''
+                },
+
+                // 每个对象的验证规则
+                rules: {
+                    // 验证名称
+                    name: [
+                        { required: true, message: '请输入名称', trigger: 'blur' },
+                        { min: 2, max: 40, message: '长度在 3 到 40 个字符', trigger: 'blur' }
+                    ],
+                    // 验证地址
+                    region: [
+                        { required: true, message: '请选择地址', trigger: 'change' },
+                        { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+                    ],
+                    // 验证负责人
+                    people: [
+                        { required: true, message: '请输入负责人', trigger: 'blur' },
+                        { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+                    ],
+                    // 验证电话号码
+                    tel: [
+                        { required: true, message: '请输入电话号码', trigger: 'blur' },
+                        { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' }
+                    ],
+                    // 验证营业
+                    scope: [
+                        { required: true, message: '请输入营业范围', trigger: 'blur' },
+                        { min: 2, max: 200, message: '长度在 2 到 200 个字符', trigger: 'blur' }
+                    ]
+                },
+                // 主体内容的基本信息名称验证所绑定的数据名结束
+            }
+        },
+        created() {
+            // // 加载 css3布局样式和首页样式
+            // oui.require([
+            //     '/res_apps/car-1/project/css/css3-flex.css',
+            //     '/res_apps/car-1/project/css/home.css'
+            // ])
+        },
+        mounted: function () {
+            // 加载 echarts 进行图表渲染
+            // oui.require([
+            //     '/res_common/third/echarts/echarts.min.js'
+            // ], (res) => {
+            //     this.$nextTick(() => {
+            //         var myChart = echarts.init(document.getElementById('main'));
+            //         myChart.setOption(this.option);
+            //     })
+            // })
+        },
+        methods: {
+            // 点击确定后将号码返回后端并把新的号码显示到基础信息的页面上
+            confirmTel() {
+
+                var that = this
+                // 此方法可以获取到底层页面传递给全局的org_info里面的数据
+                var paramStr = oui.getTop().oui.getPageParam('org_info');
+                // 将拿到的josn数据转换成javascript对象
+                var param = oui.parseJson(paramStr);
+                console.log(param);
+                console.log(param.customerId);
+
+                oui.ajaxPost('company/companyInfo/updateCompanyInfo', {
+                        "bossPhoneNo": this.ruleForm.confirmTel,
+                        "bossName":param.people ,
+                        "businessScope": param.scope,
+                        "companyAddr": param.region,
+                        "companyName":param.name ,
+                        "logoPath": param.logoImageUrl,
+                        "id":param.customerId,
+                        "qrCodePath": param.imageUrl
+                    },
+                    // 成功时候的回调
+                    function (res) {
+                        if (res.success) {
+                            that.$message({
+                                message: '恭喜你，修改成功',
+                                type: 'success'
+                            })
+                        }
+                    },
+                    // 错误时候回调
+                    function (res) {
+                        console.log(res.success, 1222222);
+
+                        that.$message.error('电话号码不一致，修改失败');
+                        return
+                    }
+
+
+
+
+                )
+            }
+
+        }
+
+
+    }
+
+
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    .tel_box {
+        width: 430px;
+        height: 240px;
+        margin: 35px auto;
+        padding: 30px 0;
+        box-sizing: border-box;
+    }
+
+
+    .tel_box .el-form {
+        margin: auto;
+        padding: 0 10px;
+    }
+
+
+    .tel_box .el-button {
+        width: 368px;
+        height: 40px;
+        display: block;
+        margin: 50px auto;
+        padding: 0;
+
+
+    }
+</style>

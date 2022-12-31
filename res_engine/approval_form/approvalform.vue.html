@@ -1,0 +1,308 @@
+<!--审批页面组件-->
+<template >
+    <div>
+        <!--<el-button @click="startProcess">启动流程</el-button>-->
+        <!--<el-button @click="queryMyTask">获取我的待办列表</el-button>-->
+
+
+
+        <el-button v-for="(button,index) in buttons" @click="buttonClick(button)">{{button.display}}</el-button>
+        <oui-include  url="res_common/oui/ui/ui_pc/components/tabs.vue.html" ref="approvalform_tabs" type="module" :data="getTabsData()"></oui-include>
+    </div>
+</template>
+
+<script>
+    //test http://115.28.73.143:8175/portal4vue.html#res_engine/approval_form/approvalform.vue.html?projectId=420520291509207040&formId=420520629691744256&dataId=429283286150283264&flowId=p_420520291509207040.m_420520629683355648.u_429618882873917440&userId=zhangyp&userName=%E5%BC%A0%E5%85%83%E5%B9%B3
+
+    exports = {
+        templateType:'vue',
+        watch:{
+            'formTab.url':{
+                handler: function(newVal,oldVal) {
+                    if(!this.tabsData || (!this.tabsData.value)){
+                        return;
+                    }
+                    var me  = this;
+                    var one = oui.findOneFromArrayBy(this.tabsData.data||[],function(item){
+                        if(item.value == me.tabsData.value ){
+                            return true;
+                        }
+                    });
+                    if(one){
+                        me.$refs.approvalform_tabs.comp.data = me.tabsData.data;
+                        me.$refs.approvalform_tabs.comp.value = me.tabsData.value;
+
+                        var  refs = me.$refs.approvalform_tabs.comp.$refs['tab_'+me.tabsData.value]||[] ;
+                        var formRef = oui.findOneFromArrayBy(refs,function(ref){
+                            if(ref.currUrl.indexOf('form.vue.html')>-1){
+                                return true;
+                            }
+                        });
+                        if(formRef){
+                            formRef.comp.url= me.formTab.url;
+                        }
+
+                    }
+                },
+                deep: true,
+                immediate: true
+            }
+            ,'flowTab.url':{
+                handler: function(newVal,oldVal) {
+                    if(!this.tabsData || (!this.tabsData.value)){
+                        return;
+                    }
+                    var me  = this;
+                    var one = oui.findOneFromArrayBy(this.tabsData.data||[],function(item){
+                        if(item.value == me.flowTab.id ){
+                            return true;
+                        }
+                    });
+                    if(one){
+                        var  refs = me.$refs.approvalform_tabs.comp.$refs['tab_'+me.tabsData.value]||[] ;
+                        var flowRef = oui.findOneFromArrayBy(refs,function(ref){
+                            if(ref.currUrl.indexOf('flow.vue.html')>-1){
+                                return true;
+                            }
+                        });
+                        if(flowRef){
+                            flowRef.comp.url= me.flowTab.url;
+                        }
+                    }
+                },
+                deep: true,
+                immediate: true
+            }
+        },
+        data: function () {
+            return {
+                approvalFormUUID:'approval_'+oui.getUUIDLong(),
+                buttons:[],
+                formTab:null,
+                flowTab:null,
+                approvalListTab:null,
+                tabsData:null
+            }
+        },
+        mounted:function(){
+
+            //解析url参数进行控制
+            //formId={0}&flowId={1}&dataId={2}&activityDefineId={3}&activityInstId={4}&workItemId={5}&processInstId={6}&projectId={7}&userId={8}&userName={9}
+            var me = this;
+            var query = this.$router.query ||{};
+            me.buttons =[{value:'save',display:'暂存'},{value:'submit',display:'提交'}];
+            var loadApproveFormUrl = oui_context.loadApproveFormUrl||'';
+            loadApproveFormUrl = oui.addParams(loadApproveFormUrl,query);
+//            query.loadApproveFormUrl = loadApproveFormUrl;
+
+            this.messageFunction = function(event){
+                if(!event.data){
+                    return ;
+                }
+                if(event.data.toId !=me.approvalFormUUID){
+                    return ;
+                }
+                if(!event.data.cmd){
+                    return ;
+                }
+                me.onMessage&&me.onMessage(event.data);
+            };
+            window.addEventListener('message',this.messageFunction);
+
+            oui.getData(loadApproveFormUrl,{},function(res){
+                var loadFormUrl = res.loadFormUrl ||'';
+                var loadFlowUrl = res.loadFlowUrl ||'';
+                var loadFormDataUrl = res.loadFormDataUrl||'';
+                var createAndStartProcessInstanceUrl = res.createAndStartProcessInstanceUrl ||'';
+                me.createAndStartProcessInstanceUrl = createAndStartProcessInstanceUrl; //启动流程url
+                me.getMyTaskUrl = res.getMyTaskUrl||'';
+                query.approvalFormUUID = me.approvalFormUUID;
+                query.loadFormUrl = loadFormUrl;
+                query.loadFlowUrl = loadFlowUrl;
+                query.loadFormDataUrl = loadFormDataUrl;
+                me.getTabsData();
+                me.flowTab.url = oui.addParams(me.flowTab.url,query);
+                me.formTab.url = oui.addParams(me.formTab.url,query);
+                me.approvalListTab.url = oui.addParams(me.approvalListTab.url,query);
+
+                me.$nextTick(function(){
+                    me.refresh();
+                });
+            });
+        },
+        methods:{
+            onMessage:function(data){
+                this[data.cmd]&&this[data.cmd](data.param);
+            },
+            destroy:function(){
+                window.removeEventListener('message',this.messageFunction);
+            },
+            onUpdate:function(v){
+                var refs = this.findCurrRefs();
+                var one = oui.findOneFromArrayBy(refs,function(ref){
+                    if(ref.comp.value == v){
+                        return true;
+                    }
+                });
+                if(one&&one.comp){
+                    one.comp.onUpdate&&one.comp.onUpdate();
+                }
+            },
+            findCurrRefs:function(){
+                var refs = this.$refs.approvalform_tabs.comp.$refs['tab_'+this.formTab.value] ||
+                        this.$refs.approvalform_tabs.comp.$refs['tab_'+this.flowTab.value]  ||
+                        this.$refs.approvalform_tabs.comp.$refs['tab_'+this.approvalListTab.value] || [];
+                return refs;
+            },
+            /** 启动流程 */
+            startProcess:function(){
+                var me = this;
+                var query = this.$router.query ||{};
+                var flowId = query.flowId || oui.getParamByUrl(this.createAndStartProcessInstanceUrl,'flowId');
+                if(!flowId){ //流程定义id不能为空
+                    return;
+                }
+                var createAndStartProcessInstanceUrl = this.createAndStartProcessInstanceUrl;
+//formId={0}&flowId={1}&dataId={2}&activityDefineId={3}&activityInstId={4}&workItemId={5}&processInstId={6}&projectId={7}&userId={8}&userName={9}
+
+                oui.postData(createAndStartProcessInstanceUrl,{
+                    userId:query.userId,
+                    userName:query.userName
+                },function(res){
+                    console.log(res);
+                    me.$message({
+                        message:'流程启动成功',
+                        type:'success'
+                    });
+                });
+
+            },
+            //获取我的待办列表 测试
+            queryMyTask:function(){
+                var me = this;
+                if(!this.getMyTaskUrl){
+                    return;
+                }
+                var getMyTaskUrl = this.getMyTaskUrl;
+//formId={0}&flowId={1}&dataId={2}&activityDefineId={3}&activityInstId={4}&workItemId={5}&processInstId={6}&projectId={7}&userId={8}&userName={9}
+
+                oui.postData(getMyTaskUrl,{
+                },function(res){
+                    if(res.success){
+                        var tasks =res.tasks;
+                        console.log(res);
+                        alert(oui.parseString(tasks));
+                    }
+                },null,'待办查询中..');
+
+            },
+            //执行事件
+            buttonClick:function(button){
+                var value = this.$refs.approvalform_tabs.comp.value;
+                var  refs = this.$refs.approvalform_tabs.comp.$refs['tab_'+value]||[] ;
+                var formRef = oui.findOneFromArrayBy(refs,function(ref){
+                    if(ref.currUrl.indexOf('form.vue.html')>-1){
+                        return true;
+                    }
+                });
+                if(formRef){
+                    var eventValue = button.value;
+                    if(formRef.comp.data.pageData[eventValue]){
+                        formRef.comp.data.pageData[eventValue](function(res){
+                        },function(res){
+                        });
+                    }
+                }
+            },
+            //暂存
+            event2save:function(){
+                //找到表单组件，进行保存
+                var value = this.$refs.approvalform_tabs.comp.value;
+                var  refs = this.$refs.approvalform_tabs.comp.$refs['tab_'+value]||[] ;
+                var formRef = oui.findOneFromArrayBy(refs,function(ref){
+                    if(ref.currUrl.indexOf('form.vue.html')>-1){
+                        return true;
+                    }
+                });
+                if(formRef){
+                    formRef.comp.data.pageData.save(function(res){
+
+                    },function(res){
+
+                    });
+                }
+
+            },
+            //保存表单并发起流程
+            event2submit:function(){
+                //找到表单组件进行流程提交
+                var value = this.$refs.approvalform_tabs.comp.value;
+                var  refs = this.$refs.approvalform_tabs.comp.$refs['tab_'+value]||[] ;
+                var formRef = oui.findOneFromArrayBy(refs,function(ref){
+                    if(ref.currUrl.indexOf('form.vue.html')>-1){
+                        return true;
+                    }
+                });
+                if(formRef){
+                    formRef.comp.data.pageData.submit(function(res){
+
+                    },function(res){
+
+                    });
+                }
+            },
+            getTabsData:function(){
+                var me = this;
+                if(!this.tabsData){
+                    var formTabId = oui.getUUIDLong();
+                    var flowTabId = oui.getUUIDLong();
+                    var approvalListTabId = oui.getUUIDLong();
+                    var formTab = {
+                        "display":"表单",
+                        "id":formTabId,
+                        "value":formTabId,
+                        "contentType":"pageUrl",
+                        "url":"res_engine/approval_form/form.vue.html" //这里是 动态传入
+
+                    };
+                    var flowTab = {
+                        "display":"流程",
+                        "id":flowTabId,
+                        "value":flowTabId,
+                        "contentType":"pageUrl",
+                        onUpdate:function(){
+
+                        },
+                        "url":"res_engine/approval_form/flow.vue.html" //这里是 动态传入
+                    };
+                    var approvalListTab ={
+                        "display":"审批记录",
+                        "id":approvalListTabId,
+                        "value":approvalListTabId,
+                        "contentType":"pageUrl",
+                        "url":"res_engine/approval_form/approvalist.vue.html" //这里是 动态传入
+                    };
+                    this.formTab = formTab;
+                    this.flowTab = flowTab;
+                    this.approvalListTab = approvalListTab;
+                    this.tabsData ={
+                        value:formTabId,
+                        data: [
+                            formTab,
+                            flowTab,
+                            approvalListTab
+                        ],
+                        onUpdate:function(key,v,ov){
+                            me.onUpdate&&me.onUpdate(v);
+                        }
+                    };
+                }
+                return this.tabsData;
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,45 @@
+<!--图片查看 -->
+<template >
+    <img :tempStyle="style"
+         :id="id"
+         :name="name"
+         :bindProp="bindProp"
+         :class="cls"
+         v-model="value"
+         :src="value"  />
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                otherAttrs:{},
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        mounted:function(){
+            this.value = this.value||this.otherAttrs.value||"";
+            if(!this.value){
+                this.value = oui.getContextPath()+'res_engine/page_design/pc/images/image-default.svg';//指定默认图片路径
+            }
+        },
+        methods:{
+//            _controlOnUpdate:function(v,ov){
+//                var key = this.bindProp;
+//                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+//            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

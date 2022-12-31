@@ -1,0 +1,283 @@
+<!-- 客户中心的公共组件页面 -->
+
+<template>
+
+    <el-menu>
+        <el-row class="tac" :class="item.cls" v-for="(item,index) in list" :key="index">
+            <el-menu-item @click="handleClick(item)">
+                <span slot="title">{{item.name}}</span>
+            </el-menu-item>
+        </el-row>
+            
+    </el-menu>
+         
+
+
+
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 侧边栏数据开始----
+                // 自己配置的url作为跳转路径
+                url: "",
+                // 侧边栏列表数据
+                list: [
+                    {
+                        id:'all',
+                        name: '全部',
+                        cls:'',
+                        url: 'res_apps/car/html/customer/customer.vue.html'
+                    },
+                    {
+                        id:'ongoing',
+                        name: '进行中',
+                        cls:'',
+                        url: 'res_apps/car/html/customer/customerhaveInHand.vue.html'
+                    },
+                    {
+                        id:'wait4pay',
+                        name: '待付款',
+                        cls:'',
+                        url: 'res_apps/car/html/customer/customerToBePaid.vue.html'
+                    }
+                ]
+
+
+
+
+            }
+        },
+        created() {
+
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+
+            this.init();
+            // 加载 echarts 进行图表渲染
+            // oui.require([
+            //     '/res_common/third/echarts/echarts.min.js'
+            // ], (res) => {
+            //     this.$nextTick(() => {
+            //         var myChart = echarts.init(document.getElementById('main'));
+            //         myChart.setOption(this.option);
+            //     })
+            // })
+        },
+        methods: {
+            init:function(){
+                var query = this.$router.query||{};
+                var currTabId = query.currTabId||'all';
+                oui.eachArray(this.list,function(item){
+                    if(item.id == currTabId){
+                        item.cls = 'active-menu';
+                    }
+                });
+
+            },
+
+            // 点击按钮跳转地址
+            handleClick: function (item) {
+                // debugger;
+                // this.$router.push(url,param||{});       
+                this.url = oui.getContextPath() + "" + item.url
+                // console.log(this.url,12312132);
+                // debugger
+                if(this.currentActiveItem){
+                    console.log(this.currentActiveItem);
+                    this.currentActiveItem.cls ='';
+                }
+                item.cls ='active-menu';
+                this.currentActiveItem = item;
+                oui.router.push(this.url,{
+                    currTabId:item.id
+                })
+
+                // 另一个占位符写法
+                // this.url = oui.getContextPath() + "index4vue.html#" + item.url
+                // console.log(this.url);
+                // $('#main_iframe')[0].url = this.url;
+
+                // oui.router.push(item.url)
+                // this.$router.push("www.baidu.com")
+                // console.log(item.url);
+                // this.$refs.main.refresh();
+
+                // 这是要跳转的组件文件地址
+                // res_apps/car/html/customer/customer.vue.html
+
+                //点击按钮跳转地砖
+                // handleClick: function (url, param) {
+                //    // this.$router.push(url,param||{});
+                //     this.$router.push("/res_apps/car-1/html/user/user.vue.html")
+
+            }
+        }
+    }
+</script>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    html {
+        padding: 0;
+        margin: 0;
+        font-size: 0;
+    }
+
+
+    .el-menu{
+        margin-top: 30px !important;
+    }
+    /* 菜单栏选中后效果 */
+    .active-menu{
+        color: #1890FF;
+        background-color: #ecf5ff;
+        border-right:2px solid #1890FF;
+        font-weight: bold;
+    }
+    /* 布局容器自带样式 */
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    /* 自己设置样式开始 */
+    .el-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 侧边栏log图片 */
+
+    .logImage {
+        margin: 0 20px 0 0;
+
+    }
+
+    .logImage>img {
+        width: 180px;
+        height: 50px;
+    }
+
+    /* 侧边栏阴影调整 */
+    .el-menu {
+        /* box-shadow: 2 0 6 0 #eee; */
+    }
+
+    /* 隐藏侧边栏的滚动轴 */
+    /* .el-aside{
+    overflow: hidden;
+} */
+    /* 美化侧边栏的滚动轴开始 */
+    .page_scroll {
+        height: 100%;
+    }
+
+    .page_scroll .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+
+    /* 美化侧边栏的滚动轴结束 */
+
+    /* 隐藏侧边栏的滚动轴 */
+
+
+    /* 调整侧边栏功能区下边的文字居中显示 */
+    .el-menu-item {
+        text-align: center;
+    }
+
+    /* 功能行的文字颜色 */
+
+    .el-menu-item-group__title {
+        padding: 7px 0;
+        margin: 8px 0;
+        line-height: normal;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1890FF;
+    }
+
+    /* 侧边栏高度及背景色 */
+    .el-scrollbar__wrap {
+        overflow: scroll;
+        height: 100%;
+        background-color: #fff !important;
+    }
+
+    /* 右侧 头部区域个人信息区域 */
+    /* 头部区域el-header标签 */
+    .el-header {
+        height: 48px !important;
+        background-color: #fff;
+        box-shadow: 0 2 6 0 rgb(0, 0, 0, 0.5);
+    }
+
+    /* 头部三个头像的盒子 */
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar>img {
+        width: 20px;
+        height: 20px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+
+
+
+
+
+    /* 内容主体区域 */
+    /* .el-container {
+        background-color: #eee;
+    } */
+
+    /* 主体内容区域 */
+    .conter_box {
+        /* padding: 15px; */
+        background-color: #eee;
+    }
+
+    /* iframe标签控制的视图窗口大小 */
+    /* 这个标签决定了组件页面显示的大小 */
+    #main_iframe {
+        width: 100%;
+        height: 100%;
+        border: 0px;
+    }
+
+    /* 主体内容溢出了不显示，让内部滚动条来控制 */
+    /* 控制内容盒子的高度 */
+    .el-main {
+        overflow: hidden;
+        padding: 0;
+        height: 100% !important;
+
+    }
+</style>

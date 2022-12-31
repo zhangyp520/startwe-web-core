@@ -1,0 +1,76 @@
+<!-- 根据页面呈现类型进行处理 -->
+<template>
+    <div :style="styleFieldString" class="portal-page-space">
+        <oui-include v-if="renderUrl" type="module" :url="renderUrl" :ref="refId" :data="pageData"></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                refId:'ref_'+oui.getUUIDLong(),
+                nodeId: '',
+                pageData:{},
+                renderUrl:'',
+                refId:'ref_'+oui.getUUIDLong(),
+                styleFieldString: ''
+            }
+        },
+        watch:{
+            'pageData':{
+                handler: function(newVal,oldVal) {
+                    this.refreshPageData();
+                },
+                deep: true,
+                immediate: true
+            }
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+             
+
+            this.isLoading = true;
+            console.log(this);
+            console.log('当前执行参数:',this.$router.query);
+            
+            var renderUrl = oui.getContextPath()+'res_common/oui/ui/ui_pc/art-components/pptPage.art.html?pageId='+this.$router.query.pageId;
+
+            
+            this.renderUrl = renderUrl;
+        },
+        methods: {
+            refreshPageData:function(){
+                
+                
+                //this.$refs[this.refId].comp.refreshPageData();
+
+            },
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, { value: v, data4DB: v, display: v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .portal-page-space{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page .control-inner-abs{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page .control-inner-abs .control-container-abs{
+        height: 100%;
+    }
+</style>

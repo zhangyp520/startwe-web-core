@@ -1,0 +1,18 @@
+{
+  dbName:'page_design_db', //数据库名
+  dbVersion:1,//数据库版本，每次要做表结构变更时，更新该属性，否则表结构不变更
+  dbStores:{
+    o_page_design:{//page_design_db-自动任务配置页面
+      name:'o_page_design',
+      indexs:{
+        'pk_id':{
+          key:'id',
+          keyPaths:['id'],
+          options:{
+            unique:true
+          }
+        }
+      }
+    }
+  }
+}

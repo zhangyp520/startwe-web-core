@@ -1,0 +1,213 @@
+
+<template >
+    <div>
+        <el-row class="query-page-select-tpl">
+            <el-col :span="9" class="label">
+                选择查询模板
+            </el-col>
+            <el-col :span="15">
+                <el-select
+                        placeholder="请选择查询模板"
+                        v-model="selectedQueryPage"
+                        @change="_controlOnUpdate4selectedQueryPage" >
+                    <el-option
+                            :key="defaultPageTpl.id"
+                            :label="defaultPageTpl.display"
+                            :value="defaultPageTpl.id">
+                    </el-option>
+                    <el-option
+                            v-for="item in options"
+                            :key="item.id"
+                            :label="item.display"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-col>
+
+        </el-row>
+        <div class="label">自定义模板设置</div>
+        <draggable v-model="options" draggable=".item" handle=".item-move" @end="onSortEnd"  ghost-class="ghost" >
+
+            <el-row  v-for="(element,index) in options" :key="element.id" class="item">
+                <el-col :span="3" class="item-move">
+                    <el-button type="text" size="medium" icon="el-icon-rank" class="item-move" >{{index+1}}</el-button>
+                </el-col>
+
+                <el-col :span="13">
+                    <el-input type="text" :bindIndex="index" bindProp="display" v-model="element.display" @change="_controlOnUpdate(index,element)" />
+                </el-col>
+                <el-col :span="8">
+                    <el-button-group>
+                        <el-button type="text" size="medium" icon="el-icon-setting" class="item-setting" @click="setOption(element.id,index)" draggable="false"></el-button>
+                        <el-button type="text" size="medium" icon="el-icon-plus" class="item-add" @click="addOption(element.id)" draggable="false"></el-button>
+                        <el-button type="text" size="medium" icon="el-icon-delete" class="item-delete" @click="removeOption(element.id)" draggable="false"></el-button>
+                    </el-button-group>
+                </el-col>
+            </el-row>
+        </draggable>
+        <el-button slot="footer" @click="addOption()">添加查询模板</el-button>
+        <el-button slot="footer" @click="clearOptions()">清空</el-button>
+        <!--<el-button slot="footer" @click="addOptions()">批量</el-button>-->
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                selectedQueryPage:1,
+                defaultPageTpl:{
+                    id:1,
+                    display:'默认查询页面'
+                },
+
+                options:[]
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var data = com.oui.absolute.AbsoluteDesign.data;
+            if(data.id){
+                if(!data.otherAttrs){
+                    data.otherAttrs = {};
+                }
+                if(!data.otherAttrs.queryPages){ //查询页面列表
+                    data.otherAttrs.queryPages =[];
+                }
+                this.options = oui.parseJson(oui.parseString(data.otherAttrs.queryPages));
+                this.selectedQueryPage = data.otherAttrs.selectedQueryPage||1;
+            }
+        },
+        methods:{
+            onMove:function(e){
+                console.log(e);
+            },
+            onSortEnd:function(){
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.queryPages = oui.parseJson(oui.parseString(this.options));
+            },
+            clearOptions:function(){
+                this.options.length=0;
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.queryPages = oui.parseJson(oui.parseString(this.options));
+            },
+            addOptions:function(){
+
+            },
+            //
+            setOption:function(id,index){ //设置查询模板
+                var me = this;
+                var item = this.options[index];
+                if(!item){
+                    return;
+                }
+                var html ='<oui-include url="res_engine/page_design/pc/query_page_config.vue.html" type="module"></oui-include>';
+                var dialog = oui.showHTMLDialog({
+                    title:'查询页面模板设置',
+                    contentStyle:'width:940px;',
+                    content:html,
+                    actions: [
+                        {
+                            cls:'oui-dialog-ok',
+                            text:'确定',
+                            action:function(){
+                                me.options[index] = oui.parseJson(oui.parseString(dialog.queryPageTpl));
+                                me._controlOnUpdate(index,me.options[index]);
+                                dialog&&dialog.hide();
+                                return false;
+                            }
+                        },
+                        {
+                        cls:'oui-dialog-cancel',
+                        text:'取消',
+                        action:function(){
+                            dialog&&dialog.hide();
+                            return false;
+                        }
+                    }]
+                });
+                dialog.queryPageTpl = oui.parseJson(oui.parseString(item));
+                com.oui.absolute.AbsoluteDesign.dialog4queryPage = dialog;
+                oui.parse({container:dialog.getEl(),callback:function(){
+
+                }});
+            },
+            addOption:function(id){
+                if(id){
+                    var item = oui.findOneFromArrayBy(this.options,function(item){
+                        if(item.id ==id){
+                            return true;
+                        }
+                    });
+                    var idx = this.options.indexOf(item);
+                    //克隆一个配置
+                    var curr = this.options[idx];
+                    var temp = oui.parseJson(oui.parseString(curr));
+                    temp.id = oui.getUUIDLong();
+                    temp.display = '模板-'+this.options.length;
+                    this.options.splice(idx+1,0,temp);
+                }else{
+                    this.options.push({
+                        id:oui.getUUIDLong(),
+                        display:'模板-'+this.options.length
+                    });
+                }
+
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.queryPages = oui.parseJson(oui.parseString(this.options));
+            },
+            removeOption:function(id){
+                var item = oui.findOneFromArrayBy(this.options,function(item){
+                    if(item.id ==id){
+                        return true;
+                    }
+                });
+                var idx = this.options.indexOf(item);
+                this.options.splice(idx,1);//删除指定元素
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.queryPages = oui.parseJson(oui.parseString(this.options));
+            },
+            /***
+             * 查询页面模板变更处理
+             * @param index
+             * @param item
+             * @private
+             */
+            _controlOnUpdate:function(index,item){
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.queryPages[index] = oui.parseJson(oui.parseString(item));
+            },
+            _controlOnUpdate4selectedQueryPage:function(){
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.selectedQueryPage = this.selectedQueryPage;
+            }
+        }
+    }
+</script>
+
+<style>
+    .query-page-select-tpl{
+        display: inline-block;
+    }
+    .label{
+        font-size: 12px;
+    }
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

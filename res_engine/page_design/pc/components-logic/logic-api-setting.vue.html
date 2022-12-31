@@ -1,0 +1,989 @@
+<!--逻辑接口定义-->
+<template >
+    <div class="api-setting scrollbar">  
+        <el-form ref="form" :model="form" label-width="80px" size="mini" class="api-setting-form">
+ 
+            <header>
+                <div class="title">输入定义(函数参数)</div>
+                <div class="tool-btn">
+                    <span class="s-icon s-icon-16 s-icon-add" title="添加定义" @click="addnew_define_input"></span>
+                    <span class="s-icon s-icon-16 s-icon-delete4" title="清空" @click="removeall_define_input"></span>
+                </div>
+            </header> 
+
+
+            <el-table
+            :data="tableDataInput" 
+            style="width: 100%; margin-bottom: 10px;"
+            row-key="id"
+            indent="10"
+            default-expand-all
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+            :header-cell-style="{background:'#3A3B3F' }" 
+            > 
+            <el-table-column
+            type="selection"
+            width="45">
+            </el-table-column>
+            <el-table-column
+                prop="valname"
+                label="变量名称"
+                width="260">
+                <template slot-scope="scope">
+                <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                    <el-select 
+                        v-model="form.valnametype[scope.$index]"
+                        placeholder="请选择"
+                        size="mini"
+                        style="width:100px"
+                        @change="changevalnametype($event,scope,'')"
+                    >
+                      <el-option
+                        v-for="item in options_valname"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value" >
+                      </el-option>
+                    </el-select>
+                  </div> 
+                  <div style="display: inline-block;width: 130px; "> 
+                    <el-input  style="width:130px"  size="mini" v-model="form.valname[scope.$index]" placeholder="变量名称"></el-input> 
+                  </div>
+                </template>
+            </el-table-column>
+            <el-table-column
+                prop="valtype"
+                label="变量类型"
+                width="240">
+                <template slot-scope="scope">
+                    <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                        <el-select  @change="changevaltype($event,scope)" v-model="form.valtype[scope.$index]" placeholder="请选择" size="mini" style="width:100px"  >
+                            <el-option
+                            v-for="item in options_valtype"
+                            :key="item.value"
+                            :label="item.label" 
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div style="display: inline-block;width: 100px; ">
+
+                    
+                    
+                    <oui-include 
+                        id="callLogic-temp"
+                        type="module"
+                        ref="logicsTree"  
+                        :data="{ data : logicsTreeData  ,disabled: form.valtype_disable[scope.$index],onUpdate:function(key,v){ console.info(key,v,'keyvvv')  }}"
+                        url="res_engine/page_design/pc/components-vue/tree-select.vue.html"  >
+                    </oui-include> 
+
+
+ 
+
+                        <!-- <el-select :disabled="!form.valtype_disable[scope.$index]" v-model="form.valtype_model[scope.$index]" placeholder="请选择" size="mini" style="width:100px" >
+                            <el-option
+                            v-for="item in form.valtype_data[scope.$index]"
+                            :key="item.value"
+                            :label="item.label" 
+                            :value="item.value"
+                            >
+                            </el-option>
+                        </el-select> -->
+                    </div> 
+                </template>
+
+            </el-table-column>
+            
+
+            <el-table-column
+                prop="defaultTxt"
+                width="100" 
+                label="默认值">
+                <template slot-scope="scope">
+                    <el-input  size="mini" v-model="form.defaultTxt[scope.$index]" placeholder="默认值"></el-input> 
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                prop="desc" 
+                label="描述">
+                <template slot-scope="scope">
+                    <el-input size="mini" v-model="form.desc[scope.$index]" placeholder="变量描述，用于生成文档"></el-input> 
+                </template>
+            </el-table-column>
+
+
+            <el-table-column
+                prop="array"
+                width="67"
+                align="center"
+                label="数组">
+                <template slot-scope="scope">
+                <el-switch
+                v-model="form.array[scope.$index]" >
+                </el-switch>
+            </template>
+            </el-table-column>
+
+            <el-table-column
+                prop="required"
+                width="80"
+                align="center"
+                label="是否必填">
+                <template slot-scope="scope">
+
+                    <el-switch
+                        v-model="form.required[scope.$index]" >
+                    </el-switch>
+              
+                </template> 
+            </el-table-column>
+
+            <el-table-column
+                prop="urlEncodeKey"
+                width="80"
+                align="center"
+                label="加密参数">
+                <template slot-scope="scope"> 
+                    <el-switch
+                    v-model="form.urlEncodeKey[scope.$index]" >
+                    </el-switch>
+              
+                </template> 
+
+            </el-table-column>
+                        
+            <el-table-column
+                label="操作"
+                align="right"
+                width="100"
+            > 
+            <template slot-scope="scope">
+                <span class="s-icon s-icon-18 s-icon-child-node s-icon-btn" v-if="form.valtype[scope.$index] == 'object_type' && !scope.row.isLeaf  "  @click="addnew_define_input('child',scope)"  title="添加子级"></span>
+                <span class="s-icon s-icon-18 s-icon-add-node s-icon-btn"   title="添加兄弟级" @click="addnew_define_input('node',scope)"    ></span>
+                <span class="s-icon s-icon-18 s-icon-delete s-icon-btn" title="删除" @click="delItem = true; currentScope = scope" ></span> 
+            </template>
+            </el-table-column>
+            </el-table>
+
+ 
+            <header>
+                <div class="title">变量定义(运行时变量)</div>
+                <div class="tool-btn">
+                    <span class="s-icon s-icon-16 s-icon-add" title="添加定义" @click="addnew_define_val"></span>
+                    <span class="s-icon s-icon-16 s-icon-delete4" title="清空" @click="removeall_define_val"></span>
+                </div>
+            </header> 
+
+             
+            <el-table
+            :data="tableDataVal"
+            style="width: 100%; margin-bottom: 10px;"
+            :header-cell-style="{background:'#3A3B3F' }"> 
+                <el-table-column
+                type="selection"
+                width="45">
+                </el-table-column>
+                <el-table-column
+                    prop="valname"
+                    label="变量名称"
+                    width="260">
+                    <template slot-scope="scope">
+                    <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                        <el-select 
+                            v-model="form.val_valnametype[scope.$index]"
+                            placeholder="请选择"
+                            size="mini"
+                            style="width:100px"
+                            @change="changevalnametype($event,scope,'val_')"
+                        >
+                        <el-option
+                            v-for="item in options_valname"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value" >
+                        </el-option>
+                        </el-select>
+                    </div> 
+                    <div style="display: inline-block;width: 130px; "> 
+                        <el-input  style="width:130px"  size="mini" v-model="form.val_valname[scope.$index]" placeholder="变量名称"></el-input> 
+                    </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    prop="valtype"
+                    label="变量类型"
+                    width="240">
+                    <template slot-scope="scope">
+                        <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                            <el-select  @change="changevaltype($event,scope)" v-model="form.val_valtype[scope.$index]" placeholder="请选择" size="mini" style="width:100px"  >
+                                <el-option
+                                v-for="item in options_valtype"
+                                :key="item.value"
+                                :label="item.label" 
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <div style="display: inline-block;width: 100px; ">
+
+                          
+                            <oui-include 
+                                type="module"
+                                ref="logicsTree"
+                                v-if="logicsTreeData" 
+                                :data="{ data : logicsTreeData ,disabled:true }"
+                                url="res_engine/page_design/pc/components-vue/tree-select.vue.html"  >
+                            </oui-include> 
+        
+                                
+                       </div>
+                    </template>
+
+                </el-table-column>
+                
+
+
+                <el-table-column
+                    prop="array"
+                    width="67"
+                    align="center"
+                    label="数组">
+                    <template slot-scope="scope">
+                    <el-switch
+                    v-model="form.val_array[scope.$index]" >
+                    </el-switch>
+                </template>
+                </el-table-column>
+
+               
+                <el-table-column
+                    prop="defaultType"
+                    width="220" 
+                    label="默认值">
+                    <template slot-scope="scope">
+                        <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                            <el-select  @change="changevaltype($event,scope)" v-model="form.val_defaultType[scope.$index]" placeholder="请选择" size="mini" style="width:100px"  >
+                                <el-option
+                                v-for="item in options_valtype"
+                                :key="item.value"
+                                :label="item.label" 
+                                :value="item.value">
+                                </el-option>
+                            </el-select> 
+                        </div>
+                        <div style="display: inline-block;width: 80px; "> 
+                        <el-input  size="mini" v-model="form.val_defaultTxt[scope.$index]" placeholder="默认值"></el-input>
+                        </div> 
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                    prop="desc" 
+                    label="描述">
+                    <template slot-scope="scope">
+                        <el-input size="mini" v-model="form.val_desc[scope.$index]" placeholder="变量描述，用于生成文档"></el-input> 
+                    </template>
+                </el-table-column>
+
+                            
+                <el-table-column
+                    label="操作"
+                    align="right"
+                    width="100"
+                > 
+                <template slot-scope="scope">
+                    <span class="s-icon s-icon-18 s-icon-child-node s-icon-btn" v-if="form.val_valtype[scope.$index] == 'object_type'" title="添加子级"></span>
+                    <span class="s-icon s-icon-18 s-icon-add-node s-icon-btn"   title="添加兄弟级" @click="addnew_define_input(scope)"    ></span>
+                    <span class="s-icon s-icon-18 s-icon-delete s-icon-btn" title="删除"  @click="delModule(scope)" ></span>
+                </template>
+                </el-table-column>
+
+            </el-table>
+            
+
+
+ 
+            <header>
+                <div class="title">输出定义</div>
+                <div class="tool-btn">
+                    <span class="s-icon s-icon-16 s-icon-add" title="添加定义" @click="addnew_define_output"></span>
+                    <span class="s-icon s-icon-16 s-icon-delete4" title="清空" @click="removeall_define_output"></span>
+                </div>
+            </header> 
+ 
+
+            <el-table
+            :data="tableDataOutput" 
+            style="width: 100%; margin-bottom: 10px;"
+            :header-cell-style="{background:'#3A3B3F' }">
+            <el-table-column
+                type="selection"
+                width="45">
+                </el-table-column>
+            <el-table-column
+                prop="valname"
+                label="变量名称"
+                width="250"
+                >
+                <template slot-scope="scope">
+                <el-input size="mini" v-model="form.out_valname[scope.$index]" placeholder="变量名称"></el-input> 
+            </template>
+            </el-table-column>
+            <el-table-column
+                prop="valtype"
+                label="变量类型"
+                width="250"
+                >
+                <template slot-scope="scope">
+                    <div style="margin-right: 5px;width: 100px;display: inline-block;">
+                        <el-select   v-model="form.out_valtype[scope.$index]" placeholder="请选择" size="mini" style="width:100px"  >
+                            <el-option
+                            v-for="item in options_valtype"
+                            :key="item.value"
+                            :label="item.label" 
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div> 
+
+                    <!-- <el-input  style="width:90px"  size="mini" v-model="form.out_tableModelName[scope.$index]" placeholder="变量名称"></el-input>  -->
+                </template>
+
+            </el-table-column>
+            
+
+            <el-table-column
+                prop="out_required"
+                label="是否必填">
+                <template slot-scope="scope"> 
+                    <el-switch
+                    v-model="form.out_required[scope.$index]" >
+                    </el-switch> 
+                </template> 
+            </el-table-column> 
+
+
+            <el-table-column
+                prop="desc"
+                width="250"
+                label="描述">
+
+                <template slot-scope="scope">
+                    <el-input size="mini" v-model="form.out_desc[scope.$index]" placeholder="变量描述，用于生成文档"></el-input> 
+                </template>
+
+            </el-table-column>
+           
+            <el-table-column
+                label="操作"
+                align="center"
+                width="150"
+            > 
+            <template slot-scope="scope">
+                <span class="s-icon s-icon-16 s-icon-delete"></span>
+            </template>
+            </el-table-column>
+            </el-table>
+ 
+          </el-form> 
+ 
+      
+
+
+        <el-dialog
+            title="成功提示"
+            :visible.sync="tipsDialog"
+            width="400px"
+            custom-class="s-dialog-box"
+            top="35vh"
+            :modal="false"
+        >
+            <span>保存成功</span> 
+            <span slot="footer" class="s-dialog-foote">
+                <el-button @click="delItem = false"  size="small">取 消</el-button>
+                <el-button type="primary" @click="tipsDialog = false"  size="small">确 定</el-button>
+            </span>
+        </el-dialog>
+
+
+    </div>
+</template>
+
+<script>
+    
+    exports = {
+        templateType:'vue',
+        id:'',
+        designFullName:'',
+        data: function () {
+            return {
+                tipsDialog:false,
+                currentControl:null,
+                valnametype:'1',
+                valname:'',
+                valtype:'',
+                delItem:false, //显示删除提示
+                visibleDel:false,
+                paramCfg:com.oui.absolute.AbsoluteDesign.paramCfg,
+                logicController : com.startwe.models.project.web.LogicDesignController,
+                logicData : com.startwe.models.project.web.LogicDesignController.data,
+                currentScope:null,
+                loadinputParams:null, //加载后的输入变量
+                loadoutputParams:null,
+                loadvarParams:null,
+                form: {
+                    name: '',
+                    region: '',
+                    date1: '',
+                    date2: '',
+                    delivery: false,
+                    type: [],
+                    resource: '',
+                    desc: [],
+                    valname:[], 
+                    valnametype:[], 
+                    valtype:[], 
+                    valtype_model:[],
+                    valtype_disable:[],
+                    valtype_data:[],
+                    defaultTxt:[],
+                    defaultType:[],
+                    valtype_object:[],
+                    array:[],
+                    required:[],
+                    urlEncodeKey:[],
+                    disabled:[],
+
+
+                    out_valname:[],
+                    out_valtype:[],
+                    out_required:[],
+                    out_tableModelName:[],
+                    out_desc:[],
+                    out_array:[],
+
+                    val_valnametype:[],
+                    val_valname:[],
+                    val_valtype:[],
+                    val_required:[],
+                    val_tableModelName:[],
+                    val_defaultTxt:[],  
+                    val_defaultType:[],  
+                    val_array:[],
+                    val_desc:[],
+
+
+                },
+                options_valtype:[
+                    {value:'int_type',label:'Int'},
+                    {value:'double_type',label:'Double'},
+                    {value:'float_type',label:'Float'},
+                    {value:'long_type',label:'Long'},
+                    {value:'short_type',label:'Short'},
+                    {value:'byte_type',label:'Byte'},
+                    {value:'boolean_type',label:'Boolean'},
+                    {value:'char_type',label:'Char'},
+                    {value:'string_type',label:'String'},
+                    {value:'decimal_type',label:'Decimal'},
+                    {value:'date_type',label:'Date'},
+                    {value:'datetime_type',label:'Datetime'},
+                    {value:'time_type',label:'Time'},
+                    {value:'object_type',label:'Object'},
+                    {value:'table_type',label:'表模型'},
+                    {value:'tableData_type',label:'数据模型'},
+                ],
+                options_valname:[
+                    {
+                    value: '',
+                    label: '自定义'
+                    }, {
+                    value: 'formData',
+                    label: '单据数据(系统内置)'
+                    }, {
+                    value: 'formDataMulti',
+                    label: '单据列表数据(系统内置)'
+                    } 
+                ],
+                tableDataInput_default:{
+                        id:1,
+                        valname: '变量名称',
+                        valtype: '变量类型',
+                        array: false,
+                        desc: '选填 变量描述 用于生成文档',
+                        bitian: false,
+                        jiami: true,
+                        default:'',
+                        isLeaf:false,
+                        children: [
+                            
+                        ]
+                },
+                tableDataInput: [
+                     
+                ],
+                tableDataVal_default:{
+                        valname: '变量名称',
+                        valtype: '变量类型',
+                        array: false,
+                        desc: '选填 变量描述 用于生成文档',
+                        bitian: false,
+                        jiami: true,
+                        default:''
+                    }, 
+                tableDataVal: [
+                     
+                ],
+                tableDataOutput_delfault:{
+                        valname: '变量名称',
+                        valtype: '变量类型',
+                        array: false,
+                        desc: '选填 变量描述 用于生成文档',
+                        bitian: false,
+                        jiami: true,
+                        default:''
+                },
+                tableDataOutput: [
+                     
+                ],
+                logicsTreeData:null,
+                templogicsData : [ ],
+                showlogicsTree:true
+                 
+            }
+        },
+        watch: {
+             
+        },
+        mounted:function(){
+          
+            window.oui.logicApiSetting = this  ; 
+
+             var logicdata = this.logicData;
+
+            this.loadinputParams = logicdata.inputParams;
+            this.loadoutputParams = logicdata.outputParams;
+            this.loadvarParams = logicdata.varParams;
+
+            if(this.loadinputParams.length>0){
+                this.tableDataInput = []
+            } 
+            if(this.loadoutputParams.length>0){
+                this.tableDataOutput = []
+            }
+            if(this.loadvarParams.length>0){
+                this.tableDataVal = []
+            } 
+
+            //初始化 输入变量 回填数据
+
+            
+           
+            this.loadinputParams.forEach((item,index)=>{ 
+                this.tableDataInput.push(this.tableDataInput_default);  
+                if(item.name == 'formData' || item.name=='formDataMulti'){
+                    this.form.valnametype[index] = item.name
+                }else{
+                    this.form.valnametype[index] = ''
+                } 
+                this.form.valtype[index] = item.fieldType 
+                this.form.valname.push(item.name) 
+                this.form.defaultTxt.push(item.defaultTxt)
+                this.form.defaultType.push(item.defaultType) 
+                this.form.array.push(item.array)
+                this.form.required.push(item.required)
+                this.form.urlEncodeKey.push(item.urlEncodeKey)  
+
+        
+
+            }); 
+
+            
+          
+             //初始化 输出变量 回填数据
+            this.loadoutputParams.forEach((item,index)=>{ 
+                  
+                this.form.out_valtype[index] = item.fieldType 
+                this.form.out_valname[index] = item.name 
+                this.form.out_tableModelName[index] = item.tableModelName  
+                this.form.out_required[index] = item.required  
+                this.form.out_desc[index] = item.desc  
+                
+                
+                this.tableDataOutput.push(this.tableDataOutput_delfault); 
+
+            }); 
+
+            this.loadvarParams.forEach((item,index)=>{ 
+                  
+                if(item.name == 'formData' || item.name=='formDataMulti'){
+                    this.form.val_valnametype[index] = item.name
+                }else{
+                    this.form.val_valnametype[index] = ''
+                } 
+
+
+                  this.form.val_valtype[index] = item.fieldType 
+                  this.form.val_valname[index] = item.name 
+                  this.form.val_tableModelName[index] = item.tableModelName  
+                  this.form.val_defaultType[index] = item.defaultType  
+                  this.form.val_defaultTxt[index] = item.defaultTxt 
+                  this.form.val_array[index] = item.array  
+                  
+                  
+                  this.tableDataVal.push(this.tableDataVal_default); 
+  
+              }); 
+
+         
+            this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            
+            this.getTree();
+           
+            // var designer = this.getDesigner();//获取当前设计器
+            // console.log('当前的配置Id:'+this.id);
+            // console.log('当前控件类型:'+designer.data.currentControl.controlType);
+        },
+        methods:{
+            getinput(d){
+                console.info(d,'dddd')
+            },
+            getTree(){
+
+              
+                let tempdata = []
+                let queryPageModelsUrl = com.startwe.models.project.web.LogicDesignController.data.queryPageModelsUrl 
+                    let params = {
+                        projectId:this.paramCfg.page.projectId,
+                        moduleId:this.paramCfg.page.moduleId,
+                    } 
+                    oui.postData(queryPageModelsUrl, params,  (res)=> { 
+                        if(res.success){ 
+                             console.info(res,'res')
+                             tempdata = this.buildModelTree(res.msg.tree);
+
+                            
+                            // res.msg.resources.map((item,index)=>{ 
+                            //     tempdata.push({
+                            //         name: item.name,
+                            //         id:item.id,
+                            //         value:item.name,
+                            //         children: [ 
+                                        
+                            //         ]
+                            //     })
+                            // });   
+
+
+                            this.logicsTreeData  =  tempdata;
+                            this.logicController.logicsTreeData  =  tempdata;
+ 
+                  
+                       
+                        } 
+                    }) 
+                 
+                   
+                     
+
+            },
+            delModule(scope){
+                this.tableDataInput.splice(scope.$index,1);
+            },
+            handleEdit(index, row) {
+                console.log(index, row);
+            },
+            handleDelete(index, row) {
+                console.log(index, row);
+            },
+            
+            //添加输入定义
+            addnew_define_input(type,data){
+          
+                console.info('11')
+                let index = 0 
+                if(data){
+                    index = data.$index; 
+                } 
+               
+
+                let newdata = {
+                        valname: '',
+                        valtype: '',
+                        array: false,
+                        desc: '',
+                        bitian: false,
+                        jiami: true,
+                        default:'new',
+                        isLeaf:false,
+                        pid:0,
+                        id:12
+                    };
+                if(type == 'node') //添加兄弟节点
+                {  
+                    if(data.row.isLeaf){ 
+                        newdata.isLeaf = true
+                        newdata.pid = this.tableDataInput[index].id 
+                        console.info(data,'newdata')
+                        this.tableDataInput[data.row.pid - 1].children.splice(newdata); 
+
+                    }else{
+                        console.info(newdata,'newdatanode');
+                        this.tableDataInput.splice(index,0,newdata); 
+                        this.form.valname.splice(index,0,'')
+                    }
+                     
+
+                }else if(type == 'child'){   
+
+
+                   newdata.isLeaf = true 
+       
+                   newdata.pid = this.tableDataInput[index].id 
+                  
+                   this.tableDataInput[index].children.push(newdata);
+ 
+                }else{
+                    this.tableDataInput.push(newdata);
+                }
+                
+                console.info(this.tableDataInput,'this.tableDataInput')
+ 
+
+            },
+            addnew_define_val(){ 
+                let newdata = {
+                        valname: '',
+                        valtype: '',
+                        array: false,
+                        desc: '',
+                        bitian: false,
+                        jiami: true,
+                        default:''
+                    };
+                this.tableDataVal.push(newdata);
+            },
+            addnew_define_output(){ 
+                let newdata = {
+                        valname: '',
+                        valtype: '',
+                        array: false,
+                        desc: '',
+                        bitian: false,
+                        jiami: true,
+                        default:''
+                    };
+                this.tableDataOutput.push(newdata);
+            },
+            removeall_define_input(){ 
+               this.tableDataInput = [];
+            }, 
+            removeall_define_val(){ 
+               this.tableDataVal = [];
+            }, 
+            removeall_define_output(){ 
+               this.tableDataOutput = [];
+            }, 
+            remove_define(data){
+                delete data.row;
+                
+            },
+            changevalnametype(val,scope,type){
+               
+                let index = scope.$index
+       
+                this.form[type + 'valname'][index] = val 
+                 
+            },
+            changevaltype(val,scope){
+
+              
+                this.$set(this,'showlogicsTree',false)
+      
+                let index = scope.$index
+                let row = scope.row
+                let inputval = '';
+ 
+                if(val ==  '表模型'){ //自定义 
+
+                    this.$set(this.form.valtype_disable,index,true)
+
+                  
+                    
+                 
+                    //加载模型数据列表
+                }else if(val ==  'object_type'){
+                    
+                    this.$set(this.form.valtype_object,index,true)
+
+                }else{
+
+                    this.$set(this.form.valtype_model,index,'') 
+                    this.$set(this.form.valtype_disable,index,false)
+
+                }
+               
+                //this.showlogicsTree = true;
+                this.$set(this,'showlogicsTree',true) 
+            },
+            buildModelTree(data){
+
+                var ModuleName = [];
+                var AppName = [];  
+
+                data.map((item,index)=>{ 
+                    if(ModuleName.indexOf(item.ModuleName)){
+                        ModuleName.push(item.ModuleName) ;  
+                    }  
+                }) 
+  
+
+                var tempdata = [];
+                ModuleName.forEach((item,index)=>{  
+ 
+                    var children = []
+                    data.map((v,k)=>{ 
+                        var chil = []
+                        data.map((vv,kk)=>{ 
+
+                            if(vv.AppName == v.AppName ){ 
+                                chil.push({
+                               name:vv.name
+                            })
+                        } 
+
+                        })
+ 
+                        if(v.ModuleName == item ){ 
+                            children.push({
+                               name:v.AppName,
+                               children:chil
+                            })
+                        } 
+                    }) 
+                    tempdata.push({
+                        name:item,
+                        children:children
+                    });
+                    
+                })
+
+
+                // console.info(tempdata,'ModuleNameModuleNameModuleName')
+
+                return tempdata 
+            },
+            
+            onSubmit() {
+
+      
+
+                var inputParams = [];
+                var outputParams = [];
+                var varParams = [];
+
+                this.form.valname.forEach((item,index)=>{
+                     
+                    var valitem = {
+                        dynamic: false,
+                        fieldType: this.form.valtype[index],
+                        name: this.form.valname[index],
+                        tableModelId: "",
+                        tableModelName: "",
+                        urlEncodeKey: this.form.urlEncodeKey[index],
+                        array:this.form.array[index],
+                        required:this.form.required[index],
+                        defaultTxt:this.form.defaultTxt[index], 
+                        defaultType:''
+                    } 
+                  
+                    inputParams.push(valitem);
+                   
+ 
+                }) 
+
+                this.form.val_valname.forEach((item,index)=>{
+                    
+                    var out_valitem = {
+                        dynamic: false,
+                        fieldType: this.form.val_valtype[index],
+                        name: this.form.val_valname[index],
+                        tableModelId: "",
+                        tableModelName: "",
+                        array:this.form.val_array[index],
+                        defaultTxt:this.form.val_defaultTxt[index],
+                        defaultType:this.form.val_defaultType[index],
+                        desc:this.form.val_desc[index],
+
+                    }
+                    varParams.push(out_valitem);
+                })
+
+            
+
+                this.form.out_valname.forEach((item,index)=>{
+                    
+                    var out_valitem = {
+                        dynamic: false,
+                        fieldType: this.form.out_valtype[index],
+                        name: this.form.out_valname[index],
+                        tableModelId: "",
+                        tableModelName: "", 
+                        required:this.form.out_required[index],
+                        desc:this.form.out_desc[index],
+                        defaultTxt:'',
+                        defaultType:'',
+                        array:false
+                        
+                    }
+                    outputParams.push(out_valitem);
+                }) 
+
+
+                var saveLogicUrl = this.logicData.saveLogicUrl; //保存的api
+
+
+                //传入参数
+                var params = {
+                    
+                    id:this.logicData.id,
+                    inputParams:inputParams,
+                    varParams:varParams,
+                    outputParams:outputParams,
+                    logicNodes:this.logicData.logics 
+
+                }
+                oui.postData(saveLogicUrl, params,  (res)=> { 
+ 
+                        if(res.success){ 
+                            
+                            this.tipsDialog = true 
+                           // window.oui.logic_drawer.closeDrawer()
+                           //更新全局变量
+
+                          this.logicData.inputParams = inputParams;
+                          this.logicData.outputParams = outputParams;
+                          this.logicData.varParams = varParams;
+
+
+                        } 
+                        else{
+
+                        }
+               }) 
+                 
+                   
+
+                    
+
+
+            },
+
+        }
+    }
+</script>
+
+<style>
+
+</style>

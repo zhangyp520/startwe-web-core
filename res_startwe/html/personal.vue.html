@@ -1,0 +1,361 @@
+<!-- 首页内容 -->
+<template>
+
+    <div class="">
+        <!-- 头部 -->
+        <div>
+            <oui-include type="module" url="/res_startwe/html/home.vue.html">
+            </oui-include>
+        </div>
+
+        <div class="personal_box">
+            <div class="personal_box_flex">
+                <div class="personal_left">
+                    <div class="personal_left_title" :class='index == tabIndex ?  "bgtabColor" : "" '
+                        v-for='(item,index) in tabList' :key='index' @click='changeTab(index)'>{{item}}</div>
+                    <div class="title">
+                        startwe>><span class="title_span">个人中心</span>
+                    </div>
+                </div>
+                <div class="personal_right" v-if='type == 1'>
+                    <div class="personal_right_top">
+                        <div class="personal_img"></div>
+                        <div>
+                            <div class="personal_name">用户名</div>
+                            <div class="personal_identity">普通用户</div>
+                        </div>
+                    </div>
+                    <div class="personal_right_title">基本信息</div>
+                    <div class="personal_right_bottom" v-if='editMoadl'>
+                        <div class="personal_content">
+                            <div class="personal_margin">用户昵称</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">用户ID</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">真实姓名</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">性别</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">个人简介</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">所在地区</div>
+                            <div>1111</div>
+                        </div>
+                        <div class="personal_content">
+                            <div class="personal_margin">出生日期</div>
+                            <div>1111</div>
+                        </div>
+
+
+                        <div class="personal_content_po" @click='editMoadl = false'>
+                            编辑
+                        </div>
+                    </div>
+
+                    <div class="personal_right_bottom_e" v-else>
+                        <div class="flex_b smbox">
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div>
+                                    <input class="personal_right_input" type="text">
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div style="width: 200px;">
+                                    1111
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex_b smbox">
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div>
+                                    <input class="personal_right_input" type="text">
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div style="width: 200px;">
+                                    1111
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex_b smbox">
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div>
+                                    <input class="personal_right_input" type="text">
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="input_table">用户昵称</div>
+                                <div style="width: 200px;">
+                                    1111
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <div class="input_table">个人简介</div>
+                            <textarea class="istextarea" name="" id="" cols="30" rows="10"></textarea>
+                        </div>
+
+                        <div class="flex" style=" justify-content:center">
+                            <div class="isbut" @click='editMoadl = true'>取消</div>
+                            <div class="isbut">保存</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="personal_right" v-show='type == 2'>
+                    <oui-include type="module" url="/res_startwe/html/personal_data.vue.html">
+                    </oui-include>
+                </div>
+                <div class="personal_right" v-show='type == 3'>
+                    <oui-include type="module" url="/res_startwe/html/personal_card.vue.html">
+                    </oui-include>
+                </div>
+                <div class="personal_right" v-show='type == 4'>
+                    <oui-include type="module" url="/res_startwe/html/personal_collection.vue.html">
+                    </oui-include>
+                </div>
+            </div>
+
+
+
+        </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                tabList: [
+                    '个人资料',
+                    '账号设置',
+                    '信息认证',
+                    '我的收藏'
+                ],
+                tabIndex: 0,
+                editMoadl: true,
+                type: 1
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+
+
+        },
+        methods: {
+
+            changeTab(index) {
+                this.tabIndex = index
+                this.type = index + 1
+            }
+
+        }
+    }
+
+</script>
+<style scoped>
+    .flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .flex_b {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .smbox {
+        width: 800px;
+        margin-bottom: 20px;
+    }
+
+    .input_table {
+        color: rgba(104, 104, 104, 100);
+        font-size: 14px;
+        margin-right: 40px;
+    }
+
+    .personal_right_input {
+        height: 30px;
+        width: 200px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        padding: 0 10px;
+        font-size: 14px;
+        border-radius: 5px;
+        outline:none;
+    }
+
+    .personal_box {
+        position: absolute;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        top: 83px;
+        background-color: #f9f9f9;
+    }
+
+    .personal_box_flex {
+        display: flex;
+        justify-content: center;
+        padding-top: 70px;
+    }
+
+    .personal_left {
+        width: 200px;
+        height: 200px;
+        margin-right: 18px;
+        background-color: #fff;
+    }
+
+    .personal_left_title {
+        height: 50px;
+        line-height: 50px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .personal_right {
+        width: 1000px;
+        background-color: #f9f9f9;
+
+
+    }
+
+    .personal_right_top {
+        width: 100%;
+        height: 160px;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 34px;
+        margin-bottom: 10px;
+    }
+
+    .personal_right_title {
+        height: 48px;
+
+        color: rgba(16, 16, 16, 100);
+        font-size: 18px;
+        font-weight: bold;
+        padding: 0 10px;
+        line-height: 48px;
+        background-color: #fff;
+    }
+
+    .personal_right_bottom {
+        height: 390px;
+        width: 100%;
+        margin-top: 5px;
+        background-color: #fff;
+        padding: 30px 30px 0 34px;
+        line-height: 48px;
+        position: relative;
+    }
+
+    .personal_right_bottom_e {
+        height: 390px;
+        width: 100%;
+        margin-top: 5px;
+        background-color: #fff;
+        padding: 30px 30px 0 34px;
+    }
+
+    .personal_content {
+        display: flex;
+    }
+
+    .personal_margin {
+        width: 150px;
+    }
+
+    .personal_img {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background-color: red;
+        margin-right: 28px;
+    }
+
+    .personal_name {
+        margin-bottom: 17px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .personal_identity {
+        font-size: 14px;
+        color: rgba(135, 135, 135, 100);
+    }
+
+    .bgtabColor {
+        background-color: rgba(240, 240, 245, 100);
+        color: rgba(16, 16, 16, 100);
+    }
+
+    .title {
+        color: rgba(136, 136, 136, 100);
+        font-size: 20px;
+        position: absolute;
+        top: 20px;
+    }
+
+    .title_span {
+        color: rgba(0, 0, 0, 1);
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .personal_content_po {
+        position: absolute;
+        right: 20px;
+        top: 0;
+        color: rgba(69, 151, 255, 100);
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .istextarea {
+        width: 800px;
+        border: 1px solid rgba(187, 187, 187, 100);
+        font-size: 14px;
+        margin-top: 10px;
+        height: 100px;
+        outline:none;
+        padding: 10px;
+    }
+
+    .isbut {
+        width: 80px;
+        height: 30px;
+        border-radius: 15px;
+        line-height: 30px;
+        text-align: center;
+        border: 1px solid rgba(255, 68, 0, 100);
+        margin-right: 20px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+</style>

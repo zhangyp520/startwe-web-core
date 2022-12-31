@@ -1,0 +1,67 @@
+<!--默认渲染模板-->
+<template>
+    <div >
+         {{=content}}
+    </div>
+</template>
+
+
+<!--当前页面脚本配置-->
+<script>
+
+    exports = {
+        templateType:'art',
+        data: function () {
+            return {
+                designData:null,
+                mainData:null,
+                detailData:null,
+                pageData:{ getControlRenderDataById:function(){},getDesigner:function(){}  },
+                content:''
+            }
+        },
+        mounted:function (){
+
+            var designData= ({{=pageJson}});
+            var detailData = {};
+            var mainData = {};
+
+            if(!designData){ //没有设计态数据
+                //根据url参数加载 获取
+                //默认测试 数据 demo
+                designData = { };
+
+            }
+            var me = this;
+            var pageData = oui.util.createPageData({
+                refresh:function(){
+                    me.refresh&&me.refresh();
+                },
+                designer:designData,
+                mainData:mainData,//主表数据
+                detailData:detailData//子表数据
+            });
+            pageData.beforeInit(function(){
+                me.content = pageData.render(); //渲染
+                me.pageData = pageData;
+                pageData.afterInit();//渲染完成
+
+                console.log("顶层控制器");
+                console.log(designData);
+                console.log(me.$router);
+                me.refresh();
+            }); //初始化前
+
+        },
+        methods:{
+            getPageData:function getPageData(){
+                return this.pageData;
+            }
+        }
+
+    }
+</script>
+
+<!--本页自定义样式处理-->
+<style>
+</style>

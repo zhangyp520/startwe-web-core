@@ -1,0 +1,116 @@
+<template>
+    <div>
+        <el-form :model="config" ref="config" label-width="200px" class="demo-ruleForm"  size="middle">
+            <fieldset>
+                <legend>流程相关配置</legend>
+
+                <div>
+                    <el-row style="text-align: center">
+                        <el-col span="24" >
+                            <el-form-item label="流程定义配置路径">
+                                <el-input type="textarea" v-model="config.processConfig.processConfigUrl"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col span="24">
+                            <el-form-item label="活动定义配置路径">
+                                <el-input type="textarea" v-model="config.processConfig.processActivityConfigUrl"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col span="24">
+                            <el-form-item label="节点连线配置路径">
+                                <el-input type="textarea" v-model="config.processConfig.processLineConfigUrl"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>并发配置</legend>
+                <div>
+                    <el-row style="text-align: center">
+                        <el-col span="24" >
+                            <el-form-item label="最大并发数">
+                                <el-input type="text" v-model="config.concurrentConfig.maxPermits"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </div>
+            </fieldset>
+
+            <el-row>
+                <el-col style="text-align: center">
+                    <el-button v-if="saveConfigUrl" type="primary" @click="event2save" icon="el-icon-save">保存</el-button>
+                    <el-button type="primary" @click="event2showConfig" icon="el-icon-save">获取配置</el-button>
+                </el-col>
+            </el-row>
+        </el-form>
+    </div>
+</template>
+
+<script>
+exports = {
+    name: "dengmiQuery",
+    data:function() {
+        return {
+            saveConfigUrl:'',
+            config:{
+                concurrentConfig:{
+                    maxPermits:5
+                },
+                processConfig: {
+                    "processConfigUrl":"",
+                    "processActivityConfigUrl":"",
+                    "processLineConfigUrl":"",
+                    "otherAttrs":{}
+                }
+            }
+        };
+    },
+    mounted:function(){
+        var me = this;
+        var sysConfig = com.startwe.models.portal.web.PortalController.findMenuById('sys-config');
+        if(!sysConfig){
+            return;
+        }
+        var url = com.startwe.models.portal.web.PortalController.findMenuById('sys-config').params.initPath;
+        oui.getData(url,{
+
+        },function(res){
+            if(res.success){
+                me.config = res.sysConfig||{};
+                me.saveConfigUrl = res.saveConfigUrl;
+            }else{
+                oui.getTop().oui.alert('你不是系统管理员，无权限进行此操作');
+            }
+        });
+    },
+    methods: {
+        event2showConfig:function(){
+            oui.getTop().oui.showInputDialog('当前配置', function(res){
+
+            }, [{type:'textarea',rows:3,value:oui.parseString(this.config)}], {});
+        },
+        event2save:function() {
+            if(this.saveConfigUrl){
+                oui.postData(this.saveConfigUrl,{
+                    sysConfig:this.config
+                },function(res){
+                    if(res.success){
+                        oui.getTop().oui.alert(res.msg || '保存成功');
+                    }else{
+                        oui.getTop().oui.alert(res.msg || '保存失败');
+                    }
+                });
+            }
+        }
+    }
+}
+</script>
+
+<style scoped>
+
+</style>

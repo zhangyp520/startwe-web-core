@@ -1,0 +1,1032 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : slbHeight } ">
+        <el-scrollbar style="height: 100%;background-color: #fff;">
+            <!-- <div class="showTypes-box">
+                <div class="show-showTypes">
+                    <div>呈现方式</div>
+                    <el-select v-model="showType" placeholder="请选择" @change="showTypeChange">
+                        <el-option v-for="item in showTypes" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="query-module-type">
+                    <div>查询模板</div>
+                    <el-select v-model="queryPage" clearable @clear="clear4query" @change="changeQueryPage">
+                        <el-option v-for="item in queryPages" :key="item.id" :label="item.display" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+            <div>
+                <div class="right_title">页面设置</div>
+                <div class="pageSetUp">
+                    <div>
+                        <div class="fillTitle">
+                            <span class="inner-title">透明背景</span>
+                        </div>
+                        <div class="fillBox">
+                            <div>
+                                <el-color-picker v-model="backgroundColor" @change="changeBackgroundColor" class="colorPicker">
+                                </el-color-picker>
+                            </div>
+                            <el-input v-model="backgroundColor" class="fillInput"></el-input>
+                            <el-input v-model="opacity" class="alphaInput" @change="changeOpacity"></el-input>
+                        </div>
+                    </div>
+                    <div class="imgBG">
+                        <span class="inner-title">图片背景</span>
+                        <el-button type="danger" icon="el-icon-close" circle @click="deleteBackgroundImage" v-if="ImgDellTips"></el-button>
+                        <div class="uploadBox">
+                            <el-upload class="avatar-uploader" :action="uploadBgImgUrl" :show-file-list="false" :on-success="bgImgSuccess" :on-remove="handleBgImgRemove"
+                                       :before-upload="beforeBgImgUpload">
+                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div>
+                <div class="right_title">外观设置</div>
+                <div class="locationSetting">
+                    <div class="X location_inner">
+                        <span>X</span>
+                        <input type="text" v-model="X">
+                    </div>
+                    <div class="Y location_inner">
+                        <span>Y</span>
+                        <input type="text" v-model="Y">
+                    </div>
+                <div class="W  location_inner">
+                    <span>W</span>
+                    <input type="text" v-model="W">
+                </div>
+                <div class="H  location_inner">
+                    <span>H</span>
+                    <input type="text" v-model="H">
+                </div>
+            </div>
+            <div class="publicBox">
+                <span class="inner-title">圆角</span>
+                <div class="sliderBox">
+                    <el-slider v-model="borderRadius" :max="1000" show-input @change="changeBorderRadius">
+                    </el-slider>
+                </div>
+            </div>
+            <div class="publicBox">
+                    <div class="borderTitle">
+                        <span class="inner-title">边框</span>
+                    </div>
+                    <div class="borderInnerBox">
+                        <el-checkbox v-model="borderChecked" class="borderCheck" @change="borderStyleCheck"></el-checkbox>
+                        <div>
+                            <el-color-picker v-model="borderColor" @change="changeBorderColor" class="colorPicker" :disabled="borderStyleDisabled">
+                            </el-color-picker>
+                        </div>
+                        <el-select v-model="borderStyle" placeholder="请选择" class="borderSelect" :disabled="borderStyleDisabled" @change="changeBorderStyle">
+                            <el-option v-for="item in borderStyleData" :key="item.value" :label="item.label" :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-input v-model="borderWidth" class="borderWidthInput" :disabled="borderStyleDisabled" @change="changeBorderWidth"></el-input>
+                    </div>
+                </div>
+            </div>
+        </el-scrollbar>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 背景图片删除按钮显隐
+                ImgDellTips: false,
+                //边框样式调整是否启用状态
+                borderStyleDisabled:true,
+                //是否启用边框修改的勾选框
+                borderChecked:false,
+                //页面样式长宽高
+                X: '',
+                Y: '',
+                W: '',
+                H: '',
+                //背景图片大小
+                backgroundSize: '100% 100%',
+                //背景图片重复
+                backgroundRepeat: 'no-repeat',
+                //选中的页面模板
+                queryPage: '',
+                //页面模板数组
+                queryPages: [],
+                //浏览器可视区域高度
+                clientHeight: '',
+                slbHeight: '',
+                //选择的边框颜色
+                borderColor:'',
+                //边框宽度
+                borderWidth: '1',
+                //边框圆角
+                borderRadius: 0,
+                //边框样式
+                borderStyle: 'solid',
+                //边框样式下拉选项
+                borderStyleData: [{
+                    value: 'solid',
+                    label: 'solid 实线'
+                }, {
+                    value: 'dotted',
+                    label: 'dotted 点线'
+                }, {
+                    value: 'double',
+                    label: 'double 双线'
+                }, {
+                    value: 'none',
+                    label: 'none 无边框'
+                }],
+                //背景颜色透明度
+                opacity: '100%',
+                //背景颜色
+                backgroundColor: '',
+                //背景图片路径
+                imageUrl: '',
+                //上传图片信息保存
+                bgImgData: [],
+                //呈现方式
+                showType: '',
+                //呈现方式选项
+                showTypes: [{
+                    value: 0,
+                    label: '列表页面'
+                }, {
+                    value: 1,
+                    label: '查看页面'
+                }, {
+                    value: 2,
+                    label: '编辑页面'
+                }, {
+                    value: 3,
+                    label: '表单/自定义页面'
+                }],
+                //查询查询模板的路径
+                loadPageQueryTemplatesUrl: '',
+                //上传背景图片的路径
+                uploadBgImgUrl: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload4Enable.biz';
+            url = oui.addParams(url, {
+                userId: oui.cookie('userId'),
+                tokenId: oui.cookie('tokenId'),
+                targetUserId: oui.cookie('userId')
+            });
+            this.uploadBgImgUrl = url;
+            this.loadPageQueryTemplatesUrl = com.oui.absolute.AbsoluteDesign.loadPageQueryTemplatesUrl;
+            var currControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if(!currControl || (!currControl.id)){
+                return ;
+            }
+            //加载是否有边框样式
+            if(currControl.otherAttrs.isShowBorder){
+                this.borderChecked = currControl.otherAttrs.isShowBorder;
+                if(this.borderChecked == true){
+                    this.borderStyleDisabled = false;
+                    this.borderColor = currControl.innerStyle.styleField.borderTopColor;
+                    this.borderWidth = currControl.innerStyle.styleField.borderTopWidth;
+                    this.borderStyle = currControl.innerStyle.styleField.borderTopStyle;
+                }else{
+                    this.borderStyleDisabled = true;
+                }
+            }
+            //背景图片加载
+            if (currControl.innerStyle.styleField.backgroundImage) {
+                var newImgurl = currControl.innerStyle.styleField.backgroundImage;
+                var new2ImgUrl = newImgurl.substring(newImgurl.indexOf("(") + 1, newImgurl.lastIndexOf(")"));
+                this.imageUrl = new2ImgUrl;
+                if (currControl.otherAttrs.bgImgData) {
+                    this.bgImgData = oui.parseJson(oui.parseString(currControl.otherAttrs.bgImgData));
+                    this.ImgDellTips = true;
+                }
+            }
+            //背景图片是否重复加载
+            if (currControl.innerStyle.styleField.backgroundColor) {
+                this.backgroundRepeat = currControl.innerStyle.styleField.backgroundRepeat;
+            }
+            //背景图片大小加载
+            if (currControl.innerStyle.styleField.backgroundSize) {
+                this.backgroundSize = currControl.innerStyle.styleField.backgroundSize;
+            }
+            //背景颜色加载
+            this.backgroundColor = currControl.innerStyle.styleField.backgroundColor;
+            //背景颜色透明度加载
+            if (currControl.innerStyle.styleField.opacity) {
+                this.opacity = currControl.innerStyle.styleField.opacity;
+            }
+            //边框圆角样式加载
+            this.borderRadius = currControl.innerStyle.styleField.borderRadius;
+            //呈现方式
+            this.showType = currControl.showType;
+            if (this.showType != 3) { //自定义页面、表单就是渲染页面
+                if (currControl && currControl.id) {
+                    let me = this;
+                    if (currControl.otherAttrs.queryPage) {
+                        me.queryPage = currControl.otherAttrs.queryPage;
+                        me.queryPages = [{
+                            id:currControl.otherAttrs.queryPage,
+                            display:currControl.otherAttrs.queryPageDisplay
+                        }];
+                    } else {
+                        me.queryPages = [{
+                            id:'1',
+                            display:'默认查询模板'
+                        }];
+                        me.queryPage = '1';
+                        me.queryPageDisplay ='默认查询模板';
+                    }
+                }
+            }
+            //页面宽 高 左右边距加载
+            this.W = currControl.innerStyle.styleField.width;
+            this.H = currControl.innerStyle.styleField.height;
+            this.X = currControl.innerStyle.styleField.left;
+            this.Y = currControl.innerStyle.styleField.top;
+            this.clientHeight = `${document.documentElement.clientHeight}`;//获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}`;
+                that.slbHeight = this.clientHeight - 80 + 'px';
+            }
+        },
+        watch: {
+            clientHeight() {     //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        methods: {
+            handleBgImgRemove:function() {
+
+            },
+            //边框样式是否改变勾选
+            borderStyleCheck:function(val){
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                currentControl.otherAttrs.isShowBorder = val;
+                if(val == true){
+                    this.borderStyleDisabled = false;
+                    currentControl.innerStyle.styleField.borderTopWidth = this.borderWidth;
+                    currentControl.innerStyle.styleField.borderRightWidth = this.borderWidth;
+                    currentControl.innerStyle.styleField.borderLeftWidth = this.borderWidth;
+                    currentControl.innerStyle.styleField.borderBottomWidth = this.borderWidth;
+                }else{
+                    this.borderStyleDisabled = true;
+                    currentControl.innerStyle.styleField.borderTopWidth = 0;
+                    currentControl.innerStyle.styleField.borderRightWidth = 0;
+                    currentControl.innerStyle.styleField.borderLeftWidth = 0;
+                    currentControl.innerStyle.styleField.borderBottomWidth = 0;
+                }
+                this.updateCurrentControl();
+                
+            },
+            // 边框颜色改变
+            changeBorderColor:function(){
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                currentControl.innerStyle.styleField.borderTopColor = this.borderColor;
+                currentControl.innerStyle.styleField.borderBottomColor = this.borderColor;
+                currentControl.innerStyle.styleField.borderLeftColor = this.borderColor;
+                currentControl.innerStyle.styleField.borderRightColor = this.borderColor;
+                this.updateCurrentControl();
+            },
+            //边框线型改变
+            changeBorderStyle:function(){
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                currentControl.innerStyle.styleField.borderTopStyle = this.borderStyle;
+                currentControl.innerStyle.styleField.borderBottomStyle = this.borderStyle;
+                currentControl.innerStyle.styleField.borderLeftStyle = this.borderStyle;
+                currentControl.innerStyle.styleField.borderRightStyle = this.borderStyle;
+                this.updateCurrentControl();
+            },
+            //边框宽度改变
+            changeBorderWidth:function(){
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if(this.borderWidth <= 0){
+                    this.borderWidth = 0;
+                    this.borderChecked = false;
+                    this.borderStyleDisabled = true;
+                    currentControl.otherAttrs.isShowBorder = false;
+                }
+                currentControl.innerStyle.styleField.borderTopWidth = this.borderWidth;
+                currentControl.innerStyle.styleField.borderBottomWidth = this.borderWidth;
+                currentControl.innerStyle.styleField.borderLeftWidth = this.borderWidth;
+                currentControl.innerStyle.styleField.borderRightWidth= this.borderWidth;
+                this.updateCurrentControl();
+            },
+            updateCurrentControl:function(){
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if(currentControl&&currentControl.id){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });     
+                }
+            },
+            //改变背景颜色透明度
+            changeOpacity: function () {
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                currentControl.innerStyle.styleField.opacity = this.opacity;
+                this.updateCurrentControl();
+            },
+            //呈现方式改变
+            showTypeChange: function (e) {
+                var me = this;
+                var curr = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                curr.showType = e;
+                if (curr && curr.id) {
+                    oui.postData(me.loadPageQueryTemplatesUrl, {
+                        pageId: curr.otherAttrs.nodeId
+                    }, function (res) {
+                        var temp = res.queryPages || [];
+                        var queryPages = [{
+                            display: '默认查询模板',
+                            id: '1'
+                        }].concat(temp);
+                        me.queryPage = queryPages[0].id;
+                        me.queryPageDisplay = queryPages[0].display;
+                        curr.otherAttrs.queryPageDisplay= me.queryPageDisplay;
+                        curr.otherAttrs.queryPage = me.queryPage;
+                        me.queryPages = queryPages;
+                    }, function (res) {
+                    }, '加载中')
+
+                }
+            },
+            //清除当前选中的查询模板 并查询当前最新的查询模板列表
+            clear4query:function(){
+                var me = this;
+                var curr = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if (curr && curr.id) {
+                    oui.postData(me.loadPageQueryTemplatesUrl, {
+                        pageId: curr.otherAttrs.nodeId
+                    }, function (res) {
+                        var temp = res.queryPages || [];
+                        var queryPages = [{
+                            display: '默认查询模板',
+                            id: '1'
+                        }].concat(temp);
+                        me.queryPage = '';
+                        me.queryPageDisplay='';
+                        curr.otherAttrs.queryPageDisplay= me.queryPageDisplay;
+                        curr.otherAttrs.queryPage = me.queryPage;
+                        me.queryPages = queryPages;
+                    }, function (res) {
+                    }, '加载中')
+
+                }
+            },
+            // 圆角
+            changeBorderRadius: function () {
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                currentControl.innerStyle.styleField.borderRadius  = this.borderRadius;
+                this.updateCurrentControl();
+            },
+            //查询模板改变
+            changeQueryPage: function(e) {
+                var me = this;
+                var curr = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                curr.otherAttrs.queryPage = e;
+                if(e){
+                    var one = oui.findOneFromArrayBy(me.queryPages,function(item){
+                        if(item.id ==e){
+                            return item;
+                        }
+                    });
+                    if(one){
+                        curr.otherAttrs.queryPageDisplay = one.display;
+                    }
+                }
+            },
+            // 滚动条
+            changeFixed:function(clientHeight) {
+                this.slbHeight = clientHeight - 80 + 'px';
+            },
+          
+            // 背景透明色改变
+            changeBackgroundColor: function () {
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                if (this.originBackgroundColor == '') {
+                    this.originBackgroundColor = currentControl.innerStyle.styleField.backgroundColor;
+                }
+                currentControl.innerStyle.styleField.backgroundColor = this.backgroundColor;
+                this.updateCurrentControl();
+            },
+            // 上传图片
+            bgImgSuccess: function (res, file) {
+                let me = this;
+                if (res.success) {
+                    var id = res.ids[0];//上传成功
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    this.imageUrl = imgUrl;
+                    var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                    currentControl.innerStyle.styleField.backgroundImage = 'url(' + this.imageUrl + ')';
+                    currentControl.innerStyle.styleField.backgroundSize = this.backgroundSize;
+                    currentControl.innerStyle.styleField.backgroundRepeat = this.backgroundRepeat;
+                    if (this.bgImgData.length >= 1) {
+                        oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                            userId: oui.cookie('userId'),
+                            tokenId: oui.cookie('tokenId'),
+                            targetUserId: oui.cookie('userId'),
+                            files: me.bgImgData,
+                            projectId: oui.getParam("projectId")
+                        }, function (res) {
+                        }, function (res) {
+                        });
+                        this.bgImgData.splice(0, 1);
+                        this.bgImgData.push({ id: res.ids[0], imgUrl: this.imageUrl });
+                    } else {
+                        this.bgImgData.push({ id: res.ids[0], imgUrl: this.imageUrl });
+                    }
+                    currentControl.otherAttrs.bgImgData = oui.parseJson(oui.parseString(this.bgImgData));
+                    this.saveDesign(function () {
+                        me.updateCurrentControl();
+                    });
+                    this.ImgDellTips = true;
+                }
+            },
+            //保存设计
+            saveDesign: function (callback) {
+                var me = com.oui.absolute.AbsoluteDesign;
+                var data = me.getDesignData();
+                me.paramCfg.page = data;
+                me.updateParamCfgSource(me.paramCfg);//更新调用处参数
+                var plugin = me.plugin || {};
+                me.hasChange = false;
+                var param = oui.getParam();
+                if (param.portalId) {
+                    oui.postData(me.updateProjectPortalUrl,{
+                        projectPortal:data
+                    },function(res){
+                        callback && callback();
+                    },function(res){
+                    },'保存中...');
+                }
+            },
+            //删除背景图片
+            deleteBackgroundImage: function () {
+                var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+                let that = this;
+                oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId'),
+                    files: that.bgImgData,
+                    projectId: oui.getParam("projectId")
+                }, function (res) {
+                    currentControl.innerStyle.styleField.backgroundImage = '';
+                    that.saveDesign(function () {
+                        that.updateCurrentControl();
+                    });
+                    this.ImgDellTips = false;
+                }, function (res) {
+
+                });
+            },
+            beforeBgImgUpload(file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true && isLt2M;
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+
+    .bgColorRadio .el-radio__inner {
+        margin-top: 13px;
+    }
+
+    .fillColorRadio {
+        margin-right: 0;
+    }
+
+    .fillColorRadio .el-radio__inner {
+        margin-top: 2px;
+    }
+
+    .uploadRadio .el-radio__inner {
+        margin-top: 12px;
+    }
+
+    .rightBorderChecked .el-checkbox__label {
+        width: 88%;
+    }
+
+    .query-module-type {
+        /* display: flex; */
+        margin-top: 20px;
+    }
+
+    .query-module-type>div {
+        margin-top: 10px;
+    }
+
+    /* .show-showTypes{
+        display: flex;
+
+    } */
+
+    .show-showTypes>div {
+        margin-top: 10px;
+
+    }
+
+    .showTypes-box {
+        margin-top: 20px;
+    }
+
+    .showTypes-box .el-select {
+        width: 100%;
+    }
+
+    .showTypes-list>div {
+        padding: 0 10px;
+    }
+
+    .showTypes-list>div:hover {
+        background: #FF7D82;
+        color: #fff;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .fillSetUpOpacity {
+        display: flex;
+        align-items: center;
+        margin-right: 0;
+    }
+
+    .fillSetUpOpacity .el-radio__input {
+        margin-top: -25px;
+    }
+
+    .pageSetUpBg {
+        display: flex;
+        align-items: center;
+    }
+
+    .pageSetUpBgImg {
+        display: flex;
+        align-items: center;
+
+    }
+
+    .pageSetUpBgImg .el-radio__input {
+        margin-top: -120px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderCheck .el-icon-close:before {
+        content: " ";
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px !important;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 30px;
+        height: 22px;
+        border-radius: 1px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        width: 28px;
+        height: 20px;
+        border-radius: 1px;
+    }
+
+    .fillCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .fillCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .fillCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .fillCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .bgColorPiker .el-color-picker__trigger {
+        border: none;
+        width: 74px;
+        height: 40px;
+    }
+
+    .bgColorPiker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .bgColorPiker.el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    .bgColorPiker .el-color-picker__color-inner {
+        width: 64px;
+        height: 30px;
+        border-radius: 2px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .pageSetUp .el-radio {
+        display: flex;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        margin-top: 10px;
+        position: relative;
+    }
+
+    .imgBG .el-button.is-circle {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 20px;
+        right: 8px;
+        z-index: 2;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 34px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+
+    .el-slider__bar {
+        background: #FF7D82;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 100%;
+        margin-left: 10px;
+    }
+
+    .sliderBox .el-slider__input {
+        width: 104px;
+    }
+
+    .sliderBox .el-slider__runway.show-input {
+        margin-right: 120px;
+    }
+
+    /* .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    } */
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .addTitle {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #8c939d;
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+</style>

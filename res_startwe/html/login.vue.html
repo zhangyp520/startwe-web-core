@@ -1,0 +1,636 @@
+<!-- 登录页面 -->
+<template>
+    <div id="login">
+        <!-- login背景图大盒子 -->
+        <div class="loginBox">
+            <!-- 内容 -->
+            <div class="content">
+                <div class="inContent">
+                    <!-- 标题 -->
+                    <div class="loginTitle">
+                        <span :class="{'active':index==checkClick}" v-for="(item,index) in navList" @click="spanClick(index)">{{item.text}}</span>
+                         <!-- <span>短信登录</span>  -->
+                    </div>
+                    <!-- 密码登陆方式 -->
+                    <div class="loginContent" v-if="checkClick==0">
+                        <!-- 出错提示 -->
+                        <div class="tips" v-if="activeHidden">
+                            <img src="/res_startwe/assets/err.png" alt=""> 账户或密码错误
+                        </div>
+                        <!-- 密码登录框 -->
+                        <div>
+                            <el-form :model="loginByPasswordForm" :rules="loginByPasswordRules" ref="loginByPasswordForm" class="demo-loginByPasswordForm">
+                                <el-form-item prop="username">
+                                    <img src="/res_startwe/assets/user.png" alt="" class="user">
+                                    <el-input v-model="loginByPasswordForm.username" placeholder="账号"></el-input>
+                                </el-form-item>
+                                <el-form-item prop="password">
+                                    <img src="/res_startwe/assets/lock.png" alt="" class="password">
+                                    <el-input v-model="loginByPasswordForm.password" placeholder="密码" show-password></el-input>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div class="loginState">
+                            <el-checkbox v-model="checked">自动登录</el-checkbox>
+                            <div @click="forgetClick">忘记密码</div>
+                        </div>
+                        <!-- <div class="loginBtn">
+                            <el-button @click="login">登录
+                                <el-button>
+                        </div> -->
+                        <div class="loginBtn">
+                            <el-button type="info" @click="loginByPassword">登录
+                            </el-button>
+                        </div>
+                    </div>
+                    <!-- 短信登录方式 -->
+                    <div class="loginContent" v-show="checkClick==1">
+                        <div class="shortMsg">
+                            <el-form class="demo-loginByPasswordForm" :model="loginBySMSVerificationCodeForm" :rules="loginBySMSVerificationCodeRules"
+                                ref="loginBySMSVerificationCodeForm">
+                                <el-form-item prop="phone">
+                                    <img src="/res_startwe/assets/phone.png" alt="" class="phoneNumber">
+                                    <el-input v-model="loginBySMSVerificationCodeForm.phone" placeholder="手机号" clearable></el-input>
+                                </el-form-item>
+                                <!-- 验证码 -->
+                                <el-form-item prop="smsVerificationCode">
+                                    <img src="/res_startwe/assets/lock.png" alt="" class="sendCode_icon">
+                                    <el-input placeholder="验证码" v-model="loginBySMSVerificationCodeForm.smsVerificationCode"></el-input>
+                                    <button type="button" class="sendCode" @click="sendCodeClick" id="loginCountdown" :disabled="sendCodeDisabled">发送验证码
+                                    </button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <!-- 滑块 -->
+                        <div class="sliderBox"></div>
+                        <!-- 自动登录 -->
+                        <div class="loginState">
+                            <el-checkbox v-model="checked">自动登录</el-checkbox>
+                            <div @click="forgetClick">忘记密码</div>
+                        </div>
+                        <!-- 登录按钮 -->
+                        <div class="loginBtn">
+                            <el-button type="info" @click="loginByVerificationCode">登录
+                            </el-button>
+                        </div>
+                    </div>
+                    <!-- 其他的登录方式 -->
+                    <div class="otherLogin">
+                        <div class="otherLoading"  style="display:none ;">
+                            <span>其他登录方式</span>
+                            <img src="/res_startwe/assets/weixin_1.png" onmouseover="this.src='/res_startwe/assets/weixin_2.png'" onmouseout="this.src='/res_startwe/assets/weixin_1.png'"
+                                alt="" @click="wechatLogin">
+                            <img src="/res_startwe/assets/zhifubao1.png" onmouseover="this.src='/res_startwe/assets/zhifubao.png'" onmouseout="this.src='/res_startwe/assets/zhifubao1.png'"
+                                alt="" @click="alipayLogin">
+                            <img src="/res_startwe/assets/qq_1.png" onmouseover="this.src='/res_startwe/assets/qq_2.png'" onmouseout="this.src='/res_startwe/assets/qq_1.png'"
+                                alt="" @click="qqLogin">
+                        </div>
+                        <div class="login_reg" @click="toAccountRegPage">
+                            注册账户
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 备案号 -->
+        <div class="pg-footer">
+            <div class="pg-ft-wrap">
+                <span>版权所有 Powered by StartWE&nbsp;&nbsp;蜀ICP备18031704号</span>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            var validator = (rule, value, callback) => {
+                if (/^1[345789]\d{9}$/.test(value) == false) {
+                    callback(new Error("请输入正确的手机号"));
+                    this.sendCodeDisabled = true;
+                } else if (value === '') {
+                    callback(new Error('请输入手机号码'));
+                    this.sendCodeDisabled = true;
+                } else {
+                    callback();
+                    this.sendCodeDisabled = false;
+                }
+            };
+            return {
+                //获取验证码的按钮启用禁用状态
+                sendCodeDisabled: true,
+                checked: false,
+                showSlider: false,
+                input: "",
+                navList: [{ text: '密码登录' }, { text: '短信登录' }],
+                checkClick: 0,
+                activeHidden: false,
+                phoneNumber: '',
+                region: '',
+                //密码登录表单数据
+                loginByPasswordForm: {
+                    username: localStorage.getItem('login_username'),
+                    password: localStorage.getItem('login_password'),
+                }, 
+                //短信验证码登录表单数据
+                loginBySMSVerificationCodeForm: {
+                    phone: '',
+                    smsVerificationCode: '',
+                },
+                loginByPasswordRules: {
+                    username: [
+                        { required: true, message: '请输入手机或者邮箱号码', trigger: 'blur' },
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: "blur" }
+                        // ,
+                        // {pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/, message: '密码须包含数字、字母两种元素，且密码位数为6-16位'}
+                    ]
+                },
+                loginBySMSVerificationCodeRules: {
+                    phone: [
+                        { validator: validator, trigger: 'blur' }
+                    ],
+                    smsVerificationCode: [
+                        { required: true, message: '请输入手机短信验证码', trigger: 'blur' },
+                        { min: 6, max: 6, message: '请输入6位手机短信验证码', trigger: 'blur' }
+                    ]
+                }
+            }
+        },
+        created() {
+            this.keyupSubmit();
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            keyupSubmit(){
+                document.onkeydown=e=>{
+                    let _key=window.event.keyCode;
+                    if(_key===13){
+                        if (this.checkClick == 0) {
+                            this.loginByPassword();
+                        }else {
+                            this.loginByVerificationCode();
+                        }
+                    }
+                }
+            },
+            //账号密码登录方式
+            loginByPassword: function () {
+ 
+                var that = this;
+                this.$refs["loginByPasswordForm"].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost('login/account/loginByPassword', {
+                            "username": this.loginByPasswordForm.username,
+                            "password": this.loginByPasswordForm.password,
+                            "projectId": "startwe"
+                        }, function (res) {
+                            oui.cookie('tokenId', res.resultObj.loginToken, 30);
+                            oui.cookie('userId', res.resultObj.loginUser.id);
+                            oui.storage.set("startwe_user_info", oui.parseString(res.resultObj.loginUser));
+                            that.loadMenus();
+
+                            if(that.checked){
+
+                                //保存账号密码
+                                localStorage.setItem('login_username',that.loginByPasswordForm.username)
+                                localStorage.setItem('login_password',that.loginByPasswordForm.password)
+
+                            }else{
+                                localStorage.removeItem('login_username' )
+                                localStorage.removeItem('login_password' )
+
+                            }
+
+                            localStorage.setItem('autoLogin',that.checked)
+
+
+                        }, function (res) {
+                            that.$message.error(res.message);
+                        })
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            //跳转到注册页面
+            toAccountRegPage: function () {
+                oui.router.push('/res_startwe/html/reg.vue.html')
+            },
+            // 跳转到找回密码页面
+            forgetClick: function () {
+                oui.router.push('res_startwe/html/findThePassword.vue.html')
+            },
+            //手机号和短信验证码登录的方式
+            loginByVerificationCode: function () {
+                var that = this;
+                this.$refs["loginBySMSVerificationCodeForm"].validate((valid) => {
+                    if (valid) {
+                        oui.ajaxPost('login/account/loginByVerificationCode', {
+                            "phone": this.loginBySMSVerificationCodeForm.phone,
+                            "verificationCode": this.loginBySMSVerificationCodeForm.smsVerificationCode,
+                            "projectId": "startwe"
+                        }, function (res) {
+                            oui.cookie('tokenId', res.resultObj.loginToken, 30);
+                            oui.cookie('userId', res.resultObj.loginUser.id);
+                            oui.storage.set("startwe_user_info", oui.parseString(res.resultObj.loginUser));
+                            that.loadMenus();
+                            
+
+                            
+                        }, function (res) {
+                            that.$message.error(res.message);
+                        })
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            //微信登录
+            wechatLogin: function () {
+                location.href = oui.getContextPath() + 'service/startwe/login/wechatUser/toWeChatLoginPage';
+            },
+            //支付宝登录
+            alipayLogin: function () {
+                location.href = oui.getContextPath() + 'service/startwe/login/alipayUser/toAlipayLoginPage';
+            },
+            //qq用户登录
+            qqLogin: function () {
+                location.href = oui.getContextPath() + 'service/startwe/login/qqUser/toQQLoginPage';
+            },
+            loadMenus: function () {
+                //var path = oui_context.checkUrl;
+                var me = this;
+                var path = oui_context.checkUrl;
+                var userId = oui.cookie("userId");
+                var tokenId = oui.cookie("tokenId");
+                var loadMenusUrl = this.$router.query.loadMenusUrl;
+
+                var iframeId = oui.getParam('iframeId');
+                oui.getData(path, {
+                    userId: userId,
+                    tokenId: tokenId
+                }, function (res) {
+                    oui.storage.set('startwe_menus', oui.parseString(res.menus));
+                    oui.router.push('res_startwe/html/workArea/index.vue.html');
+                });
+
+            },
+            login: function () {
+                // console.log(11111);
+
+
+                var path = oui.getContextPath() + 'com.oursui.models.account.web.AccountController.login.biz';
+                var me = this;
+                var param = {
+                    name: this.loginByPasswordForm.name,
+                    pass: this.loginByPasswordForm.password
+                };
+                oui.postData(path, param, function (res) {
+                    console.log(res);
+
+                    if (res.success) {
+                        setTimeout(function () {
+                            var msg = res.msg;
+
+                            var tokenId = res.tokenId;
+                            var userId = res.userId;
+                            oui.cookie('tokenId', tokenId, 30);
+                            oui.cookie('userId', userId);
+                            oui.cookie('userName', res.userName);
+                            me.loadMenus();
+
+                       
+                           
+                        }, 200);
+                    } else {
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                }, function (err) {
+                    oui.getTop().oui.alert(err);
+                }, '登陆中...')
+            },
+            // 登录框导航切换
+            spanClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            // 验证码发送按钮
+            sendCodeClick: function () {
+                // console.log(1111);
+                // this.showSlider = true;
+                var me = this;
+                oui.require([
+                    oui.getContextPath() + 'res_common/oui/system/oui-verify.js',
+                    oui.getContextPath() + 'res_common/oui/med.min.js'
+                ], function () {
+                    me.$nextTick(function () {
+                        oui.showVerifyHtml({
+                            showType: 1,
+                            container: '.sliderBox',
+                            userId: oui.cookie('userId'),
+                            onSuccess: function () {
+                                if (me.loginBySMSVerificationCodeForm.phone == null
+                                    || me.loginBySMSVerificationCodeForm.phone.trim() == "") {
+                                    me.$message.error("请输入手机号码");
+                                } else {
+                                    //点击了按钮后要开始倒计时
+                                    let time = 60;
+                                    //并且按钮不能再按
+                                    me.sendCodeDisabled = true;
+                                    //按钮中字符变化
+                                    $("#loginCountdown").html(time);
+                                    //每过一秒钟都要执行function函数
+                                    let timer = setInterval(function () {
+                                        time--;
+                                        if (time == 0) {
+                                            $("#loginCountdown").html("重发");
+                                            me.sendCodeDisabled = false;
+                                            //结束定时器
+                                            clearInterval(timer);
+                                        } else {
+                                            $("#loginCountdown").html(time + "秒后重新发送");
+                                        }
+                                    }, 1000);
+                                    oui.ajaxPost('login/verification/sendSMSVerifyCode', {
+                                        "phone": me.loginBySMSVerificationCodeForm.phone,
+                                        "type": "login",
+                                        "projectId": "startwe"
+                                    }, function (res) {
+                                        me.$message.success('手机验证码发送成功，请收到短信后再十分钟之内进行操作！');
+                                    }, function (res) {
+                                        me.$message.error(res.message);
+                                    });
+                                }
+                            }
+                        });
+
+                    });
+                });
+
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+        background-color: #999;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .demo-loginByPasswordForm {
+        position: relative;
+    }
+
+    .el-button--info {
+        background-color: #F4F4F4;
+        color: #999;
+        border-color: #F4F4F4;
+    }
+
+    .phoneNumber {
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .sendCode_icon {
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .el-button {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    /* 挂载对象盒子 最外层 */
+
+    #login {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 登录盒子 */
+
+    .loginBox {
+        width: 956px;
+        height: 628px;
+        background: url(/res_startwe/assets/box.png) no-repeat;
+        background-size: 100%;
+        position: relative;
+    }
+
+    .content {
+        width: 50%;
+        position: absolute;
+        right: 40px;
+        top: 30px;
+    }
+
+    .inContent {
+        margin-top: 100px;
+        width: 70%;
+        margin: auto;
+    }
+
+    .tips {
+        border: 1px solid #F56C6C;
+        background-color: rgb(255, 242, 241);
+        height: 40px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        /* line-height: 40px; */
+    }
+
+    .tips>img {
+        height: 20px;
+        margin: 0 10px;
+    }
+
+    .loginTitle {
+        color: #999;
+        margin: 100px 0 30px 0;
+    }
+
+    .loginTitle>span {
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .active {
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+
+    .loginTitle>span:last-child {
+        margin-left: 30px;
+    }
+
+    /* 登录方式1密码登录 */
+
+    .loginContent input {
+        padding-left: 34px;
+        width: 100%;
+        height: 40px;
+    }
+
+    .user {
+        /* margin-bottom: 24px; */
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .el-form-item__content {
+        display: flex;
+    }
+
+    .password {
+        position: absolute;
+        top: 12px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .loginState {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        margin-top: 30px;
+    }
+
+    .loginState>div {
+        color: #EA4A43;
+        cursor: pointer;
+    }
+
+    .loginBtn {
+        margin-bottom: 24px;
+    }
+
+    .loginBtn>button {
+        letter-spacing: 10px;
+    }
+
+    .loginBtn>button>soan {
+        font-size: 16px;
+    }
+
+    .otherLogin {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .otherLoading {
+        display: flex;
+        align-items: center;
+    }
+
+    .otherLoading>img {
+        margin: 0 10px;
+        cursor: pointer;
+    }
+
+    .login_reg {
+        color: #EA4A43;
+        cursor: pointer;
+    }
+
+    /* 登录方式2 短信登录 */
+
+    .shortMsg {
+        position: relative;
+    }
+
+    .shortMsg>img {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        height: 15px;
+    }
+
+    /* 滑块 */
+
+    .sliderBox {
+        margin-top: -12px;
+    }
+
+
+    .VftionCodeBox {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        margin-top: 30px
+    }
+
+    .sendCode {
+        width: 55%;
+        height: 38px;
+        border: 1px solid #999;
+        text-align: center;
+        line-height: 38px;
+        border-radius: 2px;
+        outline: none;
+        background-color: #fff;
+        margin-left: 20px;
+    }
+    /* 备案号 */
+
+    .pg-ft-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+        position: absolute;
+        bottom: 10px;
+    }
+    .pg-ft-wrap>span{
+        font-size: 12px;
+        color: #c4c4c4;
+    }
+</style>

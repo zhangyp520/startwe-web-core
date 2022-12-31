@@ -1,0 +1,58 @@
+<oui-view id="query-page-condition-config"
+          data="com.oui.absolute.AbsoluteDesign.dialog4condition.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script type="text/html" id="query-page-condition-config-tpl">
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css"/>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title  title-left">
+                <span>条件设置</span>
+                <div class="pull-right panel-title-btn">
+                    <button class="btn btn-default btn-xs" oui-e-click="com.oui.absolute.AbsoluteDesign.dialog4condition.event2showOrHidePreview"><span class="glyphicon glyphicon-eye-open"></span> <label>规则预览</label></button>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <oui-condition id="edit4filterCondition" showType="3" type="condition"
+                           align="center"
+                           useOrRule="true"
+                           settingBtnText="查询固定条件设置"
+                           title="查询固定条件设置"
+                           confirmName="确认"
+                           maxConditionLenth="8"
+                           useSysVar4fiedValue="true"
+                           maxLimitMsgTitle="变量条件"
+                           maxLimitMsgTitle4all="变量条件总数"
+                           isFilterSettingFields="false"
+                           noEnumValueDisplay="该字段已经被删除"
+                           showConditionInfoAfter="com.oui.absolute.AbsoluteDesign.dialog4condition.showConditionInfoAfter"
+                           findSysVars="com.oui.absolute.AbsoluteDesign.dialog4condition.filterField4SysVar"
+
+                    >
+                {{each fields as field}}
+                {{if field.controlType=='multiselect' || field.controlType=='singleselect' || field.controlType=='radio' }}
+
+                <oui-field title="{{field.display}}"
+                           showtype="3"
+                           datatype="{{field.dataType}}"
+                           opt="{{field.opt}}"
+                           data="{{oui.parseString(field.otherAttrs?field.otherAttrs.data:[])}}"
+                           controltype="singleselect"
+                           name="{{field.value}}"  ></oui-field>
+
+                {{else}}
+                <oui-field title="{{field.display}}"
+                           showtype="{{field.showType}}"
+                           datatype="{{field.dataType}}"
+                           opt="{{field.opt}}"
+                           data="{{oui.parseString(field.otherAttrs?field.otherAttrs.data:[])}}"
+                           controltype="{{field.controlType}}"
+                           name="{{field.value}}"  ></oui-field>
+                {{/if}}
+                {{/each}}
+            </oui-condition>
+        </div>
+    </div>
+</script>
+

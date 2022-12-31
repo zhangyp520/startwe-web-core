@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>创建文章</title>
+    <link rel="stylesheet" href="../../lib/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/font/iconfont/iconfont.css">
+    <link rel="stylesheet" href="../../lib/editor/dist/summernote.css">
+    <link rel="stylesheet" href="edit.css">
+    <script src="../../lib/jquery/jquery-3.2.1.min.js"></script>
+    <script src="../../lib/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="../../lib/editor/dist/summernote.min.js"></script>
+    <script src="../../lib/editor/dist/lang/summernote-zh-CN.js"></script>
+</head>
+<body>
+    <!--头部-->
+    <div class="pg-header">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="">StartWE</a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <div class="navbar-form rs-search-box">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="搜索 startwe...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-new-article">
+                            <a href="#">
+                                <i class="iconfont icon-xiezi"></i> 写文章
+                            </a>
+                        </li>
+                        <li>
+                            <span class="ver-line">|</span>
+                        </li>
+                        <li class="user-auth">
+                            <a href="#" class="btn-log" data-toggle="modal" data-target=".pg-log-box">登录</a>
+                            <span>·</span>
+                            <a href="#" class="btn-reg">注册</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!--/头部-->
+
+    <!--正文-->
+    <div class="pg-body">
+        <div class="container">
+            <div class="pg-block">
+                <div class="pg-block-header">
+                    <span>创建文章</span>
+                </div>
+                <div class="pg-block-cont">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="input-title" class="col-sm-2 control-label">文章标题</label>
+                            <div class="col-sm-10">
+                                <input type="文章标题" class="form-control" id="input-title" placeholder="输入文章标题">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">文章分类</label>
+                            <div class="col-sm-10">
+                                <select class="form-control">
+                                    <option value="">选择文章分类</option>
+                                    <option value="0">前端</option>
+                                    <option value="1">后端</option>
+                                    <option value="2">大数据</option>
+                                    <option value="3">人工智能</option>
+                                    <option value="4">物联网</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">文章封面</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="选择图片" readonly>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">正文内容</label>
+                            <div class="col-sm-10">
+                                <div class="article-editor"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10 text-center">
+                                <button class="article-btn bg1">
+                                    <i class="iconfont icon-chakan1"></i> 预览
+                                </button>
+                                <button class="article-btn">
+                                    <i class="iconfont icon-fasong"></i> 发布
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/正文-->
+
+    <!-- 登录信息框 -->
+    <div class="modal fade pg-log-box" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="pg-log-wrap">
+                    <div class="log-header">
+                        <div class="row">
+                            <div class="col-xs-7">
+                                <h2>用户登录</h2>
+                            </div>
+                            <div class="col-xs-5 text-right">
+                                <a href="#">注册新用户</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="log-input-box log-input-user">
+                        <em></em>
+                        <input type="text" name="username" placeholder="手机号/邮箱">
+                        <label></label>
+                    </div>
+
+                    <div class="log-input-box log-input-pwd">
+                        <em></em>
+                        <input type="password" name="password" placeholder="密码">
+                        <label></label>
+                    </div>
+
+                    <div class="log-btn-box">
+                        <a href="#" class="log-btn">立即登录</a>
+                        <a href="#" class="log-tip">忘记密码?</a>
+                    </div>
+                </div>
+
+                <div class="log-third">
+                    <h3>社交账号登录</h3>
+                    <ul class="third-opt">
+                        <li class="left"><a href=""></a></li>
+                        <li class="center"><a href=""></a></li>
+                        <li class="right"><a href=""></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /登录信息框 -->
+
+    <script src="edit.js"></script>
+</body>
+</html>

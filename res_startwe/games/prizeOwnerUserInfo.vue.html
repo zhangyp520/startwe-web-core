@@ -1,0 +1,220 @@
+<template>
+    <div class="container">
+        <div class="title">
+            查询中奖人员
+        </div>
+        <div class="content">
+            <!-- 关键区域 -->
+            <div class="keyword">
+                <div class="keyword_content">关键字:</div>
+                <!-- 可改变尺寸的input -->
+                <el-input v-model="formValue.phoneNumber" placeholder="请输入手机号码”" style="width: 314px; margin-left:8px">
+                </el-input>
+                <el-row class="Reset_button">
+                    <el-button size="small" round @click="cleanOptions">重置</el-button>
+                </el-row>
+                <el-row class="query_button1">
+                    <el-button type="primary" size="small" round @click="queryPrizeOwnerInfo">查询</el-button>
+                </el-row>
+            </div>
+            <!-- 我的工单区域结束 -->
+            <div class="Table_head">
+                <!-- 表格头部 -->
+                <template>
+                    <el-table :data="prizeOwnerUserInfo">
+                        <el-table-column type="index" label="序号" width="80" align="center">
+                        </el-table-column>
+                        <el-table-column prop="luckyDrawName" label="活动名称" align="center">
+                        </el-table-column>
+                        <el-table-column prop="name" label="中奖人员姓名" align="center"></el-table-column>
+                        <el-table-column prop="address" label="中奖人员地址" align="center"></el-table-column>
+                        <el-table-column prop="phoneNo" label="中奖人员电话号码" align="center"></el-table-column>
+                        <el-table-column prop="prizeName" label="奖品名称" align="center"></el-table-column>
+                    </el-table>
+                </template>
+            </div>
+            <!-- 分页 -->
+            <div class="page">
+                <div class="block">
+                    <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page="currentPage" :page-sizes="[1, 5, 10, 15, 20]"
+                                   :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper">
+                    </el-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                //活动id
+                id: "",
+                pageSize: 10,
+                total: 0,
+                currentPage: 1,
+                prizeOwnerUserInfo: [],
+                //高级查询关键字
+                formValue: {
+                    phoneNumber: ""
+                }
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var luckyDrawId = this.$router.query.luckyDrawId ; //活动id
+            this.id = luckyDrawId;
+            this.queryPrizeOwnerInfo();
+        },
+        methods: {
+            queryPrizeOwnerInfo: function () {
+                let me = this;
+                oui.ajaxPost('/luckyDraw/queryPrizeOwnerInfo', {
+                    "id": this.id,
+                    "pager": {
+                        "page": this.currentPage,
+                        "rows": this.pageSize
+                    },
+                    "phoneNumber": this.formValue.phoneNumber
+                }, function (res) {
+                    if (res.resultObj.pager != null) {
+                        me.total = res.resultObj.pager.total;
+                    }else {
+                        me.total = 0;
+                    }
+                    me.prizeOwnerUserInfo = res.resultObj.prizeOwners || [];
+                },function (res) {
+                    me.$message.error(res.message)
+                });
+            },
+            handleCurrentChange: function (val) {
+                this.currentPage = val;
+                this.queryPrizeOwnerInfo();
+            },
+            handleSizeChange: function (val) {
+                this.pageSize = val;
+                this.queryPrizeOwnerInfo();
+            },
+            cleanOptions: function () {
+                this.formValue.phoneNumber = "";
+                this.queryPrizeOwnerInfo();
+            }
+        }
+
+    }
+
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        font-size: 22px;
+    }
+    .Reset_button>.el-button {
+        margin: 0px 8px;
+        border-radius: 0;
+    }
+    .block {
+        float: right;
+    }
+    .content {
+        margin: 0 40px;
+        /* margin-top: 40px; */
+    }
+    .query_button1>.el-button {
+        border-radius: 0;
+    }
+    .title {
+        font-size: 40px;
+        /* margin: 40px 40px 0 40px; */
+        color: #1890FF;
+        margin: 0 40px;
+        line-height: 120px;
+    }
+
+    .el-form-item__label {
+        font-size: 32px;
+        width: 204px !important;
+        text-align: left;
+        line-height: 66px;
+    }
+
+    .el-form-item {
+        display: flex;
+    }
+
+    .el-form-item__content {
+        flex: 1;
+        margin-left: 10px !important;
+        font-size: 40px;
+    }
+
+    .el-select {
+        width: 100%;
+    }
+    .keyword {
+        width: 1000px;
+        height: 46px;
+        font-weight: 700;
+        line-height: 46px;
+        display: flex;
+        justify-content: left;
+        margin: 20px 0px;
+        background-color: rgb(255, 255, 255);
+
+    }
+    .keyword_content {
+        display: inline;
+        height: 30px;
+
+    }
+    .addCategory {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px dashed #1890FF;
+        border-radius: 5px;
+        margin-top: 40px;
+    }
+    .el-input__inner {
+        height: 60px;
+        font-size: 30px;
+    }
+    .el-button{
+        height: 60px;
+        font-size: 30px;
+    }
+    .el-select-dropdown__item{
+        height: 50px;
+    }
+    .el-select-dropdown__item>span{
+        font-size: 26px;
+    }
+    .el-table th>.cell{
+        font-size: 22px;
+    }
+    .onSubmit>div{
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 40px;
+    }
+</style>

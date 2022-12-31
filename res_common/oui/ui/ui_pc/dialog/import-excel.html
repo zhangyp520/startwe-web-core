@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>批量导入</title>
+    <link type="text/css" rel="stylesheet" href="../css/dialog.css"/>
+    <link type="text/css" rel="stylesheet" href="../css/import-excel.css"/>
+</head>
+<body>
+<!-- 批量导入文件 -->
+<div class="oui-dialog">
+    <div class="oui-dialog-cnt">
+        <header class="oui-dialog-hd">
+            <h3>批量导入</h3>  <!-- 下载状态下  文案改成  下载模板 -->
+            <i class="oui-dialog-close"></i>
+        </header>
+        <div class="oui-dialog-bd">
+            <div class="oui-dialog-content">
+                <div class="import-file">
+                    <!-- 批量导入第一步 -->
+                    <div class="step-one">
+                        <div class="ouiFile-download">
+                            批量导入，您需要先
+                            <button type="button" class="ouiFile-btn ouiFile-btn-download">
+                                <span>下载导入模板</span>
+                            </button>
+                        </div>
+                        <button type="button" class="ouiFile-import-file">
+                            <input type="file" class="import-file-btn">
+                            <span></span>
+                            <p>点击或将文件拖拽到这里上传</p>
+                        </button>
+                        <div class="ouiFile-warn-info">
+                            <h3>温馨提示</h3>
+                            <p>1.文件格式仅支持.xls或.xlsx</p>
+                            <p>2.文件大小10M以内。每次导入行数不超过1000行</p>
+                        </div>
+                    </div>
+
+                    <!-- 批量导入第二步 -->
+                    <div class="step-two" style="display: none">
+                        <ul class="ouiFile-load-file-list">
+                            <li class="ouiFile-load-file-item">
+                                <span class="icon"></span>
+                                <span class="file-name">2018年11月6日-北北京致远互联软件股份有限公司花名限公司花名册京致远互联软件股份有限公司花名限公司花名册.xls</span>
+                                <span class="file-operation"></span>
+                            </li>
+                            <li class="ouiFile-load-file-item">
+                                <span class="icon"></span>
+                                <span class="file-name">2018年11月6日-北京致远互联软件股份有限公司花名限公司花名册.xls</span>
+                                <span class="file-operation"></span>
+                            </li>
+                        </ul>
+                        <div class="ouiFile-warn-info">
+                            <h3>温馨提示</h3>
+                            <p>1.文件格式仅支持.xls或.xlsx</p>
+                            <p>2.文件大小10M以内。每次导入行数不超过1000行</p>
+                        </div>
+                    </div>
+
+                    <!-- 批量导入第三步 -->
+                    <div class="step-three">
+                        <!-- 正在上传 -->
+                        <div style="display: none">
+                            <div class="ouiFile-importing">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span> <!-- 进度条 -->
+                            </div>
+                            <p class="ouiFile-importing-file">
+										<span class="ouiFile-import-status ouiFile-import-ing">正在上传 <span
+                                                class="file-name">xxx.xls</span></span>
+                            </p>
+                        </div>
+
+                        <!-- 导入成功 -->
+                        <div class="success" style="display: none;">
+                            <div class="ouiFile-importing ">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span>
+                            </div>
+                            <p class="ouiFile-importing-file">
+                                <span class="ouiFile-import-status ouiFile-import-success">成功导入 <span class="file-name">xxx.xls</span></span>
+                            </p>
+                            <p class="ouiFile-import-successData">
+                                成功导入员工数据180条
+                            </p>
+                        </div>
+
+                        <!-- 上传成功 -->
+                        <div class="success" style="display: none;">
+                            <div class="ouiFile-importing ">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span>
+                            </div>
+                            <p class="ouiFile-importing-file">
+                                <span class="ouiFile-import-status ouiFile-import-success">成功上传 <span class="file-name">xxx.xls</span></span>
+                            </p>
+                            <p class="ouiFile-import-successData">
+                                表头校验，共上传60列数据
+                            </p>
+                        </div>
+
+                        <!-- 导入失败 -->
+                        <div class="fail" style="display: none;">
+                            <div class="ouiFile-importing">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span>
+                            </div>
+                            <p class="ouiFile-importing-file">
+										<span class="ouiFile-import-status ouiFile-import-fail">导入失败 <span
+                                                class="file-name">xxx.xls</span></span>
+                            </p>
+                            <p class="ouiFile-import-failData">
+                                导入失败，查看失败原因，点击
+                                <button type="button" class="ouiFile-btn ouiFile-btn-download"><span>下载</span></button>
+                            </p>
+                        </div>
+
+                        <!-- 下载模板 -->
+                        <div style="display: none;">
+                            <div class="ouiFile-upload-ing">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span>
+                            </div>
+                            <p class="ouiFile-importing-file">
+										<span class="ouiFile-import-status ouiFile-import-ing">正在下载 <span
+                                                class="file-name">xxx.xls</span></span>
+                            </p>
+                        </div>
+
+                        <!-- 下载失败 -->
+                        <div class="fail" style="display: none;">
+                            <div class="ouiFile-upload-fail">
+                                <span class="icon"></span>
+                            </div>
+                            <div class="ouiFile-import-progress">
+                                <span class="ouiFile-import-active-progress"></span>
+                            </div>
+                            <p class="ouiFile-importing-file">
+										<span class="ouiFile-import-status ouiFile-import-fail">下载失败 <span
+                                                class="file-name">xxx.xls</span></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="oui-dialog-ft">
+                <!--  -->
+                <span type="button" class="oui-dialog-cancel submit-button">取消</span>
+
+                <!-- 上传界面 显示按钮 -->
+                <!-- 可点击按钮 -->
+                <span type="button" class="oui-dialog-ok submit-button">上传</span>
+
+                <!-- 下载界面 显示按钮 -->
+                <span type="button" style="display: none;" class="oui-dialog-ok submit-button">确定</span>
+                <span type="button" style="display: none;" class="oui-dialog-ok submit-button">重新下载</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+

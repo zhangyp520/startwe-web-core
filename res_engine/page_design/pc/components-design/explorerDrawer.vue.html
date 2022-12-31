@@ -1,0 +1,445 @@
+<template>
+    <div>
+        <el-drawer title="我是标题" size="948px" :destroy-on-close="true" :visible.sync="drawer"
+            custom-class="explorer-drawer" :before-close="handleClose" :with-header="false">
+
+
+            <div class="header">
+                <div class="title">资源管理器</div>
+
+                <div class="right-tool-bar">
+                    <div class="tool-btn">
+                        <span class="s-icon-16 s-icon-back"></span>
+                        <span class="s-icon-16 s-icon-next"></span>
+                        <span class="s-icon-16 s-icon-refresh" @click="handleRefreshFilelist"></span>
+                    </div>
+                    <div class="search-bar">
+                        <el-input placeholder="请输入内容" prefix-icon="el-icon-search" size="mini" v-model="keyword"
+                            @input="search">
+                        </el-input>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="file-content">
+                <div class="left-tree">
+
+
+                    <el-tree :data="fileTreeData" :props="defaultProps" default-expand-all
+                        icon-class="s-icon-arrow-right" :highlight-current="true" @node-click="handleNodeFileTypeClick">
+                        <span class="s-tree-node" :class="data.class" slot-scope="{ node, data }">
+                            <span> <i :class="[data.icon,'s-icon','s-icon-16']"></i> {{ node.label }}</span>
+                        </span>
+                    </el-tree>
+
+
+                    <!-- <div class="filetype">
+                        <div class="filetype-header">
+                            <div class="arrow s-icon-arrow-expand"></div>
+                            <div class="s-icon-folder-open"></div>
+                            <div class="label">文档类型</div>
+                        </div>
+
+                        <div class="son-tree">
+                            <div  class="filetype-item" >
+                                <div class="s-icon s-icon-16 s-icon-files-file"></div>
+                                <div class="label">文档</div>
+                            </div>
+
+                            <div class="filetype-item">
+                                <div class="s-icon s-icon-16 s-icon-files-music"></div>
+                                <div class="label">音乐</div>
+                            </div>
+
+                            <div class="filetype-item">
+                                <div class="s-icon s-icon-16 s-icon-files-video"></div>
+                                <div class="label">视频</div>
+                            </div>
+
+
+                            <div class="filetype-item">
+                                <div class="s-icon s-icon-16 s-icon-files-pic"></div>
+                                <div class="label">图片</div>
+                            </div>
+
+
+                            <div class="filetype-item">
+                                <div class="s-icon s-icon-16 s-icon-files-zip"></div>
+                                <div class="label">压缩包</div>
+                            </div>
+
+                            <div class="filetype-item">
+                                <div class="s-icon s-icon-16 s-icon-files-other"></div>
+                                <div class="label">其他</div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="file-main-warp">
+
+                    <div class="file-main-header">
+                        <el-upload ref="swupload" class="files-upload" v-if="uploadUrl" :action="uploadUrl"
+                            :data="uploaddata" multiple :limit="1" :before-upload="beforeAvatarUpload"
+                            :show-file-list="false" :on-change="uploadOnChange" :on-success="uploadOnSuccess"
+                            :on-error="uploadOnError" :on-progress="uploadOnProgress">
+                            <el-button class="btn-upload" type="primary"><span
+                                    class="s-icon s-icon-14 s-icon-files-upload"></span><span>上传</span></el-button>
+                        </el-upload>
+
+
+                        <el-button type="info" class="btn-newfloder"><span
+                                class="s-icon s-icon-14 s-icon-files-newfloder"></span><span>新建文件夹</span></el-button>
+
+                        <div v-if="!pass && progress !== 0" class="file-upload-progress">
+                            <el-progress :percentage="progress"></el-progress>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="file-list">
+                        <div class="file-path-nav">
+                            <span>文档类型 > {{filetypename}}</span>
+                            <span>已全部加载，共{{filetotal}}个</span>
+                        </div>
+
+                        <el-table size="medium" ref="multipleTable" :data="tableData" row-class-name="files-table-row"
+                            header-row-class-name="files-table-header" @selection-change="handleSelectionChange">
+                            <el-table-column type="selection" width="55">
+                            </el-table-column>
+                            <el-table-column prop="name" label="名称" width="200">
+                            </el-table-column>
+                            <el-table-column :show-overflow-tooltip="true" prop="filetype" label="类型" width="70">
+                            </el-table-column>
+                            <el-table-column :show-overflow-tooltip="true" prop="filesize" label="大小" width="100">
+                            </el-table-column>
+                            <el-table-column :show-overflow-tooltip="true" prop="author" label="创建者" width="120">
+                            </el-table-column>
+                            <el-table-column prop="date" width="160" label="创建日期">
+                            </el-table-column>
+                        </el-table>
+
+
+                        <!-- <div class="file-title">
+                            <div class="file-title-col" ><el-checkbox label="all"></el-checkbox> 名称</div>
+                            <div class="file-title-col">类型</div>
+                            <div class="file-title-col">大小</div>
+                            <div class="file-title-col">创建者</div>
+                            <div class="file-title-col">创建日期</div>
+                        </div>
+                        <div class="files">
+                            <div class="files-col"><el-checkbox label="1"></el-checkbox> 夏季蕾丝裙.jpg</div>
+                            <div class="files-col">图片</div>
+                            <div class="files-col">1.2M</div>
+                            <div class="files-col">小王</div>
+                            <div class="files-col">2022-02-23 10:21:12</div>
+                        </div> -->
+
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </el-drawer>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                fileMaxSizeM: 10,
+                drawer: false,
+                direction: 'rtl',
+                dialogVisible: false,
+                keyword: '',
+                uploaddata: null, //上传参数
+                checkFileList: ['选中且禁用', '复选框 A'],
+                userinfo: null,
+                progress: 0,//上传进度
+                pass: null,//是否上传成功
+                filetypename: '全部',
+                filetotal: 0,
+                searchType:0,
+                fileTreeData: [
+                    {
+                        label: '文档类型',
+                        icon: "s-icon-folder-open",
+                        typecode: 0,
+                        children: [
+                            {
+                                label: '文档',
+                                typecode: 1,
+                                icon: "s-icon-files-file",
+                            },
+                            {
+                                label: '音乐',
+                                icon: "s-icon-files-music",
+                                typecode: 2,
+                            },
+                            {
+                                label: '视频',
+                                icon: "s-icon-files-video",
+                                typecode: 3,
+                            },
+                            {
+                                label: '图片',
+                                icon: "s-icon-files-pic",
+                                typecode: 4,
+                            },
+                            {
+                                label: '压缩包',
+                                icon: "s-icon-files-zip",
+                                typecode: 5,
+                            },
+                            {
+                                label: '其他',
+                                icon: "s-icon-files-other",
+                                typecode: 6,
+                            },
+                        ]
+                    }
+                ],
+                defaultProps: {
+                    children: "children",
+                    label: "label",
+                },
+                tableData: [
+                    // {
+                    //     date: '2016-05-03 10:21:12',
+                    //     name: '夏季蕾丝裙.jpg',
+                    //     filetype: '图片',
+                    //     filesize:'1.2M',
+                    //     author:'小王',
+                    // }, 
+                    // {
+                    // date: '2016-05-03 10:21:12',
+                    // name: '夏季蕾丝裙.jpg',
+                    // filetype: '图片',
+                    // filesize:'1.2M',
+                    // author:'小王',
+                    // }, 
+                    // {
+                    // date: '2016-05-03 10:21:12',
+                    // name: '夏季蕾丝裙.jpg',
+                    // filetype: '图片',
+                    // filesize:'1.2M',
+                    // author:'小王',
+                    // }, 
+                    // {
+                    // date: '2016-05-03 10:21:12',
+                    // name: '夏季蕾丝裙.jpg',
+                    // filetype: '图片',
+                    // filesize:'1.2M',
+                    // author:'小王',
+                    // }, 
+                    // {
+                    // date: '2016-05-03 10:21:12',
+                    // name: '夏季蕾丝裙.jpg',
+                    // filetype: '图片',
+                    // filesize:'1.2M',
+                    // author:'小王',
+                    // }, 
+                    // {
+                    // date: '2016-05-03 10:21:12',
+                    // name: '夏季蕾丝裙.jpg',
+                    // filetype: '图片',
+                    // filesize:'1.2M',
+                    // author:'小王',
+                    // }, 
+
+                ],
+                circleId: '',
+                projectId: '',
+                pageId: '',
+                uploadUrl: '',
+                Design: com.oui.absolute.AbsoluteDesign
+            }
+        },
+        computed: {
+            proStatus() {//上传状态
+                if (this.pass) {
+                    return 'success'
+                } else if (this.pass == false) {
+                    return 'exception'
+                } else {
+                    return ''
+                }
+            }
+        },
+        mounted: function () {
+
+
+            this.drawer = true;
+            let userinfo = JSON.parse(localStorage.getItem('startwe_user_info'));
+
+
+
+            this.userinfo = userinfo;
+            this.uploadUrl = this.Design.upload2AlibabaUrl
+
+            var param = oui.getParam()
+            this.projectId = param.projectId
+            this.circleId = param.circleId
+            this.pageId = param.pageId
+
+            //获取当前登陆信息 附加给上传接口
+            this.uploaddata = {
+                type: 3,
+                projectId: this.projectId,
+                userId: userinfo.id,
+                targetUserId: userinfo.id,
+            }
+
+
+            this.loadfileList(0);
+
+
+        },
+        methods: {
+            beforeAvatarUpload(file) {
+                debugger
+                //const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < this.fileMaxSizeM;
+
+                // if (!isJPG) {
+                // this.$message.error('上传头像图片只能是 JPG 格式!');
+                // }
+                if (!isLt2M) {
+                    this.$message.error(`上传文件大小不能超过 ${this.fileMaxSizeM}MB!`);
+                }
+                return isLt2M;
+
+            },
+            search() {
+                this.loadfileList(0)
+            },
+            loadfileList(extNameTypeKey) {
+
+                let findfileUrl = this.Design.findFilesUrl
+
+                let url = findfileUrl
+                let data = {
+                    'userId': this.userinfo.id,
+                    'projectId': this.projectId,
+                    'keyWord': this.keyword,
+                    'pager': { 'page': '1', 'rows': '10' }
+                }
+                if (extNameTypeKey) {
+                    data = Object.assign(data, { 'extNameTypeKey': extNameTypeKey })
+                }
+
+
+                this.tableData = []
+                oui.postData(
+                    url, data,
+                    (res) => {
+
+                        let data = res.data;
+
+                        data.map((item, index) => {
+
+
+                            let tempdata = {
+                                date: item.creatTime,
+                                name: item.name,
+                                filetype: item.type,
+                                filesize: item.size || '-',
+                                author: item.creator,
+                            }
+                            this.tableData.push(tempdata)
+
+                        })
+
+                        this.filetotal = data.length
+
+                    }
+                    , () => {
+                        this.filetotal = 0
+                    })
+
+
+            },
+            uploadOnProgress(e, file) {//开始上传
+                console.log(e.percent, file)
+                this.progress = Math.floor(e.percent)
+            },
+            uploadOnChange(file) {
+                console.log("——————————change——————————")
+                // console.log(file)
+                if (file.status == 'ready') {
+                    console.log("ready")
+                    //重置progress组件
+                    this.pass = null;
+                    this.progress = 0;
+                } else if (file.status == 'fail') {
+                    this.$message.error("图片上传出错，请刷新重试！")
+                }
+            },
+            uploadOnSuccess(e, file) {//上传附件 
+                console.log('uploadOnSuccess', e, file)
+                this.$refs.swupload.clearFiles();
+                this.pass = true;
+                this.loadfileList();
+            },
+            uploadOnError(e, file) {
+                console.log("——————————error——————————")
+                console.log(e)
+                this.pass = false;
+            },
+            //关闭事件
+            handleClose(done) {
+                done();
+                var div = document.createElement("div");
+                div.id = "sider-explorer";
+                document.querySelector("#right-drawer").innerHTML = '';
+                document.querySelector("#right-drawer").append(div);
+
+
+            },
+            toggleSelection(rows) {
+                if (rows) {
+                    rows.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row);
+                    });
+                } else {
+                    this.$refs.multipleTable.clearSelection();
+                }
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            //刷新列表
+            handleRefreshFilelist() {
+                this.loadfileList(this.searchType);
+            },
+            //选择类型时处理
+            handleNodeFileTypeClick(data) {
+                this.searchType = data.typecode;
+                this.loadfileList(data.typecode);
+            }
+        }
+    }
+</script>
+
+<style>
+    .file-content .el-tree-node {
+        margin: 10px 0;
+    }
+
+    /* 全局样式表 */
+    /* elementui中table超出隐藏提示框宽度 */
+    .el-tooltip__popper {
+        max-width: 800px;
+
+    }
+</style>

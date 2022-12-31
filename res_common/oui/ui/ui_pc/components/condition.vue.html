@@ -1,0 +1,196 @@
+<template >
+    <div>
+        <div class="panel panel-default" >
+            <div class="panel-heading">
+                <h3 class="panel-title  title-left">
+                    <span>条件设置</span>
+                    <div class="pull-right panel-title-btn">
+                        <button class="btn btn-default btn-xs" @click="event2showOrHidePreview"><span class="glyphicon glyphicon-eye-open"></span> <label>规则预览</label></button>
+                    </div>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <oui-condition :id="uuid4condition" showType="3" type="condition"
+                               align="center"
+                               useOrRule="true"
+                               settingBtnText="条件设置"
+                               title="条件设置"
+                               confirmName="确认"
+                               maxConditionLenth="8"
+                               useSysVar4fiedValue="true"
+                               maxLimitMsgTitle="变量条件"
+                               maxLimitMsgTitle4all="变量条件总数"
+                               isFilterSettingFields="false"
+                               noEnumValueDisplay="该字段已经被删除"
+                               :conditions="conditionsJson"
+                               :showConditionInfoAfter="FullName+'.showConditionInfoAfter'"
+                               :findSysVars="FullName+'.filterField4SysVar'"
+
+                        >
+                    <oui-field v-for="(field,index) in fields" :title="field.title" :showtype="field.showType" :datatype="field.dataType" :opt="field.opt" :controltype="field.controlType"
+                               :name="field.name"  ></oui-field>
+                </oui-condition>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        forceUpdate:true,
+        data: function () {//fields,
+            return {
+                uuid4condition:'edit4condition_'+oui.getUUIDLong(),
+                contentStyle:'',
+//                forceUpdate:true,
+                id:'',
+                name:'',
+                bindProp:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                iconCls:'',
+                title:'',
+                fields:[],
+                conditions:[],
+                conditionsJson:'[]',
+                fullName:this.FullName
+            }
+        },
+        watch:{
+            'conditions':function(val){
+                var control = oui.getById(this.uuid4condition);
+                this.conditionsJson = oui.parseString(this.conditions);
+                if(control){
+                    control.fillback(this.conditions);
+                }
+            }
+        },
+        mounted:function(){
+            this.initSize = 0;
+            /*
+             *  <link rel="stylesheet" type="text/css" class="loaded" href="/res_engine/logic-graph/css/node-edit-setting.css">
+             <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/dialog.css">
+             <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/control.css">
+             <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/pager/css/pager.css">
+             <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css">
+             */
+            oui.require4notSort([oui.getContextPath()+'res_common/oui/ui/ui_pc/css/control.css',oui.getContextPath()+'res_common/oui/ui/ui_pc/controls/condition/css/condition.css']);
+            this.initOnce();//初始化一次
+        },
+        methods:{
+            load:function(){
+
+                var fileds = ((!this.fields) || !this.fields.length)? (oui.JsonPathUtil.getJsonByPath('otherAttrs.fields',this)||[]):this.fields;
+                this.fields = fileds;
+
+                var conditions =((!this.conditions)|| !this.conditions.length) ? (oui.JsonPathUtil.getJsonByPath('otherAttrs.conditions',this)||[]):this.conditions;
+                this.conditions = conditions;
+                this.conditionsJson = oui.parseString(conditions);
+
+            },
+            //获取条件,根据 条件组件获取
+            getConditions:function(){
+                var arr = [];
+                var control = oui.getById(this.uuid4condition);
+                if(control){
+                    arr = control.getConditions();
+                }
+                return arr;
+            },
+            initOnce:function(){
+                this.initSize++;
+                console.log(this.initSize);
+                if(this.initSize>1){
+                    return ;
+                }
+                this.load();
+            },
+            findAllVars:function(){
+                return this.fields||[];
+            },
+            findDefaultSysVars:function(){
+                if(!this.defaultSysVars){
+                    var temp = [{
+                        value:'ctx_var_'+'null',
+                        display:'Null'
+                    },{
+                        value:'ctx_var_'+'not_null',
+                        display:'NotNull'
+                    },{
+                        value:'ctx_var_'+'null_or_empty',
+                        display:'NullOrEmpty'
+                    },{
+                        value:'ctx_var_'+'not_null_and_empty',
+                        display:'NotNullAndEmpty'
+                    }];
+                    this.defaultSysVars = temp;
+
+                }
+                return this.defaultSysVars;
+            },
+            filterField4SysVar:function(cfg,condition,value){
+                var me = this;
+                var result = [];
+                if (!condition) {
+                    return result;
+                }
+                result = result.concat(me.findDefaultSysVars());
+                var allVars = me.findAllVars();
+                //单选,下拉不支持
+                if (cfg.controlType === "radio" || cfg.controlType === "singleselect") {
+                    return result;
+                }
+
+                oui.findManyFromArrayBy(allVars,function(item){
+                    if(item.name == cfg.name) {
+                        return ;
+                    }
+                    if((item.controlType == cfg.controlType) && (item.dataType == cfg.dataType)){
+                        result.push({
+                            value:'ctx_var_'+item.name,
+                            display:item.title
+                        });
+                    }
+                });
+                return result;
+            },
+            //条件显示后置脚本
+            showConditionInfoAfter:function(info,obj){
+                var me = this;
+                if(me.isShow4Conditions){
+                    $(obj.getEl()).find('.group-condition-preview').show();
+                }else{
+                    $(obj.getEl()).find('.group-condition-preview').hide();
+                }
+            },
+            //处理规则预览显示隐藏
+            event2showOrHidePreview:function(cfg){
+                var me = this;
+                if(me.isShow4Conditions){
+                    me.isShow4Conditions= false;
+                }else{
+                    me.isShow4Conditions= true;
+                }
+
+                var obj= oui.getById(this.uuid4condition);
+                if(me.isShow4Conditions){
+                    $(obj.getEl()).find('.group-condition-preview').show();
+                    $(cfg.el).find('.glyphicon').addClass('glyphicon-eye-open');
+                    $(cfg.el).find('label').text('预览规则');
+                }else{
+
+                    $(obj.getEl()).find('.group-condition-preview').hide();
+                    $(cfg.el).find('.glyphicon').removeClass('glyphicon-eye-open');
+                    $(cfg.el).find('label').text('隐藏规则');
+                }
+            }
+
+        }
+    }
+</script>
+
+<style>
+
+</style>

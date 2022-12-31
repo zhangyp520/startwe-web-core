@@ -1,0 +1,2090 @@
+<template>
+    <div style="height: 100%; width: 100%">
+        <el-container v-if="hasFlowId" class="container" id="work-container">
+            <el-aside width="200px" style="overflow: hidden">
+                <div class="box-card">
+                    <div class="header">
+                        操作台
+                    </div>
+                    <div class="card-body">
+                        <el-checkbox v-model="changeSize">调整大小</el-checkbox>
+                    </div>
+                    <div class="card-body">
+                        <el-button @click="event2setFlowConfig">流程模板设置</el-button>
+                    </div>
+                </div>
+                <div class="box-card"
+                     v-for="(item,idx) in list"
+                     :key="idx">
+                    <div class="header">基本模块</div>
+                    <div class="card-body">
+                        <div class="item"
+                             v-for="(item2,idx2) in item"
+                             :key="idx2"
+                             :data-icon="item2.icon"
+                             :data-text="item2.name"
+                             :data-type="item2.type">
+                            <i :class="[item2.icon,item2.type]"></i>
+                            <span class="text">{{item2.name}}</span>
+
+                        </div>
+                    </div>
+                </div>
+            </el-aside>
+            <el-main>
+                <el-button class="btn-save"
+                           @click="saveChart"
+                           type="success">保存
+                </el-button>
+                <el-button class="btn-save"
+                           @click="saveAndPublish"
+                           type="success">保存并发布
+                </el-button>
+
+                <div class="workplace" v-if="chartData.map"
+                     id="workplace">
+                    <template v-for="(item, idx) in chartData.map">
+                        <div class="workplace-chart"
+                             :id="item.id"
+                             :style="calPosition(item)">
+                            <div :class="[item.nodeType]" @dblclick="editNode(item, idx)" title="双击编辑该节点">
+                                <i v-if="item.nodeType=='route'" class="el-icon-s-tools" style="color: #808080">
+                                </i>
+                                <i v-if="item.nodeType !== 'start' && item.nodeType !== 'finish' && item.nodeType !=='route' && item.nodeType !=='note'"
+                                   :class="`${item.icon} icon-class`"/>
+                                <div class="ep"></div>
+                                <div class="delete" @click="deleteMap(item)"><i class="el-icon-close"></i></div>
+                                <div v-if="item.nodeType=='note'"
+                                     style="width: 100%; height: 100%; display: flex; flex-direction: column; color: #000; font-size: 12px; text-align: left">
+
+                                    <span style="border-bottom: #666666 1px solid">{{item.otherAttrs.title}}</span>
+                                    <div class="input-size" v-if="item.isEditing">
+                                        <el-input class="input-size-height" type="textarea"
+                                                  v-model="item.description"></el-input>
+                                        <i class="el-icon-check"
+                                           style="font-size: 14px; position: absolute; bottom: 1%; right: 1%"
+                                           @click="saveText(item)"></i>
+                                    </div>
+                                    <span v-else>{{item.description}}</span>
+                                </div>
+                            </div>
+                            <span class="title">{{item.name}}</span>
+                            <div v-show="changeSize" class="resize top"
+                                 @mousedown.stop="resize($event, 'top', item)"></div>
+                            <div v-show="changeSize" class="resize left"
+                                 @mousedown.stop="resize($event, 'left', item)"></div>
+                            <div v-show="changeSize" class="resize bottom"
+                                 @mousedown.stop="resize($event, 'bottom', item)"></div>
+                            <div v-show="changeSize" class="resize right"
+                                 @mousedown.stop="resize($event, 'right', item)"></div>
+                        </div>
+                    </template>
+                </div>
+            </el-main>
+
+            <!-- 节点属性设置弹出层 -->
+            <el-dialog :z-index="zIndex4dialog" :visible.sync="dialogFormVisible2">
+                <div slot="title">属性设置</div>
+
+                <div class="border" style="min-height: 700px">
+                    <iframe id="iframe_dialog_process_activity" frameborder="0" scrolling="no" width="98%"
+                            :src="`${processActivityConfigUrl}&iframeId=iframe_dialog_process_activity`"></iframe>
+                </div>
+            </el-dialog>
+            <el-dialog
+                    title="提示"
+                    :visible.sync="dialogDeleteModal"
+                    width="30%">
+                <span>确定要删除该节点及关联的所有连线吗</span>
+                <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogDeleteModal = false">取 消</el-button>
+    <el-button type="primary" @click="confirmDelete">确 定</el-button>
+  </span>
+            </el-dialog>
+            <el-dialog
+                    title="提示"
+                    :visible.sync="showDeleteLine"
+                    width="30%">
+                <span>确定要删除该连线吗</span>
+                <span slot="footer" class="dialog-footer">
+    <el-button @click="showDeleteLine = false">取 消</el-button>
+    <el-button type="primary" @click="confirmDeleteLine">确 定</el-button>
+  </span>
+            </el-dialog>
+            <div id="canvasDiv"
+                 style='display: none;'></div>
+        </el-container>
+        <div v-else><h3 class="no-flow-title">当前模块还没有流程模板，请创建</h3></div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        name: "Chart",
+        data: function () {
+            return {
+                zIndex4dialog:0,
+                defaultJson: null,
+                showDeleteLine: false,
+                currentConnection: null,
+                dialogDeleteModal: false,
+                hasFlowId: false,
+                processActivityConfigUrl: null,
+                currentItem: null,
+                myFlow: '',
+                saveUrl: '',
+                endPointId: null,
+                changeSize: false,
+                dialogFormVisible: false,
+                dialogFormVisible2: false,
+                chartForm: {
+                    name: "",
+                    msg: ""
+                },
+                formLabelWidth: "100px",
+                nodeForm: {
+                    startTime: "",
+                    endTime: "",
+                    minDays: ""
+                },
+                list: [
+                    [
+                        {
+                            icon: "el-icon-place",
+                            name: "开始",
+                            type: "start"
+                        },
+                        {
+                            icon: "el-icon-place",
+                            name: "结束",
+                            type: "finish"
+                        },
+                        {
+                            icon: "el-icon-setting",
+                            name: "自动活动",
+                            type: "toolapp"
+                        },
+                        {
+                            icon: "el-icon-user",
+                            name: "人工活动",
+                            type: "manual"
+                        },
+                        {
+                            icon: "el-icon-plus",
+                            name: "子流程活动",
+                            type: "subflow"
+                        },
+                        {
+                            icon: "el-icon-upload",
+                            name: "路由活动",
+                            type: "route"
+                        },
+                        {
+                            icon: "el-icon-notebook-1",
+                            name: "注释",
+                            type: "note"
+                        }
+                    ]
+                ],
+                jsp: null,
+                chartData: {map: {}}
+            };
+        },
+        mounted() {
+            const _self = this;
+            this.zIndex4dialog = oui.$.ctrl.dialog.zIndex;
+            if (oui.getParam('flowId')) {
+                _self.hasFlowId = true
+                oui.require([oui.getContextPath() + 'res_common/third/jsplumb/jsplumb.min.js'], function () {
+                    _self.initJsplumb();
+                });
+                window.addEventListener("message", function (event) {
+                    let data = event.data;
+                    //流程配置
+                    if(data.cmd && data.cmd =='cmd4update_oui_process_config_json' ){
+                        //保存流程配置 {otherAttrs}
+                        var json = oui.parseJson(data.json);
+                        var name = oui.JsonPathUtil.getJsonByPath('otherAttrs.processHeader.processBasicInfo.processName',json);
+                        _self.$set(_self.chartData, 'name', name); //name需要特殊处理
+                        _self.$set(_self.myFlow, 'name', name);
+                        for(var k in json){
+                            _self.chartData[k] = json[k];
+                        }
+                        _self.$message.success("保存成功！");
+                    }else if (data.cmd && data.cmd === 'cmd4update_oui_process_activity_json') {
+                        //活动节点配置
+                        let item = oui.parseJson(data.json)
+                        if (!_self.chartData.map[item.id]) {
+                            delete _self.chartData.map[_self.currentItem.id];
+                            for (const i in _self.chartData.map) {
+                                _self.chartData.map[i].lineIds && _self.chartData.map[i].lineIds.map((current, index) => {
+                                    _self.chartData.map[i].lineIds[index] = current.replace(_self.currentItem.id, item.id)
+                                })
+                            }
+                            item.lineIds && item.lineIds.map((current, index) => {
+                                item.lineIds[index] = current.replace(_self.currentItem.id, item.id)
+                            })
+                            for (const i in _self.chartData.lineMap) {
+                                if (i.indexOf(_self.currentItem.id) > -1) {
+                                    let me = _self.chartData.lineMap[i];
+                                    if (i.indexOf(_self.currentItem.id) === 0) {
+                                        me.id = item.id + '_' + i.split('_')[1]
+                                        me.fromId = item.id
+                                    } else {
+                                        me.id = i.split('_')[0] + '_' + item.id
+                                        me.toId = item.id
+                                    }
+                                    delete _self.chartData.lineMap[i];
+                                    _self.chartData.lineMap[me.id] = me;
+                                }
+                            }
+                            _self.$set(_self.chartData.map, item.id, item);
+                            _self.jsp.deleteEveryConnection()
+                            _self.$nextTick(() => {
+                                _self.initNode(item.id)
+                                for (let i in _self.chartData.lineMap) {
+                                    let me = _self.jsp.connect({
+                                        source: _self.chartData.lineMap[i].fromId,
+                                        target: _self.chartData.lineMap[i].toId
+                                    })
+                                    me.getOverlay('label').setLabel(_self.chartData.lineMap[i].name);
+                                    me.getOverlay('label').setVisible(_self.chartData.lineMap[i].name ? true : false);
+                                    // 判断是起点终点否为 note
+                                    if (_self.chartData.map[i.split('_')[0]].nodeType === 'note' || _self.chartData.map[i.split('_')[1]].nodeType === 'note') {
+                                        let connectorStyle = {
+                                            stroke: "#409EFF",
+                                            strokeWidth: 1,
+                                            outlineStroke: "transparent",
+                                            outlineWidth: 4,
+                                            dashstyle: "2 4"
+                                        }
+                                        me.setPaintStyle(connectorStyle);
+                                        me.getOverlay('arrow').setVisible(false);
+                                    }
+                                }
+                            })
+                        } else {
+                            _self.$set(_self.chartData.map, item.id, item);
+                        }
+                    _self.$message.success("保存成功！");
+                    } else if (data.cmd && data.cmd === "cmd4remove_oui_process_line_config_json") {
+                        _self.confirmDeleteLine();
+                    } else if (data.cmd && data.cmd === "cmd4update_oui_process_line_config_json") {
+                        let lineObj = oui.parseJson(data.json)
+                        for (const count in _self.chartData.lineMap) {
+                            if (count === lineObj.id) {
+                                _self.chartData.lineMap[count] = lineObj
+                                if (lineObj.name.length > 0) {
+                                    let allConnection = _self.jsp.getAllConnections()
+                                    for (let i = allConnection.length - 1; i >= 0; i--) {
+                                        if (allConnection[i].sourceId == this.currentItem.id || allConnection[i].targetId == this.currentItem.id) {
+                                            _self.jsp.deleteConnection(allConnection[i]);
+                                        }
+                                    }
+                                    let me = _self.jsp.connect({
+                                        source: lineObj.sourceId,
+                                        target: lineObj.targetId
+                                    })
+                                    me.getOverlay('label').setLabel(_self.chartData.lineMap[count].name);
+                                    me.getOverlay('label').setVisible(_self.chartData.lineMap[count].name ? true : false);
+                                    // 判断是起点终点否为 note
+                                    if (_self.chartData.map[lineObj.sourceId].nodeType === 'note' || _self.chartData.map[lineObj.targetId].nodeType === 'note') {
+                                        let connectorStyle = {
+                                            stroke: "#409EFF",
+                                            strokeWidth: 1,
+                                            outlineStroke: "transparent",
+                                            outlineWidth: 4,
+                                            dashstyle: "2 4"
+                                        }
+                                        me.setPaintStyle(connectorStyle);
+                                        me.getOverlay('arrow').setVisible(false);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        _self.$message.success("保存成功！");
+                    }
+                }, false);
+            } else {
+                _self.hasFlowId = false
+            }
+            this.defaultJson = oui.loadUrl(oui.getContextPath()+'res_engine/flow_graph_1/static/process4startwe.json').map;
+        },
+        methods: {
+            event2setFlowConfig:function(){
+                //对当前流程模板进行配置
+
+                var url = this.processConfigUrl;
+                var iframeId = 'iframe_'+oui.getUUIDLong();
+                url = oui.addParam(url,'iframeId',iframeId);
+                var config = {
+                    otherAttrs:this.chartData?(this.chartData.otherAttrs||{}):{}
+                };
+                oui.getTop().oui.setPageParam('oui_process_configJson',oui.parseString(config));
+                oui.getTop().oui.showUrlDialog({
+                    title:'流程配置',
+                    url:url,
+                    iframeId:iframeId,
+                    contentStyle:'width:80%;height:780px',
+                    isHideFooter:true
+                });
+            },
+            confirmDelete() {
+                // 删除连线
+                let allConnection = this.jsp.getAllConnections()
+                for (let i = allConnection.length - 1; i >= 0; i--) {
+                    if (allConnection[i].sourceId == this.currentItem.id || allConnection[i].targetId == this.currentItem.id) {
+                        this.jsp.deleteConnection(allConnection[i]);
+                    }
+                }
+                delete this.chartData.map[this.currentItem.id];
+                for (const i in this.chartData.map) {
+                    if (this.chartData.map[i].lineIds && this.chartData.map[i].lineIds.length > 0) {
+                        for (let p = this.chartData.map[i].lineIds.length - 1; p >= 0; p--) {
+                            if (this.chartData.map[i].lineIds[p].split('_')[1] === this.currentItem.id || this.chartData.map[i].lineIds[p].split('_')[0] === this.currentItem.id) {
+                                this.chartData.map[i].lineIds.splice(p, 1)
+                            }
+                        }
+                    }
+                }
+                for (const me in this.chartData.lineMap) {
+                    if (me.split('_')[0] === this.currentItem.id || me.split('_')[1] === this.currentItem.id) {
+                        delete this.chartData.lineMap[me]
+                    }
+                }
+                this.dialogDeleteModal = false
+                // this.jsp.remove(this.currentItem.id)
+                this.currentItem = null
+                console.log(this.jsp.no)
+            },
+            confirmDeleteLine() {
+                this.jsp.deleteConnection(this.currentConnection)
+                delete this.chartData.lineMap [this.currentConnection.sourceId + '_' + this.currentConnection.targetId ]
+                for (const i in this.chartData.map) {
+                    if (this.chartData.map[i].lineIds && this.chartData.map[i].lineIds.length > 0) {
+                        for (let p = this.chartData.map[i].lineIds.length - 1; p >= 0; p--) {
+                            if (this.chartData.map[i].lineIds[p] === this.currentConnection.sourceId + '_' + this.currentConnection.targetId) {
+                                this.chartData.map[i].lineIds.splice(p, 1)
+                                break;
+                            }
+                        }
+                    }
+                }
+                this.$message.success("删除连线成功！");
+            },
+            deleteMap(item) {
+                this.currentItem = item
+                this.dialogDeleteModal = true
+            },
+            initJsplumb() {
+                let _self = this;
+                jsPlumb.ready(() => {
+                    // 默认配置
+                    var instance = jsPlumb.getInstance({
+                        Endpoint: [
+                            "Blank",
+                            {cssClass: "chart-dot", hoverClass: "chart-dot-hover", radius: 5}
+                        ],
+                        Connector: "Straight",
+                        HoverPaintStyle: {stroke: "#1e8151", strokeWidth: 2},
+                        ConnectionOverlays: [
+                            [
+                                "Arrow",
+                                {
+                                    location: 1,
+                                    visible: true,
+                                    width: 12,
+                                    id: "arrow"
+                                }
+                            ],
+                            [
+                                "Label",
+                                {
+                                    location: 0.5,
+                                    visible: false,
+                                    label: '关联',
+                                    id: "label",
+                                    cssClass: "aLabel",
+                                }
+                            ]
+                            // ["Label", { label: "-", id: "label", cssClass: "aLabel" }]
+                        ],
+                        Container: "workplace"
+                    });
+                    this.jsp = instance;
+                    this.ajaxForData();
+                    let canvas = document.getElementById("workplace");
+
+                    // 删除连接线
+                    // instance.bind("click", function(c) {
+                    //   instance.deleteConnection(c);
+                    // });
+                    instance.bind("click", function(conn, originalEvent) {
+                        _self.currentConnection = conn;
+                        //连线配置再这里; TODO
+
+                        _self.showLineConfig();
+
+
+//                        _self.showDeleteLine = true
+                    });
+                    // 监听 connection 事件
+                    instance.bind("connection", function (info) {
+                        if (_self.chartData.map[info.sourceId].nodeType === 'note') {
+                            info.connection.getOverlay('arrow').setVisible(false)
+                        }
+                        if (_self.chartData.map[info.connection.target.id].nodeType === 'note') {
+                            info.connection.getOverlay('arrow').setVisible(false)
+                            let dashedType = {
+                                stroke: "#409EFF",
+                                strokeWidth: 1,
+                                outlineStroke: "transparent",
+                                outlineWidth: 4,
+                                dashstyle: "2 4"
+                            };
+                            info.connection.setPaintStyle(dashedType);
+                        }
+                    });
+                    // 监听拖动connection 事件，判断是否有重复链接
+                    instance.bind("beforeDrop", function (info) {
+                        // info.connection.getOverlay("label").setLabel(info.connection.id);
+                        // 判断是否已有该连接
+                        let isSame = true;
+                        for (let i in _self.chartData.lineMap) {
+                            if (_self.chartData.lineMap[i].toId === info.connection.target.id && _self.chartData.lineMap[i].fromId === info.sourceId) {
+                                isSame = false;
+                            }
+                        }
+                        if (isSame) {
+                            let lineObj = {
+                                fromId: info.connection.source.id,
+                                toId: info.connection.target.id,
+                                id: info.sourceId + '_' + info.connection.target.id,
+                                lineType: "simpleCondition",
+                                name: "",
+                                otherAttrs: {
+                                    isDefault: true,
+                                    priority: "60",
+                                    bendPoints: []
+                                },
+                            }
+                            _self.$set(_self.chartData.lineMap, info.sourceId + '_' + info.connection.target.id, lineObj)
+                            if (_self.chartData.map[info.sourceId].lineIds) {
+                                _self.chartData.map[info.sourceId].lineIds.push(info.sourceId + '_' + info.connection.target.id)
+                            } else {
+                                _self.chartData.map[info.sourceId].lineIds = []
+                                _self.chartData.map[info.sourceId].lineIds.push(info.sourceId + '_' + info.connection.target.id)
+                            }
+
+                            // 连线排序
+                        } else {
+                            _self.$message.error("不允许重复连接！");
+                        }
+                        if (info.targetId !== info.connection.target.id) {
+                            isSame = false
+                            let me = _self.jsp.connect({
+                                source: info.sourceId,
+                                target: info.connection.target.id
+                            })
+                            // 判断是起点终点否为 note
+                            if (_self.chartData.map[info.sourceId].nodeType === 'note' || _self.chartData.map[info.connection.target.id].nodeType === 'note') {
+                                let connectorStyle = {
+                                    stroke: "#409EFF",
+                                    strokeWidth: 1,
+                                    outlineStroke: "transparent",
+                                    outlineWidth: 4,
+                                    dashstyle: "2 4"
+                                }
+                                me.setPaintStyle(connectorStyle);
+                                me.getOverlay('arrow').setVisible(false);
+                            }
+                        }
+                        return isSame;
+                    });
+
+                    _self.$nextTick(() => {
+                        instance.draggable(document.querySelectorAll(".box-card .item"), {
+                            scope: "plant",
+                            helper: "clone",
+                            containment: true,
+                            stop(ev) {
+
+                                let id = ev.drag.el.getAttribute('data-type')+''+ oui.getUUIDLong();
+                                let item = null
+                                switch (ev.drag.el.getAttribute('data-type')) {
+                                    case 'start':
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.startActivity))
+                                        break;
+                                    case 'finish':
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.finishActivity))
+                                        break;
+                                    case 'manual':
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.manualActivity))
+                                        break;
+                                    case 'toolapp' :
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.autoActivity))
+                                        break;
+                                    case 'subflow' :
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.subActivity))
+                                        break;
+                                    case 'route' :
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.routeActivity))
+                                        break;
+                                    case 'note' :
+                                        item = JSON.parse(JSON.stringify(_self.defaultJson.node1))
+                                        item.otherAttrs.title = new Date().toLocaleString()
+                                        break;
+                                }
+                                item.id = id;
+                                item.y = ev.e.layerY;
+                                item.x = ev.e.layerX;
+                                item.lineIds = []
+                                _self.$set(_self.chartData.map, id, item);
+                                _self.$nextTick(() => {
+                                    _self.initNode(id);
+                                });
+                            }
+                        });
+                    });
+                    // 暂停渲染，执行以下操作
+                    instance.batch(() => {
+                        jsPlumb.getSelector(".workplace-chart").forEach(item => {
+                            _self.initNode(item);
+                        });
+                    });
+                    jsPlumb.fire("jsPlumbDemoLoaded", instance);
+                });
+            },
+            showLineConfig:function(){
+                let me = this;
+                let cfg = {};
+                for (const count in me.chartData.lineMap) {
+                    if (count === me.currentConnection.sourceId + '_' + me.currentConnection.targetId) {
+                        cfg = me.chartData.lineMap[count];
+                    }
+                }
+
+                //将当前连线配置传入到配置页面
+
+                oui.getTop().oui.setPageParam(
+                        'oui_process_line_json', oui.parseString(cfg)
+                );
+                var iframeId='iframe_'+oui.getUUIDLong();
+                var url = this.processLineConfigUrl;
+                url = oui.addParam(url,'iframeId',iframeId);
+                oui.getTop().oui.showUrlDialog({
+                    url:url,
+                    iframeId:iframeId,
+                    title:'连线配置',
+                    isHideFooter:true,
+                    contentStyle:'width:900px;height:680px'
+                });
+            },
+            calPosition(item) {
+                if (item.x && item.y) {
+                } else {
+                    item.x = Math.ceil(Math.random() * 1000);
+                    item.y = Math.ceil(Math.random() * 700);
+                }
+                if (item.w && item.h) {
+                } else {
+                    item.w = 60
+                    item.h = 60
+                }
+                return {
+                    left: item.x + 'px',
+                    top: item.y + 'px',
+                    width: item.w + 'px',
+                    height: item.h ? item.h + 'px' : ''
+                }
+            },
+            // 初始化node节点
+            initNode(el) {
+                // initialise draggable elements.
+                // 元素拖动，基于 katavorio.js 插件
+                let _self = this;
+                this.jsp.draggable(el, {
+                    filter: ".resize",
+                    // containment: true,
+                    start(params) {
+                        // 拖动开始
+                        // console.log(params);
+                    },
+                    drag(params) {
+                        // 拖动中
+                        // console.log(params);
+                    },
+                    stop(params) {
+                        let id = params.el.id;
+                        _self.$nextTick(() => {
+                            let top = params.el.style.top
+                            let left = params.el.style.left
+                            for (let i in _self.chartData.map) {
+                                if (_self.chartData.map[i].id === id) {
+                                    _self.chartData.map[i].x = parseInt(left);
+                                    _self.chartData.map[i].y = parseInt(top);
+                                }
+                            }
+                        })
+                    }
+                });
+
+                this.jsp.makeSource(el, {
+                    filter: ".ep",
+                    // anchor: "Continuous",
+                    anchor: ["Perimeter", {shape: "Rectangle"}],
+                    connectorStyle: {
+                        stroke: "#409EFF",
+                        strokeWidth: 1,
+                        outlineStroke: "transparent",
+                        outlineWidth: 4,
+                        dashstyle: _self.chartData.map[el].nodeType === 'note' ? "2 4" : null
+                    },
+                    extract: {
+                        action: "the-action"
+                    },
+                    maxConnections: -1,
+                    onMaxConnections: function (info, e) {
+                        alert("Maximum connections (" + info.maxConnections + ") reached");
+                    }
+                });
+
+                this.jsp.makeTarget(el, {
+                    dropOptions: {hoverClass: "dragHover"},
+                    anchor: ["Perimeter", {shape: "Rectangle"}],
+                    allowLoopback: false,
+                });
+
+                this.jsp.fire("jsPlumbDemoNodeAdded", el);
+            },
+            // 保存
+            saveChart:function(isSaveAndPublish) {
+                this.isSaveAndPublish = isSaveAndPublish;
+                this.chartData.lineIds = [];
+                this.chartData.ids = [];
+                let count = 0
+                let startCount = 0;
+                let finishCount = 0;
+                for (const i in this.chartData.map) {
+                    if (this.chartData.map[i].nodeType === 'start' && this.chartData.map[i].lineIds && this.chartData.map[i].lineIds.length > 0) {
+                        this.chartData.ids.push(i)
+                        startCount++;
+                        this.chartData.map[i].lineIds.forEach(item => {
+                            this.chartData.lineIds.push(item);
+                        })
+                    }
+                    if ((!this.chartData.map[i].lineIds || this.chartData.map[i].lineIds.length === 0) && this.chartData.map[i].nodeType !== 'finish' && this.chartData.map[i].nodeType !== 'note') {
+                        count++;
+                        break;
+                    }
+                    if (this.chartData.map[i].nodeType === 'finish' && (!this.chartData.map[i].lineIds || this.chartData.map[i].lineIds.length === 0)) {
+                        finishCount++;
+                        this.endPointId = i
+                    }
+                }
+                if (count === 0 && this.chartData.lineIds.length > 0 && startCount === 1 && finishCount === 1) {
+                    this.filterChart(0)
+                } else {
+                    this.$message.error("请确保所有流程节点均已连线");
+                }
+            },
+            saveAndPublish:function(){
+                this.saveChart(true);
+            },
+            filterChart(index) {
+                this.chartData.map[this.chartData.lineIds[index].split('_')[1]].lineIds && this.chartData.map[this.chartData.lineIds[index].split('_')[1]].lineIds.map(me => {
+                    if (this.chartData.lineIds.indexOf(me) < 0) {
+                        this.chartData.lineIds.push(me);
+                    }
+                    if (this.chartData.ids.indexOf(this.chartData.lineIds[index].split('_')[1]) < 0) {
+                        this.chartData.ids.push(this.chartData.lineIds[index].split('_')[1])
+                    }
+                })
+                index++;
+                if (index <= this.chartData.lineIds.length - 1) {
+                    this.filterChart(index)
+                } else {
+                    this.chartData.ids.push(this.endPointId);
+                    let self = this;
+                    let flow = {
+                        ...self.myFlow,
+                        json: self.chartData
+                    }
+                    oui.postData(this.saveUrl, {flow: flow,isSaveAndPublish:this.isSaveAndPublish}
+                    , function (res) {
+                        self.$message.success("保存成功");
+                        if(self.isSaveAndPublish){
+                            oui.postData(self.deployProcessUrl, {}
+                                    , function (res) {
+                                        self.$message.success("发布成功");
+                                        // self.download(res.flow_xml)
+                                    }, function (error) {
+                                        self.$message.error("发布失败");
+                                    })
+                        }
+                        // self.download(res.flow_xml)
+                    }, function (error) {
+
+                    })
+                }
+            },
+            download(text) {
+                let element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', 'flow_chart.xml');
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+
+                element.click();
+
+                document.body.removeChild(element);
+            },
+            resize(e, type, item) {
+                e.preventDefault();
+                let _self = this
+                this.isMove = true;
+
+                //设置最小宽度。
+                const minWidth = 64;
+                const minHeight = 45;
+
+                //获得父元素对象。
+                let parent = e.target.parentNode;
+                let pWidth = parent.offsetWidth
+                let pHeight = parent.offsetHeight
+                let top = parseInt(parent.style.top);
+                let left = parseInt(parent.style.left);
+
+                //获得当前鼠标位置。
+                let mouseX = e.clientX;
+                let mouseY = e.clientY;
+
+                document.onmousemove = function (docEvent) {
+                    if (_self.isMove) {
+                        //获得鼠标移动后的坐标。
+                        let currentMouseX = docEvent.clientX;
+                        let currentMouseY = docEvent.clientY;
+
+                        //计算出移动后的坐标。
+                        let moveWidth = currentMouseX - mouseX;
+                        let moveHeight = currentMouseY - mouseY;
+
+                        //计算宽高增加或减少的值，增加的量等于鼠标移位的量。
+                        let width;
+                        let height;
+
+                        switch (type) {
+                            case 'top':
+                                height = pHeight - moveHeight;
+                                if (height > minHeight) {
+                                    parent.style.top = top + moveHeight + "px";
+                                    parent.style.height = height + "px";
+                                }
+                                break;
+                            case 'right':
+                                width = pWidth + moveWidth;
+                                if (width > minWidth) {
+                                    parent.style.width = width + "px";
+                                }
+                                break;
+                            case 'bottom':
+                                height = pHeight + moveHeight;
+                                if (height > minHeight) {
+                                    parent.style.height = height + "px";
+                                }
+                                break;
+                            case 'left':
+                                width = pWidth - moveWidth;
+                                if (width > minWidth) {
+                                    parent.style.left = left + moveWidth + "px";
+                                    parent.style.width = width + "px";
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                        item.x = parseInt(parent.style.left)
+                        item.y = parseInt(parent.style.top)
+                        item.w = parseInt(parent.style.width);
+                        item.h = parseInt(parent.style.height);
+                        _self.resizeGroup(parent);
+                    }
+                }
+                document.onmouseup = function (event) {
+                    _self.isMove = false;
+                    document.onmousemove = function () {
+                        return;
+                    }
+                }
+            },
+            // 请求数据
+            ajaxForData() {
+                let vm = this;
+                this.jsp.empty("workplace");
+                this.myFlow = window.com.startwe.models.flow.web.FlowDesignController.data.flow
+                this.processActivityConfigUrl = window.com.startwe.models.flow.web.FlowDesignController.data.flow.extraAttrs.processConfig.processActivityConfigUrl;
+                this.processLineConfigUrl = window.com.startwe.models.flow.web.FlowDesignController.data.flow.extraAttrs.processConfig.processLineConfigUrl;
+                this.processConfigUrl = window.com.startwe.models.flow.web.FlowDesignController.data.flow.extraAttrs.processConfig.processConfigUrl;
+
+                this.chartData = window.com.startwe.models.flow.web.FlowDesignController.data.flow.json ? oui.parseJson(window.com.startwe.models.flow.web.FlowDesignController.data.flow.json) : null
+                this.saveUrl = window.com.startwe.models.flow.web.FlowDesignController.data.flow.extraAttrs.saveUrl;
+                this.deployProcessUrl =  window.com.startwe.models.flow.web.FlowDesignController.data.flow.extraAttrs.deployProcessUrl;
+
+                if (!this.chartData) {
+                    this.chartData = {
+                        id: this.myFlow.id,
+                        name: this.myFlow.name,
+                        rootIds: [
+                            "startActivity"
+                        ],
+                        otherAttrs: {
+                            processHeader: {
+                                bizEntityInfo: {},
+                                calendarInfo: {
+                                    parameters: [],
+                                    resourceID: "default",
+                                    resourceName: "默认日历",
+                                    resourceType: "business-calendar"
+                                },
+                                dataFields: [],
+                                longProcess: "true",
+                                parameters: [],
+                                procStarterLists: {
+                                    processStarterType: "all"
+                                },
+                                processBasicInfo: {
+                                    author: "startwe",
+                                    department: "startwe",
+                                    description: "",
+                                    priority: "60",
+                                    processId: this.myFlow.id,
+                                    processName: this.myFlow.name
+                                },
+                                splitTransaction: "false",
+                                timeLimit: {
+                                    calendarSet: {
+                                        calendarInfo: {
+                                            parameters: [],
+                                            resourceID: "default",
+                                            resourceName: "默认日历",
+                                            resourceType: "business-calendar"
+                                        },
+                                        initType: "appoint"
+                                    },
+                                    isTimeLimitSet: "false"
+                                },
+                                triggerEvents: []
+                            },
+                            resource: {},
+                            productVersion: "6.1",
+                            schemaVersion: "6.0"
+                        },
+                        ids: [
+                            "startActivity",
+                            "manualActivity",
+                            "finishActivity"
+                        ],
+                        lineIds: ["startActivity_manualActivity", "manualActivity_finishActivity"],
+                        lineMap: {
+                            startActivity_manualActivity: {
+                                fromId: "startActivity",
+                                id: "startActivity_manualActivity",
+                                lineType: "simpleCondition",
+                                name: "",
+                                otherAttrs: {
+                                    isDefault: true,
+                                    priority: "60",
+                                    bendPoints: []
+                                },
+                                toId: "manualActivity"
+                            },
+                            manualActivity_finishActivity: {
+                                fromId: "manualActivity",
+                                id: "manualActivity_finishActivity",
+                                lineType: "simpleCondition",
+                                name: "",
+                                otherAttrs: {
+                                    isDefault: true,
+                                    priority: "60",
+                                    bendPoints: []
+                                },
+                                toId: "finishActivity"
+                            }
+                        },
+                        map: {
+                            startActivity: {
+                                description: "",
+                                h: "32",
+                                id: "startActivity",
+                                isStartActivity: true,
+                                joinType: "XOR",
+                                lineIds: [
+                                    "startActivity_manualActivity",
+                                ],
+                                name: "开始",
+                                nodeType: "start",
+                                otherAttrs: {
+                                    implementation: {
+                                        startActivity: {
+                                            formFields: []
+                                        }
+                                    },
+                                    nodeGraphInfo: {
+                                        color: "16777215",
+                                        fontName: "System",
+                                        fontSize: "12",
+                                        fontWidth: "550",
+                                        foreColor: "0",
+                                        height: "32",
+                                        isItalic: "0",
+                                        isUnderline: "0",
+                                        lookAndFeel: "classic",
+                                        textHeight: "60",
+                                        width: "32",
+                                        x: "45",
+                                        y: "82"
+                                    }
+                                },
+                                priority: "60",
+                                splitTransaction: false,
+                                splitType: "XOR",
+                                w: "32",
+                                x: "45",
+                                y: "82"
+                            },
+                            manualActivity: {
+                                description: "",
+                                h: "45",
+                                id: "manualActivity",
+                                isStartActivity: false,
+                                joinType: "XOR",
+                                lineIds: [
+                                    "manualActivity_finishActivity"
+                                ],
+                                name: "人工活动",
+                                icon: "el-icon-user",
+                                nodeType: "manual",
+                                otherAttrs: {
+                                    implementation: {
+                                        manualActivity: {
+                                            allowAgent: true,
+                                            customURL: {
+                                                isSpecifyURL: false,
+                                                urlType: "presentation-logic"
+                                            },
+                                            formFields: [],
+                                            freeFlowRule: {
+                                                freeRangeStrategy: "freeWithinNextActivites",
+                                                isFreeActivity: true,
+                                                isOnlyLimitedManualActivity: true
+                                            },
+                                            multiWorkItem: {
+                                                finishRequiredPercent: "0",
+                                                finishRquiredNum: 0,
+                                                finishRule: "all",
+                                                isAutoCancel: false,
+                                                isMulWIValid: false,
+                                                sequentialExecute: false,
+                                                workitemNumStrategy: "participant-number"
+                                            },
+                                            notification: {
+                                                actionURL: {
+                                                    isSpecifyURL: "false",
+                                                    urlType: "presentation-logic"
+                                                },
+                                                isExpandParticipant: false,
+                                                isSendNotification: false,
+                                                notificationImplType: "workItem",
+                                                participants: {
+                                                    participantType: "process-starter",
+                                                    specialActivityID: "",
+                                                    specialPath: ""
+                                                },
+                                                timeLimit: {
+                                                    calendarSet: {
+                                                        calendarInfo: {
+                                                            parameters: [],
+                                                            resourceID: "default",
+                                                            resourceName: "默认日历",
+                                                            resourceType: "business-calendar"
+                                                        },
+                                                        initType: "appoint"
+                                                    },
+                                                    isTimeLimitSet: "false"
+                                                }
+                                            },
+                                            participants: {
+                                                organization: {
+                                                    isAllowAppointParticipants: false,
+                                                    participants: [
+                                                        {
+                                                            id: "10000",
+                                                            name: "Company",
+                                                            type: "organization"
+                                                        },
+                                                        {
+                                                            id: "rolec",
+                                                            name: "RoleC",
+                                                            type: "role"
+                                                        }
+                                                    ]
+                                                },
+                                                participantType: "organization-list",
+                                                specialActivityID: "",
+                                                specialPath: ""
+                                            },
+                                            resetParticipant: "originalParticipant",
+                                            resetUrl: {
+                                                isSpecifyURL: false,
+                                                urlType: "presentation-logic"
+                                            },
+                                            rollBack: {
+                                                applicationInfo: {
+                                                    actionType: "service-component",
+                                                    application: {
+                                                        actionType: "service-component",
+                                                        applicationUri: "",
+                                                        exceptionStrategy: "rollback",
+                                                        invokePattern: "synchronous",
+                                                        parameters: [],
+                                                        transactionType: "join"
+                                                    },
+                                                    assignments: [],
+                                                    suppressJoinFailure: "suppress"
+                                                }
+                                            },
+                                            timeLimit: {
+                                                calendarSet: {
+                                                    calendarInfo: {
+                                                        parameters: [],
+                                                        resourceID: "default",
+                                                        resourceName: "默认日历",
+                                                        resourceType: "business-calendar"
+                                                    },
+                                                    initType: "appoint"
+                                                },
+                                                isTimeLimitSet: "false"
+                                            },
+                                            triggerEvents: []
+                                        }
+                                    },
+                                    nodeGraphInfo: {
+                                        color: "16777215",
+                                        fontName: "System",
+                                        fontSize: "12",
+                                        fontWidth: "550",
+                                        foreColor: "0",
+                                        height: "45",
+                                        isItalic: "0",
+                                        isUnderline: "0",
+                                        lookAndFeel: "classic",
+                                        textHeight: "60",
+                                        width: "64",
+                                        x: "195",
+                                        y: "75"
+                                    },
+                                    activateRule: {
+                                        activateRuleType: "directRunning",
+                                        applicationInfo: {
+                                            actionType: "service-component",
+                                            application: {
+                                                actionType: "service-component",
+                                                applicationUri: "",
+                                                exceptionStrategy: "rollback",
+                                                invokePattern: "synchronous",
+                                                parameters: [],
+                                                transactionType: "join"
+                                            },
+                                            assignments: [],
+                                            suppressJoinFailure: "suppress"
+                                        }
+                                    },
+                                    extendNodes: []
+                                },
+                                priority: "60",
+                                splitTransaction: false,
+                                splitType: "XOR",
+                                w: "64",
+                                x: "195",
+                                y: "75"
+                            },
+                            finishActivity: {
+                                description: "",
+                                h: "32",
+                                id: "finishActivity",
+                                isStartActivity: false,
+                                joinType: "XOR",
+                                lineIds: [],
+                                name: "结束",
+                                nodeType: "finish",
+                                otherAttrs: {
+                                    nodeGraphInfo: {
+                                        color: "16777215",
+                                        fontName: "System",
+                                        fontSize: "12",
+                                        fontWidth: "550",
+                                        foreColor: "0",
+                                        height: "32",
+                                        isItalic: "0",
+                                        isUnderline: "0",
+                                        lookAndFeel: "classic",
+                                        textHeight: "60",
+                                        width: "32",
+                                        x: "537",
+                                        y: "82"
+                                    },
+                                    activateRule: {
+                                        activateRuleType: "directRunning"
+                                    }
+                                },
+                                priority: "60",
+                                splitTransaction: false,
+                                splitType: "XOR",
+                                w: "32",
+                                x: "537",
+                                y: "82"
+                            },
+                        },
+                    }
+                }
+                vm.$nextTick(() => {
+                    for (let i in vm.chartData.map) {
+                        vm.initNode(i);
+                    }
+                    this.initLine()
+                    var config = {
+                        otherAttrs:vm.chartData?(vm.chartData.otherAttrs||{}):{}
+                    };
+                    oui.getTop().oui.setPageParam('oui_process_configJson',oui.parseString(config));
+                });
+            },
+            initLine() {
+                let vm = this;
+                for (let i in vm.chartData.lineMap) {
+                    let me = vm.jsp.connect({
+                        source: vm.chartData.lineMap[i].fromId,
+                        target: vm.chartData.lineMap[i].toId
+                    })
+                    me.getOverlay('label').setLabel(vm.chartData.lineMap[i].name);
+                    me.getOverlay('label').setVisible(vm.chartData.lineMap[i].name ? true : false);
+                    // 判断是起点终点否为 note
+                    if (vm.chartData.map[i.split('_')[0]].nodeType === 'note' || vm.chartData.map[i.split('_')[1]].nodeType === 'note') {
+                        let connectorStyle = {
+                            stroke: "#409EFF",
+                            strokeWidth: 1,
+                            outlineStroke: "transparent",
+                            outlineWidth: 4,
+                            dashstyle: "2 4"
+                        }
+                        me.setPaintStyle(connectorStyle);
+                        me.getOverlay('arrow').setVisible(false);
+                    }
+                }
+            },
+            editNode:function(item, idx) {
+                if(item.nodeType=='note'){
+                    this.$set(item, 'isEditing', true);
+                }else{
+                    this.currentItem = item;
+                    oui.getTop().oui.setPageParam(
+                            'oui_process_activity_json', oui.parseString(item)
+                    );
+                    var iframeId='iframe_'+oui.getUUIDLong();
+                    var url = this.processActivityConfigUrl;
+                    url = oui.addParam(url,'iframeId',iframeId);
+                    oui.getTop().oui.showUrlDialog({
+                        url:url,
+                        title:'节点配置',
+                        isHideFooter:true
+                    });
+                }
+
+//                if (item.nodeType === 'note') {
+//                    this.$set(item, 'isEditing', true);
+//                } else {
+//                    this.currentItem = item
+//                    oui.getTop().oui.setPageParam(
+//                        'oui_process_activity_json', oui.parseString(item)
+//                    );
+//                    this.dialogFormVisible2 = true;
+//                }
+            },
+            saveText(item) {
+                let date = new Date()
+                this.$set(item.otherAttrs, 'title', date.toLocaleString());
+                this.$delete(item, 'isEditing')
+            },
+
+            resizeGroup(el) {
+                this.$nextTick(() => {
+                    this.jsp.repaintEverything()
+                })
+            }
+        }
+    };
+</script>
+<style>
+    .workplace {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .workplace .workplace-chart {
+        text-align: center;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .workplace .workplace-chart .resize {
+        width: 8px;
+        height: 8px;
+        background-color: #ddd;
+        border: 1px solid #000;
+        position: absolute;
+    }
+
+    .workplace .workplace-chart .resize.left {
+        top: 50%;
+        left: -4px;
+        cursor: ew-resize;
+    }
+
+    .workplace .workplace-chart .resize.right {
+        top: 50%;
+        right: -4px;
+        cursor: ew-resize;
+    }
+
+    .workplace .workplace-chart .resize.top {
+        top: -4px;
+        left: 50%;
+        margin-left: -4px;
+        cursor: ns-resize;
+    }
+
+    .workplace .workplace-chart .resize.bottom {
+        bottom: -4px;
+        left: 50%;
+        margin-left: -4px;
+        cursor: ns-resize;
+    }
+
+    .workplace .workplace-chart div {
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-position: center;
+        font-size: 20px;
+        color: #409eff;
+        cursor: pointer;
+        margin-bottom: 1px;
+        touch-action: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+    }
+
+    .workplace .workplace-chart div .icon-class {
+        font-size: 14px;
+        color: #000;
+        position: absolute;
+        left: 0;
+    }
+
+    .workplace .workplace-chart div.manual {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #409EFF;
+    }
+
+    .workplace .workplace-chart div.toolapp {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #409EFF;
+    }
+
+    .workplace .workplace-chart div.subflow {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #409EFF;
+    }
+
+    .workplace .workplace-chart div.route {
+        width: 100%;
+        height: 100%;
+        background-image: url(res_engine/flow_graph_1/images/diamond.png);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .workplace .workplace-chart div.el-icon-s-tools {
+        width: 100%;
+        height: 100%;
+        color: #409EFF;
+    }
+
+    .workplace .workplace-chart div.note {
+        width: 100%;
+        height: 100%;
+        border: #409EFF 1px solid;
+        background: #F1F9FE;
+    }
+
+    .workplace .workplace-chart div.start {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #409EFF;
+        border-radius: 100%;
+    }
+
+    .workplace .workplace-chart div.finish {
+        width: 100%;
+        height: 100%;
+        background: #F1F9FE;
+        border: 1px solid #409EFF;
+        border-radius: 100%;
+    }
+
+    .workplace .workplace-chart span {
+        display: block;
+        word-break: break-all;
+    }
+
+    .workplace .workplace-chart .ep {
+        opacity: 0;
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        width: 10px;
+        height: 10px;
+        background: #808080;
+        border-radius: 5px;
+    }
+
+    .workplace .workplace-chart:hover .ep {
+        opacity: 1;
+    }
+
+    .workplace .workplace-chart:hover .delete {
+        opacity: 1;
+    }
+
+    .workplace .workplace-chart.dragHover .ep {
+        opacity: 0;
+    }
+
+    .workplace .workplace-group {
+        margin: 0;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        position: absolute;
+        padding-top: 24px;
+        min-width: 200px;
+        min-height: 250px;
+    }
+
+    .workplace .workplace-group .title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 24px;
+        line-height: 24px;
+        padding-left: 10px;
+    }
+
+    .workplace .workplace-group .ep {
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        background: #409eff;
+        border-radius: 5px;
+    }
+
+    .workplace .workplace-chart .delete {
+        opacity: 0;
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        width: 10px;
+        height: 10px;
+        font-size: 12px;
+        color: #808080;
+    }
+
+    .workplace .workplace-group .content {
+        width: 100%;
+        height: 100%;
+    }
+
+    .workplace .workplace-group:hover .ep {
+        opacity: 1;
+    }
+
+    .workplace .workplace-group:hover .workplace-chart .ep {
+        opacity: 0;
+    }
+
+    .workplace .workplace-group.dragHover .ep {
+        opacity: 0;
+    }
+
+    .workplace .workplace-group.dragHover .workplace-chart .ep {
+        opacity: 0;
+    }
+
+    .workplace .workplace-group .workplace-chart:hover .ep {
+        opacity: 0;
+    }
+
+    #start {
+        top: 50px;
+        left: 50px;
+    }
+
+    .group-demo {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: #ccc;
+        top: 250px;
+        left: 300px;
+    }
+
+    .aLabel {
+        background-color: white;
+        padding: 0.4em;
+        font: 12px sans-serif;
+        color: #444;
+        z-index: 21;
+        filter: alpha(opacity=80);
+        cursor: pointer;
+    }
+
+    @charset "UTF-8";
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-size: 14px;
+        color: #000;
+    }
+
+    * {
+        scrollbar-face-color: rgba(22, 39, 67, 0.3);
+        /*面子*/
+        scrollbar-arrow-color: #00adfe;
+        /*箭头*/
+        scrollbar-3dlight-color: #C0C0C0;
+        /*最外左*/
+        scrollbar-highlight-color: #FFFFFF;
+        /*左二*/
+        scrollbar-shadow-color: #FFFFFF;
+        /*右二*/
+        scrollbar-darkshadow-color: #C0C0C0;
+        /*右一*/
+        scrollbar-track-color: rgba(22, 39, 67, 0.3);
+        /*滑道*/
+    }
+
+    /*滚动条整体*/
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+        /*滚动条宽度*/
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(22, 39, 67, 0.3);
+        /*滑道全部*/
+    }
+
+    ::-webkit-scrollbar-track-piece {
+        background-color: rgba(22, 39, 67, 0.3);
+        /*滑道*/
+        -webkit-border-radius: 4px;
+        /*滑道圆角宽度*/
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #00adfe;
+        /*滑动条表面*/
+        border: solid 1px rgba(255, 255, 255, 0.2);
+        /*滑动条边框*/
+        border-radius: 4px;
+        /*滑动条圆角宽度*/
+    }
+
+    /*横竖滚动条交角*/
+    ::-webkit-scrollbar-corner {
+        background-color: rgba(22, 39, 67, 0.3);
+    }
+
+    /*横竖滚动条交角图案*/
+    ::-webkit-resizer {
+        /*background-image: url(/public/img/resizer-inactive.png);*/
+        background-repeat: no-repeat;
+        background-position: bottom right;
+    }
+
+    /*鼠标滑过滑动条*/
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #00adfe;
+    }
+
+    /*滚动条的重写end*/
+    /*添加滚动条start*/
+    textarea {
+        overflow-y: auto;
+    }
+
+    /*添加滚动条end*/
+    #app {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    .el-header,
+    .el-footer {
+        background-color: #545c64;
+        color: #333;
+    }
+
+    .el-aside {
+        background-color: #f8f8f8;
+        color: #333;
+    }
+
+    .el-main {
+        background-color: #FFFFFF;
+        color: #333;
+        padding: 0;
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .container .main {
+        height: 100%;
+        width: 100%;
+    }
+
+    .template-box {
+        padding: 10px 20px;
+    }
+
+    .template-box .header {
+        padding: 5px;
+        border-bottom: 1px solid #409EFF;
+        font-size: 16px;
+    }
+
+    .template-box .header .add {
+        float: right;
+        font-size: 20px;
+        color: #409EFF;
+        cursor: pointer;
+    }
+
+    .template-box .template-list {
+        padding: 5px;
+        color: #000;
+    }
+
+    .template-box .item {
+        line-height: 35px;
+        cursor: pointer;
+        color: #545c64;
+        font-size: 14px;
+    }
+
+    .template-box .item.active {
+        color: #409EFF;
+    }
+
+    .template-box .item:hover {
+        color: #409EFF;
+    }
+
+    .template-box .item a {
+        text-decoration: none;
+        color: #545c64;
+        font-size: 14px;
+    }
+
+    .template-box .item a:hover {
+        color: #409EFF;
+    }
+
+    .btn-save {
+        position: absolute;
+        top: 70px;
+        right: 60px;
+        z-index: 999999;
+    }
+
+    .btn-save-img {
+        position: absolute;
+        top: 70px;
+        right: 320px;
+        z-index: 999999;
+    }
+
+    .workplace .chart-dot {
+        opacity: 0;
+    }
+
+    .workplace .chart-dot-hover {
+        opacity: 1;
+    }
+
+    .workplace .chart-dot-hover circle {
+        fill: #00adfe;
+    }
+
+    .jtk-demo {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .jtk-demo-canvas {
+        height: 100%;
+    }
+
+    .jtk-bootstrap {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .jtk-bootstrap .jtk-page-container {
+        display: flex;
+        width: 100vw;
+        justify-content: center;
+        flex: 1;
+    }
+
+    .jtk-bootstrap .jtk-container {
+        width: 60%;
+        max-width: 800px;
+    }
+
+    .jtk-bootstrap-wide .jtk-container {
+        width: 80%;
+        max-width: 1187px;
+    }
+
+    .jtk-demo-main {
+        position: relative;
+        margin-top: 98px;
+    }
+
+    .jtk-demo-main .description {
+        font-size: 13px;
+        margin-top: 25px;
+        padding: 13px;
+        margin-bottom: 22px;
+        background-color: #f4f5ef;
+    }
+
+    .jtk-demo-main .description li {
+        list-style-type: disc !important;
+    }
+
+    .jtk-demo-canvas {
+        border: 1px solid #CCC;
+        background-color: white;
+        display: flex;
+    }
+
+    .canvas-wide {
+        margin-left: 0;
+    }
+
+    .miniview {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        z-index: 100;
+    }
+
+    .jtk-demo-dataset {
+        text-align: left;
+        max-height: 600px;
+        overflow: auto;
+    }
+
+    .demo-title {
+        float: left;
+        font-size: 18px;
+    }
+
+    .controls {
+        top: 25px;
+        color: #FFF;
+        margin-right: 10px;
+        position: absolute;
+        left: 25px;
+        z-index: 1;
+    }
+
+    .controls i {
+        background-color: #3E7E9C;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0;
+        padding: 4px;
+    }
+
+    li {
+        list-style-type: none;
+    }
+
+    /* ------------------------ node palette -------------------- */
+    .sidebar {
+        margin: 0;
+        padding: 0;
+        padding-top: 7px;
+        padding-right: 10px;
+        width: 150px;
+        float: left;
+        text-align: center;
+        height: 550px;
+        background-color: #84acb3;
+    }
+
+    .sidebar ul li {
+        background-color: #234b5e;
+        border-radius: 11px;
+        color: #f7ebca;
+        cursor: move;
+        margin-bottom: 10px;
+        margin-left: 6px;
+        padding: 8px;
+        width: 128px;
+    }
+
+    .sidebar ul {
+        width: 100%;
+        padding: 0;
+    }
+
+    .sidebar ul li:hover {
+        background-color: #577a8b;
+    }
+
+    .sidebar i {
+        float: left;
+    }
+
+    @media (max-width: 600px) {
+        .sidebar {
+            float: none;
+            height: 55px;
+            width: 100%;
+            padding-top: 0;
+        }
+
+        .sidebar ul li {
+            display: inline-block;
+            margin-top: 7px;
+            width: 67px;
+        }
+
+        .jtk-demo-canvas {
+            margin-left: 0;
+            margin-top: 10px;
+            height: 364px;
+        }
+    }
+
+    /* ---------------------------------------------------------------------------------------------------- */
+    /* --- jsPlumb setup ---------------------------------------------------------------------------------- */
+    /* ---------------------------------------------------------------------------------------------------- */
+    .jtk-connector {
+        z-index: 9;
+    }
+
+    .jtk-endpoint {
+        z-index: 12;
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    .jtk-overlay {
+        background-color: white;
+        color: #434343;
+        font-weight: 400;
+        padding: 4px;
+        z-index: 10;
+    }
+
+    .jtk-overlay.jtk-hover {
+        color: #434343;
+    }
+
+    path {
+        cursor: pointer;
+    }
+
+    .delete {
+        padding: 2px;
+        cursor: pointer;
+        float: left;
+        font-size: 10px;
+        line-height: 20px;
+    }
+
+    .add,
+    .edit {
+        cursor: pointer;
+        float: right;
+        font-size: 10px;
+        line-height: 20px;
+        margin-right: 2px;
+        padding: 2px;
+    }
+
+    .edit:hover {
+        color: #ff8000;
+    }
+
+    .selected-mode {
+        color: #E4F013;
+    }
+
+    .connect {
+        width: 10px;
+        height: 10px;
+        background-color: #f76258;
+        position: absolute;
+        bottom: 13px;
+        right: 5px;
+    }
+
+    /* header styles */
+    .demo-links {
+        position: fixed;
+        right: 0;
+        top: 57px;
+        font-size: 11px;
+        background-color: white;
+        opacity: 0.8;
+        padding-right: 10px;
+        padding-left: 5px;
+        text-transform: uppercase;
+        z-index: 100001;
+    }
+
+    .demo-links div {
+        display: inline;
+        margin-right: 7px;
+        margin-left: 7px;
+    }
+
+    .demo-links i {
+        padding: 4px;
+    }
+
+    .workplace {
+        padding: 20px;
+    }
+
+    .workplace .chart-item {
+        position: absolute;
+    }
+
+    .workplace .workplace-chart {
+        position: absolute;
+    }
+
+    .box-card .header {
+        padding: 10px 20px;
+        border-bottom: 1px solid #409EFF;
+        background: #409EFF;
+        color: #fff;
+    }
+
+    .box-card .card-body {
+        padding: 20px;
+    }
+
+    .box-card .card-body .item {
+        cursor: pointer;
+    }
+
+    .box-card .card-body .item:hover {
+        background: #e0e0e0;
+    }
+
+    .box-card .card-body .item {
+        margin-bottom: 20px;
+    }
+
+    .box-card .card-body .item i {
+        margin-right: 10px;
+    }
+
+    .box-card .card-body .item.ui-draggable-dragging {
+        text-align: center;
+        margin: 0;
+    }
+
+    .box-card .card-body .item.ui-draggable-dragging i {
+        display: inline-block;
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 20px;
+        color: #409EFF;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+        touch-action: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+    }
+
+    .box-card .card-body .item.ui-draggable-dragging i.circle {
+        background-image: url(res_engine/flow_graph_1/images/circle.png);
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        background-size: 100%;
+    }
+
+    .box-card .card-body .item.ui-draggable-dragging i.diamond {
+        background-image: url(res_engine/flow_graph_1/images/diamond.png);
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        background-size: 100%;
+    }
+
+    .box-card .card-body .item.ui-draggable-dragging span {
+        display: block;
+    }
+
+    .chart-item {
+        display: inline-block;
+        text-align: center;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+        touch-action: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+    }
+
+    .chart-item.circle {
+        background-image: url(res_engine/flow_graph_1/images/circle.png);
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        background-size: 100%;
+    }
+
+    .chart-item.diamond {
+        background-image: url(res_engine/flow_graph_1/images/diamond.png);
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        background-size: 100%;
+    }
+
+    .chart-item.ellipse {
+        background-image: url(res_engine/flow_graph_1/images/ellipse.png);
+        width: 90px;
+        height: 30px;
+        line-height: 30px;
+        background-size: 100%;
+    }
+
+    .chart-item.rectangle {
+        background-image: url(res_engine/flow_graph_1/images/rectangle.png);
+        width: 90px;
+        height: 30px;
+        line-height: 30px;
+        background-size: 100%;
+    }
+
+    .demo-groups .workplace {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .demo-groups .group {
+        width: 300px;
+        height: 300px;
+        border: 1px solid #ccc;
+        position: absolute;
+    }
+
+    .demo-groups .group .ep {
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        background: #409eff;
+        border-radius: 5px;
+    }
+
+    .demo-groups .group:hover > .ep {
+        opacity: 1;
+    }
+
+    .demo-groups .group.dragHover > .ep {
+        opacity: 0;
+    }
+
+    .workplace .workplace-chart .input-size {
+        height: 100%;
+        width: 100%;
+    }
+
+    .workplace .workplace-chart .input-size .input-size-height {
+        font-size: 12px;
+        height: 100%;
+        width: 100%;
+    }
+
+    .workplace .workplace-chart textarea {
+        height: 100%;
+        font-size: 12px;
+    }
+
+    .no-flow-title {
+        position: absolute;
+        left: 45%;
+        top: 40%;
+    }
+</style>
+
+

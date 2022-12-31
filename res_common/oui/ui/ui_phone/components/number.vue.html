@@ -1,0 +1,48 @@
+<!-- 数字输入框 -->
+<template >
+    <mt-field
+            label=""
+            type="number"
+            :tempStyle="style"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :class="cls"
+            v-model="value"
+            @change="_controlOnUpdate"
+            :placeholder="placeholder">
+    </mt-field>
+
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{ //针对不同控件类型，处理不同的value,data4DB,display 显示值
+                    value:v, //值
+                    data4DB:v,//提交到后端的额外数据
+                    display:v //显示值
+                }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

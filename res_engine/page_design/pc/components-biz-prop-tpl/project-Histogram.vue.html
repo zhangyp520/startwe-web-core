@@ -1,0 +1,207 @@
+
+<template >
+    <div style="font-size: 14px;padding: 0 15px;">
+        <div style="margin-bottom: 15px;">
+            <div>报表名称：</div>
+            <el-input  size='mini'
+            placeholder="请输入内容" style="width: 100%;"
+            v-model="input" ></el-input>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <div>X轴设置：</div>
+            <el-input  size='mini'
+            placeholder="请输入内容"
+            style="width: 100%;"
+            v-model="input"
+           >
+            </el-input>
+        </div>
+
+
+        <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 15px;">
+            <div>显示X轴空值</div>
+            <div>
+                <el-switch
+                v-model="value"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+                </el-switch>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <div>Y轴值设置：</div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <div>
+                    <el-button plain size='mini' style="width:100%">统计记录数量</el-button>
+               </div>
+                <div>
+                    <el-button plain size='mini' style="width:100%">计算指定字段</el-button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;display: flex;align-items: center;">
+            <div>
+                <el-select v-model="value1" placeholder="请选择" size='mini'>
+                    <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+            </div>
+            <div>
+                <el-select v-model="value1" placeholder="请选择" size='mini'>
+                <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+                </el-select>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <div>图标分组</div>
+            <el-select v-model="value1" placeholder="请选择" size='mini' style="width: 100%;">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+            </el-option>
+            </el-select>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <div>筛选条件</div>
+            <el-select v-model="value1" placeholder="请选择" size='mini' style="width: 100%;">
+                <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+            </el-select>
+
+
+            <div style="display: flex;align-items: center;margin-top: 15px;">
+                <div>
+                    <el-select v-model="value1" placeholder="请选择" size='mini' style="width: 100%;">
+                        <el-option
+                            v-for="item in operatorList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <el-input v-model="input" size='mini' placeholder="请输入内容"></el-input>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <el-select v-model="value1" placeholder="请选择" size='mini' style="width: 50%;">
+                    <el-option
+                        v-for="item in operatorList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+        </div>
+
+        <div>
+            <el-button plain size='mini' style="width:100%">筛选条件</el-button>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                input:'',
+                value:'',
+                options: [{
+                    value: '选项1',
+                    label: '姓名'
+                    }, {
+                    value: '选项2',
+                    label: '所属部门'
+                    }
+                   ],
+                value1:'',
+                operatorList:[
+                    {
+                        value:1,
+                        label:'等于'
+                    },
+                    {
+                        value:1,
+                        label:'不等于'
+                    },
+                    {
+                        value:1,
+                        label:'包含'
+                    },
+                    {
+                        value:1,
+                        label:'不包含'
+                    },
+                    {
+                        value:1,
+                        label:'属于'
+                    },
+                    {
+                        value:1,
+                        label:'不属于'
+                    },
+                    {
+                        value:1,
+                        label:'从属'
+                    },
+                    {
+                        value:1,
+                        label:'不从属'
+                    },
+                    {
+                        value:1,
+                        label:'大于'
+                    },
+                    {
+                        value:1,
+                        label:'大于等于'
+                    },
+                    {
+                        value:1,
+                        label:'小于'
+                    },
+                    {
+                        value:1,
+                        label:'小于等于'
+                    },
+                ]
+            }
+        },
+        mounted:function(){
+   
+
+        },
+        methods:{
+
+
+        }
+    }
+</script>
+
+<style>
+  
+</style>

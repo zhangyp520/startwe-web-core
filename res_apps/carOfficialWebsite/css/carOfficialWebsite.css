@@ -1,0 +1,123 @@
+.container{
+    background-color: #f4f7fa;
+}
+
+
+/* 头部区域 */
+.header{
+    height: 830px;
+    background:url(../images/img.png) no-repeat;
+    background-size: 100% 100%;
+    
+}
+.headerTopBox{
+    display: flex;
+    justify-content: space-between;
+}
+
+.headerLogo{
+    margin: 10px;
+}
+.headerMenus{
+    display: flex;
+    color: #fff;
+    font-size: 18px;
+    margin-right: 300px;
+}
+.headerMenus>li{
+    padding: 24px;
+    white-space: nowrap;
+}
+.active{
+    border-bottom: 5px solid  #1890FF;
+}
+.headerMsg{
+    color: #fff;
+    margin:300px 60px;
+}
+.headerMsg>div:first-child{
+    font-size: 80px;
+    font-weight: bold;
+}
+.headerMsg>div:last-child{
+    font-size: 32px;
+    margin-top: 20px;
+}
+/* 内容区域 */
+.title{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 100px 0;
+}
+.title>span{
+    color: #0E4B84;
+    font-size: 32px;
+    line-height: 65px;
+}
+.inContentImg{
+    width: 100%;
+}
+/* 供应链交易部分 */
+.inContentBox{
+    display: flex;
+    justify-content: space-around;
+    width: 99%;
+    margin: auto;
+}
+.inContentBox>div{
+    width: 24%;
+    background-color: #fff;
+    border-radius: 8px;
+    /* background: url(../images/box.png) no-repeat; */
+}
+.inContentBox>div>img{
+    width: 100%;
+}
+.inContentMsg{
+    font-size: 26px;
+    margin: 30px 0;
+    text-align: center;
+}
+/* 联系我们 */
+.contactUs{
+    padding: 44px 70px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.company>span{
+    font-size: 28px;
+    margin-left: 30px;
+}
+.contactUsMsg{
+    display: flex;
+    font-size: 22px;
+    color: #4D4D4D;
+    line-height: 60px;
+}
+.contactUsMsg>div:last-child{
+    margin-left: 40px;
+}
+.followUs{
+    display: flex;
+}
+/* 地址 */
+.address{
+    margin-top: 40px;
+}
+#footerMap{
+    width:500px;
+    height:350px;
+    /* border:#ccc solid 1px; */
+    font-size:12px;
+
+}
+/* 备案号 */
+.pg-ft-wrap{
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}

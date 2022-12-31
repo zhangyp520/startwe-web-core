@@ -1,0 +1,292 @@
+<template>
+    <div class="oui-class-webpage curr">
+        <div v-for="item in weatherData" class="weather_1" v-if='dateTime=="today"'>
+            <div class="cityName" v-show="showPosition">{{city}}</div>
+            <div class="airQuality" v-show="showWeatherContent">空气质量:良好</div>
+            <div class="weatherIcon">
+                <img v-show="showWeatherIcon" :src="item.type == '晴'?weatherIcons[0]:item.type == '多云'?weatherIcons[1]:weatherIcons[2]">
+                <span class="weatherNum" v-show="showTemperature">{{currentTemperature}}℃</span>
+                <span v-show="showTemperature">{{weatherData.type}}</span>
+            </div>
+            <div>
+                <span v-show="showWeatherContent">湿度:合适</span>
+                <span v-show="showWeatherContent">风力{{item.fengli.split('[')[2].split(']')[0]}}</span>
+            </div>
+        </div>
+        <div class="weather_3" v-if='dateTime != "today"'>
+            <div v-for='(item,index) in weatherData'>
+                <div v-if='index == 0'>{{weatherData.length}}天预报{{city}}</div>
+                <div v-else>.</div>
+                <div>
+                    <div>{{item.date}}</div>
+                    <div>
+                        <span v-show="showTemperature">{{currentTemperature}}℃</span>
+                        <span v-show="showTemperature">{{weatherData.type}}</span>
+                    </div>
+                    <div v-show="showWeatherContent">
+                        空气质量:良好
+                    </div>
+                    <div v-show="showWeatherContent">
+                        湿度:合适
+                    </div>
+                    <div v-show="showWeatherContent">
+                        风力{{item.fengli.split('[')[2].split(']')[0]}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                city: '成都',
+                dateTime: 'today',
+                showWeatherContent: true,
+                showTemperature: true,
+                showWeatherIcon: true,
+                positioning: true,
+                showPosition: true,
+                weatherData: [],
+                currentTemperature: "",
+                tips: "",
+                weatherIcons: [
+                    //晴
+                    oui.getContextPath() + 'res_engine/ppt_design/images/sunny.png',
+                    //多云
+                    oui.getContextPath() + 'res_engine/ppt_design/images/cloudy.png',
+                    //雨
+                    oui.getContextPath() + 'res_engine/ppt_design/images/rain.png',
+                ],
+                latitude: "",
+                longitude: "",
+                errorPositionTxt: "",
+                bold:'',
+                italic:'',
+                underline:'',
+                linethrough:'',
+                textstyle:'',
+                intoList:[],
+                doingList:[],
+                exitList:[]
+
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.city) {
+                this.city = this.control.otherAttrs.city;
+            }
+            if (this.control.otherAttrs.dateTime) {
+                this.dateTime = this.control.otherAttrs.dateTime;
+            }
+            if (typeof this.control.otherAttrs.showPosition !=='undefined') {
+                this.showPosition = this.control.otherAttrs.showPosition;
+            }
+            if (typeof this.control.otherAttrs.showWeatherContent !=='undefined') {
+                this.showWeatherContent = this.control.otherAttrs.showWeatherContent;
+            }
+            if (typeof this.control.otherAttrs.showTemperature !=='undefined') {
+                this.showTemperature = this.control.otherAttrs.showTemperature;
+            }
+            if (typeof this.control.otherAttrs.showWeatherIcon !=='undefined') {
+                this.showWeatherIcon = this.control.otherAttrs.showWeatherIcon;
+            }
+            if (typeof this.control.otherAttrs.positioning !=='undefined') {
+                this.positioning = this.control.otherAttrs.positioning;
+            }
+            if(this.control.otherAttrs.bold) {
+                this.bold = 'font-weight: bold !important;'
+            }else{
+                this.bold = ''
+            }
+            if(this.control.otherAttrs.italic) {
+                this.italic = 'font-style:oblique !important;'
+            }else{
+                this.italic = ''
+            }
+            if(this.control.otherAttrs.underline) {
+                this.underline = 'text-decoration:underline !important;'
+            }else{
+                this.underline = ''
+            }
+            if(this.control.otherAttrs.linethrough) {
+                this.linethrough = 'text-decoration:line-through !important;'
+            }else{
+                this.linethrough = ''
+            }
+            if(this.control.otherAttrs.textstyle == 1) {
+                this.textstyle = 'text-align:left !important;'
+            }else if(this.control.otherAttrs.textstyle == 2) {
+                this.textstyle = 'text-align:center !important;;'
+            }else{
+                this.textstyle = 'text-align:right !important;'
+            }            
+            this.getWether();
+            this.getLocation();
+        },
+
+        methods:{
+            // 使用中国天气网生成的天气插件 具体细节请自行天气官网查看
+            getWether() {
+                let me = this;
+                if (this.city&&this.city !== '') {
+                    oui.ajaxGetThird("http://wthrcdn.etouch.cn/weather_mini?city="+this.city, function (res) {
+
+                        console.log(res)
+                        if (res.data.status !== 1000) {
+                            me.$message({
+                                message: '获取天气数据失败！',
+                                type: 'error'
+                            });
+                        }else {
+                            if (me.dateTime == 'today') {
+                                res.data.data.forecast.splice(1,4);
+                                me.weatherData = res.data.data.forecast;
+                            }else if (me.dateTime == 'threeDays') {
+                                res.data.data.forecast.splice(3,2);
+                                me.weatherData = res.data.data.forecast;
+                            } else {
+                                me.weatherData = res.data.data.forecast;
+                            }
+                            me.currentTemperature = res.data.data.wendu;
+                            me.tips = res.data.data.ganmao;
+                            console.log(me.weatherData,123132)
+                        } 
+                    }, function (res) {
+                        console.log('获取天气状况失败',res.data);
+                    });
+                }
+            },
+            //获取位置
+            // getLocation: function () {
+            //     oui.ajaxGetThird("http://whois.pconline.com.cn/", function (res) {
+            //         console.log('获取位置成功',res);
+            //     }, function (res) {
+            //         console.log('获取位置成功',res);
+            //     });
+            // }
+            getLocation() {
+                let me = this;
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function (position) {
+                            var latitude = position.coords.latitude;
+                            var longitude = position.coords.longitude;
+                            console.log("Latitude : " + latitude + " Longitude: " + longitude);
+                            console.log(position)
+                        },
+                        function (err) {
+                            console.log("您的浏览器不支持此项技术",err)
+                        },
+                        {timeout : 60000}
+                    );
+                } else {
+                    me.errorPositionTxt = "不支持获取用户当前位置";
+                    console.log("不支持获取用户当前位置");
+                }
+            },
+            start: function () {
+                var me = this;
+                if (this.control.otherAttrs.imagesList && this.control.otherAttrs.animationList) {
+                    this.playInto(function () {
+                        me.playDoing(function () {
+                            me.playExit(function () {
+                                console.log(111)
+                            });
+                        });
+                        console.log('进入动画执行完毕');
+                    });
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+    .oui-class-webpage {
+        width: 100%;
+        height: 100%;
+        margin:0;
+        padding:0;
+        display: flex;
+    }
+    .oui-class-webpage.curr div{
+        {{style}}
+    }
+    .oui-class-webpage.curr div>div{
+    {{style}}
+    }
+    .oui-class-webpage.curr div{
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+    }
+    .oui-class-webpage.curr div>div{
+        
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+    }
+    .cityName{
+
+        margin-left: 10px;
+    }
+    .airQuality{
+
+    }
+    .weatherIcon>img{
+        width: 50px;
+        height: 50px;
+    }
+    .weatherIcon> .weatherNum{
+        font-size: 40px;
+    }
+    .weather_1 >div{
+        margin: 20px;
+       
+    }
+    .weather_1 >div{
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{linethrough}}
+        {{textstyle}}
+    }
+    
+    .weather_3{
+        display: flex;
+        font-size: 13px;
+    }
+    .weather_3>div>div>div{
+        text-align: center !important;
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{linethrough}}
+        {{textstyle}}
+    }
+    .weather_3>div{
+        margin-right: 20px;
+        
+    }
+
+    .weather_3>div>div{
+        {{bold}}
+        {{italic}}
+        {{underline}}
+        {{linethrough}}
+        {{textstyle}}
+    }
+</style>
+

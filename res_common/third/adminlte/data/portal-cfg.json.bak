@@ -1,0 +1,123 @@
+{
+  "menus":[
+    {
+      "id": "circle-startwe-list",
+      "menuPath": "circle-startwe-list",
+      "icon": "",
+      "url": "res_apps/circle/circle-startwe-list.tpl.html",
+      "scripts": [
+        "/res_apps/circle/js/circle-startwe-list-require.js"
+      ],
+      "openType": "inner",
+      "display": "StartWE",
+      "initPath":"com.startwe.models.circle.web.Circle4StartweController.queryCircles"
+    },
+    {
+      "id": "circle-startwe",
+      "menuPath": "circle-startwe-list/circle-startwe",
+      "parentId": "circle-startwe-list",
+      "icon": "",
+      "defaultNotShow": true,
+      "url": "res_apps/circle/circle-startwe.tpl.html",
+      "scripts": [
+        "/res_apps/circle/js/circle-startwe-require.js"
+      ],
+      "openType": "inner",
+      "display": "StartWE-Circle"
+    },
+    {
+      "id": "circle-list",
+      "menuPath": "circle-list",
+      "icon": "",
+      "url": "res_apps/circle/circle-list.tpl.html",
+      "scripts": [
+        "/res_apps/circle/js/circle-list-require.js"
+      ],
+      "display": "我的圈子",
+      "initPath":"com.startwe.models.circle.web.CircleController.queryMyCircles"
+    },
+    {
+      "id": "circle",
+      "menuPath": "circle-list/circle",
+      "parentId": "circle-list",
+      "icon": "",
+      "url": "res_apps/circle/circle.tpl.html",
+      "scripts": [
+        "/res_apps/circle/js/circle-require.js"
+      ],
+      "display": "搭建圈子",
+      "initPath":"com.startwe.models.circle.web.CircleController.save"
+    },
+    {
+      "id": "develop-tools",
+      "menuPath": "develop-tools",
+      "parentId": "",
+      "icon": "",
+      "url": "res_engine/tools/ouiAce/develop.html",
+      "openType": "openWindow",
+      "display": "开发者工具"
+    },
+    {
+      "id": "project-list",
+      "menuPath": "circle-list/circle/project-list",
+      "parentId": "circle",
+      "icon": "",
+      "defaultNotShow": true,
+      "url": "res_apps/project/project-list.tpl.html",
+      "scripts": [
+        "/res_apps/project/js/project-list-require.js"
+      ],
+      "openType": "inner",
+      "display": "项目管理",
+      "initPath":"com.startwe.models.project.web.ProjectController.query"
+    },
+    {
+      "id": "project",
+      "menuPath": "circle-list/circle/project-list/project",
+      "parentId": "project-list",
+      "icon": "",
+      "defaultNotShow": true,
+      "url": "res_apps/project/project.tpl.html",
+      "scripts": [
+        "/res_apps/project/js/project-edit-require.js"
+      ],
+      "openType": "inner",
+      "display": "搭建项目"
+    },
+    {
+      "id": "project-design",
+      "menuPath": "circle-list/circle/project-list/project-design",
+      "parentId": "project-list",
+      "icon": "",
+      "defaultNotShow": true,
+      "url": "res_apps/project/project-design.tpl.html",
+      "scripts": [
+        "/res_apps/project/js/project-design-require.js"
+      ],
+      "openType": "inner",
+      "display": "项目设计"
+    },
+    {
+      "id": "sys-manage",
+      "menuPath": "sys-manage",
+      "icon": "",
+      "url": "/res_apps/sys-manage/sys-config/sys-config.vue.html",
+      "openType":"inner",
+      "scripts": [
+      ],
+      "display": "系统管理"
+    },
+    {
+      "id": "sys-config",
+      "parentId":"sys-manage",
+      "menuPath": "sys-manage/sys-config",
+      "icon": "",
+      "url": "/res_apps/sys-manage/sys-config/sys-config.vue.html",
+      "openType":"inner",
+      "scripts": [
+      ],
+      "display": "系统配置",
+      "initPath":"com.startwe.models.sysmanager.SysManagerController.findSysConfig"
+    }
+  ]
+}

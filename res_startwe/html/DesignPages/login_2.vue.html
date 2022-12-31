@@ -1,0 +1,217 @@
+<!-- 设计登录页>>>>>>>11111111111111 -->
+<template>
+    <div class="container">
+        <div class="login_box">
+            <div class="left_imgbox">
+                <img src="/res_startwe/html/DesignPages/assets/loginpage2_pic.png" alt="">
+            </div>
+            <div class="login_content">
+                <div class="innerContent">
+                    <!-- title -->
+                    <div class="login_Title">
+                        欢迎登陆XXX公司系统
+                    </div>
+                    <!-- content -->
+                    <!-- 密码登录框 -->
+                    <div class="loginContent">
+                        <!-- 输入框 -->
+                        <div>
+                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                                <img src="/res_startwe/html/DesignPages/assets/user.png" alt="" class="user">
+                                <el-form-item prop="phoneNumber">
+                                    <el-input v-model="ruleForm.phoneNumber" placeholder="手机号"></el-input>
+                                </el-form-item>
+                            </el-form>
+                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+                                <img src="/res_startwe/html/DesignPages/assets/loginpage2_lock.png" alt="" class="password">
+                                <el-form-item prop="password">
+                                    <el-input v-model="ruleForm.password" placeholder="密码" show-password></el-input>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <!-- 自动登录 -->
+                        <div class="loginState">
+                            <el-checkbox v-model="checked">自动登录</el-checkbox>
+                            <div>
+                                忘记密码
+                            </div>
+                        </div>
+                        <!-- 登录按钮 -->
+                        <div class="loginBtn">
+                            <button>登录
+                                <button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                checked: false,
+                showSlider: false,
+                input: "",
+                navList: [{ text: '密码登录' }, { text: '短信登录' }],
+                checkClick: 0,
+                activeHidden: false,
+                ruleForm: {
+                    name: '',
+                    password: '',
+                    phoneNumber: '',
+                },
+                rules: {
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'change' },
+                        { min: 4, max: 16, message: '请输入4到16位字符', trigger: 'blur' }
+                    ],
+                    phoneNumber: [
+                        { required: true, message: '请输入手机号', trigger: 'blur' },
+                        {
+                            validator: function (rule, value, callback) {
+                                if (/^1[345789]\d{9}$/.test(value) == false) {
+                                    callback(new Error("请输入正确的手机号"));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur'
+                        }
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            
+            
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* element样式修改 */
+
+    .demo-ruleForm {
+        position: relative;
+    }
+
+    /* 内容 */
+
+    .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login_box {
+        width: 1068px;
+        height: 618px;
+        display: flex;
+        box-shadow: 5px 5px 5px #979797;
+    }
+
+    .left_imgbox {
+        width: 50%;
+        height: 100%;
+    }
+
+    .left_imgbox>img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .login_content {
+        width: 50%;
+
+    }
+
+    .innerContent {
+        margin: 80px 80px 0 80px;
+    }
+
+    .login_Title {
+        height: 100px;
+        line-height: 100px;
+        font-size: 24px;
+        color: #1890FF;
+    }
+
+    .loginContent input {
+        padding-left: 34px;
+        width: 100%;
+        height: 40px;
+    }
+
+    .user {
+        /* margin-bottom: 24px; */
+        position: absolute;
+        top: 8px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .password {
+        position: absolute;
+        top: 8px;
+        left: 10px;
+        z-index: 100;
+    }
+
+    .loginState {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .loginState>div {
+        font-size: 14px;
+        color: #1890FF;
+        cursor: pointer;
+    }
+
+    .loginBtn>button {
+        width: 100%;
+        height: 40px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #1890FF;
+        outline: none;
+        letter-spacing: 10px;
+    }
+</style>

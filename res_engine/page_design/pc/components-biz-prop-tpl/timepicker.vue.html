@@ -1,0 +1,67 @@
+
+<template >
+
+    <el-date-picker
+            v-model="value"
+            type="datetime"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            :format="format" :value-format="format"
+            @change="_controlOnUpdate"
+            >
+    </el-date-picker>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                format:'yyyy-MM-dd HH:mm:ss',
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'请选择时间'
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .oui-class-countdown.curr span{
+        opacity: 1;
+        line-height: 1.6;
+        border-left-width: none !important;
+        border-top-width: none !important;
+        border-right-width: none !important;
+        border-bottom-width: none !important;
+        font-size: 14px;
+        border-left-color: none !important;
+        border-top-color: none !important;
+        border-bottom-color: none !important;
+        border-right-color: none !important;
+        border-left-style: none !important;
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+      
+        font-weight: normal;
+        text-align: left;
+        white-space: normal;
+    }
+
+</style>

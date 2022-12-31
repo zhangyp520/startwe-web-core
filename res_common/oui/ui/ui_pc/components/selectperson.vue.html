@@ -1,0 +1,266 @@
+<!--选部门 控件 TODO-->
+<template >
+    <div class="select-person-outer" >
+        <div class="el-input control-field-value-abs oui-comp-textfield" >
+            <inupt type="hidden" :id="id" :name="name" :bindProp="bindProp" v-model="value" />
+            <input type="text" autocomplete="off" :tempstyle="style"
+                   :class="cls" v-model="display" readOnly="readOnly" @click="event2selectperson()"  :placeholder="placeholder"
+                   class="el-input__inner"/>
+        </div>
+        <el-button type="text" @click="event2selectperson()" icon="iconfont icon-selectInput-selectperson" title="选择人员">
+        </el-button>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                display:'',
+                url4value:'',
+                url:'',
+                data:{
+                    tabs:[]
+                },
+                isMulti:'',
+                data4DB:{},
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'请选择'
+            }
+        },
+        watch:{
+            'value':function(v){
+                this.url4value = oui.setParam(this.url4value,'values',v);
+            },
+            'url4value':function(url,lastUrl){
+                if(url&&this.value&&this.id && (!this.hasInited)){
+                    var me = this;
+                    if(!oui.timerMap){
+                        oui.timerMap = {};
+                    }
+                    if(oui.timerMap[this.id]){
+                        clearTimeout(oui.timerMap[this.id]);
+                    }
+                    oui.timerMap[this.id] = setTimeout(function(){
+                        me.loadRemoteDataByValue();
+                        oui.timerMap[me.id]=null;
+                        delete oui.timerMap[me.id];
+                    },5);
+                }
+            }
+        },
+        mounted:function(){
+            this.hasInited =false;
+            //目标节点的显示 类型枚举
+            this.targetAreaShowTypeEnum = {
+                selectAndParentsAll:{
+                    value:1,
+                    display:'所选节点和所选节点的所有父参与者节点(递归到根节点)'
+                },
+                parentsAll:{
+                    value:2,
+                    display:'所选节点的所有父参与者节点(不递归找父节点的父节点)'
+                },
+                select:{
+                    value:3,
+                    display:'固定节点'
+                },
+
+                selectAndChildren:{
+                    value:4,
+                    display:'所选节点和所选节点的子参与者节点'
+                },
+                selectAndChildrenAll:{
+                    value:5,
+                    display:'所选节点和所选节点的所有子孙参与者节点'
+                },
+                childrenAll:{
+                    value:6,
+                    display:'所选节点的所有子孙参与者节点'
+                }
+            };
+            var projectId= this.projectId || oui.JsonPathUtil.getJsonByPath('otherAttrs.projectId',this);
+            var data4DB = this.data4DB || oui.JsonPathUtil.getJsonByPath('otherAttrs.data4DB',this)||{};
+            this.data4DB = data4DB;
+            this.display = data4DB.display||'';
+            this.projectId =projectId;
+            this.url = this.url || oui.JsonPathUtil.getJsonByPath('otherAttrs.url',this)||'';
+            this.data = this.data || oui.JsonPathUtil.getJsonByPath('otherAttrs.data',this)||{};
+            if(typeof this.isMulti =='undefined'){
+                this.isMulti = oui.JsonPathUtil.getJsonByPath('otherAttrs.isMulti',this);
+                if(typeof this.isMulti =='undefined'){
+                    this.isMulti= true;
+                }else if(this.isMulti ===null){
+                    this.isMulti = true;
+                }
+            }else{
+                if(typeof this.isMulti =='string'){
+                    if(this.isMulti=='' ){
+                        var tempMulti = oui.JsonPathUtil.getJsonByPath('otherAttrs.isMulti',this);
+                        if(tempMulti===null){
+                            tempMulti = true;
+                        }
+                        this.isMulti = tempMulti;
+                    }else if(this.isMulti=='false'){
+                        this.isMulti = false;
+                    } else{
+                        this.isMulti = true;
+                    }
+                }
+            }
+            this.canNotSelectTypeCode = this.canNotSelectTypeCode || oui.JsonPathUtil.getJsonByPath("otherAttrs.canNotSelectTypeCode",this)||'';
+
+            this.url4value = this.url4value || oui.JsonPathUtil.getJsonByPath('otherAttrs.url4value',this)||'';
+            this.tabMap = this.tabMap || oui.JsonPathUtil.getJsonByPath('otherAttrs.tabMap',this)||{};
+            if(!this.display){//显示值不存在才去加载显示
+                if(this.value){//值存在，则加载显示值
+                    this.loadRemoteDataByValue();
+                }
+            }else{
+                this.hasInited = true;
+            }
+        },
+        methods:{
+
+            event2selectperson:function(){
+                var me = this;
+                if(this.data&&this.data.tabs&&this.data.tabs.length){//多页签
+                    this.showTreeDialogByData();
+                }else {
+                    //url 加载数据
+                    this.loadData(function(){
+                        me.showTreeDialogByData();
+                    })
+                }
+            },
+            loadData:function(callback){
+                var me = this;
+                //加载树数据
+                if(this.url){
+                    oui.postData(this.url,{},function(res){
+                        var dataKey = me.dataKey||'tabs';
+                        var tabs = res[dataKey]||[];
+                        me.data= me.data ||{};
+                        me.data.tabs = tabs;
+                        callback&&callback();
+                    },function(res){
+
+                    },'加载中');
+                }else{
+                    callback&callback();
+                }
+            },
+            showTreeDialogByData:function(){
+                var me = this;
+                //需要根据url加载
+                var tabMap = this.tabMap;
+                oui.eachArray(this.data.tabs||[],function(tab){
+
+                    if(tabMap[tab.typeCode]){
+                        tab.url = tabMap[tab.typeCode].url4loadData;
+                        tab.url = oui.setParam(tab.url,'tabId',tab.id);
+                        var typeCode = oui.getParamByUrl(tab.url,'typeCode');
+
+                        if(!typeCode){
+                            typeCode = tab.typeCode;
+                        }
+                        tab.url = oui.setParam(tab.url,'typeCode',typeCode);
+                    }
+                });
+                oui.showOptionsDialog({
+                    canNotSelectTypeCode:this.canNotSelectTypeCode,
+                    isMulti:this.isMulti,
+                    value:this.value,
+                    selects:this.data4DB.items,
+                    url4value:this.url4value||'',
+                    tabIndex:0,
+                    tabs:this.data.tabs||[],
+                    isShowSearch:true,
+                    confirm:function(value,selects,o){
+                        var lastValue = me.value;
+                        me.value = value;
+                        me.data4DB = selects;
+                        var display = [];
+                        var items = [];
+                        oui.eachArray(selects,function(item){
+                            display.push(item.display);
+                            items.push({
+                                id:item.id,
+                                value:item.value,
+                                parentId:item.parentId,
+                                parentTypeCode:item.parentTypeCode,
+                                typeCode:item.typeCode,
+                                name:item.name,
+                                display:item.display
+                            });
+                        });
+                        if(value){
+                            me.value = value;
+                            me.display = display.join(',');
+                        }else{
+                            me.value = '';
+                            me.display = '';
+                        }
+                        me.data4DB = {items:items,value:value,display:display};
+                        me._controlOnUpdate(value,lastValue,me.data4DB);
+                    }
+
+                });
+            },
+            loadRemoteDataByValue:function(){
+                var me = this;
+                this.data4DB = this.data4DB||{};
+                var items = this.data4DB.items ||[];
+                if(items.length&&this.data4DB.value&&this.data4DB.display){ //直接回填
+                    this.value = this.data4DB.value;
+                    this.display = this.data4DB.display;
+                }else if(this.value && this.url4value){ //根据值回填,需要有url进行请求
+                    var loadData4DBKey = this.loadData4DBKey||'participaints';
+                    oui.postData(this.url4value,{values:this.value},function(res){
+                        var items = res[loadData4DBKey]||[];
+                        me.data4DB.items =[];
+                        var display= [];
+                        var valueArr = [];
+                        var tempItems = [];
+                        oui.eachArray(items,function(item){
+                            if(item){
+                                display.push(item.display);
+                                valueArr.push(item.value);
+                                tempItems.push(item);
+                            }
+                        });
+                        me.data4DB.items = tempItems;
+
+                        me.data4DB.value =valueArr.join(',');
+                        me.data4DB.display = display.join(",");
+                        me.value = me.data4DB.value;
+                        me.display = me.data4DB.display;
+                        me.hasInited =true;
+                        me.refresh();
+                    },function(res){
+
+                    },'加载中。。。')
+                }
+            },
+
+            _controlOnUpdate:function(v,ov,options){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:options.value, data4DB:{items:options.items}, display:options.display }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .select-person-outer{
+        width: 100%;
+        display: inline-flex;
+    }
+</style>

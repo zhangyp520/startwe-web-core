@@ -1,0 +1,40 @@
+<!--单选组-->
+<template >
+    <div>
+        {{name}}
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                name:'列表模板设计'
+            }
+        },
+        mounted() {
+            let param = oui.getParam()
+            if(param.type == '1') {
+                this.name = '列表模板设计'
+            }else if(param.type == '2') {
+                this.name = '编辑呈现设计'
+            }else if(param.type == '3') {
+                this.name = '详情呈现设计'
+            }else if(param.type == '4') {
+                this.name = '报表呈现设计'
+            }else if(param.type == '5') {
+                this.name = '原型呈现设计'
+            }else{
+                this.name = '打印呈现设计'
+            }
+        },
+        methods:{
+          
+        }
+    }
+</script>
+
+<style>
+
+</style>

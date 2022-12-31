@@ -1,0 +1,489 @@
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="text-right-control" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="文本" name="1">
+                    <div class="text-public-box">
+                        <span>文字颜色</span>
+                        <div class="text-color-piker">
+                            <el-color-picker v-model="textColor" @change="handleTextColorChange"></el-color-picker>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>背景颜色</span>
+                        <div class="bgcolor-color-piker">
+                            <el-color-picker v-model="backgroundColor" @change="handleTextBackgroundColorChange"></el-color-picker>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>超长滚动</span>
+                        <div class="text-public-box-right">
+                            <el-select v-model="rollingSpeed" placeholder="请选择" class="rolling-speed" @change="handleRollingSpeedChange">
+                                <el-option v-for="item in rollingSpeedOptions" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>文本内容</span>
+                        <div class="text-public-box-right">
+                            <el-input v-model="rowContent" class="row-spacing-input" @change="handleRowContentChange"></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>字体&emsp;&emsp;</span>
+                        <div class="text-public-box-right">
+                            <div class="font-family-input-box">
+                                <el-select class="font-family-input" v-model="fontFamily" filterable placeholder="请选择" @change="handleFontFamilyChange">
+                                    <el-option
+                                            v-for="item in fontFamilies"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <!--                        <el-input v-model="fontFamily" class="font-family-input"></el-input>-->
+                            </div>
+                            <div class="font-size-select-box">
+                                <el-select v-model="fontSize" class="font-size-select" @change="handleFontSizeChange">
+                                    <el-option v-for="item in font" :key="item.value" :label="item.label" :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>文字效果</span>
+                        <div class="text-public-box-right">
+                            <el-select v-model="textEffect" placeholder="请选择" class="date-format" @change="handleTextEffectChange">
+                                <el-option v-for="item in textEffects" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>行间距&emsp;</span>
+                        <div class="text-public-box-right">
+                            <el-input v-model="rowSpacing" class="row-spacing-input" @change="handleRowSpacingChange"></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span>内间距&emsp;</span>
+                        <div class="text-public-box-right">
+                            <el-input v-model="textPadding" class="text-padding-input" @change="handleTextPaddingChange"></el-input>
+                        </div>
+                    </div>
+                    <div class="text-public-box textContent-box">
+                        <textarea class="layui-textarea" id="textContent" style="display: none"></textarea>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                slbHeight: '',
+                rightToolbarData:{},
+                // 文本内容
+                rowContent:'',
+                // 内边距
+                textPadding:'',
+                // 行间距
+                rowSpacing:'',
+                activeNames: '1', //展开的选项
+                // 字体颜色
+                textColor: '#000',
+                // 背景颜色
+                backgroundColor: '',
+                // 超长滚动
+                rollingSpeedOptions: [{
+                    value: '1',
+                    label: '慢速'
+                }, {
+                    value: '2',
+                    label: '中速'
+                },{
+                    value: '3',
+                    label: '高速'
+                }],
+                rollingSpeed: '1',
+                // 日期格式
+                textEffects: [{
+                    value: '1',
+                    label: '无'
+                }, {
+                    value: '2',
+                    label: '2'
+                }],
+                textEffect: '',
+                // 字体大小
+                font: [{
+                    value: '12',
+                    label: '12'
+                }, {
+                    value: '14',
+                    label: '14'
+                }, {
+                    value: '16',
+                    label: '16'
+                }, {
+                    value: '18',
+                    label: '18'
+                }],
+                fontSize: '14',
+                // 字体样式
+                fontFamily: '微软雅黑 Microsoft YaHei',
+                fontFamilies: [{
+                    value: 'SimSun',
+                    label: '宋体 SimSun'
+                }, {
+                    value: 'SimHei',
+                    label: '黑体 SimHei'
+                }, {
+                    value: 'Microsoft YaHei',
+                    label: '微软雅黑 Microsoft YaHei'
+                }, {
+                    value: 'Microsoft JhengHei',
+                    label: '微软正黑体 Microsoft JhengHei'
+                }],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.style.backgroundColor) {
+                this.backgroundColor = this.currentControl.style.backgroundColor;
+            }
+            if (this.currentControl.innerStyle.styleField.color) {
+                this.textColor = this.currentControl.innerStyle.styleField.color
+            }
+            if (this.currentControl.innerStyle.styleField.fontSize) {
+                this.fontSize = this.currentControl.innerStyle.styleField.fontSize
+            }
+            if (this.currentControl.otherAttrs.rollingSpeed) {
+                this.rollingSpeed = this.currentControl.otherAttrs.rollingSpeed
+            }
+            if (this.currentControl.innerStyle.styleField.fontFamily) {
+                this.fontFamily = this.currentControl.innerStyle.styleField.fontFamily
+            }
+            if (this.currentControl.otherAttrs.textEffect) {
+                this.textEffect = this.currentControl.otherAttrs.textEffect
+            }
+            if (this.currentControl.otherAttrs.textPadding) {
+                this.textPadding = this.currentControl.otherAttrs.textPadding;
+            }
+            if (this.currentControl.otherAttrs.rowSpacing) {
+                this.rowSpacing = this.currentControl.otherAttrs.rowSpacing;
+                
+            }
+            if (this.currentControl.otherAttrs.textContent) {
+                this.rowContent = this.currentControl.otherAttrs.textContent;
+            }
+        },
+        methods: {
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                // Design.setCurrPropsData4page('props', 'down2selectPage');
+                if(pptControl&&pptControl.id&&pptControl.controlType){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //文本框整体背景颜色改变事件
+            handleTextBackgroundColorChange: function () {
+                this.currentControl.style.backgroundColor = this.backgroundColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.backgroundColor = this.currentControl.style.backgroundColor;
+                this.updateCurrentControl();
+            },
+            //文本字体颜色改变事件
+            handleTextColorChange: function () {
+                this.currentControl.innerStyle.styleField.color = this.textColor;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.color = this.currentControl.innerStyle.styleField.color;
+                this.updateCurrentControl();
+            },
+            //文本自动切换速度改变事件
+            handleRollingSpeedChange: function () {
+                this.currentControl.otherAttrs.rollingSpeed = this.rollingSpeed;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.rollingSpeed = this.currentControl.otherAttrs.rollingSpeed;
+                this.updateCurrentControl();
+            },
+            //文本字体大小改变事件
+            handleFontSizeChange: function () {
+                this.currentControl.innerStyle.styleField.fontSize = this.fontSize;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontSize = this.currentControl.innerStyle.styleField.fontSize;
+                this.updateCurrentControl();
+            },
+            //文本字体样式改变事件
+            handleFontFamilyChange: function () {
+                this.currentControl.innerStyle.styleField.fontFamily = this.fontFamily;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.innerStyle.styleField.fontFamily = this.currentControl.innerStyle.styleField.fontFamily;
+                this.updateCurrentControl();
+            },
+            //文本效果改变事件
+            handleTextEffectChange: function () {
+                this.currentControl.otherAttrs.textEffect = this.textEffect;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textEffect = this.currentControl.otherAttrs.textEffect;
+                this.updateCurrentControl();
+            },
+            //行边距改变事件
+            handleRowSpacingChange: function () {
+                this.currentControl.otherAttrs.rowSpacing = this.rowSpacing;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.rowSpacing = this.currentControl.otherAttrs.rowSpacing;
+                this.updateCurrentControl();
+            },
+            //内边距大小改变事件
+            handleTextPaddingChange: function () {
+                this.currentControl.otherAttrs.textPadding = this.textPadding;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textPadding = this.currentControl.otherAttrs.textPadding;
+                this.updateCurrentControl();
+            },
+            //文字内容改变事件
+            handleRowContentChange: function () {
+                this.currentControl.otherAttrs.textContent = this.rowContent;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.textContent = this.currentControl.otherAttrs.textContent;
+                this.updateCurrentControl();
+            }
+        }
+    }
+
+</script>
+
+<style>
+    body {
+        background: #666;
+    }
+    .el-collapse{
+        border: none;
+    }
+    .text-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .text-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .text-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .el-icon-arrow-down:before {
+        content: none;
+    }
+    .text-public-box-right{
+        width: 70%;
+        padding-right: 20px;
+        display: flex;
+        align-items: center;
+
+    }
+    /* 文字颜色选择器 */
+
+    .text-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .text-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .text-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    /* 外层公共盒子 */
+
+    .text-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .text-public-box>span {
+        color: #fff;
+        width: 30%;
+        text-align: left;
+        padding-left: 20px;
+    }
+
+    /* 类型 */
+
+    .rolling-speed .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .rolling-speed .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .rolling-speed .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .rolling-speed .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* <!-- 格式 --> */
+
+    .date-format .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .date-format .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .date-format .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .date-format .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 字体类型 */
+
+    .font-family-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-family-input-box {
+        margin-right: 10px;
+    }
+
+    /* 字体大小 */
+
+    .font-size-select .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-size-select .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__icon {
+        line-height: 30px;
+    }
+
+    .font-size-select-box {
+        width: 80%;
+    }
+
+    /* 富文本编辑器 */
+
+    .textContent-box {
+        margin-bottom: 10px;
+    }
+
+    .textContent-box .layui-layedit-tool .layui-icon {
+        color: #fff;
+    }
+
+    .textContent-box .layui-layedit {
+        border: none;
+    }
+
+    .textContent-box .layui-layedit-iframe {
+        display: none;
+    }
+
+    .textContent-box .layui-layedit-tool {
+        border: none;
+    }
+
+    .textContent-box .layui-layedit-tool .layui-icon {
+        width: 30px;
+    }
+    /* 内边距 */
+    .text-padding-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+    /* 行间距 */
+    .row-spacing-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+</style>

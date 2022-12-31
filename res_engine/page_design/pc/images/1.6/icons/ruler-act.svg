@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ruler</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ruler">
+            <rect id="矩形" fill="#FFE4E4" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <g id="编组备份-2" stroke="#FFFFFF" stroke-width="0.7">
+                <path d="M15,0.35 L15.65,5 L5.65,5.65 L5.65,15 L1,15.65 L0.35,1 L15,0.35 Z" id="形状结合" fill-opacity="0" fill="#FFFFFF"></path>
+                <path d="M5.5,0.5 L5.5,3.5 M0.983835569,11.59919 L3.98383557,11.59919 M8.5,0.5 L8.5,2.5 M0.983835569,8.59918997 L2.98383557,8.59918997 M11.5,0.5 L11.5,3.5 M0.983835569,5.59918997 L3.98383557,5.59918997" id="形状结合" stroke-linecap="square"></path>
+            </g>
+        </g>
+    </g>
+</svg>

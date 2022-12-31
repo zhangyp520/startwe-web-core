@@ -1,0 +1,7 @@
+端类型划分:
+pc
+phone
+addriod
+ios
+wxxcx
+wxgzh

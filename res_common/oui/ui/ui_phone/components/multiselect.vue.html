@@ -1,0 +1,61 @@
+<!--单选组-->
+<template>
+    <mt-checklist
+            title="复选框列表"
+            v-model="value"
+            :options="data"
+            :tempStyle="style"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :class="cls"
+            :placeholder="placeholder">
+    </mt-checklist>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                id: '',
+                name: '',
+                data: [
+                    {
+                        label: '选项A',
+                        value: '值A'
+                    },
+                    {
+                        label: '选项B',
+                        value: '值B'
+                    },
+                    {
+                        label: '选项C',
+                        value: '值C'
+                    },
+                    {
+                        label: '选项D',
+                        value: '值D'
+                    }
+                ],
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: ''
+            }
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

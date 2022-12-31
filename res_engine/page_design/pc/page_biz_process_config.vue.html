@@ -1,0 +1,177 @@
+
+<template >
+    <div>
+        
+        <el-row class="page_process_config-tpl">
+            <el-col :span="18" class="label">
+                是否绑定流程
+            </el-col>
+            <el-col :span="6">
+                <el-switch
+                        @change="_controlOnUpdate('otherAttrs.bindProcess',config)"
+                        v-model="config.otherAttrs.bindProcess"
+                        >
+                </el-switch>
+            </el-col>
+
+        </el-row>
+        <el-row class="page_process_config-tpl" v-if="config.otherAttrs.bindProcess">
+            <el-col :span="9" class="label">
+                选择流程
+            </el-col>
+            <el-col :span="13" style="display: inline-block">
+                <el-input type="text" style="cursor: pointer" @focus="event2selectProcess" placeholder="请选择" v-model="config.otherAttrs.flowName"></el-input>
+            </el-col>
+            <el-col :span="2">
+                <el-button type="text" icon="el-icon-search" @click="event2selectProcess"></el-button>
+            </el-col>
+
+        </el-row>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+               config:{
+                   otherAttrs:{
+                       bindProcess:false,
+                       flowId:'',
+                       flowName:''
+                   }
+               }
+            }
+        },
+        mounted:function(){
+            com.oui.absolute.AbsoluteDesign.bizPropsUpdate();//不对全局属性进行双向绑定
+            var data = com.oui.absolute.AbsoluteDesign.data;
+            if(data.id){
+                if(!data.otherAttrs){
+                    data.otherAttrs = {
+                        bindProcess:false,
+                        flowId:'',
+                        flowName:''
+                    };
+                }
+                if(typeof data.otherAttrs.bindProcess =='undefined'){
+                    data.otherAttrs.bindProcess=false;
+                }
+                if(typeof data.otherAttrs.flowId =='undefined'){
+                    data.otherAttrs.flowId=''
+                }
+                if(typeof data.otherAttrs.flowName =='undefined'){
+                    data.otherAttrs.flowName=''
+                }
+                this.config.otherAttrs = oui.parseJson(oui.parseString(data.otherAttrs));
+            }
+        },
+        methods:{
+            loadFlowData:function(callback){
+                var queryFlowsUrl = com.oui.absolute.AbsoluteDesign.paramCfg.params.queryFlowsUrl;
+                oui.postData(queryFlowsUrl,{},function(res){
+                    oui.eachArray(res.flows||[],function(item){
+                        item.value = item.value.replace(/\./ig,'--');
+                        item.id = item.id.replace(/\./ig,'--');
+                        item.parentId = item.parentId||'';
+                        item.parentId = item.parentId.replace(/\./ig,'--');
+
+                    });
+                    callback&&callback(res.flows||[]);
+                },null,'流程模板查询中...');
+            },
+            //选择流程
+            event2selectProcess:function(){
+                var me = this;
+                var value = oui.JsonPathUtil.getJsonByPath("otherAttrs.flowId",this.config);
+                value =value ||'';
+                me.loadFlowData(function(data){
+
+                    var selects = [];
+                    if(value){
+                        var one = oui.findOneFromArrayBy(data,function(item){
+                            if(item.value == value.replace(/\./ig,'--')){
+                                return true;
+                            }
+                        });
+                        if(one){
+                            selects[0] = one;
+                        }
+                    }
+                    // 查询流程数据
+                    oui.showOptionsDialog({
+                        canNotSelectTypeCode:'module',
+
+                        isMulti:false,
+                        isShowSearch:true,
+                        selects:selects,
+                        value:value.replace(/\./ig,'--'),
+                        tabs:[{tabId:'flows',name:'流程模板',renderType:'tree',treeCfg:{
+                            nodes:data
+                        }}],
+                        confirm:function(value,selects,obj){
+                            if(value){
+                                var item = selects[0];
+                                item.parentId = item.parentId||'';
+                                item.value = item.value.replace(/--/ig,'.');
+                                item.id = item.id.replace(/--/ig,'.');
+                                item.parentId = item.parentId.replace(/--/ig,'.');
+                                me.config.otherAttrs.flowId = item.value;
+                                me.config.otherAttrs.flowName = item.display;
+                            }else{
+                                me.config.otherAttrs.flowId = '';
+                                me.config.otherAttrs.flowName = '';
+                            }
+                            me.$set(me.config.otherAttrs,'flowName',me.config.otherAttrs.flowName);
+                            me._controlOnUpdate("otherAttrs.flowId",me.config);
+                            me._controlOnUpdate("otherAttrs.flowName",me.config);
+                        }
+                    });
+                });
+            },
+
+            /***
+             * 查询页面模板变更处理
+             * @param index
+             * @param item
+             * @private
+             */
+            _controlOnUpdate:function(bindProp,config){
+                var v = oui.JsonPathUtil.getJsonByPath(bindProp,config);
+                oui.JsonPathUtil.setObjByPath(bindProp,com.oui.absolute.AbsoluteDesign.data,v,true);
+            }
+        }
+    }
+</script>
+
+<style>
+    .page_process_config-tpl{
+        display: inline-block;
+        padding-top: 10px;
+    }
+    .label{
+        font-size: 12px;
+    }
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

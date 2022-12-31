@@ -1,0 +1,73 @@
+<!-- 根据页面呈现类型进行处理 -->
+<template>
+    <div>
+        <el-table v-if='tabName.length>0'
+            :data="tableData"
+            border
+            style="width: 100%">
+            <el-table-column  type="index" v-if='listSort'>
+            </el-table-column>
+            <el-table-column v-for='item in tabName'
+            prop="date"
+            :label="item.label"
+           >
+            </el-table-column>
+            <el-table-column label="操作" v-if='display'>
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                </template>
+              </el-table-column>
+        </el-table>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                tableData: [{
+                    date: '暂无数据'
+                }],
+                tabName:[],
+                listSort:false,
+                display:false
+            }
+        },
+     
+        mounted: function () {
+            var otherAttrs = this.otherAttrs||{};
+            let fieldList = otherAttrs.fieldList||[];
+            this.display = otherAttrs.display ||'';
+            this.listSort = otherAttrs.listSort||'';
+            if(fieldList && fieldList.length > 0) {
+                this.tabName = fieldList
+               
+            }else{
+                let obj = {
+                    label:'暂无字段'
+                }
+                this.tabName.push(obj)
+            }    
+        },
+        methods: {
+            handleEdit() {
+
+            },
+            handleDelete() {
+
+            }
+         
+        }
+    }
+</script>
+
+<style>
+  
+</style>

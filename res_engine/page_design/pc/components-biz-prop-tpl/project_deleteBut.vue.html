@@ -1,0 +1,129 @@
+
+<template >
+    <div style="font-size: 14px;padding-left: 20px;">
+        <div>按钮执行前动作:</div>
+        <div style="display: flex;align-items: center;">
+            <el-select v-model="typeValue" placeholder="请选择" size='mini' style="width: 100px;margin-left: 10px;" @change='changeType'>
+                <el-option
+                v-for="item in typeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select>
+            <div>=</div>
+            <el-select v-model="resultValue" placeholder="请选择" size='mini' style="width: 100px;margin-left: 10px;">
+                <el-option
+                v-for="item in resultList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select>
+        </div>
+
+        <div>按钮执行后动作:</div>
+        <div style="display: flex;align-items: center;">
+            <div>弹框提示：</div>
+            <div><el-input v-model="tipsValue" size='mini' placeholder="请输入内容" @change='changeTipsValue'></el-input></div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                typeList:[
+                    {
+                        value:'单击',
+                        label:'单击'
+                    },
+                    {
+                        value:'双击',
+                        label:'双击'
+                    },
+                    {
+                        value:'鼠标移入',
+                        label:'鼠标移入'
+                    },
+                    {
+                        value:'鼠标移出',
+                        label:'鼠标移出'
+                    },
+                    {
+                        value:'按下',
+                        label:'按下'
+                    },
+                    {
+                        value:'松开',
+                        label:'松开'
+                    },
+                    {
+                        value:'选中',
+                        label:'选中'
+                    },
+                    {
+                        value:'未选中',
+                        label:'未选中'
+                    }
+                ],
+                resultList:[
+                    {
+                        value:'模板一',
+                        label:'模板一'
+                    }
+                ],
+                typeValue:'',
+                resultValue:'',
+                tipsValue:'是否确认删除？'
+            }
+        },
+        mounted:function(){
+            let deleteBut = com.oui.absolute.AbsoluteDesign.data.otherAttrs.deleteBut
+            let tipsValue = com.oui.absolute.AbsoluteDesign.data.otherAttrs.tipsValue
+            if(deleteBut) {
+                this.typeValue = deleteBut.typeValue
+                this.resultValue = deleteBut.resultValue
+            }
+            if(tipsValue) {
+                this.tipsValue = tipsValue
+            }
+        },
+        methods:{
+            changeType() {
+                let obj = {
+                    typeValue:this.typeValue,
+                    resultValue:this.resultValue
+                }
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.deleteBut = obj
+                this.updateCurrentControl()
+            },
+            changeTipsValue() {
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.tipsValue = this.tipsValue
+                this.updateCurrentControl()
+            },
+            //更新
+            updateCurrentControl () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+ 
+</style>

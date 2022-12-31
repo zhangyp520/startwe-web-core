@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="45px" height="20px" viewBox="0 0 45 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>drop-down-select</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="页面组件" transform="translate(-346.000000, -460.000000)">
+            <g id="drop-down-select" transform="translate(346.000000, 460.000000)">
+                <rect id="矩形备份-36" stroke="#ABABAB" stroke-width="0.9" fill-opacity="0" fill="#FFFFFF" x="0.45" y="0.45" width="44.1" height="19.1" rx="3.6"></rect>
+                <g id="下-拉" transform="translate(30.600000, 5.454545)" fill-rule="nonzero">
+                    <rect id="矩形" fill="#000000" opacity="0" x="0" y="0" width="10.8" height="10.9090909"></rect>
+                    <path d="M9.98774297,3.96705256 L5.886,8.49770241 C5.76344846,8.63856214 5.58678792,8.71930398 5.40113906,8.71930398 C5.21547549,8.71930398 5.0387972,8.63857331 4.91623594,8.49770241 L0.814492969,3.96705256 C0.614260547,3.7534304 0.552382031,3.44206321 0.655867969,3.16705611 C0.759353906,2.89204901 1.00911445,2.70001065 1.299375,2.67388849 L9.49950703,2.67388849 C9.79088555,2.69889205 10.041743,2.88977983 10.14525,3.1659375 C10.249875,3.44207386 10.188007,3.75227983 9.98774297,3.96705256 Z" id="路径" fill="#ABABAB"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

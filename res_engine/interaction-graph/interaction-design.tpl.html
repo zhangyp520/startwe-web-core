@@ -1,0 +1,459 @@
+
+<link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/pc-common.css"/>
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/interactionchart.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/toolbar.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/graph-common/css/font-awesome.min.css" />
+<link type="text/css" rel="stylesheet" href="/res_engine/interaction-graph/css/iconfont.css"/>
+<oui-view id="view-interaction" class="container" oui-controller="com.startwe.models.project.web.InteractionDesignController"  data="com.startwe.models.project.web.InteractionDesignController.getData()">
+
+</oui-view>
+<script type="text/html" id="view-interaction-tpl">
+    <div class="pg-block" oui-controller="com.startwe.models.project.web.InteractionDesignController" >
+        <style >
+            .interactionchart > table > tbody > tr:first-child td .node .title{
+                background-color:#1890FF !important;
+                color:#fff !important;
+            }
+            .interactionchart .node:hover .title {
+                background-color:#fff;
+            }
+            .interactionchart .node .title {
+                font-size:14px;
+            }
+            .page4list{
+                border: 1px solid #72B54F !important;
+                color:#72B54F !important;
+            }
+            .page4list .right{
+                border-right: 1px solid #72B54F !important;
+            }
+            .page4list .left{
+                border-left: 1px solid #72B54F !important;
+            }
+            .page4list .top{
+                border-top: 2px solid #72B54F !important;
+            }
+            .page4list .bottom{
+                border-bottom: 2px solid #72B54F !important;
+            }
+            .logic4query{
+                border: 1px solid #00BFFF !important;
+                color:#00BFFF !important;
+            }
+            .logic4query .right{
+                border-right: 1px solid #00BFFF !important;
+            }
+            .logic4query .left{
+                border-left: 1px solid #00BFFF !important;
+            }
+            .logic4query .top{
+                border-top: 2px solid #00BFFF !important;
+            }
+            .logic4query .bottom{
+                border-bottom: 2px solid #00BFFF !important;
+            }
+            .logic4new{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4load{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4remove{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4update{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4batchNew{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4batchUpdate{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .logic4batchRemove{
+                border: 1px solid #DEA535 !important;
+                color:#DEA535 !important;
+            }
+            .node-end>.title{
+                background-color:#1890FF !important;
+                color:#fff !important;
+            }
+        </style>
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'interaction-design'})}}
+        </div>
+        <div class="pg-block-header">
+            <a href="#" oui-e-{{InteractionDesignController.treeMap.clickName}}="event2direction">横向/纵向</a>
+            <a href="#" oui-e-{{InteractionDesignController.treeMap.clickName}}="event2exportGraph">导出图片</a>
+            <!--<a href="#" oui-e-{{InteractionDesignController.treeMap.clickName}}="event2save">保存</a>-->
+            <div class="manager-toolbar">
+                <a style="visibility: hidden" href="#" class="download"></a>
+                <div class="manager-toolbar-right fr">
+                    <button oui-e-click="event2small" type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-narrow"></button>
+                    <button oui-e-click="event2big"  type="button" class="toolbar-group-item toolbar-group-icon toolbar-group-icon-enlarge"></button>
+                    <button oui-e-click="event2ToggleExpand" class="toolbar-group-item toolbar-group-icon {{if InteractionDesignController.isRootChildrenUnExpand}}toolbar-group-icon-open{{else}}toolbar-group-icon-close{{/if}}"></button>
+                </div>
+            </div>
+        </div>
+        <div class="pg-block-cont interaction-graph-content" style="overflow: hidden">
+            <div class="interactionchart {{InteractionDesignController.treeMap.direction}}">
+                {{include 'interaction-table-tpl' ({treeMap:InteractionDesignController.treeMap,nodeId:InteractionDesignController.treeMap.findRootId()})}}
+            </div>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="interaction-table-split-tpl">
+    <table  height="1" width="1" style="display: inline-table"  >
+        <tbody>
+        {{if treeMap.findChildren(nodeId).length}}
+        <tr class="lines {{treeMap.findSourceNode(nodeId).nodeType}}" >
+            <td colspan="{{treeMap.findColspan(nodeId)}}">
+                <div class="down {{treeMap.findSourceNode(nodeId).nodeType}}"></div>
+            </td>
+        </tr>
+        <tr class="lines {{treeMap.findSourceNode(nodeId).nodeType}}">
+            {{each treeMap.findLineClsArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        <tr class="nodes {{treeMap.findSourceNode(nodeId).nodeType}}">
+            {{each treeMap.findChildren(nodeId) as childNode}}
+            <td colspan="2" style="overflow: hidden" width="1" >
+                {{include 'interaction-table-tpl' ({treeMap:treeMap,nodeId:childNode.id})}}
+                {{if treeMap.findChildren(nodeId).length}}
+                <div class="down  {{treeMap.findSourceNode(nodeId).nodeType}}" style="height: 100%;margin: 0 auto;"></div>
+                {{/if}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        {{if treeMap.findNode(nodeId).childIds.length>1 }}
+        <tr class="lines {{treeMap.findSourceNode(nodeId).nodeType}}">
+            {{each treeMap.findLineCls4BottomArray(nodeId) as cls}}
+            <td class="{{cls}}">&nbsp;</td>
+            {{/each}}
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+
+<script type="text/html" id="interaction-table-tpl">
+    <table table-node-id="{{nodeId}}"  height="1" width="1"  >
+        <tbody>
+        {{if !treeMap.isJoin(nodeId)}}
+        <tr>
+            <td colspan="1" class="{{treeMap.findNode(nodeId).node.loopStart?'node-loop-top node-loop-left node-loop-right':''}} {{treeMap.findNode(nodeId).node.loopEnd?'node-loop-bottom node-loop-left node-loop-right':''}} ">
+                {{if treeMap.isJoin(nodeId)}}
+                {{if treeMap.findSplitChildrenLength(nodeId)>1}}
+                <div class="down"></div>
+                {{/if}}
+                {{if treeMap.findSplitChildrenLength(nodeId)<=1}}
+                <div class="down down-join-line-height"></div>
+                {{/if}}
+
+                {{/if}}
+                <div class="node {{treeMap.isJoin(nodeId)?'join-node':''}}" draggable="true"  node-id="{{nodeId}}"
+                     oui-e-{{treeMap.clickName}}="event2showMenu"
+                        >
+                    <div class="title  {{treeMap.findSourceNode(nodeId).nodeType}}" title="{{treeMap.findNodeName(nodeId)}}" >
+                        {{if treeMap.hasChildren(nodeId)}}
+                        {{if !treeMap.isExpand(nodeId)}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        <i class="fa fa-th-large symbol"></i>
+                        {{if treeMap.isRoot(nodeId)}}
+                            <i class="icon iconfont icon-kaishi"></i>
+                        {{/if}}
+                        {{if treeMap.findNode(nodeId).node.loopStart}}
+                            <i class="icon iconfont icon-iconfontdanquxunhuan2eps"></i>
+                        {{/if}}
+                        {{treeMap.findNodeName(nodeId)}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+        {{if (treeMap.hasChildren(nodeId)||treeMap.findJoinId(nodeId)) && treeMap.isExpand(nodeId)}}
+
+
+
+        {{if treeMap.findChildren(nodeId).length}}
+        <tr class="nodes">
+            <td colspan="1" class="{{treeMap.findNode(nodeId).node.loopStart?'node-loop-left node-loop-right':''}}">
+                {{include 'interaction-table-split-tpl' ({treeMap:InteractionDesignController.treeMap,nodeId:nodeId})}}
+            </td>
+        </tr>
+        {{/if}}
+
+        {{if treeMap.findJoinId(nodeId)}}
+        <tr>
+            <td colspan="1" class="{{ treeMap.findNode(treeMap.findJoinId(nodeId)).node.loopEnd ?'node-loop-left node-loop-right node-loop-bottom':''}}  ">
+                {{if treeMap.isJoin(treeMap.findJoinId(nodeId))}}
+                {{if treeMap.findSplitChildrenLength(treeMap.findJoinId(nodeId))>1}}
+                <div class="down"></div>
+                {{/if}}
+                {{if treeMap.findSplitChildrenLength(treeMap.findJoinId(nodeId))<=1}}
+                <div class="down down-join-line-height"></div>
+                {{/if}}
+
+                {{/if}}
+                <div class="node  join-node " draggable="true"  node-id="{{treeMap.findJoinId(nodeId)}}"
+                     oui-e-{{treeMap.clickName}}="event2showMenu"
+                        >
+                    <div class="title" title="{{treeMap.findNodeName(nodeId)}}"  >
+                        {{if treeMap.hasChildren(treeMap.findJoinId(nodeId))}}
+                        {{if !treeMap.isExpand(treeMap.findJoinId(nodeId))}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-down" oui-e-{{treeMap.clickName}}="expandChildren"></i>
+                        {{else}}
+                        <i class="edge verticalEdge topEdge fa fa-chevron-up" oui-e-{{treeMap.clickName}}="unExpandChildren" ></i>
+                        {{/if}}
+                        {{/if}}
+                        <i class="fa fa-th-large symbol"></i>
+                        {{treeMap.findNodeName(treeMap.findJoinId(nodeId))}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{if treeMap.findChildren(treeMap.findJoinId(nodeId)).length}}
+        <tr class="nodes"  >
+            <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                <div style="display: inline-table;">
+                    {{include 'interaction-table-tpl' ({treeMap:InteractionDesignController.treeMap,nodeId:InteractionDesignController.treeMap.findJoinId(nodeId)})}}
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+
+        {{/if}}
+
+
+        {{/if}}
+        {{if treeMap.isRoot(nodeId)}}
+        <tr class="nodes" >
+            <td colspan="1" style="text-align: center;margin: 0 auto" width="1">
+                <div class="down down-join-line-height"></div>
+                <div style="display: inline-table;">
+                    <div class="node node-end" >
+                        <div class="title"  >
+                            <i class="icon iconfont icon-tingzhi"></i>
+                            end
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+<!--join节点菜单-->
+<script type="text/html" id="node-menu4join-tpl">
+    <div class="second-menu">
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-bianji"></i>
+            编辑
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="add4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="remove4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+            清空后续节点
+        </div>
+        {{if !treeMap.findNode(nodeId).node.loopEnd}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll4join" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+            删除当前节点和后续节点
+        </div>
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+
+<!--根节点菜单-->
+<script type="text/html" id="node-menu-start-tpl">
+    <div class="second-menu">
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addPage" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加页面资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+<!--鼠标点击的菜单功能-->
+<script type="text/html" id="node-menu-tpl">
+    <div class="second-menu">
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="edit" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-bianji"></i>
+            编辑
+        </div>
+        {{if treeMap.findNode(nodeId).node.nodeType=='page4list'}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4query" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加查询逻辑资源
+        </div>
+        {{/if}}
+        {{if treeMap.findNode(nodeId).node.nodeType=='logic4query'}}
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4new" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加新增逻辑资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4batchNew" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加批量新增逻辑资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4batchUpdate" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加批量更新逻辑资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4batchRemove" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加批量删除逻辑资源
+        </div>
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4load" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加:加载数据的逻辑资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4remove" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加:删除数据的逻辑资源
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="addLogic4update" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-tianjiajiedian"></i>
+            添加:更新数据的逻辑资源
+        </div>
+
+        {{/if}}
+
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="removeAll" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-xinshanchujiedian"></i>
+                删除当前节点和所有子节点
+        </div>
+        <div class="menu-text" node-id="{{nodeId}}" menu-action-id="hideMenu" oui-e-{{treeMap.clickName}}="event2menuAction">
+            <i class="icon iconfont icon-quxiao-copy"></i>
+            取消
+        </div>
+    </div>
+</script>
+<!--拖拽结束的菜单功能-->
+<script type="text/html" id="node-menu-dragend-tpl">
+    <div class="second-menu second-menu-dragend">
+        {{if treeMap.isBrothers(nodeId,targetNodeId)}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="swapSort" oui-e-{{treeMap.clickName}}="event2menuAction">
+            顺序调整
+        </div>
+        {{/if}}
+        <div class="menu-text" node-id="{{nodeId}}" target-node-id="{{targetNodeId}}" menu-action-id="hideMenu4DragEnd" oui-e-{{treeMap.clickName}}="event2menuAction">
+            取消
+        </div>
+    </div>
+</script>
+<!--选择逻辑-->
+<script type="text/html" id="resource-temp-tpl">
+    {{if resource&&resource.resourceType=='logicResource'}}
+    {{if resource.inputParams&&resource.inputParams.length}}
+    <div class="pg-pb-header title-left">
+        <span class="desp-text">
+        输入参数:<b>输入参数中的变量需要从父节点的输出参数中传入；如果上一节点为页面资源，则无法配置有参数的逻辑资源；页面资源的后续逻辑节点为无参数逻辑；</b>
+        </span>
+    </div>
+    {{/if}}
+    <div class="pg-pb-item">
+        {{each resource.inputParams as propDefine index}}
+        <div class="row">
+            <div class="col-sm-3">
+                变量名称:{{propDefine.name}}
+            </div>
+            <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">输入变量映射</label>
+                        <div class="col-sm-9">
+                            {{if propDefine.urlEncodeKey}}
+                            <oui-form id="varName-inputParams-{{index}}" validate="{{oui.parseString(InteractionDesignController.findValidate4params('varName','inputParams',index))}}" name="resource.paramMap.{{propDefine.name}}"  type="singleselect" value="{{resource.paramMap[propDefine.name]}}" data="{{oui.parseString(InteractionDesignController.findVarsByDataType(propDefine.dataType,nodeId))}}"></oui-form>
+                            {{/if}}
+                            {{if !propDefine.urlEncodeKey}}
+                            <oui-form id="varName-inputParams-{{index}}" name="resource.paramMap.{{propDefine.name}}"  type="singleselect" value="{{resource.paramMap[propDefine.name]}}" data="{{oui.parseString(InteractionDesignController.findVarsByDataType(propDefine.dataType,nodeId))}}"></oui-form>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                <div id="varName-inputParams-{{index}}-error"></div>
+            </div>
+            <div class="col-sm-3">
+                变量类型:{{propDefine.dataType}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+</script>
+
+<!--节点编辑页面，执行条件，执行赋值或者方法调用设置-->
+<script type="text/html" id="node-edit-tpl">
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_engine/interaction-graph/css/node-edit-setting.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/dialog.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/css/control.css" />
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/pager/css/pager.css"/>
+    <link rel="stylesheet" type="text/css" class="loaded" href="/res_common/oui/ui/ui_pc/controls/condition/css/condition.css"/>
+
+    <div class="panel-body" style="max-height: 550px;overflow-y:scroll">
+        <div class="pg-pb-item">
+
+            <div class="row">
+                <div class="col-sm-2">
+                    <label>资源节点名称</label>
+                </div>
+                <div class="col-sm-5">
+                    <oui-form type="textfield" id="node_name" name="node.name" value="{{treeMap.findNodeName(nodeId)}}" ></oui-form>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title title-left">
+                        <span>选择{{resourceTypeName}}资源</span>
+                    </h3>
+                </div>
+
+                <div class="panel-body" style="padding-bottom: 0">
+                    <div class="pg-pb-header title-left">
+                        <span class="desp-text">
+                            选择{{resourceTypeName}}资源
+                        </span>
+                    </div>
+                    <div class="pg-pb-item">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <oui-form type="outercontrol" onAfterUpdate="com.startwe.models.project.web.InteractionDesignController.onUpdate4interaction" value="{{resource&&resource.name}}" name="resource.name" url="{{queryResourceUrl}}" isReadOnly="false" dataType="array"  id="resource-select" doScriptMethod="com.startwe.models.project.web.InteractionDesignController.resourceSelectCallback"></oui-form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <oui-view oui-controller="com.startwe.models.project.web.InteractionDesignController" id="resource-temp" class="panel-body" data="getCurrNodeData('{{nodeId}}')"></oui-view>
+            </div>
+        </div>
+    </div>
+
+</script>
+

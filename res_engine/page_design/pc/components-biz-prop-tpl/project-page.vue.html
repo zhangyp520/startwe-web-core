@@ -1,0 +1,105 @@
+
+<template >
+    <div style="font-size:14px;">
+        <div style="display: flex;align-items: center;justify-content: center;margin-top: 20px;">
+            <div>每页显示最多行数</div>
+            <el-select v-model="value" placeholder="请选择" size='mini' style="width: 120px;margin-left: 10px;">
+                <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+                </el-option>
+            </el-select>
+       </div>
+       <div style="display: flex;align-items: center;justify-content: space-around;margin-top: 20px;">
+        <div>显示跳转页</div>
+        <el-select v-model="layoutValue" placeholder="请选择" size='mini' style="width: 120px;margin-left: 10px;"    @change='layoutFun'>
+            <el-option
+         
+            v-for="item in pageDis"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+        </el-select>
+   </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                options: [{
+                value: '选项1',
+                label: '5'
+                }, {
+                value: '选项2',
+                label: '10'
+                }, {
+                value: '选项3',
+                label: '15'
+                }, {
+                value: '选项3',
+                label: '20'
+                },
+                {
+                value: '选项3',
+                label: '不分页'
+                }
+                ],
+                value:'',
+                layoutValue:'',
+                pageDis:[
+                    {
+                    value: '1',
+                    label: '是'
+                    },
+                    {
+                    value: '2',
+                    label: '否'
+                    },
+                ]
+            }
+        },
+        mounted:function(){
+           let otherAttrs = com.oui.absolute.AbsoluteDesign.data.otherAttrs
+           if(otherAttrs.showJump) {
+               this.layoutValue = '1'
+           }else{
+               this.layoutValue = '2'
+           }
+
+        },
+        methods:{
+            layoutFun(data) {
+              
+                com.oui.absolute.AbsoluteDesign.data.otherAttrs.showJump = data == '1' ? true : false
+                this.updateCurrentControl()
+            },
+            //更新
+            updateCurrentControl: function () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+
+<style>
+ 
+</style>

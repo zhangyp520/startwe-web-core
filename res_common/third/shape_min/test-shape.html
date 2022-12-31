@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>连线测试 </title>
+    <link rel="stylesheet" type="text/css" href="../shape/css/shape.css" />
+    <style type="text/css">
+        /* 显示 块*/
+        .control-abs-component{
+            background-color: rgba(255,255,255,.7);
+            width: 140px;
+            height: 42px;
+            padding: 5px;
+            font-size: 0;
+            display: block;
+            border: 1px solid transparent;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /*
+        纸张宽度*/
+        .paper-area {
+            background-color: #ffffff;
+            z-index: 1;
+            position: relative;
+            margin: 30px auto;
+            overflow: hidden;
+            display: block;
+            box-shadow: rgba(0, 0, 0, 0.31) 0 0 13px;
+        }
+        .paper-area .paper-area{
+            background-color: transparent;
+            margin: 0 auto;
+            z-index: 0;
+        }
+
+        /*重写 连线文字样式*/
+        .oui-line-text .text-color{
+            color: #ffffff;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="page-abs paper-area A4 bg-center active" style="background-color: rgb(255, 255, 255); width: 210mm; height: 297mm;" oui-e-mousedown="down2selectPaperArea">
+
+
+
+
+
+
+    <div id="ctrl_509534961758118874" targets-json="[{&quot;hasArrow&quot;:false,&quot;hasFromArrow&quot;:true,&quot;lineText&quot;:&quot;连线1&quot;}]" to-ids="ctrl_806025145230846776"  class="control-abs control-abs-component control-abs-oneLine" style="left: 125px; top: 86px; opacity: 1; width: 100px; height: 100px; border-radius: 30px; border-width: 1px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid;" drag-status="down">
+
+        <div class="control-label-abs" style="opacity: 1; font-size: 14px; background-color: rgb(255, 255, 255); vertical-align: middle; color: rgb(51, 51, 51); font-weight: normal; text-align: center; white-space: normal;">a</div>
+
+    </div>
+
+
+    <div id="ctrl_806025145230846776" targets-json="[{&quot;hasArrow&quot;:false,&quot;hasFromArrow&quot;:true,&quot;lineText&quot;:&quot;连线2&quot;}]" to-ids="ctrl_967062970548743280" class="control-abs control-abs-component control-abs-oneLine" style="left: 399px; top: 86px; opacity: 1; width: 100px; height: 100px; border-radius: 30px; border-width: 1px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid;" drag-status="start">
+
+        <div class="control-label-abs" style="left:px;top:px;opacity:1;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:center;white-space:normal">b</div>
+
+    </div>
+
+
+    <div id="ctrl_967062970548743280"  class="control-abs control-abs-component control-abs-oneLine" style="left: 251px; top: 269px; opacity: 1; width: 100px; height: 100px; border-radius: 30px; border-width: 1px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid;" drag-status="down">
+
+        <div class="control-label-abs" style="left:px;top:px;opacity:1;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:center;white-space:normal">c</div>
+
+    </div>
+
+
+    <div id="ctrl_681444790719644499"  class="control-abs control-abs-component control-abs-oneLine" style="left: 557px; top: 349px; opacity: 1; width: 100px; height: 100px; border-radius: 30px; border-width: 1px; background-color: rgb(255, 255, 255); border-color: rgb(230, 230, 230); border-style: solid;" drag-status="down">
+
+        <div class="control-label-abs" style="left:px;top:px;opacity:1;font-size:14px;background-color:#ffffff;vertical-align:middle;color:#333333;font-weight:normal;text-align:center;white-space:normal">d</div>
+
+    </div>
+
+</div>
+<script src="../jquery/jquery-2.1.4.min.js"></script>
+<script src="../template/template_debug_3_0_0.js"></script>
+<script src="../algebra/algebra-0.2.5.min.js"></script>
+<script src="shape.min.js"></script>
+<!--<script src="../shape/shape_all.js"></script>-->
+<script type="text/javascript">
+    var id =0;
+    oui.os ={mobile:false};
+    oui.parseJson = function(jsonStr){
+        if(typeof  jsonStr =='object'){
+            return jsonStr
+        }
+        return JSON.parse(jsonStr);
+    };
+    oui.parseString =function(json){
+        if(typeof json =='object'){
+            return JSON.stringify(json);
+        }
+        if(typeof json =='undefined'){
+            return '';
+        }
+        return json+'';
+    };
+    oui.getUUIDLong = function(){
+        id++;
+        return 'r_'+id;
+    };
+    $(document).on('click','[oui-e-click]',function(e){
+        var target = e.target || e.srcElement;
+        var click = $(target).attr('oui-e-click');
+        if(click){
+            eval(click+'({e:e,el:e.target});');
+        }
+    }).on('mouseenter','[oui-e-mouseenter]',function(e){
+        var target = e.target || e.srcElement;
+        var click = $(target).attr('oui-e-mouseenter');
+        if(click){
+            eval(click+'({e:e,el:e.target});');
+        }
+    }).on('mouseleave','[oui-e-mouseleave]',function(e){
+        var target = e.target || e.srcElement;
+        var click = $(target).attr('oui-e-mouseleave');
+        if(click){
+            eval(click+'({e:e,el:e.target});');
+        }
+    });
+    /** 连线事件绑定****/
+    var CurrEvents = {
+        click:function(cfg){
+            var fromShapeId = $(cfg.el).attr('from-shape-id');
+            var toShapeId = $(cfg.el).attr('to-shape-id');
+            alert('click--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+            console.log('click--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+        },
+        click4text:function(cfg){
+            var fromShapeId = $(cfg.el).attr('from-shape-id');
+            var toShapeId = $(cfg.el).attr('to-shape-id');
+            alert('clickText--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+            console.log('clickText--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+        },
+        mouseenter4text:function(cfg){
+            var fromShapeId = $(cfg.el).attr('from-shape-id');
+            var toShapeId = $(cfg.el).attr('to-shape-id');
+            console.log('mouseenter4text--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+
+        },
+        mouseleave4text:function(cfg){
+
+            var fromShapeId = $(cfg.el).attr('from-shape-id');
+            var toShapeId = $(cfg.el).attr('to-shape-id');
+            console.log('mouseleave4text--> fromId:'+fromShapeId+',toShapeId:'+toShapeId);
+        }
+    };
+
+
+    /**
+     * 绑定元素属性说明
+     *
+     * targets-json="[{&quot;hasArrow&quot;:false,&quot;hasFromArrow&quot;:true,&quot;lineText&quot;:&quot;连线1&quot;}]"
+     * to-ids="ctrl_806025145230846776"
+     *
+     * targets-json为json数组[{
+     * hasArrow, 是否在目标元素位置有箭头
+     * hasFromArrow,//是否在出发元素位置有箭头
+     * lineText //连线的文本内容
+     * }]
+     * to-ids为目标连线id列表
+     * ****/
+    oui.buildShapeLines('.control-abs',{
+        container:'.page-abs', //指定 渲染容器
+        cls:'',
+        textCls:'text-color',//文本自定义样式
+        color:'pink', //线条颜色
+        lineHeight:2,//线条粗细，
+        zIndex:1,
+        click:'CurrEvents.click',//点击事件绑定函数
+        click4text:'CurrEvents.click4text', //线条文本点击事件
+        mouseenter4text:'CurrEvents.mouseenter4text',//线条文本鼠标移入事件
+        mouseleave4text:'CurrEvents.mouseleave4text'//线条文本鼠标移除事件
+    });
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+

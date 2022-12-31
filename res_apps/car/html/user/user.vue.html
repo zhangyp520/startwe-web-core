@@ -1,0 +1,111 @@
+<!--审批页面组件-->
+<template>
+    <div class="user">
+        <div class="main-container hasTagsView">
+            <div class="navbar">user</div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        el: 'user',
+        watch: {
+
+        },
+        data: function () {
+            return {
+                sidebarList: [
+                    {
+                        title: '产品管理',
+                        list: [
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' },
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' },
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' }
+                        ]
+                    },
+                    {
+                        title: '产品管理',
+                        list: [
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' },
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' },
+                            { name: '项目管理', icon: '/res_apps/car-html/home/image/3.首页_slices management_1.png' }
+                        ]
+                    }
+                ]
+            }
+        },
+        mounted: function () {
+            if(this.isLoading){
+                return ;
+            }
+            this.isLoading = true;
+
+        },
+        methods: {
+        }
+    }
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* 左侧导航 */
+    .sidebar-container .el-menu {
+        border: none;
+    }
+
+    .sidebar-container {
+        transition: width 0.28s;
+        width: 210px !important;
+        background-color: #fff;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1001;
+        overflow: hidden;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .sidebar-logo-container {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        background: #fff;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .sidebar-logo-container img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    /* 右侧区域 */
+    .main-container {
+        min-height: 100%;
+        -webkit-transition: margin-left 0.28s;
+        transition: margin-left 0.28s;
+        margin-left: 210px;
+        position: relative;
+    }
+
+    .navbar {
+        height: 50px;
+        overflow: hidden;
+        position: relative;
+        background: #fff;
+        -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+        box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    }
+</style>

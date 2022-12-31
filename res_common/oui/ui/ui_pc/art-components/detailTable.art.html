@@ -1,0 +1,1275 @@
+<template >
+    <div>
+        <div class="control-toolbar">
+
+            {{each $current().buttons as button index}}
+            <oui-include type="module" ref="btn_{{button.id}}" url="res_common/oui/ui/ui_pc/components/button.vue.html" data="_data().data().buttons[{{index}}]"></oui-include>
+            {{/each}}
+        </div>
+        <div class="table-wrap">
+            <div class="table-head" style="height: {{$current().headHeight}}px">
+                <div class="table-head-wrap">
+                    <table class="grid">
+                        <colgroup>
+                            {{each $current().columns4head as column4head columnIndex}}
+                            <col style="{{column4head.style}}" />
+                            {{/each}}
+                            <col style="{{column4headOperate.style}}" />
+                        </colgroup>
+
+                        <thead>
+                        {{each $current().rows4head as row4head rowIndex}}
+                        <tr
+                                class="control-table-head-row"
+                                style="{{row4head.style}}"
+                                row-index="{{row4head.index}}" >
+                            {{each $current().columns4head as column4head columnIndex}}
+                            {{if $current().hasTableCell(columnIndex,rowIndex)}}
+                            <th class="control-table-column"
+                                {{if $current().findCellColspan(columnIndex,rowIndex)>1}} colspan="{{$current().findCellColspan(columnIndex,rowIndex)}}" {{/if}}
+                                {{if $current().findCellRowspan(columnIndex,rowIndex)>1}} rowspan="{{$current().findCellRowspan(columnIndex,rowIndex)}}" {{/if}}
+                                {{if $current().hasControlInTableCell(columnIndex,rowIndex)}}style="background-color:{{$current().findControlInTableCell(columnIndex,rowIndex).style.backgroundColor}}" {{/if}}
+
+                                >
+                                {{if $current().hasControlInTableCell(columnIndex,rowIndex)}}
+                                {{each [$current().findControlInTableCell(columnIndex,rowIndex)] as control4cell }}
+                                <div control-id="{{control4cell.id}}"
+                                     class="control-abs control-abs-component control-detail-head-cell control-abs-onlyTitle"
+                                     style="{{control4cell.styleString}}" >
+                                    <div class="control-inner-abs" style="{{control4cell.innerStyle&&control4cell.innerStyle.styleInnerOuterString}}">
+                                        {{if control4cell.htmlType=='label'}}
+                                        <div class="control-label-abs" style="{{control4cell.innerStyle&&control4cell.innerStyle.styleTitleString}}">{{control4cell.description}}1</div>
+                                        {{else}}
+                                        <div class="control-label-abs" style="{{control4cell.innerStyle&&control4cell.innerStyle.styleTitleString}}">{{control4cell.name}}</div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                {{/each}}
+                                {{/if}}
+                            </th>
+                            {{/if}}
+                            {{/each}}
+                            {{if rowIndex ==0}}
+                            <!--操作列 表头-->
+                            <th class="control-table-column" rowspan="{{rows4head.length}}" >
+                                <div  class="control-abs control-abs-component control-detail-head-cell control-abs-onlyTitle"
+                                      style="{{control4operateCell.styleString}}" >
+                                    <div class="control-inner-abs" style="{{control4operateCell.innerStyle&&control4operateCell.innerStyle.styleInnerOuterString}}">
+                                        <div class="control-label-abs control-label-operate" style="{{control4operateCell.innerStyle&&control4operateCell.innerStyle.styleTitleString}}">{{control4operateCell.name}}</div>
+                                    </div>
+                                </div>
+                            </th>
+                            {{/if}}
+                        </tr>
+                        {{/each}}
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="table-content" style="{{contentStyle}}" onscroll="{{fullName}}.event2scroll(this)">
+                <table class="grid">
+                    <colgroup>
+                        {{each $current().columns4head as column4head columnIndex}}
+                        <col style="{{column4head.style}}" />
+                        {{/each}}
+                        <col style="{{column4headOperate.style}}" />
+                    </colgroup>
+                    <tbody>
+                    {{if (!$current().getTableData().length)}}
+                    <tr   class="control-table-body-row" >
+                        <td
+                                class="control-table-column"
+                                colspan="{{columns4head.length+1}}"
+                        >
+                            <div class="cell-detail-abs cell-detail-empty">
+                                暂无数据
+                            </div>
+                        </td>
+                    </tr>
+                    {{/if}}
+                    {{each $current().getTableData() as row rowIndex}}
+                    <tr  oui-e-click="event2selectRow" class="control-table-body-row {{if $current().isSelected(rowIndex)}}control-table-body-row-active{{/if}}"  row-index="{{rowIndex+''}}" >
+                        {{each columns as cell}}
+                        <td
+                                class="control-table-column"
+                                {{if $current().findCellColspan(cell.columnIndex,cell.rowIndex)>1}} colspan="{{$current().findCellColspan(cell.columnIndex,cell.rowIndex)}}" {{/if}}
+                            >
+                            {{if $current().hasControlInTableCell(cell.columnIndex,cell.rowIndex)}}
+
+                            <div class="cell-detail-abs">
+                                {{if $current().isEditing(row)}}
+
+                                <div
+                                        class="control-abs control-abs-component control-abs-html-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).htmlType}} control-abs-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).controlType}} control-abs-hideTitle"
+                                        style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).styleString}}">
+                                    <div class="control-inner-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleInnerOuterString}}">
+                                        {{if $current().findControlInTableCell(cell.columnIndex,cell.rowIndex).htmlType=='label'}}
+                                        <div class="control-label-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleTitleString}}">{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).description}}2</div>
+                                        {{else}}
+                                        <div class="control-title-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleTitleString}}" >{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).name}}</div>
+                                        <div class="control-container-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleFieldOuterString}}">
+                                            11111111111111111111111111111
+                                            <oui-include
+                                                    url="{{$current().findControlUrlInTableCell(cell.columnIndex,cell.rowIndex)}}"
+                                                    ref="{{row._editId}}_{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).id}}"
+                                                    type="module" data="_data().getPageData().getControlRenderDataById('{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).id}}',{{rowIndex}})">
+                                            </oui-include>
+                                        </div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+
+                                {{/if}}
+
+                                {{if !$current().isEditing(row)}}
+
+                                {{if $current().findControlInTableCell(cell.columnIndex,cell.rowIndex).htmlType=='label'}}
+
+                                <div
+                                        class="control-abs control-abs-component control-abs-html-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).htmlType}} control-abs-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).controlType}} control-abs-hideTitle"
+                                        style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).styleString}}">
+                                    <div class="control-inner-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleInnerOuterString}}">
+                                        <div class="control-label-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleTitleString}}">{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).description}}</div>
+                                    </div>
+                                </div>
+                                {{else}}
+                                <div
+                                        class="control-abs control-abs-component control-abs-html-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).htmlType}} control-abs-{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).controlType}} control-abs-hideTitle"
+                                        style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).styleString}}">
+                                    <div class="control-inner-abs" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleInnerOuterString}}">
+                                        <div class="control-container-abs control-container-abs-not-edit" style="{{$current().findControlInTableCell(cell.columnIndex,cell.rowIndex).innerStyle.styleFieldOuterString}}">
+                                            {{$current().getCellDisplay(cell,rowIndex)}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{/if}}
+                                {{/if}}
+                            </div>
+                            {{/if}}
+                        </td>
+                        {{/each}}
+                        {{if true}}
+                        <td class="control-table-column" >
+                            <div class="cell-detail-abs cell-detail-operate"   >
+                                {{if $current().isEditing(row)}}
+
+                                {{each $current().editingButtons as rowButton index4rowButton}}
+                                <oui-include type="module" ref="btn_{{rowButton.id}}" url="res_common/oui/ui/ui_pc/components/button.vue.html" data="_data().findEditingRowButtons({{index4rowButton}},{{rowIndex}})"></oui-include>
+                                {{/each}}
+
+                                {{/if}}
+                                {{if !$current().isEditing(row)}}
+                                {{each $current().rowButtons as rowButton index4rowButton}}
+                                <oui-include type="module" ref="btn_{{rowButton.id}}" url="res_common/oui/ui/ui_pc/components/button.vue.html" data="_data().findRowButtons({{index4rowButton}},{{rowIndex}})"></oui-include>
+                                {{/each}}
+
+                                {{/if}}
+                            </div>
+                        </td>
+                        {{/if}}
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+        forceUpdate:true,
+        data: function () {
+            return {
+                contentStyle:'',
+                forceUpdate:true,
+                id:'',
+                name:'',
+                tableDefine:{
+                    id:'',
+                    style:{
+                        columnLines:[],
+                        rowLines:[]
+                    }
+                },
+                columns4head:[],
+                buttons:[],
+                minWidth:1500,
+                column4headOperate:{style:''},
+                control4operateCell:{styleString:'',innerStyle:{}},
+                rows4head:[],
+                headHeight: 40,
+                columns:[],
+                bindProp:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                iconCls:'',
+                title:'',
+                fullName:this.FullName,
+                selectedIndex:[] //选择行索引列表
+            }
+        },
+        mounted:function(){
+            this.selectedIndex = [];
+            this.oldRowCache ={}; //编辑前数据缓存
+            this.initSize = 0;
+            if(!this.columns4head || (!this.columns4head.length)){
+                this.initByTableDefine(); //根据表格定义初始化列
+            }
+            this.initOnce();//初始化一次
+        },
+        methods:{
+
+            //获取行操作 按钮
+            findRowButtons:function(btnIndex,rowIndex){
+                var rowButtons = this.rowButtons||[];
+                var btn = rowButtons[btnIndex]||{};
+                var button = oui.parseJson(oui.parseString(btn));
+                button.rowIndex= rowIndex;
+                button.id =btn.id+'_'+rowIndex;
+                return button;
+            },
+            findEditingRowButtons:function(btnIndex,rowIndex){
+                var rowButtons = this.editingButtons||[];
+                var btn = rowButtons[btnIndex]||{};
+                var button = oui.parseJson(oui.parseString(btn));
+                button.rowIndex= rowIndex;
+                button.id =btn.id+'_'+rowIndex;
+                return button;
+            },
+            query:function(){
+                var me = this;
+                var pageData = me.getPageData&&me.getPageData();
+                if(pageData){
+                    var logic4query = pageData.logics? pageData.logics.logic4query:'';
+                    if(logic4query && pageData.dataId){// 有数据id才查询，否则不查询
+                        //ajax 查询明细表数据
+                        //根据明细表业务属性控制数据结构
+                        oui.getData(logic4query,{//业务参数
+                            pageSize:500,//每页不超过500条,全量查询,此处不做分页
+                            mainDataId:pageData.dataId,
+                            detailTableId:me.bizId
+                        },function(res){
+                            var controls = me.getPageData().getDesigner().controls||[];
+                            var detailControls = oui.findManyFromArrayBy(controls,function(item){
+                                //主表数据
+                                if((item.detailId) &&(item.formField) &&(item.detailId == me.bizId) ){
+                                    return true;
+                                }
+                            });
+
+                            var total= res.total;
+                            var dataList = res.dataList||[];
+                            //遍历 数据，组装模型
+                            var data4detail = [];
+
+                            oui.eachArray(dataList,function(temp){
+                                var one4detail={};
+                                oui.eachArray(detailControls,function(item){
+                                    var key = item.bizId||item.id;
+                                    var value = temp[key]||'';
+                                    var display = oui.util.findDisplayByControlAndFormData(item,temp);
+                                    one4detail[key] = { //明细表数据处理
+                                        value:value,
+                                        display:display
+                                    };
+                                });
+                                data4detail.push(one4detail);
+                            });
+
+                            //用于 特殊字段处理
+                            var logic4new = res.logic4new;
+                            me.logic4new = logic4new;
+                            me.dataList = dataList;
+
+                            //用于明细表 的数据渲染
+                            pageData.detailData = pageData.detailData||{};
+                            pageData.detailData[me.tableDefine.bizId]= data4detail;
+                            me.refresh();
+                        });
+                    }else{
+                        me.refresh();
+                    }
+                }else{
+                    this.refresh();
+                }
+            },
+            initOnce:function(){
+                this.initSize++;
+                console.log(this.initSize);
+                if(this.initSize>1){
+                    return ;
+                }
+                this.query();
+            },
+            //滚动条滚动
+            event2scroll:function(el){
+                var $wrap= $(el).closest('.table-wrap');
+                if($wrap&&$wrap.length){
+                    var $wrapHead = $wrap.find('.table-head-wrap');
+                    $wrapHead[0].scrollLeft = el.scrollLeft;
+                }
+
+                console.log('scroll');
+            },
+            //添加数据
+            event2add:function(){
+                this.addRow();
+                this.refresh();
+            },
+            event2removeMany:function(){
+                //TODO 删除多个
+                var data = this.getTableData();
+                var selecteds = this.getSelecteds();
+                for(var i= 0,len=selecteds.length;i<len;i++){
+                    var curr = selecteds[i];
+                    var currIdx = data.indexOf(curr);
+                    if(currIdx>-1){
+                        data.splice(currIdx,1);
+                    }
+
+                }
+                this.selectedIndex = [];
+                this.refresh();
+            },
+            removeBy:function(fun){
+                var data = this.getTableData();
+                oui.removeFromArrayBy(data,fun);
+                this.refresh();
+            },
+            removeByAndAddMany:function(fun,many){
+                var me = this;
+                var data = this.getTableData();
+                oui.removeFromArrayBy(data,fun);
+                me.addRow4many(many);
+                this.refresh();
+            },
+            //删除数据
+            event2remove:function(){
+                var data = this.getTableData();
+                var selecteds = this.getSelecteds();
+                if(selecteds.length!=1){
+                    oui.alert('请选择一行数据进行操作');
+                    return;
+                }
+                var me = this;
+                var curr = selecteds[0];
+                var currIdx = data.indexOf(curr);
+                if(currIdx>-1){
+                    var serverRow = me.dataList[currIdx];
+                    if(serverRow){
+                        var logic4remove = serverRow.extraAttrs.logic4remove;
+                        var detailTableId = me.tableDefine.bizId;//当前明细表的业务id
+                        var formData ={
+                            id:serverRow.id,
+                            _detail_table_id_: detailTableId //明细表业务ID
+                        };
+                        oui.postData(logic4remove,{
+                            id:serverRow.id,
+                            formData:formData
+                        },function(res){
+                            if(res&&res.success){
+                                data.splice(currIdx,1);
+                                me.dataList.splice(currIdx,1);
+                                me.selectedIndex = [];
+                                me.refresh();
+                            }
+                        },null,'删除中');
+                    }
+
+                }
+
+            },
+            event2editRow:function(rowIndex){
+                //先缓存原始数据，再编辑
+                var data = this.getTableData();
+                if(!data[rowIndex]){
+                    return ;//没有数据，存在异常情况
+                }
+                var row = oui.parseJson(oui.parseString(data[rowIndex])); //克隆行数据
+                var uuid = oui.getUUIDLong();
+                data[rowIndex]._editId =uuid;
+                this.oldRowCache[uuid] = row;
+                this.refresh();
+            },
+            //编辑数据
+            event2edit:function(cfg){
+                cfg.e.stopPropagation&&cfg.e.stopPropagation();
+                cfg.e.preventDefault&&cfg.e.preventDefault();
+                var rowIndex = $(cfg.el).attr('row-index');
+                rowIndex = parseInt(rowIndex);
+                //先缓存原始数据，再编辑
+                var data = this.getTableData();
+                if(!data[rowIndex]){
+                    return ;//没有数据，存在异常情况
+                }
+                var row = oui.parseJson(oui.parseString(data[rowIndex])); //克隆行数据
+                var uuid = oui.getUUIDLong();
+                data[rowIndex]._editId =uuid;
+                this.oldRowCache[uuid] = row;
+                this.refresh();
+            },
+            saveRow:function(rowIndex){
+                var data = this.getTableData();
+                var row = data[rowIndex];
+                var me = this;
+
+                var serverRow = me.dataList? me.dataList[rowIndex]:null;
+                if(row && serverRow){
+                    // ajax 保存提交 当前数据
+                    this.onSaveRowBefore&&this.onSaveRowBefore(row); //行保存事件自定义脚本
+
+                    if(row._editId){
+                        this.oldRowCache[row._editId] = null;
+                        delete this.oldRowCache[row._editId];//删除缓存的老数据
+                    }
+                    row._editId = null; // 清除编辑id
+                    delete row._editId;
+                    var logic4save = serverRow.extraAttrs.logic4update;//更新
+
+                    //更新时只需要 处理 明细表名即可
+                    var detailTableId = me.tableDefine.bizId;//当前明细表的业务id
+                    var formData ={
+                        id:serverRow.id,
+                        _detail_table_id_: detailTableId //明细表业务ID
+                    };
+                    //业务属性扩展
+
+                    var controls = me.getPageData().getDesigner().controls||[];
+                    var detailControls = oui.findManyFromArrayBy(controls,function(item){
+                        //明细表数据
+                        if((item.detailId) &&(item.formField) &&(item.detailId == me.bizId) ){
+                            return true;
+                        }
+                    });
+
+                    //遍历 数据，组装模型
+                    oui.eachArray(detailControls,function(item){
+                        var key = item.bizId||item.id;
+                        formData[key] =  row[key].value;
+                    });
+
+                    oui.postData(logic4save,{
+                        formData:formData
+                    },function(res){
+                        //保存当前行数据 事件
+                        me.onSaveRow&&this.onSaveRow(row); //行保存事件自定义脚本
+                        me.query();//重新查询 刷新
+                    });
+                }
+            },
+            //纯前端 行数据保存
+            saveRow4front:function(rowIndex){
+                var data = this.getTableData();
+                var row = data[rowIndex];
+                var me = this;
+
+                if(row){
+                    // ajax 保存提交 当前数据
+                    this.onSaveRowBefore&&this.onSaveRowBefore(row); //行保存事件自定义脚本
+
+                    if(row._editId){
+                        this.oldRowCache[row._editId] = null;
+                        delete this.oldRowCache[row._editId];//删除缓存的老数据
+                    }
+                    row._editId = null; // 清除编辑id
+                    delete row._editId;
+                    //更新时只需要 处理 明细表名即可
+                    me.refresh();
+                }
+            },
+            event2saveRow:function(rowIndex){
+                var me =this;
+                me.saveRow(rowIndex);
+            },
+
+            /**取消保存行 */
+            event2cancelSaveRow:function(cfg){
+                cfg.e.stopPropagation&&cfg.e.stopPropagation();
+                cfg.e.preventDefault&&cfg.e.preventDefault();
+                var rowIndex = $(cfg.el).attr('row-index');
+                rowIndex = parseInt(rowIndex);
+                var data = this.getTableData();
+                var row = data[rowIndex];
+                if(row){
+                    this.onSaveRowBefore&&this.onSaveRowBefore(row); //行保存事件自定义脚本
+
+                    if(row._editId){
+                        this.oldRowCache[row._editId] = null;
+                        delete this.oldRowCache[row._editId];//删除缓存的老数据
+                    }
+                    row._editId = null; // 清除编辑id
+                    delete row._editId;
+                }
+                //保存当前行数据 事件
+                this.refresh();
+                this.onSaveRow&&this.onSaveRow(row); //行保存事件自定义脚本
+            },
+            //选择行或者取消选择行
+            event2selectRow:function(cfg){
+
+                var rowIndex = $(cfg.el).attr('row-index');
+                rowIndex = parseInt(rowIndex);
+                var tableData = this.getTableData();
+                var row = tableData[rowIndex]||{};
+                if(this.isEditing(row)){
+                    return false;
+                }
+                var idx = this.selectedIndex.indexOf(rowIndex);
+                if(idx>-1){
+                    this.selectedIndex.splice(idx,1); //删除该索引
+                }else{
+                    this.selectedIndex.push(rowIndex); //放入选择行索引
+                }
+                this.refresh();
+            },
+            isSelected:function(rowIndex){
+                return this.selectedIndex&&this.selectedIndex.indexOf(rowIndex)>-1;
+            },
+            getSelecteds:function(){
+                var arr =[];
+                var data = this.getTableData();
+                if(this.selectedIndex&&this.selectedIndex.length){
+                    for(var i= 0,len=this.selectedIndex.length;i<len;i++){
+                        var idx = this.selectedIndex[i];
+                        if(data[idx]){
+                            arr.push(data[idx]);
+                        }
+                    }
+                }
+                return arr;
+            },
+            /****
+             * 判断行是否正在编辑
+             *
+             */
+            isEditing:function(row){
+                return row._editId;//存在编辑id说明正在编辑中
+            },
+            /***
+             *  获取编辑id
+             */
+            getEditId:function(rowIndex){
+                var tableData = this.getTableData();
+                return tableData[rowIndex]&&tableData[rowIndex]._editId;
+            },
+            /**
+             * 获取单元格显示值
+             */
+            getCellDisplay:function(cell,rowIndex){
+                var me = this;
+                var pageData = me.getPageData&&me.getPageData();
+                var display ='';
+                if(pageData){
+                    var tableData = this.getTableData();
+                    var control = this.findControlInTableCell(cell.columnIndex,cell.rowIndex);
+                    display = pageData.getDisplay(control,tableData[rowIndex]||{})
+                }
+                return display;
+            },
+            initBodyColumnCells:function(){
+                //获取用于渲染数据的列单元格
+                var columnCells =  this.findCells4Detail();
+                //TODO 处理用于渲染数据的单元格列
+                console.log('数据列有：');
+                console.log(columnCells);
+                this.control4operateCell = {
+                    styleString:'',
+                    innerStyle:{
+                        styleInnerOuterString:'',
+                        styleTitleString:''
+                    }
+                };
+
+                //遍历找到第一个列头样式 赋予给 操作列样式
+
+                for(var r=this.rows4head.length-1;r>-1;r--){
+                    for(var c = this.columns4head.length-1;c>-1;c--){
+                        if(this.hasControlInTableCell(c,r)){
+                            this.control4operateCell = oui.parseJson(oui.parseString(this.findControlInTableCell(c,r)));
+                            break;
+                        }
+                    }
+                }
+
+                this.control4operateCell.name = "操作";
+                this.columns = columnCells;
+            },
+            findCells4Detail:function(){
+                var me = this;
+                var cells = [];
+                var resultMap = {};
+                var tableDefine = this.tableDefine||{style:{columnLines:[],rowLines:[]}};
+                if(!tableDefine.style){
+                    tableDefine.style={columnLines:[],rowLines:[]};
+                }
+                var columnLines = tableDefine.style.columnLines ||[];
+                var rowLines = tableDefine.style.rowLines ||[];
+                var rowIndex = rowLines.length-2; //获取最后行的列信息
+                for(var i= 0,len= columnLines.length-1;i<len;i++){
+                    var cell =me.findTableCell(i,rowIndex);
+                    if(!resultMap[cell.columnIndex+'_'+cell.rowIndex]){
+                        resultMap[cell.columnIndex+'_'+cell.rowIndex] = cell;
+                        cells.push(cell);
+                    }
+                }
+                resultMap=null;
+                delete resultMap;
+                return cells;
+            },
+            /** 找出指定 行列索引对应的 单元格*****/
+            findTableCell:function(columnIndex,rowIndex){
+                var tableDefine = this.tableDefine ||{};
+                var result = {
+                    columnIndex:columnIndex,
+                    rowIndex:rowIndex
+                };
+                var cellsMap = tableDefine.style.cellsMap||{};
+                if(cellsMap[columnIndex+'_'+rowIndex]){
+                    return result;
+                }
+                var mergeCellsMap = tableDefine.style.mergeCellsMap;
+                /** 在合并单元格中 判断是否被合并单元格包含****/
+                if(mergeCellsMap){
+                    for(var key in mergeCellsMap){
+
+                        var cell = mergeCellsMap[key];
+                        if(!cell){
+                            continue;
+                        }
+                        /** 找到合并单元格行列索引位置 直接 返回，存在****/
+                        if((cell.startColumnIndex==columnIndex) && (cell.startRowIndex ==rowIndex)){
+                            result.columnIndex = cell.startColumnIndex;
+                            result.rowIndex = cell.startRowIndex;
+                            break;
+                        }
+                        /** 找到合并单元格，并且 被合并单元格包含，则 返回不存在*****/
+                        if((columnIndex>=cell.startColumnIndex) && (columnIndex<=cell.endColumnIndex)){
+                            if((rowIndex>=cell.startRowIndex) && (rowIndex<=cell.endRowIndex)){
+                                result.columnIndex = cell.startColumnIndex;
+                                result.rowIndex = cell.startRowIndex;
+                                break;
+                            }
+                        }
+                        //继续循环判断,如果遍历完都没有找到 则说明单元格存在
+                    }
+                }
+                return result;
+            },
+            /***
+             *  获取表格数据
+             */
+            getTableData:function(){
+                var me = this;
+                var pageData = me.getPageData&&me.getPageData();
+                var data = null;
+                if(pageData){
+                    //根据明细表业务属性控制数据结构
+                    if((!this.tableDefine) || (!this.tableDefine.bizId)){
+                        return [];
+                    }
+                    data = pageData.getDataList&&pageData.getDataList(this.tableDefine.bizId);
+                }
+                return data||[];
+            },
+            addRow4one:function(one,idx){
+                var me = this;
+                //遍历 数据，组装模型
+                var pageData = me.getPageData&&me.getPageData();
+                //用于明细表 的数据渲染
+                pageData.detailData = pageData.detailData||{};
+                pageData.addDataRow(me.tableDefine.bizId,one,idx);
+                me.refresh();
+            },
+            addRow4many:function(many,idx){
+                var me = this;
+                //遍历 数据，组装模型
+                var pageData = me.getPageData&&me.getPageData();
+                //用于明细表 的数据渲染
+                pageData.detailData = pageData.detailData||{};
+                oui.eachArray(many,function(one){
+                    pageData.addDataRow(me.tableDefine.bizId,one,idx);
+                });
+                me.refresh();
+            },
+            //删除多个
+            remove4many:function(){
+                this.event2removeMany();
+            },
+            setRows:function(rows){
+                var me = this;
+                //遍历 数据，组装模型
+                var pageData = me.getPageData&&me.getPageData();
+                //用于明细表 的数据渲染
+                pageData.detailData = pageData.detailData||{};
+                var dataList = pageData.getDataList(me.tableDefine.bizId);
+                if(dataList.length){
+                    dataList.length=0;
+                    dataList=[];
+                }
+                oui.eachArray(rows,function(one){
+                    pageData.addDataRow(me.tableDefine.bizId,one);
+                });
+                me.refresh();
+            },
+            /****
+             * 添加行
+             */
+            addRow:function(){
+                var me = this;
+                var pageData = me.getPageData&&me.getPageData();
+                if(pageData){
+                    if((!this.tableDefine) || (!this.tableDefine.bizId)){
+                        return false ;
+                    }
+                    if(!me.dataId){ //主表数据存在
+                        //先保存主表数据，再保存明细表
+                        oui.alert('请先保存主业务数据，再添加明细数据');
+
+                        return false;
+                    }
+
+                    var mainTableId = pageData.designer.bizId||('oui_of_'+pageData.designer.id);
+                    var detailTableId = me.tableDefine.bizId;//当前明细表的业务id
+                    //ajax 新增空行占位
+                    oui.postData(me.logic4new,{
+                        formData:{
+                            mainDataId:me.dataId,//主数据id
+                            mainTableId:mainTableId,//主业务ID
+                            _detail_table_id_:detailTableId //明细表业务ID
+                        }
+                    },function(res){
+                        //pageData.addDataRow&&pageData.addDataRow(me.tableDefine.bizId,{}) ;
+                        //直接查询刷新当前页
+                        me.query();
+                    });
+                    return true;
+                }
+
+                return false;
+            },
+            findControlUrlInTableCell:function(columnIndex,rowIndex){
+                var me = this;
+                var control = this.findControlInTableCell(columnIndex,rowIndex);
+                if(control){
+                    return  oui.util.findControlUrl(control);
+                }
+                return '';
+            },
+            /***
+             *  找出在单元格中的控件
+             */
+            findControlInTableCell:function(columnIndex,rowIndex){
+                var me = this;
+                var tableDefine = this.tableDefine ||{};
+                var cellsMap = tableDefine.style.cellsMap||{};
+                var control = null;
+                if(cellsMap[columnIndex+'_'+rowIndex]){
+                    var controlId =  cellsMap[columnIndex+'_'+rowIndex].controlId;
+                    if(!controlId){
+                        return control;
+                    }
+                    var pageData = me.getPageData&&me.getPageData();
+                    if(pageData){
+                        control = pageData.getControl&&pageData.getControl(controlId);
+                    }
+                    return control;
+                }
+                return control;
+            },
+            /*** 判断 单元格中是否存在控件 *****/
+            hasControlInTableCell:function(columnIndex,rowIndex){
+                var tableDefine = this.tableDefine||{};
+                tableDefine.style = tableDefine.style||{};
+                var flag = false;
+                var cellsMap = tableDefine.style.cellsMap||{};
+                if(cellsMap[columnIndex+'_'+rowIndex]){
+                    flag = true;
+                }
+                return flag;
+            },
+            /*** 找出单元格的跨列信息****/
+            findCellColspan:function(columnIndex,rowIndex){
+                var tableDefine = this.tableDefine||{};
+                tableDefine.style = tableDefine.style||{};
+                var mergeCellsMap = tableDefine.style.mergeCellsMap||{};
+                var cell = mergeCellsMap[columnIndex+'_'+rowIndex];
+                var colspan = 1;
+                if(cell){
+                    colspan = cell.endColumnIndex-cell.startColumnIndex+1;
+                }
+                return colspan;
+            },
+            /*** 找出单元格的跨行信息****/
+            findCellRowspan:function(columnIndex,rowIndex){
+                var tableDefine = this.tableDefine||{};
+                tableDefine.style = tableDefine.style||{};
+                var mergeCellsMap = tableDefine.style.mergeCellsMap||{};
+                var cell = mergeCellsMap[columnIndex+'_'+rowIndex];
+                var rowspan = 1;
+                if(cell){
+                    rowspan = cell.endRowIndex - cell.startRowIndex+1;
+                }
+                return rowspan;
+            },
+            /***
+             * 判断 table中是否存在某个td单元格
+             *
+             * 如果被合并单元格包含，并且不是合并单元格的行列索引位置，则说明 单元格不存在
+             * @param tableDefine
+             * @param columnIndex
+             * @param rowIndex
+             */
+            hasTableCell:function(columnIndex,rowIndex){
+                var tableDefine = this.tableDefine||{};
+                //先判断是否存在控件单元格，存在 则直接返回
+                var flag = true;
+                tableDefine.style = tableDefine.style ||{};
+                var cellsMap = tableDefine.style.cellsMap||{};
+                if(cellsMap[columnIndex+'_'+rowIndex]){
+                    return flag;
+                }
+                var mergeCellsMap = tableDefine.style.mergeCellsMap;
+                /** 在合并单元格中 判断是否被合并单元格包含****/
+                if(mergeCellsMap){
+                    for(var key in mergeCellsMap){
+
+                        var cell = mergeCellsMap[key];
+                        if(!cell){
+                            continue;
+                        }
+                        /** 找到合并单元格行列索引位置 直接 返回，存在****/
+                        if((cell.startColumnIndex==columnIndex) && (cell.startRowIndex ==rowIndex)){
+                            flag = true;
+                            break;
+                        }
+                        /** 找到合并单元格，并且 被合并单元格包含，则 返回不存在*****/
+                        if((columnIndex>=cell.startColumnIndex) && (columnIndex<=cell.endColumnIndex)){
+                            if((rowIndex>=cell.startRowIndex) && (rowIndex<=cell.endRowIndex)){
+                                flag = false;
+                                break;
+                            }
+                        }
+                        //继续循环判断,如果遍历完都没有找到 则说明单元格存在
+                    }
+                    return flag;
+                }
+                return flag;
+            },
+            /**
+             *  初始化表头列信息
+             *
+             */
+            initColumns4HeadByTableDefine:function(){
+                //处理表头第一行的每列信息
+                var columns4head =[];
+                var tableDefine = this.tableDefine||{};
+                var style = tableDefine.style ||{};
+                var columnLines = style.columnLines||[];
+                var rowLines = style.rowLines||[];
+                var me = this;
+                var headThStyleRender = template.compile("width:{{currPos.width}}px;border-left-style:{{currPos.borderLeftStyle}};border-right-style:{{currPos.borderRightStyle}};border-left-color:{{currPos.borderLeftColor}};border-left-width:{{currPos.borderLeftWidth}}px;border-right-width:{{currPos.borderRightWidth}}px;border-right-color:{{currPos.borderRightColor}};");
+                var tableMinWidth =0;
+                for(var i= 0,len=columnLines.length-1;i<len;i++){
+                    var currPos = me.findColumnPos(i);
+                    var width = currPos.width;
+                    var borderLeftStyle= currPos.borderLeftStyle;
+                    var borderRightStyle = currPos.borderRightStyle;
+                    tableMinWidth += currPos.width;
+                    columns4head.push({
+                        index:i,
+                        lineColumnLength:columnLines.length,
+                        lineRowLength:rowLines.length,
+                        width:currPos.width,
+                        style:headThStyleRender({currPos:currPos}), //表头 第一行控制列宽的th
+                        headThCode:oui.getCharCode(i+1)//表头第一行列的索引 转为字母，如 A,B,C。。。
+                    });
+                }
+                var currPos =  me.findColumnPos(columnLines.length-2); //获取最后一列作为操作列样式
+                currPos.width=200; //操作列固定宽度为100
+                //tableMinWidth+= currPos.width;
+                this.minWidth = tableMinWidth;
+                //操作列的样式配置
+                this.column4headOperate = {
+                    style:headThStyleRender({
+                        currPos:currPos
+                    })
+                };
+                this.columns4head = columns4head;
+            },
+            /**
+             * 初始化表头多行信息
+             *
+             */
+            initRows4HeadByTableDefine:function(){
+                var rows4head =[];
+
+                var tableDefine = this.tableDefine||{};
+                var style = tableDefine.style ||{};
+                var columnLines = style.columnLines||[];
+                var rowLines = style.rowLines||[];
+                var me = this;
+
+                var headRowStyleRender = template.compile("height:{{currPos.height}}px;" +
+                    "border-top-width:{{currPos.borderTopWidth}}px;" +
+                    "border-top-color:{{currPos.borderTopColor}};" +
+                    "border-bottom-color:{{currPos.borderBottomColor}};" +
+                    "border-top-style:{{currPos.borderTopStyle}};" +
+                    "border-bottom-style:{{currPos.borderBottomStyle}};" +
+                    "border-bottom-width:{{currPos.borderBottomWidth}}px;");
+
+                //剔除最后两条线 作为行样式,因为最后一行是数据行
+                var len = rowLines.length-2<1?rowLines.length-1:rowLines.length-2;
+                var headHeight =2; //默认2px 上下边框
+                for(var i= 0;i<len;i++){
+                    var currPos = me.findRowPos(i);
+                    headHeight+= currPos.height;
+                    rows4head.push({
+                        index:i,
+                        lineColumnLength:columnLines.length,
+                        lineRowLength:rowLines.length,
+                        currPos:currPos,
+                        height:currPos.height,
+                        style:headRowStyleRender({currPos:currPos})
+                    });
+                }
+                this.headHeight = headHeight;
+                this.rows4head = rows4head;
+            },
+            initByTableDefine:function(){
+                this.tableDefine = this.tableDefine ||this.control||{};
+                this.contentStyle =  this.tableDefine.contentStyle;//表格内容样式传入进来
+                this.initButtons();
+                //处理表头第一行的每列信息
+                this.initColumns4HeadByTableDefine();
+
+                //处理表头多行信息
+                this.initRows4HeadByTableDefine();
+
+                //处理内容的每列单元格信息
+                this.initBodyColumnCells();
+            },
+            initButtons:function(){
+                var me = this;
+                this.buttons = this.tableDefine.otherAttrs.buttons ||[];
+                this.rowButtons = this.tableDefine.otherAttrs.rowButtons ||[]; //默认行编辑按钮列表
+                this.editingButtons = this.tableDefine.otherAttrs.editingButtons||[]; // 编辑时按钮列表
+                oui.eachArray(this.buttons,function(item){
+                    item.detailTableFullName = me.FullName;
+                });
+                oui.eachArray(this.rowButtons,function(temp){
+                    temp.detailTableFullName = me.FullName;
+                });
+                oui.eachArray(this.editingButtons,function(temp){
+                    temp.detailTableFullName = me.FullName;
+                });
+
+            },
+
+            /**
+             * 获取所有列
+             */
+            getColumns:function(){
+                return this.columns||[];
+            },
+            /** 获取某列位置****/
+            findColumnPos:function(columnIndex,key){
+
+                var tableDefine = this.tableDefine ||{};
+                var operationAreaOffset = 2 ;
+                if((!tableDefine.style) || (!tableDefine.style.columnLines) || (!tableDefine.style.columnLines.length)){
+                    return {};
+                }
+                var left = tableDefine.style.columnLines[columnIndex].fromPos.left;
+                var right = tableDefine.style.columnLines[columnIndex+1].fromPos.left;
+                var width = right-left+operationAreaOffset/2;
+                var leftBorderWidth = tableDefine.style.columnLines[columnIndex].config.lineHeight;
+                var rightBorderWidth =tableDefine.style.columnLines[columnIndex+1].config.lineHeight;
+                var borderLeftColor = tableDefine.style.columnLines[columnIndex].config.color;
+                var borderRightColor = tableDefine.style.columnLines[columnIndex+1].config.color;
+                var columnLength =  tableDefine.style.columnLines.length;
+
+                var pos = {
+                    left:left,
+                    width:width,
+                    borderLeftWidth:leftBorderWidth,
+                    borderLeftColor:borderLeftColor,
+                    borderRightColor:borderRightColor,
+                    borderLeftStyle:tableDefine.style.columnLines[columnIndex].config.borderStyle||'solid',
+                    borderRightStyle:tableDefine.style.columnLines[columnIndex+1].config.borderStyle||'solid',
+                    borderRightWidth:columnIndex==columnLength-2?rightBorderWidth:0
+                };
+                if(key){
+                    return pos[key];
+                }
+                return pos;
+            },
+            /*** 获取某行位置****/
+            findRowPos:function(rowIndex,key){
+                var tableDefine  = this.tableDefine||{};
+                var operationAreaOffset =2;
+                var top = tableDefine.style.rowLines[rowIndex].fromPos.top;
+                var bottom = tableDefine.style.rowLines[rowIndex+1].fromPos.top;
+                var height = bottom-top+operationAreaOffset/2;
+                var topBorderWidth = tableDefine.style.rowLines[rowIndex].config.lineHeight;
+                var bottomBorderWidth =tableDefine.style.rowLines[rowIndex+1].config.lineHeight;
+                var borderTopColor = tableDefine.style.rowLines[rowIndex].config.color;
+                var borderBottomColor = tableDefine.style.rowLines[rowIndex+1].config.color;
+
+                var rowLength =  tableDefine.style.rowLines.length;
+
+                var pos = {
+                    top:top,
+                    height:height,
+                    borderTopWidth:topBorderWidth,
+                    borderTopColor:borderTopColor,
+                    borderBottomColor:borderBottomColor,
+                    borderTopStyle:tableDefine.style.rowLines[rowIndex].config.borderStyle||'solid',
+                    borderBottomStyle:tableDefine.style.rowLines[rowIndex+1].config.borderStyle||'solid',
+
+                    borderBottomWidth:rowIndex==rowLength-2?bottomBorderWidth:0
+                };
+                if(key){
+                    return pos[key];
+                }
+                return pos;
+            },
+            event2click:function(){ //icon图标点击事件
+                this.onClick&&this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style>
+    /* 空数据颜色**/
+    .cell-detail-empty{
+        text-align: center;
+    }
+    /*表头 操作列头样式*/
+    .control-label-operate{
+        text-align: center !important;
+    }
+    /*单元格操作样式 */
+    .cell-detail-operate{
+        text-align: center;
+    }
+    /*默认单元格字体*/
+    .control-table-body-row-active  .control-abs-component{
+        background-color:rgb(173, 216, 230) !important;
+    }
+    .control-table-body-row-active .control-table-column{
+        background-color: rgb(173, 216, 230) !important; ;
+    }
+    .cell-detail-abs .control-container-abs-not-edit{
+        font-size: 14px;
+    }
+    /*单元格label背景*/
+    .cell-detail-abs .control-label-abs,.cell-detail-abs .control-abs-html-label{
+        background:none !important;
+    }
+    .control-table-column{
+        background-color:rgb(255, 255, 255) ;
+    }
+    .control-table-column .control-abs-component{
+        width: 100% !important;
+    }
+
+    .cell-detail-abs .el-button {
+        opacity: 1;
+        /*line-height: 1.6;*/
+        border-width: 1px;
+        font-size: 14px;
+        background-color: rgb(255, 255, 255);
+        border-color: rgb(230, 230, 230);
+        border-style: solid;
+        color: rgb(51, 51, 51);
+        font-weight: normal;
+        text-align: left;
+        white-space: normal;
+    }
+    .control-toolbar .button-outer{
+        display: inline-block;
+        padding:5px
+    }
+
+    /*****表格样式***/
+    .table-thead tr th{
+        text-align: left;
+        padding-left:10px;
+        border-right:1px solid #CFCFCF;
+    }
+    .table-thead tr th:last-child, .table-thead tr th:nth-last-child(2){
+        border-right:0;
+    }
+    .table-thead tr, .table-tbody tr{
+        height:35px;
+    }
+    .table-tbody tr{
+        border-bottom:1px solid #CFCFCF;
+    }
+    /*.table-tbody tr:last-child{*/
+    /*border-bottom: 0;*/
+    /*}*/
+    .table-tbody tr td{
+        padding-left:10px;
+        padding-right:10px;
+        border-right:1px solid #CFCFCF;
+    }
+    .table-wrap{
+        width:100%;
+        outline: none;
+        position: relative;
+        font-size: 14px;
+        color:#444;
+        border: 1px #e6e6e6 solid;
+        margin-bottom: 30px;
+    }
+    .table-head{
+        padding-right:17px;
+        background-color: #FAFAFA;
+        border-bottom: 1px #e6e6e6 solid;
+    }
+    .table-head-wrap{
+        width:100%;
+        position: relative;
+        overflow-x:scroll;
+        overflow-y: hidden;
+    }
+    .grid{
+        margin: 0px;
+        table-layout: fixed;
+        width: 100%;
+        max-width: none;
+        border-spacing: 0px;
+        empty-cells: show;
+        border-width: 0px;
+        outline: 0px none;
+        border-collapse: collapse;
+    }
+    .grid tr th{
+        /*padding: 0.929em 0.5em;*/
+        /*vertical-align: bottom;*/
+        /*overflow: hidden;*/
+        /*border-left: 1px #e6e6e6 solid;*/
+        /*font-weight: normal;*/
+        /*white-space: nowrap;*/
+        /*text-overflow: ellipsis;*/
+        /*text-align: left;*/
+    }
+    .grid tr th:first-child{
+        border-left-width: 0;
+    }
+    .grid tr td{
+        border-left: 1px #e6e6e6 solid;
+        border-bottom: 1px #e6e6e6 solid;
+        /*padding: 0.929em 0.5em;*/
+        overflow: hidden;
+        line-height: 1.6em;
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+    .grid tr td:first-child{
+        border-left-width: 0px;
+    }
+    .grid tr:last-child td{
+        /*border-bottom: none;*/
+    }
+
+    .table-content{
+        height:300px;
+        white-space: normal;
+        position: relative;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: scroll;
+        min-height: 0;
+    }
+
+    .data-table td{
+        border-color: #CCC;
+        border-width: 0px 1px 1px 0px;
+        border-style: dotted;
+        margin: 0px;
+        padding: 0px;
+        line-height: 1.65em;
+    }
+
+    .datagrid-btable tr{
+        height:25px;
+    }
+    .datagrid-btable tr td{
+        border-color: #CCC;
+        border-width: 0px 1px 1px 0px;
+        border-style: dotted;
+        margin: 0px;
+        padding: 0px;
+    }
+
+
+    /****** 固定列 ******/
+    .ours-table-fixed-col {
+        position: relative;
+    }
+
+    .ours-table-body {
+        overflow-x: scroll;
+    }
+
+    /**** 左侧固定列 ****/
+    .ours-table-fixed-left {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #fff;
+        box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.15);
+    }
+
+    /**** 右侧固定列 ****/
+    .ours-table-fixed-right {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background: #fff;
+        box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.15);
+    }
+
+    .ours-table-body table,
+    .ours-table-fixed-left table,
+    .ours-table-fixed-right table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .ours-table-body table thead th,
+    .ours-table-fixed-left table thead th,
+    .ours-table-fixed-right table thead th {
+        text-align: left;
+        font-size: 14px;
+        font-weight: bolder;
+        color: #333;
+        background: #fafafa;
+        overflow-wrap: break-word;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+    .ours-table-body table tbody td,
+    .ours-table-fixed-left table tbody td,
+    .ours-table-fixed-right table tbody td {
+       
+        text-align: left;
+        font-size: 14px;
+        font-weight: bolder;
+        color: #333;
+        overflow-wrap: break-word;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+
+</style>

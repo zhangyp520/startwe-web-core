@@ -1,0 +1,515 @@
+<template>
+    <!-- 全部3 客户中心  查询工单弹窗页面 -->
+    <!-- 车辆受损部位选择 -->
+    <div class="Vehicle_damage">
+        <div class="Vehicle_damage_text">车辆受损部位选择：<span>{{selectedDots.length}}</span>处</div>
+        <div class="car_box">
+            <div class="car_picture">
+                <ul>
+                    <li v-for="(item,index) in dots" :key="index" @click="selectDot(item)" :class="findCls(item)" style="pointer-events: none;">
+                        {{item}}</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 车辆执行项目 -->
+        <div class="implement_box">车辆执行项目</div>
+        <!-- 列表 -->
+        <div class="Table_head">
+            <!-- 表格头部 -->
+            <template>
+                <el-table :data="maintainItems" style="width: 100%">
+                    <el-table-column label="序号" width="100" type="index">
+                    </el-table-column>
+                    <el-table-column prop="itemName" label="执行项目" width="200">
+                    </el-table-column>
+                    <el-table-column prop="materialName" label="维修材料" width="200">
+                    </el-table-column>
+                    <el-table-column prop="materialPrice" label="材料单价" width="200">
+                    </el-table-column>
+                    <el-table-column prop="materialQty" label="数量" width="150">
+                    </el-table-column>
+                    <el-table-column prop="materialCost" label="维修费用" width="150">
+                    </el-table-column>
+                    <el-table-column prop="workHours" label="工时数" width="80">
+                    </el-table-column>
+                    <el-table-column prop="workHourPrice" label="工时单价" width="80">
+                    </el-table-column>
+                    <el-table-column prop="workCost" label="工时费" width="100">
+                    </el-table-column>
+                </el-table>
+            </template>
+        </div>
+        </el-form>
+        <div class="return_button">
+            <el-button type="primary" style="display: none;">返回</el-button>
+        </div>
+        </el-form>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                //    控制小圆点的个数
+                selectedDots: [],
+                // 添加类名
+                dots: [],
+                //工单项目展示数据
+                maintainItems: [],
+                // 该行客户的id
+                custId: ''
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            var custId = this.$router.query.custId;
+            this.custId = custId;
+            this.workOrderList();
+            this.dots = [];
+            for (var i = 0, len = 37; i < len; i++) {
+                this.dots.push(i + 1);
+            }
+            this.selectedDots = [];
+        },
+        methods: {
+            // 弹窗页面数据渲染
+            workOrderList: function () {
+                var that = this;
+                // 给小圆点赋值
+                this.dots = [];
+                // 给小圆点赋值
+                this.selectedDots = [];
+                // 需要项目工单数据请求的地址
+                oui.ajaxPost('customer/customerCenter/findOneCustomer', {
+                    "custId": this.custId
+                }, function (res) {
+                        console.log(res);
+                    if(res.resultObj.damageSections){
+                        var arr = (res.resultObj.damageSections).split(',');
+                        
+                        oui.eachArray(arr,function(item){
+                            if(item){
+                                that.selectedDots.push(parseInt(item));
+                            }
+
+                        });
+                    }
+                    that.maintainItems = res.resultObj.carExecutionProjects
+                }, function (res) {
+                    that.$message.error(res.message)
+                })
+            },
+
+            // 图片区域
+            findCls: function (dot) {
+                if (this.selectedDots.indexOf(dot) > -1) {
+                    return 'Dot_' + dot + ' dot-selected';
+                } else {
+                    return 'Dot_' + dot;
+                }
+            },
+            selectDot: function (dot) {
+                var me = this;
+                var idx = me.selectedDots.indexOf(dot);
+                if (idx > -1) {
+                    me.selectedDots.splice(idx, 1);
+                } else {
+                    me.selectedDots.push(dot);
+                }
+                me.$forceUpdate();
+            },
+
+        }
+    }
+</script>
+<style>
+    html {
+        margin: 0;
+        padding: 0;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    /* 车辆受损部位选择 */
+    .Vehicle_damage {
+        background-color: #fff;
+        margin-top: 20px;
+        padding: 20px 0;
+    }
+
+    .Vehicle_damage_text {
+        font-size: 16px;
+        font-weight: 700;
+        padding-left: 20px;
+
+    }
+
+    .Vehicle_damage_text>span {
+        color: #1890FF;
+        margin: 0 20px;
+        font-size: 16px;
+    }
+
+    /* 汽车图片外层盒子 */
+    .car_box {
+        width: 100%;
+        height: 100%;
+    }
+
+    .car_picture {
+        width: 893px;
+        height: 413px;
+        background-image: url(/res_apps/car/image/car_image.png);
+        background-repeat: no-repeat;
+        /* background-color: rgb(67, 128, 80); */
+        margin: 0 auto;
+
+    }
+
+    /* 把li转换成小圆点 */
+    .car_picture>ul>li {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgb(230, 179, 167);
+        text-align: center;
+    }
+
+    .car_picture>ul {
+        position: relative;
+    }
+
+    /* 放第一个圆点 */
+    .Dot_1 {
+        position: absolute;
+        top: 42px;
+        left: 89px;
+        cursor: pointer
+    }
+
+    .Dot_2 {
+        position: absolute;
+        top: 35px;
+        left: 130px;
+        cursor: pointer
+    }
+
+    .Dot_3 {
+        position: absolute;
+        top: 65px;
+        left: 164px;
+        cursor: pointer
+    }
+
+    .Dot_4 {
+        position: absolute;
+        top: 111px;
+        left: 204px;
+        cursor: pointer
+    }
+
+    .Dot_5 {
+        position: absolute;
+        top: 51px;
+        left: 224px;
+        cursor: pointer
+    }
+
+    .Dot_6 {
+        position: absolute;
+        top: 21px;
+        left: 252px;
+        cursor: pointer
+    }
+
+    .Dot_7 {
+        position: absolute;
+        top: 59px;
+        left: 308px;
+        cursor: pointer
+    }
+
+    .Dot_8 {
+        position: absolute;
+        top: 35px;
+        left: 368px;
+        cursor: pointer
+    }
+
+    .Dot_9 {
+        position: absolute;
+        top: 75px;
+        left: 392px;
+        cursor: pointer
+    }
+
+    .Dot_10 {
+        position: absolute;
+        top: 49px;
+        left: 428px;
+        cursor: pointer
+    }
+
+    .Dot_11 {
+        position: absolute;
+        top: 191px;
+        left: 31px;
+        cursor: pointer
+    }
+
+    .Dot_12 {
+        position: absolute;
+        top: 191px;
+        left: 121px;
+        cursor: pointer
+    }
+
+    .Dot_13 {
+        position: absolute;
+        top: 191px;
+        left: 313px;
+        cursor: pointer
+    }
+
+    .Dot_14 {
+        position: absolute;
+        top: 191px;
+        left: 434px;
+        cursor: pointer
+    }
+
+    .Dot_15 {
+        position: absolute;
+        top: 191px;
+        left: 505px;
+        cursor: pointer
+    }
+
+    .Dot_16 {
+        position: absolute;
+        top: 337px;
+        left: 88px;
+        cursor: pointer
+    }
+
+
+    .Dot_17 {
+        position: absolute;
+        top: 343px;
+        left: 131px;
+        cursor: pointer
+    }
+
+    .Dot_18 {
+        position: absolute;
+        top: 312px;
+        left: 164px;
+        cursor: pointer
+    }
+
+
+    .Dot_19 {
+        position: absolute;
+        top: 255px;
+        left: 220px;
+        cursor: pointer
+    }
+
+    .Dot_20 {
+        position: absolute;
+        top: 322px;
+        left: 224px;
+        cursor: pointer
+    }
+
+    .Dot_21 {
+        position: absolute;
+        top: 357px;
+        left: 252px;
+        cursor: pointer
+    }
+
+    .Dot_22 {
+        position: absolute;
+        top: 317px;
+        left: 303px;
+        cursor: pointer
+    }
+
+    .Dot_23 {
+        position: absolute;
+        top: 343px;
+        left: 368px;
+        cursor: pointer
+    }
+
+    .Dot_24 {
+        position: absolute;
+        top: 302px;
+        left: 402px;
+        cursor: pointer
+    }
+
+    .Dot_25 {
+        position: absolute;
+        top: 327px;
+        left: 434px;
+        cursor: pointer
+    }
+
+    .Dot_26 {
+        position: absolute;
+        top: 29px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_27 {
+        position: absolute;
+        top: 60px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_28 {
+        position: absolute;
+        top: 97px;
+        left: 625px;
+        cursor: pointer
+    }
+
+    .Dot_29 {
+        position: absolute;
+        top: 91px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_30 {
+        position: absolute;
+        top: 97px;
+        left: 793px;
+        cursor: pointer
+    }
+
+    .Dot_31 {
+        position: absolute;
+        top: 151px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_32 {
+        position: absolute;
+        top: 196px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_33 {
+        position: absolute;
+        top: 249px;
+        left: 625px;
+        cursor: pointer
+    }
+
+    .Dot_34 {
+        position: absolute;
+        top: 243px;
+        left: 709px;
+        cursor: pointer
+    }
+
+    .Dot_35 {
+        position: absolute;
+        top: 249px;
+        left: 790px;
+        cursor: pointer
+    }
+
+    .Dot_36 {
+        position: absolute;
+        top: 286px;
+        left: 669px;
+        cursor: pointer
+    }
+
+    .Dot_37 {
+        position: absolute;
+        top: 286px;
+        left: 752px;
+        cursor: pointer
+    }
+
+    /* 当点击小圆点时变为红色 */
+    .car_picture>ul>li.dot-selected {
+        background-color: #FF0000;
+    }
+
+    /* 车辆执行项目 */
+    .implement_box {
+        font-size: 16px;
+        font-weight: 700;
+        padding-left: 20px;
+        margin-bottom: 20px;
+    }
+
+
+    /* 列表 */
+
+    .Table_head {
+        padding-left: 20px;
+    }
+
+
+
+    /*查看材料单按钮 */
+    .Material_Science_button {
+        color: #fff;
+        margin-top: 20px;
+        height: 40px;
+    }
+
+    .Material_Science_button>button {
+        background-color: #DDB148;
+        color: #fff;
+        float: right;
+        margin-right: 20px;
+
+    }
+
+
+
+    /* 改变表头的颜色 */
+    .el-table th {
+        background-color: #FAFAFA;
+        height: 30px;
+    }
+
+    .el-table td {
+        height: 30px;
+    }
+
+    /* 返回按钮 */
+    .return_button {
+        text-align: center;
+    }
+
+    .return_button>.el-button {
+        width: 110px;
+        height: 32px;
+        padding: 0;
+        margin: 20px 0;
+    }
+</style>

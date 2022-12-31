@@ -1,0 +1,334 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div>
+       {{if url}} 
+       <oui-include  type="module" url="{{url}}" data="configData"></oui-include>   
+       {{/if}} 
+    </div>
+</template>
+<script>
+    exports= {
+        templateType: 'art',
+       
+        data: function () {
+            return {
+                url:this.$router.query.url,
+                configData:oui.parseJson(oui.parseString(this.$router.query))
+            }
+        },
+        created() {
+        }, 
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            // this.url = this.$router.query.url;
+            // this.configData = oui.parseJson(oui.parseString(this.$router.query));
+            this.refresh();
+        },
+        methods: {  
+            
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+    }
+
+    .menu-public-box {
+        margin-top: 10px;
+    }
+
+    .text-color {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    .borderWidthInput {
+        width: 60px;
+    }
+
+    .alphaInput {
+        width: 80px;
+    }
+
+    .alphaInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .alphaInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .borderWidthInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderWidthInput .el-input__inner {
+        height: 24px;
+        padding: 0 5px;
+    }
+
+    .fillInput .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .textColor .el-input.is-active .el-input__inner,
+    .el-input__inner:focus {
+        border: 1px solid #FF7D82;
+    }
+
+    .borderCheck {
+        margin-right: 1px;
+        margin-top: 2px;
+    }
+
+    .borderCheck .el-icon-close:before {
+        content: " ";
+    }
+
+    .borderSelect {
+        margin-left: 10px;
+    }
+
+    .borderSelect .el-input {
+        width: 96%;
+    }
+
+    .borderSelect .el-input__inner {
+        height: 22px !important;
+        line-height: 22px;
+        padding: 0 5px;
+    }
+
+    .borderSelect .el-input__icon {
+        line-height: 22px;
+    }
+
+    .fontWeight {
+        width: 100%;
+    }
+
+    /* .fontWeight .el-input {
+        width: 100%;
+    } */
+
+    .fontWeight .el-input__inner {
+        height: 26px !important;
+        line-height: 26px;
+        padding: 0 5px;
+    }
+
+    .fontWeight .el-input__icon {
+        line-height: 22px;
+    }
+
+    .borderCheck .el-checkbox__inner {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .borderCheck .el-checkbox__input.is-checked .el-checkbox__inner {
+        background-color: #FF7D82;
+        border-color: #FF7D82;
+    }
+
+    .borderCheck .el-checkbox__inner::after {
+        left: 7px;
+        top: 2px;
+        width: 6px;
+        height: 12px;
+    }
+
+    .borderCheck .el-checkbox__input.is-focus .el-checkbox__inner {
+        border: 1px solid #DCDFE6;
+    }
+
+    .fillInput .el-input__inner {
+        height: 24px;
+        width: 90%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .textColor .el-input__inner {
+        height: 24px;
+        width: 96%;
+        margin-left: 10px;
+        padding: 0 5px;
+    }
+
+    .colorPicker {
+        height: 20px;
+        margin-top: -8px;
+    }
+
+    .colorPicker .el-color-picker__trigger {
+        border: none;
+        width: 30px;
+        height: 20px;
+    }
+
+    .colorPicker .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .colorPicker .el-color-picker__color {
+        width: 30px;
+        height: 22px;
+        border-radius: 1px;
+        border: 1px solid #DCDFE6;
+    }
+
+    .colorPicker .el-color-picker__color-inner {
+        width: 28px;
+        height: 20px;
+        border-radius: 1px;
+    }
+
+    .colorPicker .el-color-picker__mask {
+        height: 22px;
+        width: 30px;
+        border-radius: 0;
+        position: absolute;
+        top: 4px;
+        left: 4px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .el-slider__button {
+        background: #FFFFFF;
+        border: 1px solid #979797;
+    }
+
+    .el-slider__bar {
+        background: #FF7D82;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 100%;
+        margin-left: 10px;
+    }
+
+    .sliderBox .el-slider__input {
+        width: 104px;
+    }
+
+    .sliderBox .el-slider__runway.show-input {
+        margin-right: 120px;
+    }
+
+    /* .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    } */
+
+    .publicBox {
+        margin-top: 10px;
+    }
+
+    .borderInnerBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .borderTitle {
+        /* display: flex;
+        justify-content: space-between;
+        align-items: center; */
+    }
+
+    .fillTitle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fillBox {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .scrollbar .el-scrollbar__wrap {
+        overflow-x: hidden;
+    }
+</style>

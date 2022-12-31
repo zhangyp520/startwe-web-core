@@ -1,0 +1,102 @@
+<template>
+    <div>
+        <!-- 行模式 -->
+        <el-form inline>
+            <el-form-item label="inline 默认：">
+                <oui-include type="module" :data="getData4Default()" url="res_common/oui/ui/ui_pc/components/treeselect.vue.html"></oui-include>
+            </el-form-item>
+            <el-form-item label="inline 定义宽度：">
+                <oui-include type="module" :data="getData4Width()" url="res_common/oui/ui/ui_pc/components/treeselect.vue.html"></oui-include>
+            </el-form-item>
+        </el-form>
+        <!-- 块模式 -->
+        <el-form>
+            <el-form-item label="自适应：">
+                <oui-include type="module" :data="getData4Auto()" url="res_common/oui/ui/ui_pc/components/treeselect.vue.html"></oui-include>
+            </el-form-item>
+        </el-form>
+    </div>
+
+</template>
+
+<script>
+exports={
+        name: 'about',
+        data() {
+            return {
+                // 默认选中值
+                selected: 'A',
+                // 数据默认字段
+                defaultProps: {
+                    parent: 'parentId',   // 父级唯一标识
+                    value: 'id',          // 唯一标识
+                    label: 'display',       // 标签显示
+                    children: 'children' // 子级
+                },
+                // 数据列表
+                options: [
+                    {
+                        parentId: '0',
+                        id: 'A',
+                        display: 'label-A我要看看到底多长',
+                        age:33,
+                        children: [
+                            {
+                                parentId: 'A',
+                                id: 'A-1',
+                                age:44,
+                                display: 'label-A-1'
+                            }
+                        ]
+                    },
+                    {
+                        parentId: '0',
+                        id: 'B',
+                        display: 'label-B',
+                        children: []
+                    }
+                ]
+            };
+        },
+        methods:{
+            getCache:oui.getCache4include,
+            getData4Default:function (){
+                var me = this;
+                return this.getCache('default',{
+                    options:me.options,
+                    value:me.selected,
+                    columns:[{name:'age'}],
+                    onUpdate:function (k,v){
+                        //这里处理相关属性变更
+                        console.log('当前值变更了',arguments);
+                    }
+                });
+            },
+            getData4Width:function (){
+                var me = this;
+                return this.getCache('width',{
+                    width:200,
+                    options:me.options,
+                    value:me.selected,
+                    onUpdate:function (k,v){
+                        //这里处理相关属性变更
+                        console.log('当前值变更了',arguments);
+                    }
+                });
+            },
+            getData4Auto:function (){
+                var me = this;
+                return this.getCache('auto',{
+                    props:me.defaultProps,
+                    options:me.options,
+                    value:me.selected,
+                    onUpdate:function (k,v){
+                        //这里处理相关属性变更
+
+                        console.log('当前值变更了',arguments);
+                    }
+                });
+            }
+        }
+    };
+</script>

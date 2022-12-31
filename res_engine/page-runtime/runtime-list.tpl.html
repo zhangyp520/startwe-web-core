@@ -1,0 +1,79 @@
+<div class="list-outer query-page-{{queryPage.queryListShowType}}">
+    <div class="toolbar">
+        <div class="header" style="display: inline-block;">
+            <div class="button-wrap" style="float: left">
+                {{each queryPage.toolbarButtons as btn}}
+                {{if queryPage.toolbarValues.indexOf(btn.value)>-1}}
+                <button oui-e-click="event2{{btn.value}}" menu-id="{{pageId}}" type="button" class="btn">
+                    <span>{{btn.display}}</span>
+                </button>
+                {{/if}}
+                {{/each}}
+            </div>
+            <div class="search query-condition-{{queryPage.queryConditionShowType}}" style="float: right">
+                <oui-condition id="simple-search-condition"
+                               searchTitle="根据输入条件，在当前表格数据中检索"
+                               showType="{{queryPage.queryConditionShowType4condition}}" type="condition" callback="com.startwe.models.page.web.PageRuntime.searchCallback"
+                               cancelback="com.startwe.models.page.web.PageRuntime.searchCancelback">
+
+                    {{each queryPage.dynamicConditionFields as item index}}
+                    {{if item.otherAttrs&&item.otherAttrs.useRelation }}
+                    <oui-field title="{{item.varName||item.display}}" placeholder="请输入-{{item.varName||item.display}}" showType="0" dataType="STRING"
+                               opt="like,=,!=" controlType="textfield" name="{{item.varName4api}}"></oui-field>
+
+
+                    {{else if item.controlType=='multiselect' }}
+                    <oui-field title="{{item.varName||item.display}}" placeholder="请输入-{{item.varName||item.display}}" showType="3" dataType="STRING"
+                               data="{{oui.parseString(item.otherAttrs.data)}}" opt="like" controlType="singleselect" name="{{item.varName4api}}"></oui-field>
+
+                    {{else if item.controlType=='singleselect' || item.controlType=='radio' }}
+                    <oui-field title="{{item.varName||item.display}}" placeholder="请输入-{{item.varName||item.display}}" showType="3" dataType="STRING"
+                               data="{{oui.parseString(item.otherAttrs.data)}}" opt="=" controlType="singleselect" name="{{item.varName4api}}"></oui-field>
+                    {{else if item.controlType=='number' }}
+                    <oui-field title="{{item.varName||item.display}}" placeholder="请输入-{{item.varName||item.display}}" showType="0" dataType="NUMBER"
+                                opt="=,!=,>,>=,<,<=" controlType="number" name="{{item.varName4api}}"></oui-field>
+                    {{else}}
+                    <oui-field title="{{item.varName||item.display}}" placeholder="请输入-{{item.varName||item.display}}" showType="0" dataType="STRING"
+                               opt="like" controlType="{{item.controlType}}" name="{{item.varName4api}}"></oui-field>
+
+                    {{/if}}
+                    {{/each}}
+
+                </oui-condition>
+            </div>
+        </div>
+    </div>
+    <div class="table-details query-page-list-{{queryPage.queryListShowType}}">
+        <oui-table id="list-{{pageId}}"
+                   type="tablegrid"
+                   showHLines="false"
+                   allowColumnResize="true"
+                   allowAlternating="true"
+                   multiSelect="true"
+                   onCelldblclick=""
+                   onAfterLoad=""
+                   onCellClick=""
+                   lockColumnSize="2"
+                   showHeaderLines="false"
+                   showColumnsMenu="false"
+                   dataUrl="{{logic4query}}"
+                   emptyTips="暂无数据">
+            <oui-columns>
+                <oui-column-checkbox width="40" headerAlign="center" align="center"></oui-column-checkbox>
+                <oui-column fieldName="id"  hideable4menu="true" visible="false"></oui-column>
+                <oui-column fieldName="eid"  hideable4menu="true" visible="false"></oui-column>
+
+                {{each queryPage.queryFields as item index}}
+                {{if item.otherAttrs&&item.otherAttrs.useRelation}}
+                <oui-column allowSort="true" width="120" type="{{item.controlType}}" otherAttrs="{{oui.parseString(item.otherAttrs)}}" onrender="oui.util.onRenderCell4ouiTable" fieldName="{{item.varName4api}}" align="left" headerAlign="left">{{item.varName||item.display}}</oui-column>
+                {{else if item.otherAttrs&&item.otherAttrs.data&&item.otherAttrs.data.length}}
+                <oui-column allowSort="true" width="120" type="{{item.controlType}}" otherAttrs="{{oui.parseString(item.otherAttrs)}}" onrender="oui.util.onRenderCell4ouiTable" fieldName="{{item.varName4api}}" align="left" headerAlign="left">{{item.varName||item.display}}</oui-column>
+                {{else}}
+                <oui-column allowSort="true" width="120" fieldName="{{item.varName4api}}" align="left" headerAlign="left">{{item.varName||item.display}}</oui-column>
+                {{/if}}
+                {{/each}}
+            </oui-columns>
+            <oui-pager id="oui-pager" type="pager" showPageNumSize="10" pageIndex="1" pageSize="{{queryPage.minPagerSize}}" total="1" class="oui-class-pager text-right"></oui-pager>
+        </oui-table>
+    </div>
+</div>

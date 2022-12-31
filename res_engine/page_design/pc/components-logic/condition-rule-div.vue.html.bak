@@ -1,0 +1,941 @@
+<template>
+    <div :class="'condition-area '+((rootConditionData.length==0)?'condition-area-no-data':'')">
+        <div class="condition-select" v-if="(!conditionId)">
+            <div class="tab-relation">
+                <el-button size="mini" @click="add(parentConditionId,conditionId)" >添加条件</el-button>
+                <el-button size="mini" @click="addRule(parentConditionId,conditionId,false)" >添加并(AND)条件组</el-button>
+                <el-button size="mini" @click="addRule(parentConditionId,conditionId,true)" >添加或(OR)条件组</el-button>
+
+            </div>
+            <div class="tab-relation right">
+                <el-button v-if="rootConditionData.length>0" size="mini" @click="clearAll()" >清空</el-button>
+            </div>
+        </div>
+
+        <div class="condition-warp-first-padding"></div>
+        <div class="condition-warp" v-for="(item,index) in conditionData" :condition-id="item.id" :key="item.id" >
+            <span class="condition-num">{{getNum(item.id)}}</span>
+            <div class="condition-select" v-if="(item.expression=='and' || item.expression=='or')"  >
+
+                <div v-if="item.expression=='and'" class="title">
+                    并关系(and)
+                </div>
+                <div v-if="item.expression=='or'" class="title">
+                    或关系(or)
+                </div>
+                <div class="tab-relation">
+                    <el-button size="mini" @click="add(item.parentId,item.id)" >添加条件</el-button>
+                    <el-button size="mini" @click="addRule(item.parentId,item.id,false)" >添加并(AND)条件组</el-button>
+                    <el-button size="mini" @click="addRule(item.parentId,item.id,true)" >添加或(OR)条件组</el-button>
+                </div>
+                <div class="tab-relation right">
+                    <el-button v-if="item.children.length>0" size="mini" @click="clearChildren(item.parentId,item.id)" >清空</el-button>
+                    <el-button size="mini" @click="del(item.parentId,item.id)" >删除条件组</el-button>
+                </div>
+            </div>
+            <div v-else class="condition-row"  >
+
+                <div class="condition-row-item">
+                    <oui-include type="module" :data="getData4FieldSelect(item)" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                    <el-input v-model="item.field" @click.native="event2showOrHide($event,item)" readonly style="width: 150px"  size="mini"></el-input>
+
+                    <el-select
+                            v-model="item.expression"
+                            placeholder="请选择"
+                            size="mini"
+                            @change="event2UpdateExpression(item)"
+                            style="width:100px"
+                    >
+                        <el-option
+                                v-for="item in findExpressionsByCondition(item)"
+                                :key="item.value"
+                                :label="item.display"
+                                :value="item.value" >
+                        </el-option>
+                    </el-select>
+                    <div v-if="findExpressionByCondition(item)!=null&&(!findExpressionByCondition(item).innerVar) ">
+<!--                        这里是值选择区域,表达式右侧的配置:1.存在对应表达式，并且不是内部变量表达式（如排除掉 Null,NotNull,NullOrEmpty,NotNullAndEmpty）-->
+
+                        <el-select
+                                v-model="item.valueType"
+                                placeholder="请选择"
+                                size="mini"
+                                style="width:100px"
+                                @change="event2UpdateValueType(item)"
+                        >
+                            <el-option
+                                    v-for="item in findValueTypesByCondition(item)"
+                                    :key="item.value"
+                                    :label="item.display"
+                                    :value="item.value" >
+                            </el-option>
+                        </el-select>
+
+                    </div>
+
+                    <div v-if="item.valueType=='value' && getControlUrl4ValueInput(item) " :key="item.id+'valueType'+item.valueType+'_'+item.expression">
+                        <oui-include type="module" :data="getData4ValueInput(item)" :url="getControlUrl4ValueInput(item)"></oui-include>
+                    </div>
+                    <div v-else-if="item.valueType=='var'" :key="item.id+'valueType'+item.valueType+'_'+item.expression">
+                        <oui-include type="module" :data="getData4ValueFieldSelect(item)" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                    </div>
+                    <div v-else-if="item.valueType=='expr'" :key="item.id+'valueType'+item.valueType+'_'+item.expression">
+
+                    </div>
+                    <div v-else-if="item.valueType=='callLogic'" :key="item.id+'valueType'+item.valueType+'_'+item.expression">
+
+                    </div>
+                </div>
+
+                <div class="delete">
+                    <span class="s-icon s-icon-16 s-icon-add"  @click="addBrother(conditionId,item.id)"></span>
+                    <span class="s-icon s-icon-splitline"></span>
+                    <span class="s-icon s-icon-16 s-icon-delete" @click="del(item.parentId,item.id)"   ></span>
+                </div>
+            </div>
+            <div v-if="item.children.length>0" class="condition-area-outer-inner" >
+                <oui-include  type="module" :data="getData4Children(item)" url="res_engine/page_design/pc/components-logic/condition-rule-div.vue.html"></oui-include>
+            </div>
+            <div v-if="(index==conditionData.length-1) " :class="'condition-warp-last condition-warp-'+((item.expression=='and'||item.expression=='or')?'complex':'simple')"></div>
+        </div>
+        <div class="condition-warp-end-padding"></div>
+
+    </div>
+</template>
+<script>
+exports = {
+    templateType: 'vue',
+    name:'condition-rule-div',
+    props:["conditionData","parentConditionId","conditionId","fields","rootConditionData","associationRuntimeQueryUrl"],
+    data: function () {
+        return {
+            /** 条件组相关属性 **/
+            hideButton:false,
+            isShowGroupConditions:false,
+            settingBtnText:'',
+            buttonCls4showOrHideGroupConditions:'group-condition',
+            associationRuntimeQueryUrl:'',
+            /**条件区域控制相关属性 **/
+            conditionAlign:'left',
+            conditionAreaHide:true,
+            groupConditionAreaAlign:'group-condition-area condition-left',
+
+            /**条件的基本属性配置 */
+            title:'',//标题
+            useOrRule:false,//是否启用或规则
+            contentStyle:'',//内容样式
+
+            /**条件数据相关 */
+            conditionData:[],//条件数据
+            rootConditionData:[],
+            fields:[],
+            conditionId:'',
+            parentConditionId: '',
+            confirmName:'确定',
+            cancelName:'取消'
+
+        };
+    },
+    watch:{
+
+    },
+    computed:{
+
+        buttonCls4showOrHideGroupConditions:function (){
+            return 'group-condition '+(this.hideButton?'group-condition-hide':'')+(' ')+(this.settingBtnText?"condition-setting-btn":"");
+        },
+        groupConditionAreaAlign:function (){
+            return 'group-condition-area '+(this.conditionAlign||'left')+' '+(this.conditionAreaHide?'display_none':'');
+        }
+    },
+    mounted: function () {
+        var me = this;
+    },
+    methods: {
+        destroyed:function (){
+
+        },
+        getNum:function(id){
+            var idx =0;
+            oui.findOneFromTreeArrayBy(this.rootConditionData||[],function (item){
+                idx++;
+                if(item.id == id){
+                    return true;
+                }
+            });
+            return idx;
+        },
+        getControllers4Children:function (){
+            //根据 获取所有控制器对应的 id映射
+
+            var $els = $(this.$el).find('.condition-area[oui-controller]');
+            var controllers = [];
+            var cfg ={};
+            if($els&&$els.length){
+                $els.each(function (){
+                    var $el4conditionId = $(this).closest('div[condition-id]');
+                    var conditionId =$el4conditionId.attr('condition-id');
+                    if(!cfg[conditionId]){
+                        cfg[conditionId] =[];
+                    }
+                    var controller = $(this).attr('oui-controller');
+                    if(cfg[conditionId].indexOf(controller)<0){
+                        cfg[conditionId].push(controller);
+                    }
+                });
+            }
+            return cfg;
+        },
+        getCache:oui.getCache4include,
+        destroyByCache:oui.destroyByCache,
+        updateAll:function (){
+            this.refresh&&this.refresh();
+        },
+        triggerUpdate:function (){
+            this.onUpdate(this.bindProp,this.getData(),this.getData(),{operate:'triggerUpdate'});
+        },
+        destroyByUpdate:function (k,v,ov,option){
+            var me = this;
+            var shouldClearComponentKeys = ['clearAll','clearChildren','del'];
+            if(option.operate&&(shouldClearComponentKeys.indexOf(option.operate)>-1)){
+
+                //开始检查无用组件数据
+                var caches = me.getCache();
+                var shouldRemoveKeys = [];
+                var currIds = []; //当前最新的树节点id列表
+                oui.eachTreeArray(me.rootConditionData,function (item){
+                    currIds.push(item.id);
+                });
+                var controllers = [];
+                for(var key in caches){//判断缓存中的id是否在最新的里面
+                    if(key.indexOf('conditionKey-')>-1){
+                        var tempId = key.split('-')[1];
+                        if(tempId&&(currIds.indexOf(tempId)<0)){
+                            shouldRemoveKeys.push(key);
+                            controllers = controllers.concat(ov.controllerMap[tempId]||[]);
+                        }
+                    }
+                }
+                //比对更新前后的变化，如果控制器发生变化，则进行更新
+                for(var k in ov.controllerMap){
+                    if((!v.controllerMap[k]) ){
+                        //新的没有,说明老的删除了
+                        var arr = ov.controllerMap[k]||[];
+                        oui.eachArray(arr,function (temp){
+                            if(controllers.indexOf(temp)<0){
+                                controllers.push(temp);
+                            }
+                        })
+                    }else{
+                        var oldControllers = ov.controllerMap[k]||[];
+                        var newControllers = v.controllerMap[k] ||[];
+                        //遍历老的，检查新的有没有，如果新的没有，则意图删除
+                        oui.eachArray(oldControllers,function (temp){
+                            if(newControllers.indexOf(temp)<0){
+                                controllers.push(temp);
+                            }
+                        })
+                    }
+                }
+                oui.destroyVueControllers(controllers);
+                me.destroyByCache(shouldRemoveKeys.join(','));
+            }else{
+                oui.destroyVueControllers();
+            }
+        },
+        getData4Children:function (item){
+            var key ='conditionKey-'+item.id;
+            var me = this;
+            return this.getCache(key,{
+                parentConditionId:item.parentId,
+                conditionId:item.id,
+                fields:this.fields,
+                conditionData:item.children||[],
+                rootConditionData:this.rootConditionData,
+                associationRuntimeQueryUrl:this.associationRuntimeQueryUrl,
+                onUpdate:function (k,v,ov,option){
+                    //只要有变更 就变更顺序
+                    console.log('condition-rule.vue.html 中子组件变更了',arguments);
+                    /*
+                     clearAll,clearChildren,del
+                     */
+                    //如果存在删除，清空的情况需要 清空子组件
+                    me.triggerUpdate();//触发父节点更新
+
+                }
+
+            });
+        },
+        //根据字段id 或namePath找
+        findFieldBy:function (fieldIdOrNamePath){
+            if(fieldIdOrNamePath){
+                var one = oui.findOneFromTreeArrayBy(this.fields,function (item){
+                    if(item.id == fieldIdOrNamePath || (item.namePath == fieldIdOrNamePath) || (item.idPath == fieldIdOrNamePath) ){
+                        return true
+                    }
+                });
+                return one ;
+            }
+            return null;
+        },
+        /**
+         * 根据namePath找字段id
+         * @param namePath
+         * @returns {string}
+         */
+        findFieldIdByNamePath:function (namePath){
+            var value ='';
+            if(namePath){
+                var one = this.findFieldBy(namePath);
+                if(one){
+                    value = one.id;
+                }
+            }
+            return value;
+        },
+        /**
+         * 根据字段id找namePath
+         * @param fieldId
+         * @returns {string}
+         */
+        findFieldNamePathByFieldId:function (fieldId){
+            var value ='';
+            if(fieldId){
+                var one =this.findFieldBy(fieldId);
+                if(one){
+                    value = one.namePath;
+                }
+            }
+            return value;
+        },
+        /***
+         * 获取当前条件对应的待选表达式列表
+         * @param item
+         * @returns {*[]|*}
+         */
+        findExpressionsByCondition:function (item){
+            var me = this;
+            var field = me.findFieldBy(item.field);
+            if(field){
+                return oui.util.findExpressions(field.opt);
+            }
+            return [];
+        },
+        findValueTypesByCondition:function (item){
+            var me = this;
+
+            var field = me.findFieldBy(item.field);
+            var arr = [];
+            if(field){
+                if(item.expression){
+                    var expressions = oui.util.findValueTypeEnums();
+                    var exprs = oui.util.findExpressions(item.expression);
+                    if(exprs&&exprs.length){
+                        arr = oui.findManyFromArrayBy(expressions,function (item){
+                            if(!item.innerVar){
+                                return true;
+                            }
+                        });
+                        if(exprs[0].value ==oui.util.ExpressionTypeEnum.eq.expr){
+                            var temp = oui.findManyFromArrayBy(me.findExpressionsByCondition(item),function (curr){
+                                if(curr.innerVar){
+                                    return true;
+                                }
+                            })
+                            arr = arr.concat(temp);
+                        }else if(exprs[0].value==oui.util.ExpressionTypeEnum.between.expr || exprs[0].value ==oui.util.ExpressionTypeEnum.notBetween.expr){
+                           var one  = oui.findOneFromArrayBy(arr,function (item){
+                               if(item.name =='value'){
+                                   return true;
+                               }
+                           });
+                           arr = [one];
+                        }
+                    }
+                }
+            }
+            return arr;
+        },
+        //获取当前条件 对应的条件表达式
+        findExpressionByCondition:function (item){
+            var arr = oui.util.findExpressions(item.expression);
+            if(arr&&arr.length){
+                return arr[0];
+            }
+            return null;
+        },
+        event2showOrHide:function ($event,item){
+            var me = this;
+            var flag  = !me.getData4FieldSelect(item).ref.$refs.popover.showPopper
+            this.$nextTick(function (){
+                setTimeout(function (){
+                    me.getData4FieldSelect(item).ref.$refs.popover.showPopper = flag;
+                },1)
+            });
+            console.log('show or hide ');
+        },
+
+
+        //下拉选择待选树
+        getData4FieldSelect:function (item){
+            var key ='conditionFieldKey-'+item.id;
+            var me = this;
+            var value = this.findFieldIdByNamePath(item.field);
+            return this.getCache(key,{
+                conditionId:item.id,
+                value:value,//不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                options:this.fields,
+                width:150,
+                /*
+                  <el-table-column
+                        label="说明" width="100">
+                    <template slot-scope="scope">
+                        {{scope.row.desc||scope.row.display}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="dataType"
+                        label="数据类型" width="100">
+                </el-table-column>
+                <el-table-column
+                        label="序号" width="50">
+                    <template slot-scope="scope">
+                        {{getNum(scope.row.id)}}
+                    </template>
+                </el-table-column>
+
+                 */
+                columns:[
+                    {name:'name',title:'字段名称',width:300 },
+                    {name:'display',title:'显示名称',width:120 },
+                    {name:'dataType',title:'数据类型',width:120},
+                    {name:'desc',title:'字段说明',width:200 },
+                    {name:'fieldSourceType',title:'字段来源',width:120}
+                ],
+                onUpdate:function (k,v,ov,option){
+                    //只要有变更 就变更顺序
+                    console.log('condition-rule.vue.html 中子组件变更了',arguments);
+                    var curr= this;
+                    //找到当前条件
+                    var one = oui.findOneFromTreeArrayBy(me.rootConditionData,function (temp){
+                        if(temp.id == curr.conditionId){
+                            return true;
+                        }
+                    });
+                    var field = me.findFieldBy(v.value);
+                    if(field && (one.field == field.namePath)){
+                        return ; //没有改变
+                    }
+                    if(field){
+                        one.field = field.namePath;
+                        one.display = v.display;
+                        one.dataType = field.dataType;
+                        one.expression='=';
+                        one.value='';
+                        one.valueType='';
+                    }else{
+                        one.field='';
+                        one.display='';
+                        one.value='';
+                        one.valueType='';
+                        one.expression='';
+                    }
+                    curr.value =v.value;
+                    /*
+                     clearAll,clearChildren,del
+                     */
+                    //如果存在删除，清空的情况需要 清空子组件
+
+                    me.getData4ValueInput(item).value='';
+                    me.getData4ValueInput(item).ref && (me.getData4ValueInput(item).ref.value='');
+
+
+                    me.getData4ValueFieldSelect(item).value='';
+                    me.getData4ValueFieldSelect(item).ref&&me.getData4ValueFieldSelect(item).ref.clear();
+
+
+
+                    me.triggerUpdate();//触发父节点更新
+
+                }
+
+            });
+        },
+        event2UpdateValueType:function (item){
+            var me = this;
+            item.value ='';
+
+            me.getData4ValueInput(item).value='';
+            me.getData4ValueInput(item).ref && (me.getData4ValueInput(item).ref.value='');
+
+            me.getData4ValueFieldSelect(item).value='';
+            this.getData4ValueFieldSelect(item).ref&&this.getData4ValueFieldSelect(item).ref.clear();
+            me.triggerUpdate();
+
+        },event2UpdateExpression:function (item){
+            var me = this;
+            item.valueType='';
+            item.value=''
+            if(item.expression ==oui.util.ExpressionTypeEnum.between.expr || item.expression == oui.util.ExpressionTypeEnum.notBetween.expr){
+                item.valueType =oui.util.ValueTypeEnum.value.name;
+                me.getData4ValueInput(item).isRange=true;
+                me.getData4ValueInput(item).ref && (me.getData4ValueInput(item).ref.isRange=true);
+            }else{
+                me.getData4ValueInput(item).isRange=false;
+                me.getData4ValueInput(item).ref && (me.getData4ValueInput(item).ref.isRange=false);
+            }
+            me.getData4ValueInput(item).value='';
+            me.getData4ValueInput(item).ref && (me.getData4ValueInput(item).ref.value='');
+
+            me.getData4ValueFieldSelect(item).value='';
+            this.getData4ValueFieldSelect(item).ref&&this.getData4ValueFieldSelect(item).ref.clear();
+            me.triggerUpdate();
+        },
+        /**
+         * 获取控件url
+         * @param item
+         */
+        getControlUrl4ValueInput:function (item){
+            var me = this;
+            var url = '';
+            var field = me.findFieldBy(item.field);
+            var controlType = field.controlType;
+            if(field&&field.otherAttrs&&field.otherAttrs.useRelation){ //关联查询控件
+                controlType ='association';
+            }else if(controlType =='radio'){ //在条件组件中特殊处理单选
+                controlType ='select';
+            }
+            if(field && item.expression&& item.valueType=='value'){
+                url = oui.getContextPath()+'res_common/oui/ui/ui_pc/components/'+controlType+'.vue.html';
+            }
+            return url;
+        },
+        /**
+         * 输入控件 渲染数据
+         * @param item
+         */
+        getData4ValueInput:function (item){
+            var key ='conditionFieldValueInputKey-'+item.field+'_'+item.expression+'_'+item.valueType+'_'+item.id;
+            var me = this;
+            var value = item.value;
+            var field = me.findFieldBy(item.field);
+            var showType =0;
+            if(field&& field.showType){
+                showType = field.showType;
+            }
+            //associationRuntimeQueryUrl,createLogicApiUrl
+            var isRange = (item.expression==oui.util.ExpressionTypeEnum.between.expr ||item.expression==oui.util.ExpressionTypeEnum.notBetween.expr);
+            console.log('showType in getData4ValueInput:',field.controlType,showType,item.value,field);
+            var style = isRange?'width:170px':'width:120px';
+            if(field.controlType=='datepicker'){
+                style=isRange?'width:300px':'width:180px';
+            }
+            var dotNum=0;
+            if(field.controlType=='number'){ //数字框的渲染
+                dotNum = field.dotNum;
+            }
+            var otherAttrs = oui.clone(field.otherAttrs);
+            if(otherAttrs&&otherAttrs.useRelation){
+
+                var relation = oui.findOneFromArrayBy(otherAttrs.targetLines||[],function (re){
+                    if(re.lineType == 1){ // 1,关联,2推送
+                        if(!re.targetDisplayFieldId){
+                            re.targetDisplayFieldId = re.targetFieldId;
+                        }
+                        return true;
+                    }
+                });
+                if(relation){
+                    otherAttrs.associationRuntimeQueryUrl = oui.addParams(this.associationRuntimeQueryUrl,{
+                        formId:relation.targetFormId,
+                        fieldId:relation.targetFieldId,
+                        displayFieldId:relation.targetDisplayFieldId
+                    });
+                }
+            }
+            var cache=  this.getCache(key,{
+                conditionId:item.id,
+                style:style,
+                size:'mini',
+                showType:showType,
+                isRange:isRange,
+                dotNum:dotNum,
+                value:value,//不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                otherAttrs: otherAttrs,//当前字段的otherAttrs
+                onUpdate:function (k,v,ov,option){
+                    //只要有变更 就变更顺序
+                    console.log('condition-rule.vue.html 中子组件变更了',arguments);
+                    var curr= this;
+                    //找到当前条件
+                    var one = oui.findOneFromTreeArrayBy(me.rootConditionData,function (temp){
+                        if(temp.id == curr.conditionId){
+                            return true;
+                        }
+                    });
+                    one.value = v;
+                    curr.value = v;
+                    /*
+                     clearAll,clearChildren,del
+                     */
+                    //如果存在删除，清空的情况需要 清空子组件
+                    me.triggerUpdate();//触发父节点更新
+
+                }
+
+            });
+            cache.isRange = isRange;
+            cache.style =style;
+            cache.showType = showType;
+            cache.value =value;
+            if(cache.ref){
+                cache.ref.style =style;
+                cache.ref.isRange = isRange;
+                cache.ref.showType = showType;
+                cache.ref.value =value;
+            }
+            return cache;
+        },
+
+        /**
+         * 值选择待选树
+         * @param item
+         */
+        getData4ValueFieldSelect:function (item){
+            var key ='conditionFieldValueKey-'+item.id;
+            var me = this;
+            var value = this.findFieldIdByNamePath(item.value);
+            var cache=  this.getCache(key,{
+                conditionId:item.id,
+                value:value,//不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                options:this.fields,
+                width:150,
+                columns:[
+                    {name:'name',title:'字段名称',width:300 },
+                    {name:'display',title:'显示名称',width:120 },
+                    {name:'dataType',title:'数据类型',width:120},
+                    {name:'desc',title:'字段说明',width:200 },
+                    {name:'fieldSourceType',title:'字段来源',width:120}
+                ],
+                filter:function (temp){
+                    if(item.dataType==temp.dataType && (item.field !=temp.namePath)){//数据类型相同的进行过滤,并且排除自己
+                        return true;
+                    }
+                },
+                filterUpdate:function (temp){
+                    if(item.dataType!=temp.dataType){
+                        temp.disabled = true;//需要禁用
+                    }
+                },
+                onUpdate:function (k,v,ov,option){
+                    //只要有变更 就变更顺序
+                    console.log('condition-rule.vue.html 中子组件变更了',arguments);
+                    var curr= this;
+                    //找到当前条件
+                    var one = oui.findOneFromTreeArrayBy(me.rootConditionData,function (temp){
+                        if(temp.id == curr.conditionId){
+                            return true;
+                        }
+                    });
+                    var field = me.findFieldBy(v.value);
+                    if(field){
+                        one.value = field.namePath;
+                    }else{
+                        one.value='';
+                    }
+                    curr.value = v.value;
+                    /*
+                     clearAll,clearChildren,del
+                     */
+                    //如果存在删除，清空的情况需要 清空子组件
+                    me.triggerUpdate();//触发父节点更新
+
+                }
+
+            });
+            return cache;
+        },
+
+        showOrHideGroupConditions:function (){
+            //隐藏或者显示条件组
+            if(!this.isShowGroupConditions){
+                this.showGroupConditions();
+            }else{
+                this.hideGroupConditions();
+            }
+        },
+        /**
+         * 显示条件组
+         */
+        showGroupConditions:function (){
+            //todo
+        },
+        /**
+         * 隐藏条件组
+         */
+        hideGroupConditions:function (){
+            //todo
+        },
+        newCondition:function (){
+            var one ={
+                field:'',
+                expression:'=',
+                value:'',
+                dataType:oui.dataTypeEnum.STRING.name,//默认值为 STRING 类型
+                display:'',//显示文本内容
+                valueType:'value',//值类型 value,var,expr,callLogic 值类型 value,var,expr 值、变量，表达式
+                //设计条件组件所需 父子结构 id,parentId,children
+                id:oui.getUUIDLong(),
+                parentId:'',
+                children:[]
+            };
+            return one;
+        },
+        getData:function (){
+            var keys = 'conditionId,parentConditionId,conditionData,rootConditionData,associationRuntimeQueryUrl'.split(',');
+            var me = this;
+            var cfg = {};
+            oui.eachArray(keys,function (key){
+                cfg[key] = me[key];
+            });
+            cfg.controllerMap = this.getControllers4Children();
+            return cfg;
+        },
+        /**
+         * 添加规则
+         * @param pid
+         * @param id
+         * @param isOr
+         */
+        addRule:function (pid,id,isOr){//添加子节点
+            var lastData = oui.clone(this.getData());
+            var me = this;
+            var condition = me.newCondition();
+            if(isOr){
+                condition.expression='or';
+            }else{
+                condition.expression ='and';
+            }
+            if(id){ //指定 节点下添加
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == id){
+                        return true;
+                    }
+                });
+                if(one){
+                    condition.parentId = one.id;
+                    if(!one.children){
+                        one.children = [];
+                    }
+                    //从第一个位置开始加
+                    one.children.unshift(condition);
+                }
+            }else if(pid){
+                //指定父节点后面追加兄弟节点
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == pid){
+                        return true;
+                    }
+                });
+                if(one){
+                    condition.parentId = one.id;
+                    if(!one.children){
+                        one.children = [];
+                    }
+                    one.children.unshift(condition);
+                }
+            }else{ //追加根节点
+                this.rootConditionData.unshift(condition);
+            }
+            var me = this;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'addRule'});
+            });
+        },
+        clearAll:function (){ //清空所有
+            var lastData = oui.clone(this.getData());
+            oui.removeFromTreeArrayBy(this.rootConditionData,function (){
+                return true;
+            });
+            var me = this;
+            this.conditionData.length=0;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'clearAll'});
+                me.destroyByUpdate(me.bindProp,me.getData(),lastData,{operate:'clearAll'});
+            });
+
+        },
+        //清空当前分组中的所有子条件
+        clearChildren:function (pid,id){
+            var lastData = oui.clone(this.getData());
+            oui.removeFromTreeArrayBy(this.rootConditionData,function (item){
+                if(item.parentId ==id){
+                    return true;
+                }
+            });
+            if(!pid){
+                this.conditionData = this.rootConditionData;
+            }else{
+                var conditionId = this.conditionId;
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(conditionId == item.id){
+                        return true;
+                    }
+                });
+                if(one){
+                    this.conditionData = one.children;
+                }
+            }
+
+            var me = this;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'clearChildren'});
+                me.destroyByUpdate(me.bindProp,me.getData(),lastData,{operate:'clearChildren'});
+            });
+
+        },
+        accordion:function (parentConditionId,conditionId){
+
+        },
+        calc:function (parentConditionId,conditionId){//设置计算
+
+        },
+        add:function (pid,id){//指定位置后面追加条件
+
+            var lastData = oui.clone(this.getData());
+            var me = this;
+            var condition = me.newCondition();
+            if(id){ //指定 节点下添加
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == id){
+                        return true;
+                    }
+                });
+                if(one){
+                    condition.parentId = one.id;
+                    if(!one.children){
+                        one.children = [];
+                    }
+                    one.children.unshift(condition);
+                }
+            }else if(pid){
+                //指定父节点后面追加兄弟节点
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == pid){
+                        return true;
+                    }
+                });
+                if(one){
+                    condition.parentId = one.id;
+                    if(!one.children){
+                        one.children = [];
+                    }
+                    one.children.unshift(condition);
+                }
+            }else{ //追加根节点
+                this.rootConditionData.unshift(condition);
+            }
+            var me = this;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'addCondition'});
+            });
+        },
+        //指定节点后增加兄弟节点
+        addBrother:function (pid,id){
+            var lastData = oui.clone(this.getData());
+            var me = this;
+            var condition = me.newCondition();
+            if(id){ //指定 节点后添加
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == id){
+                        return true;
+                    }
+                });
+                if(one){
+                    if(one.parentId){
+                        var parentOne = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                            if(item.id == one.parentId){
+                                return true;
+                            }
+                        });
+                        if(parentOne){
+                            var idx =-1;
+                            oui.findOneFromArrayBy(parentOne.children||[],function (temp,index){
+                                if(temp.id ==one.id){
+                                    idx=index;
+                                    return true;
+                                }
+                            })
+                            condition.parentId = parentOne.id;
+                            parentOne.children.splice(idx+1,0,condition);
+                        }
+                    }else{
+                        var idx =-1;
+                        oui.findOneFromArrayBy(this.rootConditionData,function (temp,index){
+                            if(temp.id ==one.id){
+                                idx= index;
+                                return true;
+                            }
+                        });
+                        this.rootConditionData.splice(idx+1,0,condition);
+                    }
+                }
+            }
+            var me = this;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'addBrother'});
+            });
+        },
+        del:function (pid,id){//删除指定位置的条件
+            var lastData = oui.clone(this.getData());
+            var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                if(item.id == id){
+                    return true;
+                }
+            });
+            oui.removeFromTreeArrayBy(this.rootConditionData,function (item){
+                if(item.id ==id){
+                    return true;
+                }
+            });
+            if(pid){
+                var one = oui.findOneFromTreeArrayBy(this.rootConditionData,function (item){
+                    if(item.id == pid){
+                        return true;
+                    }
+                });
+                if(one){
+                    this.conditionData = one.children||[];
+                }
+            }
+            var contorller= lastData.controllerMap[one.id];
+            if(contorller){ //销毁子集
+                // contorller = oui.parseJson(contorller);
+                // contorller.destroyChildren();
+            }
+
+
+
+            var me = this;
+            this.$nextTick(function (){
+                me.onUpdate && me.onUpdate(me.bindProp,me.getData(),lastData,{operate:'del'});
+                me.destroyByUpdate(me.bindProp,me.getData(),lastData,{operate:'del'});
+            });
+
+            //需要清空子组件
+        },
+        showOrHideMore:function (){
+
+        },
+        confirm4group:function (){
+
+        },
+        cancel4group:function (){
+
+        }
+
+    }
+}
+</script>
+<style>
+
+</style>

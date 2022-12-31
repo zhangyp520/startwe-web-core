@@ -1,0 +1,502 @@
+<template>
+    <div class="product">
+        <!-- 面包屑头部盒子 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item><a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>权限设置</el-breadcrumb-item>
+                <el-breadcrumb-item>修改</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <el-main>
+            <div class="vehicle">
+                <div class="grid_content">
+                    角色名称：
+                    <el-input v-model="updateRoleFormValue.roleName" placeholder="请输入角色名称" style="width: 160px;margin-right: 15%">
+                    </el-input>
+                    请选择角色类型：
+                    <el-radio-group v-model="updateRoleFormValue.roleType">
+                        <el-radio :label="1">超级管理员</el-radio>
+                        <el-radio :label="2">库房管理员</el-radio>
+                        <el-radio :label="3">维修员工</el-radio>
+                        <el-radio :label="4">维修总管</el-radio>
+                        <el-radio :label="5">售后人员</el-radio>
+                        <el-radio :label="6">售后经理</el-radio>
+                        <el-radio :label="7">库房总管</el-radio>
+                    </el-radio-group>
+                </div>
+            </div>
+            <template>
+                <div>
+
+                    <el-table
+                            :data="functionList"
+                            ref="permissionTable"
+                            style="width: 100%;margin-bottom: 20px;"
+                            @select-all="handleSelectAll"
+                            @select="handleCheckChange"
+                            border >
+                        <el-table-column type="index"></el-table-column>
+
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                label="菜单权限"
+                                width="500">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.functionName}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="children"
+                                label="子权限"
+                                sortable
+                                width="500">
+                            <template slot-scope="scope">
+                                <el-tree
+                                        :data="scope.row.children"
+                                        show-checkbox
+                                        node-key="id"
+                                        :ref="findRef4tree(scope.row)"
+                                        default-expand-all
+                                        :default-checked-keys="scope.row.selectedIds"
+                                        :props="defaultProps">
+                                </el-tree>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </template>
+            <div class="roleRemarks">
+                <div class="grid_textarea">
+                    <el-input v-model="updateRoleFormValue.remarks" resize="none" maxlength="100" :rows="4" type="textarea" placeholder="请输入角色备注" style="width: 80%">
+                    </el-input>
+                    <el-button type="primary" style="margin-left: 10px;" @click="submitRoleInfo">确定</el-button>
+                </div>
+            </div>
+        </el-main>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 控制菜单栏checkbox选中状态
+                checked:true,
+                functionList: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'functionName'
+                },
+                updateRoleFormValue:{
+                    id: "",
+                    roleCode: "",
+                    roleName: "",
+                    remarks: "",
+                    roleType: 0
+                }
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            this.isLoading = true;
+            var param = this.$router.query;
+            this.updateRoleFormValue.roleName = param.roleName;
+            this.updateRoleFormValue.roleCode = param.roleCode;
+            this.updateRoleFormValue.id = param.roleId;
+            this.updateRoleFormValue.roleType = parseInt(param.roleType);
+            this.updateRoleFormValue.remarks = param.remarks;
+            this.getListData();
+        },
+        methods: {
+            findRef4tree:function(row){
+                return 'tree_'+row.id;
+            },
+            getListData: function () {
+                var param = this.$router.query;
+                var that = this;
+                oui.ajaxPost('company/functionInfo/queryAllOfFunction', {}, function (res) {
+                    that.functionList = res.resultObj || [];
+                    oui.ajaxPost('company/role/findOneRoleById', {
+                        "id": param.roleId
+                    }, function (res) {
+                        var functions = res.resultObj.functions || [];
+                        var ids = [];
+                        oui.eachArray(functions, function (item) {
+                            ids.push(item.id);
+                        });
+                        that.$nextTick(function () {
+                            that.setCheckedIds(ids);
+                        })
+                    })
+                }, function (res) {
+                    that.$message.error(res.message);
+                });
+            },
+            setCheckedIds:function(ids){
+                var that = this;
+                oui.eachArray(that.functionList,function (row) {
+                    var refId = that.findRef4tree(row);
+                    var currRef = that.$refs[refId];
+                    if(ids.indexOf(row.id)>-1){
+                        row.isChecked = true;
+                    }else{
+                        row.isChecked = false;
+                    }
+                    var currIds = [];
+                    that.eachTree(row.children||[],function (item) {
+                        if(ids.indexOf(item.id)>-1){
+                            item.isChecked = true;
+                            row.isChecked = true;
+                            currIds.push(item.id);
+                        }else{
+                            item.isChecked = false;
+                        }
+                    })
+                    currRef&&currRef.setCheckedKeys(currIds);
+                    if(row.isChecked){
+                        that.$refs.permissionTable.toggleRowSelection(row,true);
+                    }else{
+                        // that.ref.permissionTable.toggleRowSelection(row,false);
+                    }
+                });
+            },
+            eachTree: function (treeData, func) {
+                var me = this;
+                oui.eachArray(treeData, function (item) {
+                    func && func(item);
+                    if (item.children) {
+                        me.eachTree(item.children, func);
+                    }
+                })
+            },
+            handleSelectAll:function(section){
+                var that = this;
+                var isChecked = false;
+                if(section&&section.length){
+                    isChecked = true;
+                }
+                oui.eachArray(that.functionList,function (row) {
+                    var refId = that.findRef4tree(row);
+                    var currRef = that.$refs[refId];
+                    row.isChecked = isChecked;
+                    var currIds = [];
+                    that.eachTree(row.children||[],function (item) {
+                        item.isChecked = isChecked;
+                        if(item.isChecked){
+                            currIds.push(item.id);
+                        }
+                    });
+                    currRef&&currRef.setCheckedKeys(currIds);
+                });
+            },
+            handleCheckChange:function(section,row) {
+                var me = this;
+                if(!row.isChecked){
+                    row.isChecked = true;
+                }else{
+                    row.isChecked = false;
+                }
+                if (row.children) { //只对有子节点的行响应
+                    if (row.isChecked) {   //由行数据中的元素isChecked判断当前是否被选中
+                        var refId = me.findRef4tree(row);
+                        row.children.map((item) => { //遍历所有子节点
+                            item.isChecked = true;
+                            me.$refs[refId].setChecked(item,item.isChecked, true); //切换该子节点选中状态
+                        });
+
+                    } else {
+                        var refId = this.findRef4tree(row);
+                        row.children.map((item) => {
+                            item.isChecked = false;
+                            this.$refs[refId].setChecked(item, item.isChecked,true);
+                        });
+
+                    }
+                }
+            },
+            getCheckedKeys:function(row) {
+                var refId = this.findRef4tree(row);
+                return this.$refs[refId].getCheckedKeys();
+            },
+            getCheckedNodes:function(row) {
+                var refId = this.findRef4tree(row);
+                return this.$refs[refId].getCheckedNodes();
+            },
+            getSelectedFunctionIds() {
+                var ids= [];
+                var me = this;
+                oui.eachArray(this.functionList, function (item) {
+                    var keys = me.getCheckedKeys(item) ||[];
+                    if(item.isChecked){
+                        if(ids.indexOf(item.id)<0){
+                            ids.push(item.id);
+                        }
+                    }else{
+                        var idx = ids.indexOf(item.id);
+                        if(idx>-1){
+                            ids.splice(idx,1);
+                        }
+                    }
+                    ids = ids.concat(keys);
+                });
+                return ids;
+            },
+            submitRoleInfo:function() {
+                let ids = this.getSelectedFunctionIds();
+                var me = this;
+                oui.ajaxPost('company/role/updateRole', {
+                        "id": this.updateRoleFormValue.id,
+                        "roleCode": this.updateRoleFormValue.roleCode,
+                        "comments": this.updateRoleFormValue.remarks,
+                        "functionIds": ids,
+                        "roleName": this.updateRoleFormValue.roleName,
+                        "roleType": this.updateRoleFormValue.roleType
+                    },
+                    function (res) {
+                        me.$message.success('角色修改成功');
+                        oui.router.push("/res_apps/car/html/jurisdiction/jurisdiction.vue.html");
+                    },
+                    function (res) {
+                        me.$message.error(res.message)
+                    }
+                )
+            }
+
+        }
+    }
+</script>
+<style>
+    /* 让表单头部的复选框和文字在一行显示 */
+    .el-table .disabledCheck .cell:before {
+        content: '全部';
+        position: absolute;
+        left: 38px;
+    }
+
+
+    html {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    .el-header,
+    .el-footer {
+        /* background-color: #B3C0D1; */
+        /* background-color: #fff; */
+        /* color: #333; */
+        /* text-align: center; */
+        line-height: 48px;
+        height: 48px;
+        box-shadow: darkgrey 0px 1px 1px 1px
+    }
+
+    .el-aside {
+        background-color: #D3DCE6;
+        background-color: #fff;
+        color: #333;
+        /* text-align: center; */
+        /* line-height: 200px; */
+        /* height: 900px; */
+        box-shadow: red;
+        border: 1px soild red;
+        box-shadow: darkgrey 1px 1px 2px 1px
+    }
+
+    .el-main {
+        background-color: #f5f5f5;
+        color: #333;
+        /* text-align: center; */
+        line-height: 160px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
+    .el-container:nth-child(5) .el-aside,
+    .el-container:nth-child(6) .el-aside {
+        line-height: 260px;
+    }
+
+    .el-container:nth-child(7) .el-aside {
+        line-height: 320px;
+    }
+
+    /* 自己的样式 */
+    /* 侧边栏 */
+    /* 侧边栏log图片 */
+    img {
+        width: 208px;
+        height: 48px;
+        /* border: 1px solid red; */
+        /* background-color: #333; */
+    }
+
+    /* .el-menu-vertical-demo el-menu{
+        width: 39px;
+      }
+    
+      .tac.el-col.el-menu.el-menu-item{
+        width: 39px;
+      } */
+    .el-col {
+        margin: 1px 1px;
+    }
+
+    /* 文字盒子span */
+    .el-icon-menu > span {
+        margin-left: 1px;
+    }
+
+    .product_text {
+        /* width: 208px; */
+        height: 60px;
+        line-height: 40px;
+        color: #1890FF;
+        padding-left: 8px;
+        /* background-color: rgb(151, 56, 56); */
+    }
+
+
+    .el-main {
+        padding: 0 20px;
+    }
+
+
+    /* 侧边栏样式结束 */
+
+    /* 右侧 头部区域个人信息区域 */
+    /* .navbar {
+      height: 50px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    } */
+
+    .navbar {
+        height: 48px;
+        float: right;
+        /* margin-right: 24px; */
+        line-height: 48px;
+        background-color: #fff;
+
+    }
+
+    .navbar > img {
+        width: 25px;
+        height: 25px;
+        margin: 14px 24px 14px 0;
+        /* line-height: 60px; */
+    }
+
+    /* 面包屑区域开始 -------*/
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+
+    /* 员工查询区域组件样式 */
+
+
+    /* 在厂车辆数量情况 */
+
+    .vehicle {
+        padding: 0 30px;
+        background-color: #fff;
+        height: 80px;
+        margin: 24px 0px;
+        line-height: 80px;
+    }
+
+    .el-main {
+        line-height: normal;
+    }
+
+
+    /* 新增员工工单表格处 */
+    /* 修改表格头部背景色 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+
+    .table_box {
+        margin-bottom: 21px;
+        background-color: #fff;
+        padding: 24px 24px;
+    }
+
+
+    .staff_button {
+        margin-bottom: 20px;
+    }
+
+    /* 表格数据 居中对齐*/
+    .cell {
+        /* text-align: center; */
+        color: rgb(0, 0, 0, 0.7);
+    }
+
+    /* 分页区域开始---- */
+    .page {
+        width: 100%;
+        height: 35px;
+    }
+
+    .block {
+        float: right;
+    }
+
+
+    /* 按钮区域返回和保存 */
+    .basics_button {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .basics_button > .el-row > .el-button {
+        width: 180px;
+        height: 32px;
+        line-height: 0;
+
+    }
+
+    /* 分页区域位置放置区域 ----------------*/
+    /* .block {
+          margin: 20px 0px 20px 500px;
+      } */
+    /* 分页区域结束----- */
+</style>

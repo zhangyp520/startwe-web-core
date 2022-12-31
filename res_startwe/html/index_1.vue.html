@@ -1,0 +1,567 @@
+<!-- 无圈子首页内容 -->
+<template>
+
+    <div>
+        <!-- 头部 -->
+        <div>
+            <oui-include type="module" url="/res_startwe/html/home.vue.html">
+            </oui-include>
+        </div>
+        <!-- slogan -->
+        <!-- <el-carousel arrow="never" trigger="click" :interval="5000" :height="bannerH+'px'"> -->
+        <!-- <el-carousel-item> -->
+        <div class="slogan">
+            <img src="/res_startwe/assets/img1.png" alt="" class="banner">
+        </div>
+        <!-- </el-carousel-item> -->
+        <!-- </el-carousel> -->
+
+        <!-- 项目 -->
+        <div class="Project">
+            <!-- 标题 -->
+            <div class="projectTitle">
+                <div :class="{'active':index==checkClick}" v-for="(item,index) in navList" @click="titleClick(index)">{{item.text}}</div>
+                <!-- <div>项目回收站</div> -->
+            </div>
+            <!-- 项目内容 -->
+            <div class="projectContent" v-show="checkClick==0">
+                <!-- 项目小盒子 -->
+                <!-- 第一个 -->
+                <div class="myproject_inbox" v-for="(item,index) in projectList">
+                    <div class="inner_Content">
+                        <!-- 圆圈 -->
+                        <div class="circular"></div>
+                        <!-- 项目内容 -->
+                        <div class="in_content">
+                            <div class="in_Title" @click="editClick(item)">{{item.name}}</div>
+                            <div class="projectDate">版本号：{{item.versionNumber}}</div>
+                            <div class="projectDate">{{item.createTime}}</div>
+                        </div>
+                    </div>
+                    <!-- 卡片底部 -->
+                    <div class="down_Chice">
+                        <div>
+                            <img src="/res_startwe/assets/shan.png" alt="">
+                            <span>设计项目1</span>
+                        </div>
+                        <div>
+                            <img src="/res_startwe/assets/shanchu_.png" alt="">
+                            <span>访问项目</span>
+                        </div>
+                    </div>
+                    <!-- 设置 -->
+                    <div class="setUp">
+                        <div @click="setUpClick(index)">
+                            <img src="/res_startwe/assets/sz.png" alt="">
+                        </div>
+                        <div class="administration" v-if="showSetUp&&setUpcurrent==index">
+                            <div>
+                                <img src="/res_startwe/assets/jcsz.png" alt="">
+                                <span>基础设置</span>
+                            </div>
+                            <div>
+                                <img src="/res_startwe/assets/bbgl.png" alt="">
+                                <span>版本管理</span>
+                            </div>
+                            <div>
+                                <div @click="dialogVisible = true">
+                                    <img src="/res_startwe/assets/sc.png" alt="">
+                                    <span>删除</span>
+                                </div>
+                                <!-- 弹窗 -->
+                                <el-dialog title="删除项目" :visible.sync="dialogVisible" width="700px" :before-close="handleClose">
+                                    <div class="oneTips">您确定要恢复项目
+                                        <span>{{item.name}}</span>吗？</div>
+                                    <div class="twoTips">删除项目30天内，可在「项目回收站」恢复</div>
+                                    <span slot="footer" class="dialog-footer">
+                                        <el-button class="cancel_Btn" @click="dialogVisible = false">取 消</el-button>
+                                        <el-button class="determineDelBtn" @click="dialogVisible = false">确认删除</el-button>
+                                    </span>
+                                </el-dialog>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- 第三个 -->
+                <div class="addProject" v-if="addProject" @click="addClick">
+                    <img src="/res_startwe/assets/add.png" alt="">
+                </div>
+            </div>
+            <!-- 回收站内容 -->
+            <div v-show="checkClick==1" class="recoveryBox">
+                <!-- 回收提示 -->
+                <div class="recoveryTips" v-if="displayTips">
+                    <img src="/res_startwe/assets/duihuakuang.png" alt="">
+                    <div class="recoveryRemind">
+                        <div>
+                            <img src="/res_startwe/assets/tips.png" alt="">
+                            <span>删除的项目会在回收站保留30天，之后将被彻底删除</span>
+                        </div>
+                        <img src="/res_startwe/assets/Shape.png" alt="" @click="delTips">
+                    </div>
+                </div>
+                <!-- 项目回收表格 -->
+                <div class="recovery_table">
+                    <oui-include type="module" url="/res_startwe/html/index_recovery.vue.html">
+                    </oui-include>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                // 弹窗
+                dialogVisible: false,
+                // title切换属性
+                navList: [{ text: '我的项目' }, { text: '项目回收站' }],
+                checkClick: 0,
+                // 设置菜单属性
+                showSetUp: false,
+                setUpcurrent: 0,
+                // 数据容器
+                // projectList: [],
+                projectList: [{
+                    name: '3212',
+                    versionNumber: '2.0.0',
+                    createTime: '2021/1/6 12:31:12'
+                }, {
+                    name: '3212',
+                    versionNumber: '2.0.0',
+                    createTime: '2021/1/6 12:31:12'
+                }],
+                // 添加属性
+                addProject: true,
+                // 回收站提示属性
+                displayTips: true,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            // this.loadMyCircles();
+
+
+        },
+        methods: {
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => { });
+
+            },
+            // 点击进入圈子编辑页面
+            editClick: function (row) {
+
+                oui.router.push('res_startwe/html/circle/circleDetails.vue.html', {
+                    id: row.id,
+                    loadUrl: row.extraAttrs.loadUrl,
+                    saveUrl: row.extraAttrs.saveUrl
+                })
+
+
+            },
+
+            // 点击删除事件
+            delClick: function (index) {
+                var that = this;
+                var circleId = that.circles[index].id;
+                var removeUrl = that.circles[index].extraAttrs.removeUrl;
+                // console.log(removeUrl);
+                var path = oui.biz.Tool.getApiPathByController(that.FullName.replace('4Query', ''), 'removeCircle');
+                var param = {
+                    id: circleId
+                };
+                oui.postData(removeUrl || path, param, function (res) {
+                    if (res.success) {
+                        oui.getTop().oui.alert('删除成功');
+                        oui.removeFromArrayBy(that.circles, function (item) {
+                            if (item.id == circleId) {
+                                return true;
+                            }
+                        });
+                    } else {
+                        oui.getTop().oui.alert(res.msg);
+                    }
+                }, function (err) {
+                    oui.getTop().oui.alert(err);
+                }, '删除中...');
+
+            },
+            // 添加项目
+            addClick: function () {
+                // 调取弹窗不做跳转
+                oui.router.push('res_startwe/html/project/addProject.vue.html')
+            },
+            // 数据
+            // loadMyCircles: function () {
+            //     var that = this;
+            //     var str = oui.storage.get('startwe_menus');
+            //     var startwe_menus = oui.parseJson(str || '[]');
+            //     var one = oui.findOneFromArrayBy(startwe_menus, function (item) {
+            //         if (item.id == 'project-list') {
+            //             return true;
+            //         }
+            //     });
+            //     if (one) {
+            //         var url = one.params.initPath;
+            //         oui.postData(url, {}, function (res) {
+            //             //拿到项目列表
+            //             that.projectList = res.projects;
+            //             // var addCircle=true;
+            //             if (res.circles.length >= 3) {
+            //                 that.addCircle = false;
+            //             } else {
+            //                 that.addCircle = true;
+            //             }
+
+
+            //         });
+            //     }
+            // },
+            // 标题切换
+            titleClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            // 提示信息隐藏
+            delTips: function () {
+                this.displayTips = false;
+            },
+            // 设置菜单显示隐藏
+            setUpClick: function (index) {
+                this.setUpcurrent = index;
+                this.showSetUp = !this.showSetUp;
+            }
+
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容开始 */
+
+    .banner {
+        width: 100%;
+        height: auto;
+    }
+
+    /* 我的项目大盒子 */
+
+    .Project {
+        width: 80%;
+        margin: auto;
+
+    }
+
+    /* 标题 */
+
+    .projectTitle {
+        color: rgba(0, 0, 0, 0.45);
+        margin: 40px 0;
+        display: flex;
+    }
+
+    .projectTitle>div {
+        width: 150px;
+        font-size: 26px;
+        font-weight: bold;
+        cursor: pointer;
+
+    }
+
+    .active {
+        color: #000;
+    }
+
+    /* 项目内容 */
+
+    .projectContent {
+        display: flex;
+        /* justify-content: space-between; */
+        margin-bottom: 100px;
+
+    }
+
+    /* 每个小盒子 */
+
+    .myproject_inbox {
+        border: 1px solid #E9E9E9;
+        position: relative;
+        border-radius: 2px;
+        height: 203px;
+        width: 458px;
+        margin-right: 40px;
+    }
+
+    .myproject_inbox:hover {
+        box-shadow: 0 0 4px 1px #4C95FF;
+    }
+
+    .inner_Content {
+        display: flex;
+        /* justify-content: space-around; */
+        /* margin-top: 21px; */
+        margin: 21px 24px 0 24px;
+    }
+
+    .circular {
+        width: 24px;
+        height: 24px;
+        background-color: #5BD171;
+        border-radius: 12px;
+        margin-right: 10px;
+    }
+
+    .circularActive {
+        width: 24px;
+        height: 24px;
+        background-color: #FFBF00;
+        border-radius: 12px;
+        margin-right: 10px;
+    }
+
+    .in_content {
+        width: 90%;
+        height: 140px;
+        /* margin-bottom: 80px; */
+    }
+
+    .in_Title {
+        font-size: 16px;
+        font-weight: bold;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .in_Title:hover {
+        color: #7863FF;
+        text-decoration: underline;
+    }
+
+    .projectDate {
+        font-size: 14px;
+        color: #999;
+        margin-top: 10px;
+    }
+
+    .down_Chice {
+        display: flex;
+        height: 40px;
+        background-color: #FAFAFA;
+        border-top: 1px solid #E9E9E9;
+        line-height: 40px;
+    }
+
+    .down_Chice>div {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+    }
+
+    .down_Chice>div:first-child {
+        border-right: 1px solid #E9E9E9;
+    }
+
+    .down_Chice>div>img {
+        margin-right: 10px;
+    }
+
+    .setUp {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .setUp>div>img {
+        cursor: pointer;
+    }
+
+
+    .administration {
+        position: absolute;
+        top: 20px;
+        left: -35px;
+        background: #FFFFFF;
+        width: 98px;
+        height: 104px;
+        box-shadow: 0 2px 12px 2px rgba(0, 0, 0, 0.10);
+        border-radius: 8px;
+    }
+
+    .administration>div {
+        margin: 0 10px;
+        cursor: pointer;
+    }
+
+    .administration>div:hover {
+        color: #4C95FF;
+    }
+
+    .administration>div>span {
+        line-height: 30px;
+    }
+
+    .addProject {
+        height: 203px;
+        width: 458px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #E9E9E9;
+        border-radius: 2px;
+    }
+
+    .addProject:hover {
+        box-shadow: 0 0 4px 1px #4C95FF;
+    }
+
+    /* 回收站 */
+
+    .recoveryBox {
+        position: relative;
+    }
+
+    .recoveryTips {
+        position: absolute;
+        top: -40px;
+        left: 120px;
+        z-index: 100;
+    }
+
+    .recoveryRemind {
+        position: absolute;
+        top: 18px;
+        left: 14px;
+        display: flex;
+        align-items: center;
+    }
+
+    .recoveryRemind>div {
+        display: flex;
+        align-items: center;
+    }
+
+    .recoveryRemind>div>img {
+        margin-right: 10px;
+    }
+
+    .recoveryRemind>img {
+        margin-left: 20px;
+        cursor: pointer;
+    }
+
+    /* 表格 */
+
+    .recovery_table {
+        margin-top: 20px;
+    }
+
+    /* 弹窗 */
+
+    .oneTips {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        /* line-height: 50px; */
+        font-weight: bold;
+        margin-left: 24px;
+    }
+
+    .oneTips>span {
+        font-size: 20px;
+        /* color: rgba(0, 0, 0, 0.85); */
+        /* line-height: 50px; */
+        font-weight: bold;
+        margin: 0 10px;
+        color: #FF7D82;
+    }
+
+    .twoTips {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+
+    .cancel_Btn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancel_Btn>span {
+        font-size: 16px;
+    }
+
+    .cancel_Btn:focus,
+    .cancel_Btn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineDelBtn {
+        width: 140px;
+        height: 40px;
+        background: #FF7D82;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineDelBtn>span {
+        font-size: 16px;
+    }
+
+    .determineDelBtn:focus,
+    .determineDelBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #FF7D82;
+    }
+</style>

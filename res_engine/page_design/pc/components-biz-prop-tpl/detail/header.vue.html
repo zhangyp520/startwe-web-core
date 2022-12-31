@@ -1,0 +1,790 @@
+<template>
+    <div> 
+      <div class="detail-tabs"> 
+        <div class="detail-tabs-item"
+          v-for="(item,index) in DataList"
+          :key="index"
+          :label="item.label"
+          :name="item.name"
+          @click="changeTabs(index)"
+          
+        >
+           {{item.label}}
+        </div> 
+        <div class="active-bar" :style="{ transform: 'translateX('+(76 * tabActiveIndex)+'px)'}" ></div> 
+     </div>
+  
+  
+      <div class="design-attribute-item" v-show='tabActive=="first"'>
+        <oui-include
+          :data="getData4ProjectsFC()"
+          type="module"
+          ref="projectRbacModels"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"
+        ></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="style"'>
+        <oui-include
+          :data="getData4ProjectsFCReg()"
+          type="module"
+          ref="projectRbacModelsReg"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"
+        ></oui-include>
+      </div>
+      <div class="design-attribute-item" v-show='tabActive=="advanced"'>
+        <oui-include
+          :data="getData4ProjectsFCAnimate()"
+          type="module"
+          ref="projectRbacModelsAnimate"
+          url="res_engine/page_design/pc/components-tpl/property.tpl.vue.html"
+        ></oui-include>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+    exports = {
+      data: function() {
+        return {
+          getData4ProjectsFC: this.getData4ProjectsFC,
+          getData4ProjectsFCReg: this.getData4ProjectsFCReg,
+          getData4ProjectsFCAnimate: this.getData4ProjectsFCAnimate,
+          projectRbacModels: "",
+          projectRbacModelsReg: "",
+          projectRbacModelsAnimate: "",
+          cache4vue: {},
+          cache4vueReg: {},
+          cache4vueAnimate: {},
+          projects: ["999"],
+  
+          tabActive: "first",
+          tabActiveIndex:0,
+          activeName: "first",
+          DataList: [
+            {
+              label: "属性",
+              name: "first",
+              content: "first",
+            },
+            {
+              label: "样式",
+              name: "style",
+              content: "style",
+            },
+            {
+              label: "高级",
+              name: "advanced",
+              content: "advanced",
+            } 
+          ], 
+          property: [
+            {
+              type: "string",
+              name: "id",
+              zhName: "控件id",
+              group: "基础设置",
+              required: false,
+              disabled: true,
+              placeholder: oui.util.componentRandomGenKeyId('header'),
+              default: "",
+              suffix: "",
+              max: 30,
+              prepend: "",
+            },
+            {
+              type: "string",
+              name: "bizId",
+              zhName: "业务id",
+              group: "基础设置",
+              required: false,
+              disabled: false,
+              placeholder: "业务id",
+              default: "",
+              suffix: "",
+              max: 30,
+              prepend: "",
+            },
+            {
+              type: "inputandcheckbox",
+              name:  "name" ,
+              checkboxname:  "otherAttrs.titleShow" ,
+              zhName: "标题名称",
+              group: "基础设置",
+              required: false,
+              placeholder: "请输入标题名称",
+              default: "单行文字",
+              checkboxdefault: true,
+              suffix: "",
+              checkboxtitle: "显示标题",
+              max: 20,
+              prepend: "",
+            },
+            {
+              type: "arrayandinput",
+              name: "otherAttrs.defaulttext",
+              zhName: "默认内容",
+              group: "基础设置",
+              required: false,
+              placeholderArray: "我是占位符",
+              placeholderInput: "",
+              defaultArray: "自定义",
+              defaultInput: "",
+              suffix: "",
+              data:[
+                  {value:'diy',display:'自定义'},
+                  {value:'1',display:'数据绑定'},
+                  {value:'2',display:'公式/代码'}
+              ],
+              max: 20,
+              prepend: "",
+            },
+            {
+              type: "arrayandinput",
+              name: "otherAttrs.desc" ,
+              selectname: "otherAttrs.descType" ,
+              zhName: "描述信息",
+              group: "基础设置",
+              required: false, 
+              placeholderInput: "",
+              defaultArray: "不展示",
+              defaultInput: "",
+              data:[{
+                  value:'notShow',
+                  display:'不显示'
+              },{
+                  value:'showAtRight',
+                  display:'右侧显示'
+              },{
+                  value:'showAtNextLine',
+                  display:'换行显示'
+              }],
+              suffix: "",
+              max: 50,
+              prepend: "",
+            },
+            {
+              type: "switch",
+              name: "otherAttrs.clearable",
+              zhName: "可否清空",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: false,
+              // 其他属性
+            },
+            {
+              type: "switch",
+              name: "otherAttrs.showPassword",
+              zhName: "密码框",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: false,
+              // 其他属性
+            },
+            {
+              type: "switch",
+              name: "otherAttrs.showWordLimit",
+              zhName: "字数统计",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: false,
+              // 其他属性
+            }, 
+          ],
+          propertyStyle:[
+          {
+              type: "iconselect",
+              name: "otherAttrs.headIcon",
+              zhName: "头部图标",
+              group: "样式设置",
+              clearable: true,
+              iconlistvisible: false,
+              iconlist: [
+                "el-icon-edit",
+                "el-icon-share",
+                "el-icon-delete",
+                "el-icon-remove",
+                "el-icon-remove-outline",
+                "el-icon-minus",
+                "el-icon-plus",
+                "el-icon-check",
+                "el-icon-picture",
+                "el-icon-user",
+                "el-icon-phone",
+              ],
+              // 其他属性
+            },
+            {
+              type: "iconselect",
+              name: "otherAttrs.afterIcon",
+              zhName: "尾部图标",
+              group: "样式设置",
+              clearable: true,
+              iconlistvisible: false,
+              iconlist: [
+                "el-icon-edit",
+                "el-icon-share",
+                "el-icon-delete",
+                "el-icon-remove",
+                "el-icon-remove-outline",
+                "el-icon-minus",
+                "el-icon-plus",
+                "el-icon-check",
+                "el-icon-picture",
+                "el-icon-user",
+                "el-icon-phone",
+              ],
+              // 其他属性
+            },
+            {
+              type: "string",
+              name: "otherAttrs.prepend",
+              zhName: "前置内容",
+              group: "样式设置",
+              required: false,
+              placeholder: "请输入内容",
+              default: "",
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "string",
+              name: "otherAttrs.append",
+              zhName: "后置内容",
+              group: "样式设置",
+              required: false,
+              placeholder: "请输入内容",
+              default: "",
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.inputWidth",
+              zhName: "布局宽度%",
+              group: "样式设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: "100",
+              data:[{
+                  value:'25',
+                  display:'25'
+              },{
+                  value:'50',
+                  display:'50'
+              },{
+                  value:'75',
+                  display:'75'
+              },{
+                  value:'100',
+                  display:'100'
+              } ],
+              suffix: "",
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.fontColor",
+              zhName: "文字颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#000000",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.borderColor",
+              zhName: "边框颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#EDEDED",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "colorPicker",
+              name: "innerStyle.styleInput.bgColor",
+              zhName: "填充颜色",
+              group: "样式设置",
+              required: false,
+              placeholder: "",
+              default: "#FFFFFF",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            },
+            {
+              type: "slider",
+              name: "otherAttrs.id",
+              zhName: "圆角",
+              group: "样式设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: 0,
+              dangwei: "px",
+              suffix: "",
+              max: 0,
+              num: 0,
+              prepend: "",
+            },
+            {
+              type: "slider",
+              name: "otherAttrs.ids",
+              zhName: "透明度",
+              group: "样式设置",
+              required: false,
+              dangwei: "%",
+              placeholder: "我是占位符",
+              default: "",
+              suffix: "",
+              max: 0,
+              prepend: "",
+            }
+          ],
+          propertyAdvanced: [
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.status",
+              zhName: "状态",
+              group: "基础设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: "edit",
+              suffix: "",
+              data:[{
+                  value:'edit',
+                  display:'可编辑'
+              },{
+                  value:'disable',
+                  display:'禁用'
+              },{
+                  value:'readOnly',
+                  display:'只读'
+              },{
+                  value:'hidden',
+                  display:'隐藏'
+              }],
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "switch",
+              name: "otherAttrs.empty",
+              zhName: "必填",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: true,
+              // 其他属性
+            },
+            {
+              type: "switch",
+              name: "otherAttrs.empty",
+              zhName: "允许重复",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: false,
+              // 其他属性
+            },
+            {
+              type: "switch_input_maxmin",
+              name: "otherAttrs.empty",
+              zhName: "限定字数",
+              group: "基础设置",
+              radio: true,
+              data:[],
+              default: false,
+              // 其他属性
+            },
+            {
+              type: "arrayandinput",
+              name: "otherAttrs.zzyz",
+              zhName: "正则验证",selectname:"otherAttrs.zzyzType",
+              group: "基础设置",
+              radio: true,
+              data:[{
+                  value:'0',
+                  display: '无'
+              },{
+                  value:'1',
+                  display: '数字'
+              },{
+                  value:'2',
+                  display: '金额'
+              },{
+                  value:'3',
+                  display: '全中文'
+              },{
+                  value:'4',
+                  display: '全英文'
+              },{
+                  value:'5',
+                  display: '数字+英文'
+              },{
+                  value:'6',
+                  display: '手机号码'
+              },{
+                  value:'7',
+                  display: '邮政编码'
+              },{
+                  value:'8',
+                  display: '邮箱'
+              },{
+                  value:'9',
+                  display: '身份证号码'
+              },{
+                  value:'10',
+                  display: '统一信用代码'
+              },{
+                  value:'11',
+                  display: '自定义'
+              }],
+              placeholderInput: "请输入正则校验规则",
+              // 其他属性
+            },
+            {
+              type: "string",
+              name: "otherAttrs.id",
+              zhName: "错误提示",
+              group: "基础设置",
+              required: false,
+              placeholder: "请输入错误提示",
+              default: "",
+              suffix: "",
+              max: 30,
+              prepend: "",
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.bjkd",
+              zhName: "显示设备",
+              group: "基础设置",
+              required: false,
+              placeholder: "我是占位符",
+              default: "pc",
+              data:[
+                  {value:'pc',display:'电脑'},
+                  {value:'mobile',display:'手机'},
+              ],
+              labelsicon: ["el-icon-s-platform", "el-icon-mobile"],
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "radiogroupselect",
+              name: "otherAttrs.bjkd",
+              zhName: "数据体检",
+              group: "基础设置",
+              required: false,
+              placeholder: "我是占位符",
+                default: "commit4onlyShow",
+                data:[{
+                    value:'commit4onlyShow',display:'仅显示时提交'
+                },{
+                    value:'commit4ever',display:'始终提交'
+                }],
+              max: 10,
+              prepend: "",
+            },
+            {
+              type: "button",
+              name: "otherAttrs.id",
+              zhName: "动作设置",
+              btnText: "新建动作",
+              group: "基础设置",
+              size: "small",
+              btnType:"primary",
+              isBlock:true,
+              default: "",
+            },
+          ], 
+  
+          
+        };
+      },
+      mounted: function() {
+        this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+        var me = this;
+        if(this.currentControl){
+          
+          if(!this.currentControl.otherAttrs){
+            this.currentControl.otherAttrs = {};
+          }
+          oui.eachArray(this.propertyAdvanced,function(item){
+          var name = item.name;
+          item.default  = oui.JsonPathUtil.getJsonByPath(name,me.currentControl)||'';
+          });
+          oui.eachArray(this.property,function(item){
+            var name = item.name;
+            item.default  = oui.JsonPathUtil.getJsonByPath(name,me.currentControl)||'';
+          });
+          oui.eachArray(this.propertyStyle,function(item){
+            var name = item.name;
+            item.default  = oui.JsonPathUtil.getJsonByPath(name,me.currentControl)||'';
+          });
+  
+        }
+        
+        
+        if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrc
+        ) {
+          this.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+        }
+  
+        if (
+          this.currentControl &&
+          this.currentControl.otherAttrs &&
+          this.currentControl.otherAttrs.webPageSrcs
+        ) {
+          this.webPageSrcs = this.currentControl.otherAttrs.webPageSrcs;
+        }
+        //更新复制删除工具条标题
+
+   
+      },
+      methods: {
+        changeTabs(index){
+          this.tabActive = this.DataList[index].name;
+          this.tabActiveIndex = index;
+  
+  
+        },
+        getData4ProjectsFC: function() {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vue);
+          var bindKey = "projectRbacModels"; 
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModels",
+              name: "projectRbacModels",
+              bindProp: "projectRbacModels",
+              value: {
+                name: "1",
+              },
+              property: this.property,
+              data: this.projects || [],
+              onUpdate: function(key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        getCacheReg: function(v) {
+          if (!v) {
+            v = {};
+            v = v;
+          }
+          return v;
+        },
+  
+        getData4ProjectsFCReg: function() {
+          
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueReg);
+          var bindKey = "projectRbacModelsReg";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModelsReg",
+              name: "projectRbacModelsReg",
+              bindProp: "projectRbacModelsReg",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyStyle,
+              data: this.projects || [],
+              onUpdate: function(key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            // me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+  
+          return cache4vue[bindKey];
+        },
+        getData4ProjectsFCAnimate: function() {
+          var me = this;
+          var cache4vue = this.getCacheReg(this.cache4vueAnimate);
+          var bindKey = "projectRbacModelsAnimate";
+          if (!cache4vue[bindKey]) {
+            cache4vue[bindKey] = {
+              notClone4Component: true,
+              clearable: false,
+              id: "projectRbacModelsAnimate",
+              name: "projectRbacModelsAnimate",
+              bindProp: "projectRbacModelsAnimate",
+              value: {
+                name: "aaaaaaaaaaaaaa",
+              },
+              property: this.propertyAdvanced,
+              webPageSrc: this.webPageSrc,
+              data: this.projects || [],
+              onUpdate: function(key, v) {
+                me.onUpdate(key, v);
+              },
+            };
+            me.$set(cache4vue, bindKey, cache4vue[bindKey]);
+          }
+          return cache4vue[bindKey];
+        },
+        onUpdate: function(key, v) { 
+          var me = this; 
+          if (key == "projectRbacModels") {
+            me.projectRbacModels = v;
+            if (v) {
+              var one = oui.findOneFromArrayBy(me.projects, function(temp) {
+                if (temp.value == v) {
+                  return true;
+                }
+              });
+              if (one) {
+                me.queryPageFieldsByFormIdUrl = one.queryPageFieldsByFormIdUrl;
+              }
+  
+              oui.getData(
+                me.queryPagesByProjectIdUrl,
+                {
+                  projectId: v,
+                },
+                function(res) {
+                  var pages = res.pages || [];
+                  //组织模型所属项目变更后，更新控件数据项
+                  oui.eachArray(me.options || [], function(item) {
+                    var data4tableModels = me.findData4tableModels(item);
+  
+                    data4tableModels.queryParams = {
+                      projectId: v,
+                    };
+                    var refKey = "tableModelId_" + item.id;
+                    if (me.$refs[refKey]) {
+                      me.$refs[refKey][0].comp.value = "";
+                      me.$refs[refKey][0].comp.data = oui.parseJson(
+                        oui.parseString(pages)
+                      );
+                      me.$refs[refKey][0].comp.queryParams.projectId = v;
+                    }
+                    //idKey
+                    var refKey4bindId = "tableModelId_id_" + item.id;
+                    if (me.$refs[refKey4bindId]) {
+                      me.$refs[refKey4bindId][0].comp.value = "";
+                      me.$refs[refKey4bindId][0].comp.data = [];
+                    }
+  
+                    //nameKey
+                    var refKey4bindNameId = "tableModelId_name_" + item.id;
+                    if (me.$refs[refKey4bindNameId]) {
+                      me.$refs[refKey4bindNameId][0].comp.value = "";
+                      me.$refs[refKey4bindNameId][0].comp.data = [];
+                    }
+                  });
+                }
+              );
+            } else {
+              me.queryPageFieldsByFormIdUrl = "";
+            }
+          }
+          this.$set(this, key, v);
+        },
+  
+        handleTabsChange(tab, event) {
+          this.tabActive = tab.name;
+          if (tab.name === "frist") {
+            this.property = this.property;
+          } else if (tab.name === "reg") {
+            this.property = this.propertyReg;
+          } else if (tab.name === "event") {
+            this.property = this.propertyAnimation;
+          }
+        },
+        handleWebPageSrcChange: function(val) {
+          this.currentControl.otherAttrs.webPageSrc = this.webPageSrc;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrc = this.currentControl.otherAttrs.webPageSrc;
+        },
+        handleWebPageSrcChangeText: function(val) {
+          this.currentControl.otherAttrs.webPageSrcs = this.webPageSrcs;
+          com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.webPageSrcs = this.currentControl.otherAttrs.webPageSrcs;
+  
+          com.oui.absolute.AbsoluteDesign.changed4props(
+            this.currentControl,
+            function() {}
+          );
+        },
+        _controlOnUpdate: function(bindProp, config) {
+          console.log(config.id);
+          var me = this;
+          if (!config.id) {
+            return;
+          }
+          //获取当前配置变更的对象
+          var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(
+            config.id
+          );
+  
+          if (
+            bindProp &&
+            config &&
+            currentControl &&
+            currentControl.id === config.id
+          ) {
+            //根据当前配置的值改变 更新当前控件的值
+            oui.JsonPathUtil.setObjByPath(
+              bindProp,
+              currentControl,
+              oui.JsonPathUtil.getJsonByPath(bindProp, config),
+              true
+            );
+            //清除关系连线
+            me._controlOnUpdate4clearRelation(bindProp, config, currentControl);
+          }
+        },
+      },
+    };
+  </script>
+  
+  <style>
+    .ghost {
+      border: 1px dashed indianred;
+    }
+  
+    .item {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      /*height: 30px;*/
+      /*font-size: 14px;*/
+    }
+  
+    .item-move {
+      cursor: move;
+    }
+  
+    .item-delete {
+      padding-left: 5px;
+      color: red;
+    }
+  
+    .item-add {
+      padding-left: 5px;
+      color: blue;
+    }
+  </style>
+  

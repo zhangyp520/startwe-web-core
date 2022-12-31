@@ -1,0 +1,30 @@
+<!--多选组 TODO -->
+<template >
+    <div class="calendar_box">
+        <el-calendar v-model="value">
+        </el-calendar>        
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                value: new Date()
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+         
+        }
+    }
+</script>
+
+<style>
+    .calendar_box{
+        font-size: 14px;
+        color: #000;
+    }
+</style>

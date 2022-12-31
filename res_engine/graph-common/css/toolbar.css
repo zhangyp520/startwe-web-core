@@ -1,0 +1,141 @@
+@charset "UTF-8";
+.manager-toolbar {
+    display: inline;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.manager-toolbar .toolbar-group{
+    display: inline-block;
+    vertical-align: top;
+    font-size: 0;
+}
+.manager-toolbar .header-logic-name{
+    display: inline-block;
+    line-height: 30px;
+    padding-left: 50px;
+}
+.toolbar-group-item{
+    width: 18px;
+    height: 18px;
+    border: 0;
+    outline: none;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+    position: relative;
+    cursor: pointer;
+}
+.toolbar-group-item:before{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    top: 23px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 0 5px 5px;
+    border-bottom-color: #000;
+    display: none;
+}
+.toolbar-group-item:after{
+    padding: 3px 8px;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    background-color: #000;
+    border-radius: 4px;
+    white-space: nowrap;
+    position: absolute;
+    left: 50%;
+    margin-left: -20px;
+    top: 28px;
+    display: none;
+}
+.toolbar-group-item:hover:before,.toolbar-group-item:hover:after{
+    display: block;
+}
+.toolbar-group-icon{
+    background: url("../images/toolbar-icon.png") no-repeat;
+}
+.toolbar-group-icon-narrow{
+    background-position: 0 0;
+}
+.toolbar-group-icon-enlarge{
+    background-position: -18px 0;
+}
+.toolbar-group-icon-open{
+    background-position: -36px 0;
+}
+.toolbar-group-icon-close{
+    background-position: -54px 0;
+}
+.toolbar-group-icon-download{
+    background-position: -72px 0;
+}
+.toolbar-group-icon-narrow:hover{
+    background-position: 0 0;
+}
+.toolbar-group-icon-enlarge:hover{
+    background-position: -18px 0;
+}
+.toolbar-group-icon-open:hover{
+    background-position: -36px -18px;
+}
+.toolbar-group-icon-close:hover{
+    background-position: -54px -18px;
+}
+.toolbar-group-icon-download:hover{
+    background-position: -72px -18px;
+}
+.toolbar-group-icon-narrow:after{
+    content: "缩小";
+}
+.toolbar-group-icon-enlarge:after{
+    content: "放大";
+}
+.toolbar-group-icon-open:after{
+    content: "展开";
+}
+.toolbar-group-icon-close:after{
+    content: "收起";
+}
+.toolbar-group-icon-download:after{
+    content: "下载";
+}
+.manager-content {
+    position: absolute;
+    top: 62px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+
+.manager-toolbar-right{
+    line-height: 30px;
+    display: inline-block;
+    font-size: 0;
+}
+.manager-toolbar-right .zoom-view{
+    display: inline-block;
+    vertical-align: top;
+}
+.version-content{
+    text-align: center;
+    padding: 30px;
+}
+.version-content button{
+    display: block;
+    margin: 20px auto;
+    font-size: 14px;
+}
+.version-content button span{
+    font-size: 14px;
+}
+

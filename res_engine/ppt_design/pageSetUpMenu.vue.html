@@ -1,0 +1,319 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div style="">
+        <div class="right_title">页面设置</div>
+        <div class="pageSetUp">
+            <div class="bgColor">
+                <span class="inner-title">纯色背景</span>
+                <el-color-picker v-model="bgColor" @change="changeBgColor">
+                </el-color-picker>
+            </div>
+            <div class="imgBG">
+                <span class="inner-title">图片背景</span>
+                <div class="uploadBox">
+                    <el-upload class="avatar-uploader" :action="uploadBgimg" :show-file-list="false" :on-success="bgImgSuccess"
+                        :before-upload="beforeBgImgUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </div>
+            </div>
+            <div class="checkBox">
+                <el-checkbox v-model="checked">验证登陆</el-checkbox>
+            </div>
+        </div>
+
+    </div>
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                bgColor: '#fff',
+                imageUrl: '',
+                checked: false,
+                input: 0,
+                value1: 0,
+                bgImgData:[],
+                uploadBgimg: oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz'
+            }
+        },
+        created:function() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz';
+                url = oui.addParams(url, {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId')
+                });
+                this.uploadBgimg = url;
+        },
+        methods: {
+            changeBgColor: function () {
+
+            },
+            bgImgSuccess(res, file) {
+                if (res.success) {
+                    var id = res.ids[0];//上传成功
+                    // this.imageUrl = URL.createObjectURL(file.raw);
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    this.imageUrl = imgUrl;
+                    
+                    if (this.bgImgData.length > 1) {
+                        this.bgImgData.splice(0, 1);
+                        this.bgImgData.push({id: res.ids[0], imgUrl: this.imageUrl});
+                    }else{
+                        this.bgImgData.push({id: res.ids[0], imgUrl: this.imageUrl});
+                    }
+                    console.log(this.bgImgData);
+                    
+
+
+                }
+
+            },
+            beforeBgImgUpload(file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return true && isLt2M;
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .el-color-picker__trigger {
+        border: none;
+        width: 74px;
+        height: 40px;
+    }
+
+    .el-icon-arrow-down:before {
+        content: '';
+    }
+
+    .el-color-picker__color {
+        width: 64px;
+        height: 30px;
+        border-radius: 4px;
+    }
+
+    .el-color-picker__color-inner {
+        width: 62px;
+        height: 28px;
+        border-radius: 4px;
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 206px;
+        height: 120px;
+        line-height: 120px;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 206px;
+        height: 120px;
+        display: block;
+    }
+
+    .right_title {
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.80);
+        font-weight: bold;
+        margin-left: 12px;
+        line-height: 70px;
+    }
+
+    .pageSetUp {
+        margin: 0 12px;
+    }
+
+    .bgColor {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgColor>span {
+        margin-right: 20px;
+    }
+
+    .inner-title {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .imgBG {
+        margin-top: 10px;
+    }
+
+    .uploadBox {
+        margin-top: 10px;
+    }
+
+    .checkBox {
+        margin-top: 20px;
+    }
+
+    .module-title {
+        display: flex;
+        justify-content: space-between;
+        background-color: #E9E9E9;
+        height: 40px;
+    }
+
+    .module-title>div {
+        line-height: 40px;
+    }
+
+    .module-title>div:first-child {
+        margin-left: 12px;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .module-title>div:last-child {
+        margin-right: 12px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.65);
+    }
+
+    .TypesettingBox {
+        display: flex;
+        justify-content: center;
+    }
+
+    .TypesettingBox>div {
+        width: 206px;
+        height: 129px;
+        margin: 10px;
+    }
+
+    .locationSetting {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+    }
+
+    .location_inner {
+        height: 30px;
+        /* width: 70px; */
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .location_inner>input {
+        width: 50px;
+        outline: none;
+        margin-right: 5px;
+    }
+
+    .locationSetting>div>span {
+        color: #999;
+        margin: 0 5px;
+        font-size: 14px;
+        width: 10px;
+        line-height: 30px;
+    }
+
+    .num {
+        height: 30px;
+        width: 50px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        border-radius: 1px;
+        margin-bottom: 10px;
+    }
+
+    .num>input {
+        height: 28px;
+        width: 40px;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .lockImg {
+        height: 30px;
+        width: 50px;
+        margin-bottom: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    .sliderBox {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .sliderBox>div {
+        width: 78%;
+    }
+
+    .sliderBox>input {
+        width: 20%;
+        height: 30px;
+        border: 1px solid rgba(151, 151, 151, 0.30);
+        outline: none;
+        padding-left: 5px;
+    }
+</style>

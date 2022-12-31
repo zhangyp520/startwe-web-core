@@ -1,0 +1,90 @@
+<!-- 首页内容 -->
+<template>
+
+    <div class="">
+        <div class="personal_right_title">基本信息</div>
+        <div class="per_mar_box per_hight" v-if='type == 0'>
+            <div class="flex_b per_mar_bot">
+                <div>密码</div>
+                <div class="flex">
+                    <div class="per_mar_r">请定期更换密码</div>
+                    <div class="per_mar_color" @click='changeType(1)'>设置密码</div>
+                </div>
+            </div>
+            <div class="flex_b per_mar_bot">
+                <div>手机</div>
+                <div class="flex">
+                    <div class="per_mar_r">15698555555</div>
+                    <div class="per_mar_color">修改手机</div>
+                </div>
+            </div>
+            <div class="flex_b per_mar_bot">
+                <div>邮箱</div>
+                <div class="flex">
+                    <div class="per_mar_r">11XXXXXX@163.com</div>
+                    <div class="per_mar_color">修改邮箱</div>
+                </div>
+            </div>
+            <div class="flex_b">
+                <div>账号注销</div>
+                <div class="per_mar_color">立即注销</div>
+            </div>
+        </div>
+
+        <div class="per_mar_box per_hight" v-if='type == 1'>
+            <div class="flex">
+                <div class="input_table">输入旧密码</div>
+                <div class="">
+                    <input class='personal_right_input' type="text">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'data',
+        data: function () {
+            return {
+                type:0
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            
+
+
+        },
+        methods: {
+            changeType(type) {
+                this.type = type
+            }
+
+        }
+    }
+
+</script>
+<style scoped>
+   .per_mar_r{
+       margin-right: 20px;
+   }
+   .per_mar_box{
+        width: 100%;
+        margin-top: 5px;
+        background-color: #fff;
+        padding: 30px 30px 30px 34px;
+        font-size: 14px;
+   }
+   .per_hight{
+       height: 300px;
+   }
+   .per_mar_bot{
+       margin-bottom: 40px;
+   }
+   .per_mar_color{
+        color: rgba(69, 151, 255, 100);
+   }
+</style>

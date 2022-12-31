@@ -1,0 +1,138 @@
+
+<template >
+    <div class="oui-class-music">
+        <audio  class="audio" v-for='(item,index) in audioArr'  :src="item.url" :controls="controls" :autoplay="autoDetection? false : item.autoplay " :loop="loop" :muted="muted" :preload="preload"
+        :volume="volume"
+        @ended="overAudio(index)"
+        @pause="onPause"
+        @play="onPlay(index)"
+        >
+        </audio>
+        <div>
+            <img src="/res_engine/ppt_design/images/ui_music.png" alt="">
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                audioSrc: "",
+                //是否显示控件
+                controls: false,
+                //是否自动播放
+                autoplay: false,
+                //是否循环播放
+                loop: false,
+                //是否静音
+                muted: false,
+                //是否提前加载
+                preload: false,
+                //背景音乐是否自动切换
+                autoSwitch: false,
+                //背景音乐音量
+                volume: "",
+                //自动检测
+                autoDetection: false,
+                audioArr:[],
+            }
+        },
+        mounted:function(){
+            
+            
+            
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            if (this.control.otherAttrs.audios) {
+                if (this.control.otherAttrs.audios.length > 0) {
+                    this.audioArr = this.control.otherAttrs.audios
+                }
+            }
+            if (typeof this.control.otherAttrs.autoSwitch !== 'undefined') {
+                this.autoSwitch = this.control.otherAttrs.autoSwitch;
+            }
+            if (this.control.otherAttrs.volume) {
+                this.volume = this.control.otherAttrs.volume;
+                console.log(document.getElementsByClassName("audio"),'声音')
+                
+            }   
+            if (typeof this.control.otherAttrs.autoDetection !== 'undefined') {
+                this.autoDetection = this.control.otherAttrs.autoDetection;
+            }
+            
+        },
+        methods:{
+            /**
+             * audio自身事件
+             * */
+            // 当音频播放
+            onPlay (index) {
+                console.log('开始播放声音',index);
+
+                let aaa = this.audioArr = this.control.otherAttrs.audios
+                for (const item of aaa) {
+                    item.autoplay = false
+                }
+                aaa[index].autoplay = true
+                console.log(this.audioArr,1232)
+                
+            },
+            // 当音频暂停
+            onPause () {
+                console.log('暂停播放声音');
+            },
+           //播放完毕执行
+            overAudio(index){
+                console.log('播放声音完毕');
+                if(this.autoSwitch) {
+                    this.audioArr.forEach(item=>{
+                        item.autoplay = false;
+                    })
+                    this.audioArr[index].autoplay = true
+                    for (const key in this.audioArr) {
+                        if(this.audioArr.length - index == 1) {
+                            this.audioArr[0] = true
+                        }else{
+                            this.audioArr[index] = true
+                        }
+                    }
+                }
+            },
+
+        }
+    }
+</script>
+
+<style>
+    .oui-class-loginaccount{
+        margin-bottom: 20px;
+    }
+    .loginaccount-box{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e6e6e6;
+        background: #fff;
+    }
+    .loginaccount-icon {
+        width: 20px;
+        height: 20px;
+        margin-left: 10px;
+        z-index: 100;
+    }
+    .control-container-abs .loginaccount-input input{
+        border: none;
+        border-radius: 4px;
+    }
+    .oui-error-info{
+        position: absolute;
+        color: red;
+        font-size: 14px;
+    }
+</style>

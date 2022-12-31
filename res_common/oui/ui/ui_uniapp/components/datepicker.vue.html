@@ -1,0 +1,50 @@
+
+<template >
+
+    <div class="el-datepicker-outer">
+        <el-date-picker
+                v-model="value"
+                type="date"
+                :id="id"
+                :name="name"
+                :bindProp="bindProp"
+                :tempStyle="style"
+                :class="cls"
+                :placeholder="placeholder"
+                :format="format" :value-format="format"
+                @change="_controlOnUpdate"
+                >
+        </el-date-picker>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                format:'yyyy-MM-dd',
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:'请选择日期'
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .el-datepicker-outer .el-date-editor.el-input, .el-datepicker-outer .el-date-editor.el-input__inner{
+        width: 100%;
+    }
+</style>

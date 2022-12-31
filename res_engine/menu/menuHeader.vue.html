@@ -1,0 +1,154 @@
+<!-- 设计页头部 -->
+<template>
+    <div class="DesignHeader">
+        <!-- logo -->
+       
+        <div class="right-box">
+            <div>
+                <img src="/res_startwe/assets/logo2.png" alt="">
+            </div>
+            <div class="leftButton">
+                <div @click="saveMenuDesign" style="cursor: pointer;">
+                    <img src="/res_startwe/assets/save.png" alt="">
+                    <div>保存</div>
+                </div>
+                <div style="cursor: pointer;" @click='previewPage'>
+                    <img src="/res_startwe/assets/preview.png" alt="">
+                    <div>预览</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+        },
+        methods: {
+            //跳转到模板页面
+            queryPortalTemplates:function () {
+                var url = oui.getContextPath()+'index4vue.html#'+'res_engine/portal_design/templateMall.vue.html';
+                oui.openWindow({
+                    url:url,
+                    openType:'_blank'
+                });
+            },
+            //保存菜单设计
+            saveMenuDesign:function () {
+                window.postMessage({
+                    cmd: 'saveMenu',
+                    param: {
+                        saveMenu:true
+                    }
+                }, '*');
+                
+
+            },
+            previewPage() {
+                window.postMessage({
+                    cmd: 'previewPage',
+                    param: {
+                        saveMenu:true
+                    }
+                }, '*');
+            }
+          
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 头部 */
+
+    .DesignHeader {
+        /* width: 100%; */
+        display: flex;
+        padding: 5px;
+        border-bottom: 0.5px solid rgba(151,151,151,0.52);
+        background: #fff;
+  
+    }
+
+    .right-box {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        margin-left: 50px;
+    }
+
+    .right-box>div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 50px;
+    }
+
+    .right-box>div>div {
+        margin-right: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inner_box {
+        display: flex;
+        align-items: center;
+    }
+
+    .inner_box>div {
+        margin-right: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .inner_box>div>img {
+        width: 32px;
+    }
+
+    .designScaling {
+        margin-top: 4px;
+    }
+
+    .designZoom {
+        margin-top: 10px;
+    }
+</style>

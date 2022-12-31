@@ -1,0 +1,57 @@
+<oui-view id="project-entity"
+          data="com.oursui.models.project.web.ProjectController4Edit.getData()"
+          class="container oui-class-ouiview">
+</oui-view>
+<script id="project-entity-tpl" type="text/html" charset="utf-8">
+    <div class="pg-block" oui-controller="com.oursui.models.project.web.ProjectController4Edit" >
+        <div class="pg-block-header">
+            {{include 'menu-path-tpl' ({menuId:'project'})}}
+        </div>
+        <div class="pg-block-cont">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="input-project-name" class="col-sm-2 control-label">项目名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" bindProp="project.name" value="{{project.name}}" id="input-project-name" placeholder="输入项目名称">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-project-name" class="col-sm-2 control-label">项目唯一标识(必须以圈子的账号作为项目唯一标识的前缀)</label>
+                    <div class="col-sm-10">
+                        <input type="text" {{if project.id}}readOnly="readOnly"{{/if}} class="form-control" bindProp="project.enName" value="{{project.enName}}" id="input-project-enName" placeholder="输入项目名称">
+                    </div>
+                </div>
+
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-2 control-label">项目Logo</label>-->
+                    <!--<div class="col-sm-10">-->
+                        <!--<div class="input-group">-->
+                            <!--<input type="text" class="form-control" placeholder="选择图片" readonly="readonly" />-->
+                            <!--<span class="input-group-btn">-->
+                                <!--<button class="btn btn-default" type="button">-->
+                                    <!--<i class="glyphicon glyphicon-plus"></i>-->
+                                <!--</button>-->
+                            <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">项目描述</label>
+                    <div class="col-sm-10">
+                        <div class="article-editor">
+                            {{=project.description}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class=" text-center">
+                        <button class="article-btn" oui-e-{{clickName}}="event2save">
+                            <i class="iconfont icon-fasong"></i> 保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

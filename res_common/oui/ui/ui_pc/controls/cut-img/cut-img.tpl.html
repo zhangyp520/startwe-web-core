@@ -1,0 +1,35 @@
+<div class="cutimg-main">
+    <div class="cutimg-center">
+        <input type="file" style="display:none" accept="image/*" id="select-file-{{ouiId}}" onchange="oui.getByOuiId({{ouiId}}).updateImg();"  />
+        <div class="container cutimg-content {{showPreview?'show-preview':''}}" style="{{panelStyle}}">
+            <div class="cutimg-content-area">
+                <img src=""/>
+            </div>
+            <div class="cutimg-content-preview">
+                <div class="cutimg-preview-box">
+                    <span class="preview-img-info">预览图</span>
+            <span class="preview-img-area preview-img-area-{{ouiId}} img-area-large preview">
+            </span>
+
+                </div>
+            </div>
+            <div class="cutimg-content-toolbar">
+                <span class="cutimg-toolbar-icon cutimg-clockwise" onclick="oui.getByOuiId({{ouiId}}).clockwise();" title="顺时针旋转">顺时针旋转</span>
+                <span class="cutimg-toolbar-icon cutimg-anti-clockwise" onclick="oui.getByOuiId({{ouiId}}).antiClockwise();" title="逆时针旋转">逆时针旋转</span>
+                <span class="cutimg-toolbar-icon cutimg-level" onclick="oui.getByOuiId({{ouiId}}).level();" title="水平翻转">水平翻转</span>
+                <span class="cutimg-toolbar-icon cutimg-vertical" onclick="oui.getByOuiId({{ouiId}}).vertical();" title="垂直翻转">垂直翻转</span>
+                <span class="cutimg-toolbar-icon cutimg-edit" onclick="oui.getByOuiId({{ouiId}}).edit();" title="更换">更换</span>
+            </div>
+            <div class="cutimg-content-btns cutimg-clear">
+                <button class="cutimg-btn-sub" onclick="oui.getByOuiId({{ouiId}}).confirm();">确定</button>
+                <button class="cutimg-btn-cancel" onclick="oui.getByOuiId({{ouiId}}).cancel();">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<button class="cutimg-btn-default" onclick="oui.getByOuiId({{ouiId}}).showCutImg();">{{buttonInfo}}</button>
+
+
+
+
+

@@ -1,0 +1,83 @@
+<!-- 根据页面呈现类型进行处理 -->
+<template>
+    <div :style="styleFieldString" class="portal-page-space">
+        <oui-include v-if="renderUrl" type="module" :url="renderUrl" :data="pageData"></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                nodeId: '',
+                pageData:{},
+                renderUrl:'',
+                refId:'ref_'+oui.getUUIDLong(),
+                styleFieldString: ''
+            }
+        },
+        watch:{
+            'pageData':{
+                handler: function(newVal,oldVal) {
+                    this.refreshPageData();
+                },
+                deep: true,
+                immediate: true
+            }
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return;
+            }
+            //loadPortalPage4RuntimeUrl
+
+            this.isLoading = true;
+            var control = this.control;
+            this.styleFieldString = control.innerStyle.styleFieldString;
+
+            var nodeId = this.otherAttrs.nodeId; //页面id
+            this.nodeId = nodeId; //页面id
+            var dataId = this.otherAttrs.dataId||'';
+            var queryPage = this.otherAttrs.queryPage||'1';
+            var portalId = this.otherAttrs.portalId||'';
+            this.loadPortalPage4RuntimeUrl = this.otherAttrs.loadPortalPage4RuntimeUrl;
+            var renderUrl = oui.getContextPath()+'res_common/oui/ui/ui_pc/art-components/page.art.html';
+            renderUrl = oui.addParams(renderUrl,{
+                portalId:portalId,
+                pageId:nodeId,
+                dataId:dataId,
+                queryPage:queryPage,
+                loadPortalPage4RuntimeUrl:this.loadPortalPage4RuntimeUrl
+            });
+            this.renderUrl = renderUrl;
+        },
+        methods: {
+            refreshPageData:function(){
+
+            },
+            _controlOnUpdate: function (v, ov) {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, { value: v, data4DB: v, display: v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+    .portal-page-space{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page .control-inner-abs{
+        height: 100%;
+        width: 100%;
+    }
+    .control-abs-html-page .control-inner-abs .control-container-abs{
+        height: 100%;
+    }
+</style>

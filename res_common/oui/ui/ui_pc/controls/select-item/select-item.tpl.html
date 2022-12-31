@@ -1,0 +1,69 @@
+<link rel="stylesheet" type="text/css" href="{{oui.getContextPath()}}res_common/third/jquery-ui/css/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{oui.getContextPath()}}res_common/oui/ui/ui_pc/controls/select-item/css/select-item.css"/>
+<script type="text/javascript" src="{{oui.getContextPath()}}res_common/third/jquery-ui/jquery-1.114-ui.min.js"></script>
+<div class="dataSet-content {{if tabs&&tabs.length}}dataSet-tab{{/if}}">
+
+    <div class="dialog-data-tab" style="{{if notShowTabs}}display:none{{/if}}">
+        <ul>
+            {{each tabs as tab index}}
+            <li {{if index==tabIndex}}class="selected"{{/if}} onclick='oui.getPageParam("select_item_dialog_temp").setTabIndex({{index}})'>
+                {{tab.name}}
+                <i class="selectriangle-left"></i>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="dataset-dialog-container">
+        <div class="dataSet-head {{if isShowSearch}}dataSearch{{/if}}">
+            <div class="dataSet-search">
+                <div class="searchArea">
+                    <input type="text" class="dataInput" onkeyup='oui.getPageParam("select_item_dialog_temp").keyup(event,this)' onkeydown='oui.getPageParam("select_item_dialog_temp").keydown(event,this)' placeholder="请输入..."/>
+                    <button type="button" onclick='oui.getPageParam("select_item_dialog_temp").search()' class="dataSet-btn dataSet-btn-search"></button>
+                </div>
+                <div class="selectItem-webrobot-info">?<i class="triangle-up"></i><span>拖动或双击左侧的选项到右侧的次序位置进行排序，双击或者点击删除右侧选项进行删除</span></div>
+            </div>
+            <div class="dialog-warntips">Tips:拖动或双击左侧的选项到右侧的次序位置进行排序，双击或者点击删除右侧选项进行删除。</div>
+        </div>
+        <div class="dialog-data-left" oui-controller='oui.getPageParam("select_item_dialog_temp")'>
+            <div class="dialog-data-title"><span>默认选项</span></div>
+            {{if tabs[tabIndex]&& tabs[tabIndex].renderType=='tree' }}
+                <div class="tree-container-left">
+                <oui-include type="module" ref="tab_{{tabs[tabIndex].tabId}}" url="res_common/oui/ui/ui_pc/components/tree.vue.html" data='oui.getPageParam("select_item_dialog_temp").findTreeData({{tabIndex}})'></oui-include>
+                </div>
+            {{else}}
+            <ul>
+                {{each findData(tabIndex) as item index}}
+                {{if (tabs&&tabs[tabIndex]&&tabs[tabIndex].id == item.tabId)||(!tabs.length)}}
+                <li drag-id="{{item.value}}" {{if hasSelect(item.value,selects)}}canuse="false"{{/if}}  title="{{oui.escapeHTMLToString(item.display)}}" ondblclick='oui.getPageParam("select_item_dialog_temp").addItem("{{item.value}}")' >{{item.display}}</li>
+                {{/if}}
+                {{/each}}
+            </ul>
+            {{/if}}
+
+        </div>
+        <div class="dialog-data-right">
+            <div class="dialog-data-title"><span>已选</span></div>
+            <ul class="select-items">
+                {{each findSelects(selects,onlyShowCurrTabSelected,tabs,tabIndex) as item index}}
+                <li sort-id="{{item.value}}" title="{{oui.escapeHTMLToString(item.display)}}"><span>{{index+1}}</span>
+                    <div class="dialog-right-detail-name" ondblclick='oui.getPageParam("select_item_dialog_temp").delItem("{{item.value}}")'>
+                        <i class="right-item-icon"></i>
+                        {{item.display}}
+                        <i onclick='oui.getPageParam("select_item_dialog_temp").delItem("{{item.value}}")' class="right-item-delete"></i>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+            <div class="oui-dialog-ft">
+                <span class="oui-dialog-ok" onclick='oui.getPageParam("select_item_dialog_temp").ok()' >确认</span>
+                <span class="oui-dialog-cancel" onclick='oui.getPageParam("select_item_dialog_temp").cancel()'>取消</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

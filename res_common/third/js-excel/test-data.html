@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>示例</title>
+</head>
+
+<body>
+<script src="excel.all.min.js"></script>
+<script>
+    function saveAs(obj, fileName) {
+        var tmpa = document.createElement("a");
+        tmpa.download = fileName || "下载";
+        tmpa.href = URL.createObjectURL(obj);
+        tmpa.click();
+        setTimeout(function () {
+            URL.revokeObjectURL(obj);
+        }, 100);
+    }
+    var jsono = [];
+    const wopts = { bookType: 'xlsx', bookSST: true, type: 'binary', cellStyles: true };
+    var oui = oui||{};
+    oui.eachArray = function (arr,fun){
+        if((!arr) ||(!arr.length)){
+            return null;
+        }
+        if(!fun){
+            return;
+        }
+        for(var i= 0,len=arr.length;i<len;i++){
+            var flag = fun(arr[i],i);
+            if(typeof flag =='boolean'){
+                if(!flag){
+                    return ;
+                }
+            }
+        }
+    };
+    var getExportData  = function(){
+        var arr = [{"1": "批次", "2": "顺序", "3": "志愿", "4": "代码","5":"名称","6":"志愿","7":"代码","8":"名称"}];
+        var data = [
+            {
+                "pc": "本科普通批次",
+                "list": [
+                    {
+                        "index": 1,
+                        "code": "4425",
+                        "name": "深圳大学",
+                        "majorgroup": "不限选考科目",
+                        "majorgroupcode": 1,
+                        "majorlist": [
+                            {
+                                "index": 1,
+                                "code": "12",
+                                "name": "金融学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "18",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "68544",
+                                        "jhs": "10",
+                                        "pjf": "503"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "18",
+                                        "pjf": "501"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "64386",
+                                        "jhs": "-",
+                                        "pjf": "486"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 2,
+                                "code": "13",
+                                "name": "会计学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "12",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "96520",
+                                        "jhs": "10",
+                                        "pjf": "478"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "71085",
+                                        "jhs": "12",
+                                        "pjf": "499"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 3,
+                                "code": "10",
+                                "name": "广告学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "20",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "113687",
+                                        "jhs": "25",
+                                        "pjf": "464"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 4,
+                                "code": "11",
+                                "name": "工商管理",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "58",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "71682",
+                                        "jhs": "27",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "70165",
+                                        "jhs": "28",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "66292",
+                                        "jhs": "-",
+                                        "pjf": "484"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 5,
+                                "code": "14",
+                                "name": "金融科技",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "16",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "86025",
+                                        "jhs": "12",
+                                        "pjf": "487"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "24",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "67252",
+                                        "jhs": "-",
+                                        "pjf": "483"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "index": 2,
+                        "code": "44256",
+                        "name": "深圳大学2",
+                        "majorgroup": "不限选考科目",
+                        "majorgroupcode": 1,
+                        "majorlist": [
+                            {
+                                "index": 1,
+                                "code": "12",
+                                "name": "金融学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "18",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "68544",
+                                        "jhs": "10",
+                                        "pjf": "503"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "18",
+                                        "pjf": "501"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "64386",
+                                        "jhs": "-",
+                                        "pjf": "486"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 2,
+                                "code": "13",
+                                "name": "会计学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "12",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "96520",
+                                        "jhs": "10",
+                                        "pjf": "478"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "71085",
+                                        "jhs": "12",
+                                        "pjf": "499"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 3,
+                                "code": "10",
+                                "name": "广告学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "20",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "113687",
+                                        "jhs": "25",
+                                        "pjf": "464"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 4,
+                                "code": "11",
+                                "name": "工商管理",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "58",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "71682",
+                                        "jhs": "27",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "70165",
+                                        "jhs": "28",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "66292",
+                                        "jhs": "-",
+                                        "pjf": "484"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 5,
+                                "code": "14",
+                                "name": "金融科技",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "16",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "86025",
+                                        "jhs": "12",
+                                        "pjf": "487"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "24",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "67252",
+                                        "jhs": "-",
+                                        "pjf": "483"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },{
+                "pc": "本科提前批次",
+                "list": [
+                    {
+                        "index": 1,
+                        "code": "4426",
+                        "name": "暨南大学",
+                        "majorgroup": "不限选考科目",
+                        "majorgroupcode": 2,
+                        "majorlist": [
+                            {
+                                "index": 1,
+                                "code": "14",
+                                "name": "金融学14",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "35",
+                                        "pjf": "560"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "45852",
+                                        "jhs": "48",
+                                        "pjf": "569"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69852",
+                                        "jhs": "12",
+                                        "pjf": "666"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "12589",
+                                        "jhs": "-",
+                                        "pjf": "568"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 2,
+                                "code": "16",
+                                "name": "会计学16",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "12",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "85555",
+                                        "jhs": "10",
+                                        "pjf": "478"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69999",
+                                        "jhs": "16",
+                                        "pjf": "566"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 3,
+                                "code": "10",
+                                "name": "广告学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "20",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "113687",
+                                        "jhs": "25",
+                                        "pjf": "464"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 4,
+                                "code": "11",
+                                "name": "工商管理",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "58",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "71682",
+                                        "jhs": "27",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "70165",
+                                        "jhs": "28",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "66292",
+                                        "jhs": "-",
+                                        "pjf": "484"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 5,
+                                "code": "14",
+                                "name": "金融科技",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "16",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "86025",
+                                        "jhs": "12",
+                                        "pjf": "487"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "24",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "67252",
+                                        "jhs": "-",
+                                        "pjf": "483"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "index": 2,
+                        "code": "44256",
+                        "name": "深圳大学2",
+                        "majorgroup": "不限选考科目",
+                        "majorgroupcode": 1,
+                        "majorlist": [
+                            {
+                                "index": 1,
+                                "code": "12",
+                                "name": "金融学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "18",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "68544",
+                                        "jhs": "10",
+                                        "pjf": "503"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "18",
+                                        "pjf": "501"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "64386",
+                                        "jhs": "-",
+                                        "pjf": "486"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 2,
+                                "code": "13",
+                                "name": "会计学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "12",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "96520",
+                                        "jhs": "10",
+                                        "pjf": "478"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "71085",
+                                        "jhs": "12",
+                                        "pjf": "499"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 3,
+                                "code": "10",
+                                "name": "广告学",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "20",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "113687",
+                                        "jhs": "25",
+                                        "pjf": "464"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "-",
+                                        "jhs": "-",
+                                        "pjf": "-"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 4,
+                                "code": "11",
+                                "name": "工商管理",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "58",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "71682",
+                                        "jhs": "27",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "70165",
+                                        "jhs": "28",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "66292",
+                                        "jhs": "-",
+                                        "pjf": "484"
+                                    }
+                                ]
+                            },
+                            {
+                                "index": 5,
+                                "code": "14",
+                                "name": "金融科技",
+                                "data": [
+                                    {
+                                        "year": 2021,
+                                        "pw": "-",
+                                        "jhs": "16",
+                                        "pjf": "-"
+                                    },
+                                    {
+                                        "year": 2020,
+                                        "pw": "86025",
+                                        "jhs": "12",
+                                        "pjf": "487"
+                                    },
+                                    {
+                                        "year": 2019,
+                                        "pw": "69264",
+                                        "jhs": "24",
+                                        "pjf": "500"
+                                    },
+                                    {
+                                        "year": 2018,
+                                        "pw": "67252",
+                                        "jhs": "-",
+                                        "pjf": "483"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+        var rowIdx=1;
+        var merges= {};
+        oui.eachArray(data,function(item){
+            var curr = item; //批次 对象
+            var list = item.list ||[]; //学校列表
+            var start = rowIdx;
+            //处理批次合并
+            merges['0_'+start] = {
+                s:{
+                    c:0,r:start
+                },
+                e:{
+                    c:0,r:start
+                }
+            };
+            oui.eachArray(list,function(school){
+                var majorlist = school.majorlist ||[];
+                var len =majorlist.length;
+                var start4pc = rowIdx;
+                //处理序号合并
+                merges['1_'+start4pc] = {
+                    s:{
+                        c:1,r:start4pc
+                    },
+                    e:{
+                        c:1,r:start4pc
+                    }
+                };
+                rowIdx++;
+                arr.push({
+                    1:curr.pc, //批次
+                    2:school.index,//顺序
+                    3:'院校',
+                    4:school.code,
+                    5:school.name,//院校名称
+                    6:'专业组',
+                    7:'待2021大厚本公布结果',
+                    8: '待公布'
+                });
+
+                oui.eachArray(majorlist,function(marjor,idx4margor){
+                    if(idx4margor%2==0){
+                        var left = marjor;
+                        var right =null;
+                        if(idx4margor+1<len){
+                            right = majorlist[idx4margor+1];
+                        }
+                        rowIdx++;
+                        arr.push({
+                            1:curr.pc, //批次
+                            2:school.index,//顺序
+                            3:'专业'+(idx4margor+1), //左侧专业标题
+                            4:left.code, //左侧专业代码
+                            5:left.name,//左边的专业名词
+                            6:'专业'+(idx4margor+2),//右侧专业标题
+                            7:right?right.code:'', //右侧专业代码
+                            8:right?right.name:''//右侧专业名词
+
+                        });
+                    }
+                });
+                merges['1_'+start4pc].e.r = rowIdx-1;
+
+            });
+            merges['0_'+start].e.r = rowIdx-1;
+
+
+        });
+        return {
+            data:arr,
+            merges:merges
+        }
+
+    };
+    jsono = getExportData();
+    function downloadExl(obj, type) {
+        var json = obj.data;
+        var mergesMap = obj.merges;
+
+        var tmpdata = json[0];
+//        json.unshift({});
+        var keyMap = []; //获取keys
+        for (var k in tmpdata) {
+            keyMap.push(k);
+            json[0][k] =  json[0][k];
+        }
+        var tmpdata = [];//用来保存转换好的json
+        json.map((v, i) => keyMap.map((k, j) => Object.assign({}, {
+            v: v[k],
+            position: (j > 25 ? getCharCol(j) : String.fromCharCode(65 + j)) + (i + 1)
+        }))).reduce((prev, next) => prev.concat(next)).forEach((v, i) => tmpdata[v.position] = {
+            v: v.v
+        });
+        var outputPos = Object.keys(tmpdata); //设置区域,比如表格从A1到D10
+        tmpdata["B1"].s = {
+            font: {
+                sz: 14, bold: true, color: { rgb: "FFFFAA00" }
+            }, fill: {
+                bgColor: { indexed: 64 }, fgColor: { rgb: "FFFF00" } }
+        };//<====设置xlsx单元格样式
+        var merges = [];
+        for(var k in mergesMap){
+            merges.push(mergesMap[k]);
+        }
+        tmpdata["!merges"] = merges;//<====合并单元格
+        var tmpWB = {
+            SheetNames: ['mySheet'], //保存的表标题
+            Sheets: {
+                'mySheet': Object.assign({},
+                        tmpdata, //内容
+                        {
+                            '!ref': outputPos[0] + ':' + outputPos[outputPos.length - 1] //设置填充区域
+                        })
+            }
+        };
+        tmpDown = new Blob([s2ab(OURS_IMPORT_XLSX.write(tmpWB,
+                { bookType: (type == undefined ? 'xlsx' : type), bookSST: false, type: 'binary' }//这里的数据是用来定义导出的格式类型
+        ))], {
+            type: ""
+        });
+        saveAs(tmpDown, "这里是下载的文件名" + '.' + (wopts.bookType == "biff2" ? "xls" : wopts.bookType));
+    }
+    function getCharCol(n) {
+        let temCol = '',
+                s = '',
+                m = 0
+        while (n > 0) {
+            m = n % 26 + 1
+            s = String.fromCharCode(m + 64) + s
+            n = (n - m) / 26
+        }
+        return s
+    }
+    function s2ab(s) {
+        if (typeof ArrayBuffer !== 'undefined') {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        } else {
+            var buf = new Array(s.length);
+            for (var i = 0; i != s.length; ++i) buf[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+    }
+</script>
+<button onclick="downloadExl(jsono)">导出</button>
+<!--<script type="text/javascript" charset="utf-8" src="/res_common/third/jquery/jquery-2.1.4.min.js"></script>-->
+<!--<script type="text/javascript" charset="utf-8" src="/res_common/oui/system/oui.js"></script>-->
+<!--<script type="text/javascript">-->
+    <!--oui.require([-->
+        <!--oui.getContextPath()+'res_common/third/template/template_debug_3_0_0.js',-->
+        <!--oui.getContextPath()+'res_common/oui/system/oui-common.js',-->
+        <!--oui.getContextPath()+'res_common/oui/system/oui-datautils.js',-->
+        <!--oui.getContextPath()+'res_common/oui/ui/base-control.js',-->
+        <!--oui.getContextPath()+'res_common/oui/system/oui-jsclazz.js',-->
+        <!--oui.getContextPath()+'res_common/oui/system/oui-biz-ext.js'-->
+    <!--],function(){-->
+
+    <!--});-->
+<!--</script>-->
+</body>
+
+</html>

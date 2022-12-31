@@ -1,0 +1,1111 @@
+@charset "UTF-8";
+label:after{
+    content: "";
+    display: block;
+    clear: both;
+}
+/*防止用户操作过快导致数据重复提交*/
+.submit-button-disabled{
+    pointer-events: none;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.submit-button-disabled:after{
+    content: "";
+    background: rgba(255,255,255,.5);
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    cursor: default;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/*span模拟*/
+.form-simulation,
+.oui-readOnly,
+.oui-edit4ReadOnly,
+.oui-edit4View,
+.oui-readonly{
+    background: #f5f5f5;
+    padding: 5px !important;
+    margin: 0;
+    border: 1px solid #e6e6e6;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-size: 14px;
+    display: inline-block;
+    width: 100%;
+    min-height: 36px;
+    line-height: 24px;
+    text-align: left;
+    color: rgba(81,81,81,.8);
+    word-wrap: break-word;
+    word-break: normal;
+    vertical-align: top;
+}
+.form-simulation .oui-readOnly-canclick,
+.oui-readOnly .oui-readOnly-canclick,
+.oui-edit4ReadOnly .oui-readOnly-canclick,
+.oui-readonly .oui-readOnly-canclick{
+    width: auto;
+    display: inline-block;
+    border-bottom: 1px solid #2C82FC;
+    color: #2C82FC;
+    cursor: pointer;
+}
+.form-simulation{
+    word-break: keep-all;
+}
+.form-viewType-0 .form-simulation{
+    width: 80%;
+    display: inline-block;
+    vertical-align: middle;
+}
+span.form-simulation img {
+    padding:0 10px 10px 0;
+}
+.form-simulation.oui-relation-readOnly .oui-relation,
+.oui-readOnly.oui-relation-readOnly .oui-relation{
+    min-height: auto;
+    line-height: inherit;
+    padding: 0;
+    border: 0;
+    padding-left: 25px;
+}
+/*查看全部内容*/
+.form-collapse-item{
+    position: relative;
+    width: 100%;
+}
+.form-collapse-item .form-collapse-area{
+    display: block;
+    padding-bottom: 18px;
+}
+.collapse-hidden{
+    max-height: 155px;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+}
+.collapse-more{
+    position: absolute;
+    bottom: -5px;
+    left: -5px;
+    right: -5px;
+    height: 70px;
+    z-index: 5;
+    border-radius: 3px;
+    overflow: hidden;
+    border: none;
+    text-align: center;
+}
+.form-collapse-area + .collapse-more{
+    background: none;
+}
+.form-collapse-area.collapse-hidden + .collapse-more{
+    background: url("../images/linearlayer.png") repeat-x;
+    background: linear-gradient(-180deg,rgba(255,255,255,0.00) 0%,rgba(255,255,255,0.60) 49%,#FFFFFF 85%);
+}
+.form-collapse-area.collapse-hidden + .collapse-more .collapse-btn-info,
+.form-collapse-area + .collapse-more .collapse-btn-info{
+    background: url("../images/arrow-down.png") center no-repeat;
+    background-size: 24px auto;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+    font-size: 14px;
+    color: #2C82FC;
+    margin: 40px auto 0 auto;
+    cursor: pointer;
+}
+.form-collapse-area.collapse-hidden + .collapse-more .collapse-btn-info{
+    -webkit-transform:rotate(0deg);
+    -moz-transform:rotate(0deg);
+    -ms-transform:rotate(0deg);
+    transform:rotate(0deg);
+}
+.form-collapse-area + .collapse-more .collapse-btn-info{
+    -webkit-transform:rotate(180deg);
+    -moz-transform:rotate(180deg);
+    -ms-transform:rotate(180deg);
+    transform:rotate(180deg);
+}
+/*控件标题大小*/
+.oui-fontsize-title-1{
+    font-size: 12px !important;
+}
+.oui-fontsize-title-2{
+    font-size: 14px !important;
+}
+.oui-fontsize-title-3{
+    font-size: 18px !important;
+}
+/*控件内文字大小*/
+.oui-fontsize-1 input,
+.oui-fontsize-1 textarea,
+.oui-fontsize-1 select,
+.oui-fontsize-1 .oui-number-split-area,
+.oui-fontsize-1 .button-wrapper-info,
+.oui-fontsize-1.form-simulation,
+.oui-fontsize-1.oui-readOnly,
+.oui-fontsize-1.oui-readonly,
+.oui-fontsize-1.oui-readOnly .oui-relation{
+    font-size: 12px !important;
+}
+.oui-fontsize-2 input,
+.oui-fontsize-2 textarea,
+.oui-fontsize-2 select,
+.oui-fontsize-2 .oui-number-split-area,
+.oui-fontsize-2 .button-wrapper-info,
+.oui-fontsize-2.form-simulation,
+.oui-fontsize-2.oui-readOnly,
+.oui-fontsize-2.oui-readonly,
+.oui-fontsize-2.oui-readOnly .oui-relation{
+    font-size: 14px !important;
+}
+.oui-fontsize-3 input,
+.oui-fontsize-3 textarea,
+.oui-fontsize-3 select,
+.oui-fontsize-3 .oui-number-split-area,
+.oui-fontsize-3 .button-wrapper-info,
+.oui-fontsize-3.form-simulation,
+.oui-fontsize-3.oui-readOnly,
+.oui-fontsize-3.oui-readonly,
+.oui-fontsize-3.oui-readOnly .oui-relation{
+    font-size: 18px !important;
+}
+.oui-fontsize-1 .multiSelect-wrapper,
+.oui-fontsize-1 .radio-button-wrapper{
+    margin-top: 1px !important;
+}
+.oui-fontsize-2 .multiSelect-wrapper,
+.oui-fontsize-2 .radio-button-wrapper{
+    margin-top: 3px !important;
+}
+.oui-fontsize-3 .multiSelect-wrapper,
+.oui-fontsize-3 .radio-button-wrapper{
+    margin-top: 6px !important;
+}
+.oui-class-signature.oui-readOnly img{
+    max-width: 100%;
+    vertical-align: top;
+}
+/* 控件与控件的间距*/
+.form-space-1{
+    padding: 6px 0 !important;
+}
+.form-space-2{
+    padding:12px 0 !important;
+}
+.form-space-3{
+    padding:20px 0 !important;
+}
+article .form-ctrl{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+/**
+ * <i class="oui-error-info"></i>
+ * 错误消息的公共样式 
+ */
+/*复选&单选公用样式*/
+.checkbox-wrapper,.radio-button-wrapper {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    float: left;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 3px 7px 0 0;
+    z-index: 5;
+}
+.selected-icon{
+    cursor: pointer;
+}
+.radio-button-wrapper input[type=radio],.checkbox-wrapper input[type=checkbox]{
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon,.radio-button-wrapper input[type="radio"]+.selected-icon{
+    display: inline-block;
+    background: #FFF;
+    border: 1px solid #aab2bd;
+    -webkit-transition: background 0.28s ease;
+    -o-transition: background 0.28s ease;
+    transition: background 0.28s ease;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="radio"]+.selected-icon:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon,.radio-button-wrapper input[type="radio"]:checked+.selected-icon{
+    background-color: #2C82FC;
+    border-color: #2C82FC;
+}
+/*单选样式*/
+
+.radio-button-wrapper input[type="radio"]+.selected-icon {
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+}
+.radio-button-wrapper input[type="radio"]+.selected-icon:after {
+    background: #FFF;
+    width: 16px;
+    height: 16px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+}
+.radio-button-wrapper input[type="radio"]:checked+.selected-icon:after {
+    -webkit-transform: scale(0.4);
+    -ms-transform: scale(0.4);
+    -o-transform: scale(0.4);
+    transform: scale(0.4);
+}
+.button-wrapper-info {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+/*复选*/
+.checkbox-wrapper input[type="checkbox"]+.selected-icon{
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+.checkbox-wrapper input[type="checkbox"]:checked+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]:checked+.selected-icon:after {
+    border-bottom-color: #FFF;
+    border-right-color: #FFF;
+}
+.checkbox-wrapper input[type="checkbox"]+.selected-icon:after,.radio-button-wrapper input[type="checkbox"]+.selected-icon:after {
+    top: 1px;
+    left: -1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid transparent;
+    -webkit-transform: rotate(43deg);
+    -ms-transform: rotate(43deg);
+    -o-transform: rotate(43deg);
+    transform: rotate(43deg);
+    -webkit-transform-origin: 100% 100%;
+    -moz-transform-origin: 100% 100%;
+    -ms-transform-origin: 100% 100%;
+    transform-origin: 100% 100%;
+}
+/*CSS3模拟Switch*/
+.oui-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    -ms-flex-item-align: center;
+    -webkit-align-self: center;
+    align-self: center
+}
+.oui-checkbox input[type=checkbox] {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox {
+    background: #2C82FC;
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:before {
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0)
+}
+.oui-checkbox input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(42px);
+    -ms-transform: translateX(42px);
+    transform: translateX(42px)
+}
+.oui-checkbox .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+    background: #e5e5e5;
+    z-index: 0;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox .checkbox:before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 28px;
+    background: #fff;
+    z-index: 1;
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1)
+}
+.oui-checkbox .checkbox:after {
+    content: ' ';
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    background: #fff;
+    position: absolute;
+    z-index: 2;
+    top: 2px;
+    left: 2px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    -ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    -webkit-transform: translateX(0);
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+    -webkit-transition-duration: 150ms;
+    -ms-transition-duration: 150ms;
+    transition-duration: 150ms
+}
+.oui-checkbox.large,.oui-checkbox.large .checkbox {
+    width: 52px;
+    height: 32px;
+    border-radius: 16px;
+}
+.oui-checkbox.large input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(22px);
+    -ms-transform: translateX(22px);
+    transform: translateX(22px)
+}
+.oui-checkbox.large .checkbox:before {
+    left: 2px;
+    top: 2px;
+    width: 48px;
+    border-radius: 16px;
+    height: 28px
+}
+.oui-checkbox.large .checkbox:after {
+    height: 28px;
+    width: 28px;
+    border-radius: 28px;
+    top: 2px;
+    left: 2px
+}
+.oui-checkbox.middle,.oui-checkbox.middle .checkbox {
+    width: 46px;
+    height: 24px;
+    border-radius: 16px;
+}
+.oui-checkbox.middle input[type=checkbox]:checked + .checkbox:after {
+    -webkit-transform: translateX(21px);
+    -ms-transform: translateX(21px);
+    transform: translateX(21px)
+}
+.oui-checkbox.middle .checkbox {
+    display: inline-block;
+}
+.oui-checkbox.middle .checkbox:before {
+    left: 1px;
+    top: 1px;
+    width: 44px;
+    border-radius: 16px;
+    height: 22px;
+}
+.oui-checkbox.middle .checkbox:after {
+    height: 22px;
+    width: 22px;
+    border-radius: 22px;
+    top: 1px;
+    left: 1px
+}
+.oui-checkbox input[type=checkbox] {
+    display: inline \9;
+    zoom: 1 \9
+}
+.oui-checkbox .checkbox {
+    display: none \9
+}
+.oui-checkbox.disabled {
+    opacity: .4
+}
+
+.oui-error-info{
+    background-color: #d92424;
+    color: #ffeae6;
+    padding: 2px 5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    margin: 5px 0 5px 0;
+    display: inline-block;
+    word-break: break-all;
+}
+.error-info{
+    font-size: 12px;
+    color: #e4393c;
+    font-style: normal;
+    display: inline;
+}
+.error-light-tips{
+    background: url("../images/error.png") left center no-repeat;
+    background-size: 14px 14px;
+    margin: 5px 0;
+    padding-left: 16px;
+    line-height: 20px;
+    font-size: 12px;
+    color: #e4393c;
+    font-style: normal;
+    display: inline-block;
+}
+/*
+问号--白色-开始*/
+div.question{
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    text-align: center;
+    line-height: 14px;
+    font-size: 12px !important;
+    font-style: normal !important;
+    font-family: Arial, sans-serif, Helvetica, Tahoma;
+    display: inline-block;
+    font-weight: 600;
+    vertical-align: baseline;
+    margin-left: 5px;
+    position: relative;
+}
+div.question i.triangle-up{
+    width: 8px;
+    height: 8px;
+    background-color: #b7b7b7;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    z-index: 3;
+    margin-left: -4px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    display: none;
+}
+div.question p{
+    background: #b7b7b7;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    border: 1px solid #e6e6e6;
+    line-height: 1.5;
+    padding: 5px;
+    font-size: 12px !important;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    width: 170px;
+    color: #ffffff;
+    position: absolute;
+    text-align: left;
+    left: 50%;
+    margin-left: -85px;
+    top: 20px;
+    z-index: 2;
+    display: none;
+}
+div.question:hover i,
+div.question:hover p{
+    display: block;
+}
+/*
+问号--白色--结束*/
+
+/*
+问号灰色*/
+div.question-webrobot,
+span.question-webrobot{
+    background: #b9b9b9;
+    width: 16px;
+    height: 16px;
+    color: #ffffff;
+    font-size: 14px !important;
+    font-weight: normal !important;
+    line-height: 16px;
+    text-align: center;
+    font-family: arial, verdana, sans-serif;
+    display: inline-block;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    cursor: default;
+    position: relative;
+    /*z-index: 300;*/
+    top: 0;
+    margin: 0 0 0 5px;
+    text-indent: 0;
+}
+div.question-webrobot div.question-content,
+span.question-webrobot span.question-content{
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
+    background: #b7b7b7;
+    padding: 5px 10px;
+    width: 160px;
+    min-height: 30px;
+    font-size: 13px !important;
+    font-weight: normal !important;
+    line-height: 1.4;
+    position: absolute;
+    left: 26px;
+    top: -6px;
+    color: #ffffff;
+    z-index: 300;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    text-align: left;
+    white-space: normal;
+    display: none;
+}
+div.question-webrobot div.question-content div.question-wapper,
+span.question-webrobot span.question-content span.question-wapper{
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid #b7b7b7;
+    position: absolute;
+    left: -8px;
+    top: 7px;
+}
+div.question-webrobot:hover div.question-content,
+span.question-webrobot:hover span.question-content{
+    display: block;
+}
+/*
+问号灰色*/
+/*针对下拉条件组件的选项被页面底部遮住，向上浮动选项*/
+.dropdown-float-top{
+    border-top-left-radius: 3px !important;
+    border-top-right-radius: 3px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.guide-mask{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.7);
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    z-index: 9998;
+}
+.guide-mask #guide-content{
+    position: absolute;
+    color: #ffffff;
+    z-index: 9999;
+}
+/*-------Toolbar***button***--开始------*/
+.oui-toolbar-content{
+    padding: 6px 10px 6px 0;
+    margin-bottom: 8px;
+}
+.oui-toolbar-content .toolbar-search-area{
+    float: right;
+    width: 240px;
+}
+.oui-toolbar-content button {
+    padding: 0 10px;
+    min-width: 80px;
+    height: 34px;
+    font-size: 14px;
+    line-height: 32px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.toolbar-icon{
+    background: url("../images/oui-toolbar-icon.png") no-repeat;
+    background-size: 126px 42px;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -3px;
+}
+.toolbar-icon-delete{
+    background-position: -14px -28px; /*删除*/
+}
+.toolbar-icon-edit{
+    background-position: 0 -28px; /*编辑*/
+}
+.toolbar-icon-move{
+    background-position: -56px -28px; /*移动*/
+}
+.toolbar-icon-add{
+    background-position: -28px -28px; /*添加*/
+}
+.toolbar-icon-invite{
+    background-position: -42px -28px; /*邀请*/
+}
+.toolbar-icon-batchImport{
+    background-position: -98px -28px; /*批量导入*/
+}
+.toolbar-icon-more{
+    background-position: -70px -28px; /*更多操作*/
+}
+.toolbar-icon-auditing{
+
+}
+.oui-toolbar-content button:hover .toolbar-icon-delete{
+    background-position: -14px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-edit{
+    background-position: 0 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-move{
+    background-position: -56px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-add{
+    background-position: -28px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-invite{
+    background-position: -42px 0;
+}
+.oui-toolbar-content button:hover .toolbar-icon-batchImport{
+    background-position: -98px 0
+}
+.oui-toolbar-content button:hover .toolbar-icon-more{
+    background-position: -70px 0;
+}
+.button-default{
+    background: none;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+    position: relative;
+}
+.button-default:hover{
+    background: #2C82FC;
+    color: #FFFFFF;
+}
+/*-------Toolbar***button***--结束------*/
+/*内容区域常用框架--开始*/
+.oui-content-layout{
+    background: #ffffff;
+    position: absolute;
+    top: 0;
+    left: 30px;
+    right: 30px;
+    bottom: 0;
+    text-align: center;
+}
+.oui-content-layout.noTop{
+    top: 30px;
+}
+.oui-content-layout-left{
+    background: #f6f6f7;
+    width: 250px;
+    border: 1px solid #ebebeb;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 0;
+    overflow-y: auto;
+}
+.oui-content-layout-right{
+    padding-left: 10px;
+    position: absolute;
+    left: 260px;
+    right: 10px;
+    top: 10px;
+    bottom: 0;
+    text-align: left;
+}
+.oui-content-layout-right .layout-right-content{
+    position: absolute;
+    top: 56px;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    width: auto;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.fixed-nav{
+    background: none;
+}
+.fixed-nav .oui-content-layout-left{
+    background:#ffffff;
+    width: 200px;
+    left: 0;
+    top: 0;
+    bottom: auto;
+}
+.fixed-nav .oui-content-layout-right{
+    background: #ffffff;
+    left: 220px;
+    top: 0;
+}
+/*内容区域常用框架--结束*/
+.display_none{
+    display: none;
+}
+/*必填*/
+.required-icon {
+    color: red;
+    position: relative;
+    top: 2px;
+    font-style: normal;
+}
+/*必填*/
+
+/*列表toolbar*/
+.oui-toolbar-area {
+    display: block;
+    padding: 10px 0;
+    position: relative;
+}
+.oui-toolbar-area:after{
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/*.oui-toolbar-area button {
+    background: none;
+    padding: 0 10px;
+    min-width: 80px;
+    height: 30px;
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+    font-size: 14px;
+    line-height: 28px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 7px;
+}
+.oui-toolbar-area button:hover {
+    background: #2C82FC;
+    color: #ffffff;
+}
+.oui-toolbar-area button.btn-disable{
+    background:#b8b8b8;
+    border-color:#b8b8b8;
+    color: #eee;
+}
+.btn-icon{
+    background: url("../images/btn-option-icon.png") no-repeat;
+    background-size: 210px 105px;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 2px;
+    margin-top: -3px;
+}*/
+/*编辑*/
+.btn-icon-edit{
+    background-position: 0 -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-edit{
+    background-position: 0 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-edit,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-edit{
+    background-position: 0 -14px;
+}
+/*删除*/
+.btn-icon-delete{
+    background-position: -14px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-delete{
+    background-position: -14px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-delete,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-delete{
+    background-position: -14px -14px;
+}
+/*添加*/
+.btn-icon-add{
+    background-position: -28px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-add{
+    background-position: -28px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-add,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-add{
+    background-position: -28px -14px;
+}
+/*更多*/
+.btn-icon-more{
+    background-position: -70px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-more{
+    background-position: -70px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-more,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-more{
+    background-position: -70px -14px;
+}
+/*批量导入*/
+.btn-icon-batchImport{
+    background-position: -98px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-batchImport{
+    background-position: -98px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-batchImport,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-batchImport{
+    background-position: -98px -14px;
+}
+/*导入*/
+.btn-icon-leadIn{
+    background-position: -112px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-leadIn{
+    background-position: -112px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-leadIn,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-leadIn{
+    background-position: -112px -14px;
+}
+/*导出*/
+.btn-icon-leadOut{
+    background-position: -126px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-leadOut{
+    background-position: -126px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-leadOut,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-leadOut{
+    background-position: -126px -14px;
+}
+/*查看*/
+.btn-icon-see{
+    background-position: -140px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-see{
+    background-position: -140px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-see,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-see{
+    background-position: -140px -14px;
+}
+/*打印*/
+.btn-icon-print{
+    background-position: -154px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-print{
+    background-position: -154px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-print,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-print{
+    background-position: -154px -14px;
+}
+
+/*日志*/
+.btn-icon-log{
+    background-position: -168px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-log{
+    background-position: -168px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-log,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-log{
+    background-position: -168px -14px;
+}
+/*撤銷*/
+.btn-icon-revoke{
+    background-position: -182px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-revoke{
+    background-position: -182px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-revoke,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-revoke{
+    background-position: -182px -14px;
+}
+.oui-toolbar-area .toolbar-search-area{
+    float: right;
+}
+/*重新提交*/
+.btn-icon-againSub{
+    background-position: -196px -28px;
+}
+.oui-toolbar-area button:hover .btn-icon-againSub{
+    background-position: -196px 0;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-againSub,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-againSub{
+    background-position: -196px -14px;
+}
+/*取回*/
+.btn-icon-getBack{
+    background-position: 0 -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-getBack{
+    background-position: 0 -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-getBack,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-getBack{
+    background-position: 0 -56px;
+}
+/*批量下载*/
+.btn-icon-batchDown{
+    background-position: -28px -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-batchDown{
+    background-position: -28px -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-batchDown,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-batchDown{
+    background-position: -28px -56px;
+}
+/*审核*/
+.btn-icon-auditing{
+    background-position: -42px -70px;
+}
+.oui-toolbar-area button:hover .btn-icon-auditing{
+    background-position: -42px -42px;
+}
+.oui-toolbar-area button.btn-disable .btn-icon-auditing,
+.oui-toolbar-area button:hover.btn-disable .btn-icon-auditing{
+    background-position: -42px -56px;
+}
+@media screen and (max-width: 1024px) {
+    .oui-toolbar-area button .btn-icon{
+        display: none !important;
+    }
+}
+@media screen and (max-width: 1130px) {
+    .oui-toolbar-area button .btn-icon{
+        display: none !important;
+    }
+}
+/*列表toolbar*/
+/*全选*/
+.multi-select-all {
+    display: block;
+    margin-top: 16px;
+    text-align: left;
+}
+.multi-select-all button{
+    background: transparent;
+    height: 24px;
+    line-height: 22px;
+    padding: 0 15px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border:0;
+    outline: none;
+    margin-right: 20px;
+    cursor: pointer;
+}
+.multi-select-all button.btn-select-all{
+    border: 1px solid #2C82FC;
+    color: #2C82FC;
+}
+.multi-select-all button.btn-select-all:hover{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.multi-select-all button.btn-select-clear{
+    border: 1px solid #c4c4c4;
+    color: #515151;
+}
+.multi-select-all button.btn-select-clear:hover{
+    background: #c4c4c4;
+    color: #ffffff;
+}
+/*地图返回按钮*/
+.map-back-btn{
+    background: url("../images/map-back-icon.png") rgba(0,0,0,.35) center no-repeat;
+    background-size: auto 14px;
+    background-position: 10px 8px;
+    width: 70px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,.8);
+    padding-left: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 99;
+}
+.map-back-btn:hover{
+    background-color: rgba(0,0,0,.5);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+
+
+
+

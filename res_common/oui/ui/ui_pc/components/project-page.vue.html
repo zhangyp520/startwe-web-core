@@ -1,0 +1,46 @@
+<!--多选组 TODO -->
+<template >
+    <div>
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage3"
+            :page-size="100"
+            :layout="layout"
+            :total="1000">
+        </el-pagination>
+
+       
+    </div>
+</template>
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                currentPage3: 5,
+                layout:'prev, pager, next, jumper'
+            }
+        },
+        mounted:function(){
+            let otherAttrs = com.oui.absolute.AbsoluteDesign.data.otherAttrs
+            if(otherAttrs.showJump) {
+                this.layout = 'prev, pager, next, jumper'
+            }else{
+                this.layout = 'prev, pager, next'
+            }
+        },
+        methods:{
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+            }
+        }
+    }
+</script>
+
+<style>
+    
+</style>

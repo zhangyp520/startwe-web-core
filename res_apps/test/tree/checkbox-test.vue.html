@@ -1,0 +1,43 @@
+<template>
+    <div>
+        <oui-include type="module" ref="test" data="getData()" url="res_common/oui/ui/ui_pc/components/checkbox.vue.html" :data="getData()"></oui-include>
+    </div>
+</template>
+
+<script>
+    exports = {
+        data:function(){
+            return {
+                options:[]
+            }
+        },
+        created:function(){
+
+        },
+        mounted:function(){
+
+        },
+        methods:{
+            getCache:oui.getCache4include,
+            getData:function (){
+                return this.getCache('check',{
+                    value:'1,2',
+                    data:[{
+                        value:1,
+                        display:'hello1'
+                    },{
+                        value:2,display: 'hello2'
+                    },{
+                        value:3,display: 'hello3'
+                    }],
+                    onUpdate:function (k,v,ov,options){
+                        console.log('checkbox-test.vue.html updated',arguments);
+                    }
+                });
+            }
+        }
+    }
+</script>
+
+<style scoped>
+</style>

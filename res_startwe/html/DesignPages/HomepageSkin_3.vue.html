@@ -1,0 +1,117 @@
+<!-- 主题换肤>>>>>中心环绕>>>>>333333333 -->
+<template>
+    <div class="container">
+        <div class="content">
+            <!-- 左边 -->
+            <div class="left_box">
+                <div class="left_innerBox"></div>
+                <div class="left_innerBox"></div>
+                <div class="left_innerBox"></div>
+            </div>
+            <!-- 中间 -->
+            <div class="middle_box">
+                <div class="middle_innerBox"></div>
+                <div class="middle_innerBox"></div>
+            </div>
+            <!-- 右边 -->
+            <div class="right_box">
+                <div class="right_innerBox"></div>
+                <div class="right_innerBox"></div>
+                <div class="right_innerBox"></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 内容 */
+
+    .container {
+        width: 100%;
+        height: 100%;
+        background-color: #151b33;
+    }
+
+    .content {
+        width: 90%;
+        height: 100%;
+        margin: auto;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    /* 左边盒子 */
+
+    .left_box {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .left_innerBox {
+        width: 100%;
+        height: 30%;
+        background: #1D2F55;
+    }
+
+    /* 中间盒子 */
+
+    .middle_box {
+        width: 55%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .middle_innerBox {
+        width: 100%;
+        background: #1D2F55;
+
+    }
+
+    .middle_innerBox:first-child {
+        height: 63%;
+    }
+
+    .middle_innerBox:last-child {
+        height: 30%;
+    }
+
+    /* 右边盒子 */
+
+    .right_box {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .right_innerBox {
+        width: 100%;
+        height: 30%;
+        background: #1D2F55;
+    }
+</style>

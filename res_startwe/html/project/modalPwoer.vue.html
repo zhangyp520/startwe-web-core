@@ -1,0 +1,264 @@
+<!-- 项目设计公共侧边栏 -->
+<template>
+    <div class="">
+        <!-- 权限弹框 -->
+        <div class="powerModal" v-if='powerModalShow'>
+            <div class="contentModal">
+                <div class="power_title">
+                    <div>页面权限设置</div>
+                    <div><i class="el-icon-close" @click='powerModalShow = false'></i></div>
+                </div>
+                <div class="power_tips">
+                    由您创建的《项目架构图》自动生成下图
+                </div>
+                <div class="power_content">
+                    <div class="power_left">
+                        <el-scrollbar style="height: 100%;">
+                            <el-tree ref="tree" node-key="id" :expand-on-click-node="isNodeExpand" :data="data"
+                                :props="defaultProps" @node-click="handleNodeClick" highlight-current="true"
+                                default-expand-all="true">
+                            </el-tree>
+                        </el-scrollbar>
+                    </div>
+                    <div class="power_right">
+                        <div class="power_right_content">
+                            <div class="power_right_hig" v-for='item in 3'>
+                                <div class="power_right_title">
+                                    应用A
+                                </div>
+                                <div>
+                                    <div>
+                                        <el-radio v-model="radio" label="1">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                    </div>
+                                    <div style="margin-top: 15px;">
+                                        <el-radio v-model="radio" label="1">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                        <el-radio v-model="radio" label="2">应用权限模板1</el-radio>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                radio: '1',
+                powerModalShow: false,
+                activeName: 'first',
+                isNodeExpand:false,
+                defaultProps: {
+                    children: 'children',
+                    label: 'name'
+                },
+                tableData: [{
+                    date: 'sdjkljsa',
+                    name: 'sadjksalj153132132132',
+                    address: '单行输入框'
+                }, {
+                    date: 'sdjkljsa',
+                    name: 'sadjksalj153132132132',
+                    address: '数字输入框'
+                }]
+            }
+        },
+
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+            window.addEventListener("message", (event) => {
+                var data = event.data;
+                if (data.cmd == 'powerDesign') {
+                    this.powerModalShow = true
+                }
+            });
+            this.buildTreeData()
+        },
+        methods: {
+            handleClick(tab, event) {
+                console.log(tab, event);
+            },
+            buildTreeData: function () {
+              
+                var me = this;
+                var treeMap = com.startwe.models.project.web.ProjectController4Design.data.treeMap;
+                // this.currentNodeId = treeMap.currentNodeId;
+                var root = treeMap.findRoot();
+               
+                var rootNode = this.findNodes4Tree(root);
+                
+               
+                this.data = rootNode.children || [];
+               
+
+            },
+            findNodes4Tree: function (node, targetPnode) {
+                var me = this;
+                if (!targetPnode) {
+                    var targetNode = oui.parseJson(oui.parseString(node.node));
+                    targetNode.children = [];
+                    targetPnode = targetNode;
+                    me.findNodes4Tree(node, targetPnode);
+
+                } else {
+                    oui.eachArray(node.childIds || [], function (cid) {
+                        var currNode = com.startwe.models.project.web.ProjectController4Design.data.treeMap.findNode(cid);
+                        var currPNode = oui.parseJson(oui.parseString(currNode.node));
+                        targetPnode.children.push(currPNode);
+                        currPNode.children = [];
+
+
+                        me.findNodes4Tree(currNode, currPNode);
+                    });
+                }
+                return targetPnode;
+            },
+            handleNodeClick() {
+
+            }
+        }
+    }
+
+</script>
+<style>
+    .power_tips {
+        height: 50px;
+        line-height: 50px;
+        font-family: PingFangSC-Regular;
+        font-size: 16px;
+        color: #262626;
+        font-weight: 400;
+        padding-left: 20px;
+        border-bottom: 1px solid rgba(151,151,151,0.50);;
+    }
+
+    .powerModal {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
+
+    .contentModal {
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        bottom: 40px;
+        left: 40px;
+        background: #fff;
+    }
+
+    .power_title {
+        background-color: #F2F2F2;
+        height: 60px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .power_title div,
+    .power_title>div>i {
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .el-tabs__nav-scroll {
+        padding-left: 20px;
+    }
+
+    .tab_table_pading {
+        padding: 0 20px;
+    }
+
+    .box_flex {
+        display: flex;
+        width: 100%;
+    }
+
+    .flex_left_table {
+        width: 50%;
+        padding: 0 20px;
+        border-right: 1px solid;
+    }
+
+    .flex_right_table {
+        width: 50%;
+    }
+
+    .el-tabs__active-bar {
+        background-color: #f56c6c;
+    }
+
+    .el-tabs__item.is-active,
+    .el-tabs__item:hover {
+        color: #f56c6c;
+    }
+    .power_content{
+        display: flex;
+        height: calc(100% - 111px);
+    }
+    .power_left{
+        width: 200px;
+     
+        border: 1px solid #CACACA;
+        border-left: 0;
+        margin-top: 10px;
+
+    }
+    .power_right{
+        width: calc(100% - 200px);
+        padding: 60px 100px 0 100px;
+    }
+    .power_right_content{
+        border: 1px solid #CACACA;
+        padding: 0 20px;
+    }
+    .el-tree-node__content{
+        height: 40px;
+    }
+    .el-tree-node__label{
+        font-size: 16px;
+    }
+    .power_right_hig{
+        height: 100px;
+        display: flex;
+        border-bottom: 1px solid #E8E8E8;
+        padding-top: 20px;
+    }
+    .power_right_title{
+        width: 200px;
+        text-align: center;
+    }
+    .el-radio{
+        margin-right: 80px;
+    }
+    .el-radio__input.is-checked+.el-radio__label{
+        color: #606266;
+    }
+    .el-radio__input.is-checked .el-radio__inner{
+        background: #606266;
+        border: #606266;
+    }
+    .el-radio__inner:hover{
+        border: #606266;
+
+    }
+</style>

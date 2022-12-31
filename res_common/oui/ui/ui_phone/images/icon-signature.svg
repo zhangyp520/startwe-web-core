@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="21px" height="23px" viewBox="0 0 21 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+    <title>手写签名控件icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M13.8292193,0 L1.03127443,12.7979448 L1,20 L8.20205518,19.9687256 L21,7.17078074 L13.8292193,0 Z M18.7127178,7.20395051 L16.0706335,9.84603476 L11.1888753,4.96427653 L13.8309596,2.32219228 L18.7127178,7.20395051 Z M7.67948845,18.1789167 L2.80789407,18.1999149 L2.82889232,13.3283205 L10.1856673,5.97154555 L15.0362634,10.8221417 L7.67948845,18.1789167 Z" id="path-1"></path>
+    </defs>
+    <g id="PC-管理员" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="电子签章－运行态" transform="translate(-43.000000, -661.000000)">
+            <g id="Group-5" transform="translate(0.000000, -58.000000)">
+                <g id="手写签名控件icon" transform="translate(43.000000, 719.000000)">
+                    <path d="M0,22 L21,22" id="Path" stroke="#2C82FC" stroke-width="1.5" fill="#D8D8D8"></path>
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Clip-2" fill="#2C82FC" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
+
+
+
+
+

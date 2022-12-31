@@ -1,0 +1,340 @@
+<template>
+
+    <div>
+
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active ">业务属性<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+
+                    <div class="fieldname">业务id(以项目唯一标识 {{enName}}_ 作为前缀)</div>
+                    <div class="fieldblock">
+                        <input type="text" bindPropAfter="onUpdate" placeholder="自定义业务id，自定义表名，如oui_of_***"
+                            bindProp="bizId" value="{{bizId}}" />
+                    </div>
+                </div>
+                <div class="design-field ">
+
+                    <div class="fieldname">业务模型绑定策略</div>
+                    <div class="fieldblock">
+                        <label>
+                            <span class="radio-button-wrapper">
+                                <input type="radio" oui-e-change="onUpdate" name="otherAttrs.modelBindType"
+                                    {{=otherAttrs.modelBindType =='1' ?'checked=\'checked\'':''}}
+                                    bindProp="otherAttrs.modelBindType" value="1" />
+                                <i class="selected-icon"></i>
+                            </span>
+                            从已有物理表绑定表单
+                        </label>
+                        <label>
+                            <span class="radio-button-wrapper">
+                                <input type="radio" oui-e-change="onUpdate" name="otherAttrs.modelBindType"
+                                    {{=otherAttrs.modelBindType =='2' ?'checked=\'checked\'':''}}
+                                    bindProp="otherAttrs.modelBindType" value="2" />
+                                <i class="selected-icon"></i>
+                            </span>
+                            表单定义自动驱动物理表新增、修改、删除
+                        </label>
+                        <label>
+                            <span class="radio-button-wrapper">
+                                <input type="radio" oui-e-change="onUpdate" name="otherAttrs.modelBindType"
+                                    {{=otherAttrs.modelBindType =='3' ?'checked=\'checked\'':''}}
+                                    bindProp="otherAttrs.modelBindType" value="3" />
+                                <i class="selected-icon"></i>
+                            </span>
+                            不绑定表模型
+                        </label>
+                    </div>
+                </div>
+                <div class="design-field ">
+
+                    <div class="fieldname">业务模型公开策略</div>
+                    <div class="fieldblock">
+                        <label>
+                            <span class="radio-button-wrapper">
+                                <input type="radio" oui-e-change="onUpdate" name="modelType"
+                                    {{=(modelType+'') =='1' ?'checked=\'checked\'':''}} bindProp="modelType"
+                                    value="1" />
+                                <i class="selected-icon"></i>
+                            </span>
+                            当前模块中使用
+                        </label>
+                        <label>
+                            <span class="radio-button-wrapper">
+                                <input type="radio" oui-e-change="onUpdate" name="modelType"
+                                    {{=(modelType+'') =='2' ?'checked=\'checked\'':''}} bindProp="modelType"
+                                    value="2" />
+                                <i class="selected-icon"></i>
+                            </span>
+                            作为公共模块让其他模型可关联
+                        </label>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">业务描述</div>
+                    <div class="fieldblock">
+                        <textarea bindPropAfter="onUpdate" placeholder="业务描述" bindProp="otherAttrs.bizDes"
+                            value="{{otherAttrs.bizDes}}">{{otherAttrs.bizDes}}</textarea>
+                    </div>
+                    <div class="fielderror" id="check_page_otherAttrs_bizDes">
+                        {{if AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}
+                        <div class="fielderror-info">{{AbsoluteDesign.findCheckMessage("otherAttrs.bizDes")}}</div>
+                        {{/if}}
+                    </div>
+                </div>
+                <!--在这里扩展自定义业务设置-->
+                <div class="design-field ">
+                    <button class="design-des-btn design-btn-text" title="获取数据模板"
+                        oui-e-click="event2showDataModel">获取数据模板</button>
+                </div>
+                <div class="design-field ">
+                    <button class="design-des-btn design-btn-text" title="数据填充模板"
+                        oui-e-click="event2showDataSetModel">数据填充模板</button>
+                </div>
+            </div>
+        </div>
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active">业务流程绑定<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+                    <!--引入业务配置项-->
+                    <oui-include url="res_engine/page_list_design/pc/page_biz_process_config.vue.html" type="module">
+                    </oui-include>
+                </div>
+            </div>
+        </div>
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active">查询页面模板<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+                    <!--引入业务配置项-->
+                    <oui-include url="res_engine/page_list_design/pc/page_biz_config.vue.html" type="module"></oui-include>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active">页面权限模板<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+                    <!--引入业务配置项-->
+                    <oui-include url="res_engine/page_list_design/pc/page_biz_limit_config.vue.html" type="module">
+                    </oui-include>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-attribute-item">
+            <div class="design-set-attribute-tit attribute-tit-active">事件脚本<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area">
+                <!--此处可以扩展多个配置项-->
+                <div class="design-field ">
+                    <button class="design-des-btn design-btn-text" title="设置页面加载前事件" invoke-prop="events.beforeInit"
+                        eventType="script4beforeInit" code-max-length="10000" error-msg-compile="设置页面加载前事件脚本错误，请检查"
+                        error-msg-max="设置页面加载前事件脚本，长度不能超过10000个字符" oui-e-click="event2showCodeDialog">设置页面加载前事件</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType: 'art',
+        //        useVDom:true,//art 使用虚拟Dom,默认值为true
+        id: '',
+        designFullName: '',
+        data: function () {
+            return {
+                enName: '',
+                otherAttrs: {
+                    bizDes: '',
+                    modelBindType: '1' //默认从已有物理表绑定表单
+                },
+                modelType: '1',
+                fieldErrorId: '',
+                AbsoluteDesign: {
+                    findCheckMessage: function () {}
+                },
+                bizId: '',
+                id: '' //控件id
+            }
+        },
+
+        mounted: function () {
+
+            // 需要克隆来自当前选择的控件，当前组件中更新后再覆盖 业务属性otherAttrs 回去
+            var designer = this.getDesigner();
+            this.AbsoluteDesign = designer;
+            this.otherAttrs = designer.data.otherAttrs;
+            this.bizId = designer.data.bizId; //业务ID
+            this.enName = designer.data.enName;
+            this.modelType = designer.data.modelType; //模型公开类型
+            var keys = 'bizDes,modelBindType'.split(','); //配置当前的key列表
+            for (var i = 0, len = keys.length; i < len; i++) {
+                var key = keys[i];
+                if (typeof designer.data.otherAttrs[key] == 'undefined') {
+                    designer.data.otherAttrs[key] = '';
+                }
+            }
+            this.fieldErrorId = 'check_page_' + '_otherAttrs_bizDes';
+            this.refresh(); //手动刷新
+        },
+        methods: {
+
+            event2showDataModel: function (cfg) {
+                var designer = this.getDesigner();
+                var items = designer.findItems4list(); //获取控件列表
+                var cfg = {};
+                oui.eachArray(items, function (item) {
+                    cfg[item.bizId || item.id] = "${" + item.name + "}";
+                });
+                oui.getTop().oui.showInputDialog("数据模板", function (desc) {
+
+                }, [{
+                    type: "textarea",
+                    value: oui.parseString(cfg)
+                }], {
+                    contentStyle: 'width:700px'
+                });
+            },
+
+            event2showDataSetModel: function () {
+                var designer = this.getDesigner();
+                var items = designer.findItems4list(); //获取控件列表
+                var arr = [];
+                arr.push('{\n');
+                var len = items.length;
+                oui.eachArray(items, function (item, idx) {
+                    arr.push('\"');
+                    arr.push(item.bizId || item.id);
+                    arr.push('\"');
+                    arr.push(' : ');
+                    arr.push(' {\n');
+                    arr.push('  value:\"${' + item.name + '\}",\n');
+                    arr.push('  display:\"${' + item.name + '\}",\n');
+                    arr.push('  data4DB:{} \n');
+                    arr.push(' }\n');
+                    if (idx < len - 1) {
+                        arr.push(',');
+                    }
+                });
+                arr.push('}\n');
+                oui.getTop().oui.showInputDialog("数据填充模板", function (desc) {
+
+                }, [{
+                    type: "textarea",
+                    rows: 20,
+                    style: 'line-height:20px;height:auto;',
+                    value: arr.join('')
+                }], {
+                    contentStyle: 'width:700px'
+                });
+            },
+            /** 显示 脚本dialog **/
+            event2showCodeDialog: function event2showCodeDialog(cfg) {
+                var _self = this;
+
+                var title = $(cfg.el).attr('title'); //扫码结果处理脚本
+                var errorMsgMax = $(cfg.el).attr('error-msg-max'); //'输入扫码脚本长度不能超过error-msg-max个字符'
+                var codeMaxLength = $(cfg.el).attr('code-max-length'); //脚本最大长度，默认code-max-length
+                var compileErrorMsg = $(cfg.el).attr('error-msg-compile'); //脚本编译错误，提醒;//'输入扫码脚本错误，请检查'
+                if (codeMaxLength) {
+                    codeMaxLength = parseInt(codeMaxLength);
+                }
+                codeMaxLength = codeMaxLength || 2000;
+
+                var prop = $(cfg.el).attr('invoke-prop');
+                var eventType = $(cfg.el).attr('eventType');
+
+                var scriptJson = oui.JsonPathUtil.getJsonByPath(prop, this.AbsoluteDesign.data);
+                if (!scriptJson) {
+                    scriptJson = {};
+                }
+                //页面默认加载脚本在这里
+                var defaultParams = {
+                    "params": [],
+                    "startCode": "",
+                    "bodyCode": "var pageData = this.getPageData();\nvar designer = pageData.getDesigner();\nvar controls = designer.controls||[];\nvar count =0;\n\nfor(var i=0,len=controls.length;i<len;i++){\n  if((controls[i].formField||controls[i].isFormField) && (!controls[i].detailId)){\n    count++;\n    pageData.mainData[controls[i].bizId] = {\n      value:'测试-'+count, //组件实际值，用于数据库存储\n      display:'测试-'+count, //组件的显示值，用于后台数据存储使用\n      data4DB:{'test':'这里是对数据的扩展'+count} // data4DB是扩展表单提交数据的额外属性,根据特殊场景处理\n    }\n }\n}\npageData.refresh();\ncallback&&callback();\/\/回调必须要有，如果在ajax里面，则该行需要放到ajax回调中\n",
+                    "endCode": "",
+                    "returnType": "string"
+                };
+
+                scriptJson.eventType = eventType;
+                var json = $.extend({}, defaultParams, scriptJson, true);
+                json.params = ["callback"]; //处理回调的情况
+                oui.showCodeDialog(json, function (jsonResult) { //回调 返回修改后的codeJson对象
+                    try {
+                        var fun = oui.parseJson2Function(jsonResult); //预编译 看是否报错
+                        if (jsonResult.bodyCode && jsonResult.bodyCode.length > codeMaxLength) {
+                            oui.getTop().oui.alert(errorMsgMax);
+                            console.error(errorMsgMax);
+                            return false;
+                        }
+                    } catch (e) {
+                        oui.getTop().oui.alert(compileErrorMsg);
+                        console.error(compileErrorMsg);
+
+                        return false;
+                    }
+                    console.log(jsonResult);
+                    console.log(oui.parseString(jsonResult));
+                    scriptJson.eventType = eventType;
+                    oui.JsonPathUtil.setObjByPath(prop, _self.AbsoluteDesign.data, jsonResult, true);
+                }, {
+                    title: title,
+                    bodyCodeRows: 30,
+                    contentStyle: 'width:60%' //dialog样式相关
+                });
+            },
+            onUpdate: function (cfg) {
+                var designer = this.getDesigner();
+                var key = $(cfg.el).attr('bindProp');
+                var v = $(cfg.el).val();
+                oui.JsonPathUtil.setObjByPath(key, designer.data, v, true); //设置当前设计器中的属性
+                designer.bizPropsUpdate && designer.bizPropsUpdate(key, v); //属性值变更无需强制刷新，用户体验更好
+            },
+            getDesigner: function () {
+                var designFullName = this.designFullName;
+                return oui.util.eval(designFullName);
+            }
+        }
+    }
+</script>
+
+<style>
+    /*富文本按钮样式*/
+    .design-des-btn {
+        background-size: 16px auto;
+        min-width: 24px;
+        height: 24px;
+        line-height: 24px;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 0;
+        outline: none;
+        border-radius: 3px;
+        border: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .design-des-btn:hover {
+        background-color: #63a4ed;
+    }
+
+    .design-des-btn.design-btn-text {
+        background: #2C82FC;
+        min-width: 24px;
+        padding: 0 7px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+    }
+</style>

@@ -1,0 +1,204 @@
+<!-- 页面设计>>>>>>>页面权限设计弹窗>>>>>>>>查询模板 -->
+<template>
+    <div class="container">
+        <div class="wrapper">
+            <!-- 表格 -->
+            <div class="table_box">
+                <div>
+                    <el-table :data="templateData" style="width: 100%" :header-cell-style="{background:'#FAFAFA'}">
+                        <el-table-column prop="templateName" label="模板名称" align="center">
+                        </el-table-column>
+                        <el-table-column prop="enableOrNot" label="是否启用" align="center">
+                            <template slot-scope='scope'>
+                                <el-switch v-model="scope.row.enableOrNot" :active-value="Y" :inactive-value="N" active-color="#1890FF" class="switch_box"
+                                    inactive-color="#A2A2A2" @change="changeStatus(scope.row)">
+                                </el-switch>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="operate" label="操作" align="center">
+                            <template slot-scope='scope'>
+                                <div class="goToDesign">前往设计</div>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+
+            </div>
+            <!-- 效果预览 -->
+            <div class="effectPreview">
+                <div>
+                    <div class="previewTitle">
+                        <div>效果预览</div>
+                        <div class="fullScreen">全屏预览</div>
+                    </div>
+                    <!-- 预览图 -->
+                    <div>111</div>
+                </div>
+            </div>
+        </div>
+        <!-- 按钮 -->
+        <div class="submitBtn">
+            <el-button class="cancel_btn">取消</el-button>
+            <el-button class="determine_btn">确定</el-button>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                templateData: [{
+                    templateName: '123',
+                    enableOrNot: '',
+                }, {
+                    templateName: '123',
+                    enableOrNot: '',
+                }, {
+                    templateName: '123',
+                    enableOrNot: '',
+                }, {
+                    templateName: '123',
+                    enableOrNot: '',
+                }],
+                Y: "Y",
+                N: "N",
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            //改变项目状态
+            changeStatus: function (row) {
+
+            },
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* 内容 */
+
+    .wrapper {
+        display: flex;
+        margin-top: 24px;
+    }
+
+    /* 表格 */
+
+    .table_box {
+        width: 50%;
+        border-right: 1px solid #979797;
+    }
+
+    .table_box>div {
+        margin: 0 24px 24px 24px;
+    }
+
+    .goToDesign {
+        cursor: pointer;
+    }
+
+    .goToDesign:hover {
+        color: #1890FF;
+    }
+
+    .effectPreview {
+        flex: 1;
+    }
+
+    .effectPreview>div {
+        margin: 0 24px 24px 24px;
+    }
+
+    .previewTitle {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .previewTitle>div:first-child {
+        font-size: 14px;
+        color: #A2A2A2;
+    }
+
+    .fullScreen {
+        color: #1890FF;
+        cursor: pointer;
+    }
+    /* 按钮 */
+    .submitBtn {
+        margin: 60px 0 ;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .cancel_btn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancel_btn:focus,
+    .cancel_btn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determine_btn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determine_btn:focus,
+    .determine_btn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

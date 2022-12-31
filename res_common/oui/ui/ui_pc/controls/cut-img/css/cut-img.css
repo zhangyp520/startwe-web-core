@@ -1,0 +1,289 @@
+@charset "UTF-8";
+.cutimg-clear:after{
+    content: "";
+    height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+.cutimg-hide .cutimg-btn-default{
+    visibility: hidden;
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+.oui-class-cutimg,
+.oui-class-cutimg-1{
+    display: block;
+}
+.oui-class-cutimg button,
+.oui-class-cutimg-1 button{
+    background: transparent;
+    width: 100%;
+    height: 32px;
+    line-height: 30px;
+    font-size: 14px;
+    outline: none;
+    border: 1px solid transparent;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin: 4px 0;
+}
+.oui-class-cutimg button:hover,
+.oui-class-cutimg-1 button:hover{
+    cursor: pointer;
+}
+.oui-class-cutimg button.cutimg-btn-default,
+.oui-class-cutimg-1 button.cutimg-btn-default{
+    background: #ffffff;
+    color: #2C82FC;
+    border: 1px solid #2C82FC;
+}
+.oui-class-cutimg button.cutimg-btn-default:hover,
+.oui-class-cutimg-1 button.cutimg-btn-default:hover{
+    background: #2C82FC;
+    color: #ffffff;
+}
+.cutimg-content-btns button.cutimg-btn-sub{
+    background: #2C82FC;
+    color: #ffffff;
+    float: left;
+}
+.cutimg-content-btns button.cutimg-btn-sub:hover{
+    background: #4878c5;
+}
+.cutimg-content-btns button.cutimg-btn-cancel{
+    background: #e5e5e5;
+    color: #515151;
+    float: right;
+}
+.cutimg-content-btns button.cutimg-btn-cancel:hover{
+    background: #e1e1e1;
+}
+.oui-class-cutimg .cutimg-main{
+    display: none;
+}
+.oui-class-cutimg .cutimg-content{
+    background: #ffffff;
+    width: 540px;
+    height: 420px;
+    position: relative;
+}
+.oui-class-cutimg .cutimg-main.show-cutimg-main{
+    display: block;
+}
+
+.cutimg-content .cutimg-content-area,
+.cutimg-content .cutimg-content-preview{
+    position: absolute;
+    top: 10px;
+    bottom: 90px;
+}
+.cutimg-content .cutimg-content-area{
+    background: url("../images/cut-img-bg.png") repeat;
+    left: 10px;
+    right: 10px;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.cutimg-content .cutimg-content-preview{
+    width: 20%;
+    right: 10px;
+    padding-left: 30px;
+    display: none;
+}
+.cutimg-content.show-preview .cutimg-content-area{
+    right: 20%;
+}
+.cutimg-content.show-preview .cutimg-content-preview{
+    display: block;
+}
+.cutimg-content-preview .cutimg-preview-box{
+    display: block;
+    margin-bottom: 25px;
+}
+.cutimg-preview-box span{
+    display: block;
+    text-align: center;
+}
+.preview-img-area{
+    background: #e6e6e6;
+    margin: 0 auto 7px;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 100%;
+}
+.preview-img-area img{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.preview-img-info{
+    width: 100%;
+    font-size: 14px;
+    color: #515151;
+    text-align: left !important;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.img-area-large{
+    width: 100% !important;
+    height: auto !important;
+}
+.img-area-middle{
+    width: 100% !important;
+    height: auto !important;
+}
+.img-area-small{
+    width: 100% !important;
+    height: auto !important;
+}
+.cutimg-content .cutimg-content-toolbar,
+.cutimg-content .cutimg-content-btns{
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+}
+.cutimg-content .cutimg-content-toolbar{
+    bottom: 55px;
+    font-size: 0;
+}
+.cutimg-content .cutimg-content-toolbar span{
+    width: 20%;
+    height: 30px;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    line-height: 30px;
+    font-size: 0;
+    color: #515151;
+    cursor: pointer;
+}
+.cutimg-content .cutimg-content-toolbar span:hover{
+    color: #2C82FC;
+}
+.cutimg-content .cutimg-content-btns{
+    bottom: 10px;
+    font-size: 0;
+}
+.cutimg-content .cutimg-content-btns button{
+    width: 47%;
+    display: inline-block;
+    vertical-align: top;
+}
+.oui-class-cutimg .cutimg-main.show-cutimg-main + button.cutimg-btn-default,
+.oui-class-cutimg-1 .cutimg-main.show-cutimg-main + button.cutimg-btn-default{
+    display: none;
+}
+.cutimg-toolbar-icon:after{
+    content: "";
+    background: url("../images/cutimg-options-icon.png") no-repeat;
+    background-size:auto 40px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    left: 50%;
+    margin-left: -10px;
+}
+.cutimg-clockwise:after{
+    background-position: 0 0;
+}
+.cutimg-anti-clockwise:after{
+    background-position: -20px 0;
+}
+.cutimg-level:after{
+    background-position: -40px 0;
+}
+.cutimg-vertical:after{
+    background-position: -60px 0;
+}
+.cutimg-edit:after{
+    background-position: -80px 0;
+}
+.cutimg-clockwise:hover:after{
+    background-position: 0 -20px;
+}
+.cutimg-anti-clockwise:hover:after{
+    background-position: -20px -20px;
+}
+.cutimg-level:hover:after{
+    background-position: -40px -20px;
+}
+.cutimg-vertical:hover:after{
+    background-position: -60px -20px;
+}
+.cutimg-edit:hover:after{
+    background-position: -80px -20px;
+}
+/*弹窗切图*/
+.oui-class-cutimg-1 .cutimg-main{
+    background: rgba(0,0,0,.5);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+}
+.oui-class-cutimg-1 .cutimg-main .cutimg-center{
+    height: 100%;
+    vertical-align: middle;
+    display: table-cell;
+    text-align: center;
+    _position: absolute;
+    _top: 50%;
+    _left: 50%;
+}
+.oui-class-cutimg-1 .cutimg-content{
+    background: #ffffff;
+    width: 540px;
+    height: 420px;
+    margin: 0 auto;
+    position: relative;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-area,
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-btns{
+    left: 15px;
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-preview,
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-btns{
+    right: 15px;
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-btns{
+    bottom: 15px;
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-area,
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-preview{
+    top: 15px;
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-toolbar{
+    bottom: 65px;
+}
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-area,
+.oui-class-cutimg-1 .cutimg-content .cutimg-content-preview{
+    bottom: 105px;
+}
+.oui-class-cutimg-1 .cutimg-main.show-cutimg-main{
+    display: table;
+}
+
+
+
+
+

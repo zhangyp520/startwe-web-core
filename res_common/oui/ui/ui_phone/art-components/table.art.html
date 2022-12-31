@@ -1,0 +1,150 @@
+
+<template >
+    <table class="control-abs-table-view">
+        <thead>
+        <tr>
+            {{each data.style.columnLines as line lineIndex}}
+            {{if lineIndex<data.style.columnLines.length-1}}
+            <th title="列{{lineIndex+1}}" control-abs-id="{{data.id}}" class="control-table-column"
+                style="width:{{AbsoluteDesign.findColumnPos(data,lineIndex).width}}px;border-left-style:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderLeftStyle}};border-right-style:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderRightStyle}};border-left-color:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderLeftColor}};border-left-width:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderLeftWidth}}px;border-right-width:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderRightWidth}}px;border-right-color:{{AbsoluteDesign.findColumnPos(data,lineIndex).borderRightColor}};"
+                line-column-index="{{lineIndex}}" line-column-length="{{data.style.columnLines.length}}"
+                line-row-length="{{data.style.rowLines.length}}"
+                    >
+                {{oui.getCharCode(lineIndex+1)}}
+            </th>
+            {{/if}}
+            {{/each}}
+        </tr>
+        {{each data.style.rowLines as line lineIndex}}
+            {{if lineIndex<data.style.rowLines.length-1}}
+            <tr title="行{{lineIndex+1}}" control-abs-id="{{data.id}}" class="control-table-row"
+                style="height:{{AbsoluteDesign.findRowPos(data,lineIndex).height}}px;"
+                line-row-index="{{lineIndex}}"
+                line-column-length="{{data.style.columnLines.length}}"
+                line-row-length="{{data.style.rowLines.length}}"
+                    >
+                {{each data.style.columnLines as columnLine columnLineIndex}}
+                {{include 'control-table-headcell-runtime-tpl' ({data:data,columnLineIndex:columnLineIndex,lineIndex:lineIndex})}}
+                {{/each}}
+            </tr>
+            {{/if}}
+        {{/each}}
+
+        </thead>
+        <tbody>
+        {{if data.id}}
+        {{include 'subdata-runtime-each-start' ({data:data})}}
+        <tr  control-abs-id="{{data.id}}" class="control-table-row"
+                >
+            {{each AbsoluteDesign.findCells4Detail(data) as cell}}
+            <td control-abs-id="{{data.id}}" class="control-table-column"
+                {{if AbsoluteDesign.findCellColspan(data,cell.columnIndex,cell.rowIndex)>1}} colspan="{{AbsoluteDesign.findCellColspan(data,cell.columnIndex,cell.rowIndex)}}" {{/if}}
+                line-column-index="{{cell.columnIndex}}"
+                >
+                {{if AbsoluteDesign.hasControlInTableCell(data,cell.columnIndex,cell.rowIndex)}}
+                <div class="cell-detail-abs">
+                    {{if render4tpl}} {{include 'control-detail-field-runtime-tpl' ({data:data,cell:cell})}} {{/if}}
+                </div>
+                {{/if}}
+            </td>
+            {{/each}}
+        </tr>
+        {{include 'subdata-runtime-each-end' ({data:data})}}
+
+        {{/if}}
+        </tbody>
+    </table>
+</template>
+
+<script>
+    exports = {
+        templateType:'art',
+        data: function () {
+            return {
+
+                id:'',
+                name:'',
+                data:{
+                    style:{
+                        columnLines:[],
+                        rowLines:[]
+                    }
+                },
+                bindProp:'',
+                style:'',
+                cls:'',
+                placeholder:'',
+                iconCls:'',
+                title:''
+            }
+        },
+        mounted:function(){
+
+        },
+        methods:{
+            /** 获取某列位置****/
+            findColumnPos:function(tableLine,columnIndex,key){
+                var operationAreaOffset = 2 ;
+                var left = tableLine.style.columnLines[columnIndex].fromPos.left;
+                var right = tableLine.style.columnLines[columnIndex+1].fromPos.left;
+                var width = right-left+operationAreaOffset/2;
+                var leftBorderWidth = tableLine.style.columnLines[columnIndex].config.lineHeight;
+                var rightBorderWidth =tableLine.style.columnLines[columnIndex+1].config.lineHeight;
+                var borderLeftColor = tableLine.style.columnLines[columnIndex].config.color;
+                var borderRightColor = tableLine.style.columnLines[columnIndex+1].config.color;
+                var columnLength =  tableLine.style.columnLines.length;
+
+                var pos = {
+                    left:left,
+                    width:width,
+                    borderLeftWidth:leftBorderWidth,
+                    borderLeftColor:borderLeftColor,
+                    borderRightColor:borderRightColor,
+                    borderLeftStyle:tableLine.style.columnLines[columnIndex].config.borderStyle||'solid',
+                    borderRightStyle:tableLine.style.columnLines[columnIndex+1].config.borderStyle||'solid',
+                    borderRightWidth:columnIndex==columnLength-2?rightBorderWidth:0
+                };
+                if(key){
+                    return pos[key];
+                }
+                return pos;
+            },
+            /*** 获取某行位置****/
+            findRowPos:function(tableLine,rowIndex,key){
+                var operationAreaOffset =2;
+                var top = tableLine.style.rowLines[rowIndex].fromPos.top;
+                var bottom = tableLine.style.rowLines[rowIndex+1].fromPos.top;
+                var height = bottom-top+operationAreaOffset/2;
+                var topBorderWidth = tableLine.style.rowLines[rowIndex].config.lineHeight;
+                var bottomBorderWidth =tableLine.style.rowLines[rowIndex+1].config.lineHeight;
+                var borderTopColor = tableLine.style.rowLines[rowIndex].config.color;
+                var borderBottomColor = tableLine.style.rowLines[rowIndex+1].config.color;
+
+                var rowLength =  tableLine.style.rowLines.length;
+
+                var pos = {
+                    top:top,
+                    height:height,
+                    borderTopWidth:topBorderWidth,
+                    borderTopColor:borderTopColor,
+                    borderBottomColor:borderBottomColor,
+                    borderTopStyle:tableLine.style.rowLines[rowIndex].config.borderStyle||'solid',
+                    borderBottomStyle:tableLine.style.rowLines[rowIndex+1].config.borderStyle||'solid',
+
+                    borderBottomWidth:rowIndex==rowLength-2?bottomBorderWidth:0
+                };
+                if(key){
+                    return pos[key];
+                }
+                return pos;
+            },
+            event2click:function(){ //icon图标点击事件
+                this.onClick&&this.onClick(); //外部构造的方法调用,组件内部不能实现 onClick,而是由外部传入组件方法
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

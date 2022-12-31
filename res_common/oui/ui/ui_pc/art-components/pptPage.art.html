@@ -1,0 +1,163 @@
+<!--默认渲染模板-->
+<template>
+    <div>
+        {{=content}}
+    </div>
+</template>
+<!--当前页面脚本配置-->
+<script>
+
+    exports = {
+        templateType:'art',
+        data: function () {
+            return {
+                data:{},
+                designData:null,
+                mainData:null,
+                detailData:null,
+                pageData:{getControlRenderDataById:function(){},getDesigner:function(){} },
+                content:''
+            }
+        },
+        mounted:function (){
+            var designData={};
+            var detailData = {};
+            var mainData ={};
+            var me = this;
+            var query = this.$router.query;
+            var loadPortalPage4RuntimeUrl = query.loadPortalPage4RuntimeUrl;
+            // if(!loadPortalPage4RuntimeUrl){
+            //     //如果没有url参数构造全路径
+            //     loadPortalPage4RuntimeUrl = oui.getContextPath()+'com.startwe.models.project.web.ProjectPortal4NotLoginController.loadPortalPage4Runtime.biz';
+            //     loadPortalPage4RuntimeUrl= oui.addParams(loadPortalPage4RuntimeUrl,{
+            //         portalId:query.portalId||'',
+            //         pageId:query.pageId || '',
+            //         dataId:query.dataId ||'',
+            //         queryPage:query.queryPage||''
+            //     });
+
+            // }
+
+ 
+            console.log('pptPage.art.html',this.$router.query);
+
+            var pageId = this.$router.query.pageId;
+            this.pageId = pageId;
+
+            var dataMap = oui.getPageParam('preview_dataMap');
+
+            var designData = dataMap[pageId];
+            
+            if(typeof designData.controls=='string'){
+                designData.controls = oui.parseJson(designData.controls);
+            }
+            if(typeof designData.style=='string'){
+                designData.style = oui.parseJson(designData.style);
+            }
+            if(typeof designData.innerStyle=='string'){
+                designData.innerStyle = oui.parseJson(designData.innerStyle);
+            }
+            if(typeof designData.otherAttrs=='string'){
+                designData.otherAttrs = oui.parseJson(designData.otherAttrs);
+            }
+            if(typeof designData.events=='string'){
+                designData.events = oui.parseJson(designData.events);
+            }
+            if(designData.style){
+                designData.style.backgroundColor='';
+            }
+            var pageData = oui.util.createPageData({
+                refresh:function(){
+                    me.refresh&&me.refresh();
+                },
+                designer:designData,
+                mainData:mainData,//主表数据
+                detailData:detailData//子表数据
+            });
+            pageData.beforeInit(function(){
+                me.content = pageData.render(); //渲染
+                me.pageData = pageData;
+                if(!me.data){
+                    me.data={};
+                }
+                if(!me.__data){
+                    me.__data = function(){
+                        return this;
+                    };
+                }
+                me.data.pageData = pageData;
+                pageData.afterInit();//渲染完成
+                me.refresh();
+            }); //初始化前
+
+        },
+        methods:{
+
+            refreshPageData:function(){
+                var designData={};
+                var detailData = {};
+                var mainData ={};
+                var me = this;
+                var dataMap = oui.getPageParam('preview_dataMap');
+
+                var designData = dataMap[pageId];
+            
+                if(typeof designData.controls=='string'){
+                    designData.controls = oui.parseJson(designData.controls);
+                }
+                if(typeof designData.style=='string'){
+                    designData.style = oui.parseJson(designData.style);
+                }
+                if(typeof designData.innerStyle=='string'){
+                    designData.innerStyle = oui.parseJson(designData.innerStyle);
+                }
+                if(typeof designData.otherAttrs=='string'){
+                    designData.otherAttrs = oui.parseJson(designData.otherAttrs);
+                }
+                if(typeof designData.events=='string'){
+                    designData.events = oui.parseJson(designData.events);
+                }
+                if(designData.style){
+                    designData.style.backgroundColor='';
+                }
+                var pageData = oui.util.createPageData({
+                    refresh:function(){
+                        me.refresh&&me.refresh();
+                    },
+                    designer:designData,
+                    mainData:mainData,//主表数据
+                    detailData:detailData//子表数据
+                });
+                pageData.beforeInit(function(){
+                    me.content = pageData.render(); //渲染
+                    me.pageData = pageData;
+                    if(!me.data){
+                        me.data={};
+                    }
+                    if(!me.__data){
+                        me.__data = function(){
+                            return this;
+                        };
+                    }
+                    me.data.pageData = pageData;
+                    pageData.afterInit();//渲染完成
+                    me.refresh();
+                }); //初始化前
+                 
+
+            },
+            getPageData:function getPageData(){
+
+                return this.pageData;
+            },
+            cmd4Q() {
+                console.log('123322')
+            }
+        }
+
+    }
+</script>
+
+<!--本页自定义样式处理-->
+<style>
+</style>

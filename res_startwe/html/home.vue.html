@@ -1,0 +1,257 @@
+<!-- 首页头部组件 -->
+<template>
+    <div>
+        <!-- 头部 -->
+        <div class="header">
+            <div>
+                <!-- 头部左边盒子 -->
+                <div class="header_left">
+                    <img src="/res_startwe/assets/logo2.png" alt="">
+                    <div class="companyName">
+                        <div>成都起微网络技术有限公司</div>
+                        <div>Chengdu StartWe Software Technology Co.,Ltd</div>
+                    </div>
+                </div>
+                <!-- 头部右边盒子 -->
+                <div class="header_right">
+                    <!-- 搜索框 -->
+                    <div class="searchBox">
+                        <input type="text">
+                        <img src="/res_startwe/assets/sousuo.png" alt="">
+                    </div>
+                    <!-- 头像 -->
+                    <div class="headPortrait" @click.stop='changeMoadl'>
+                        <img src="res_startwe/assets/toux.jpeg" alt="">
+                    </div>
+                    <!-- 退出 -->
+                    <!-- <div class="signOut" @click="logout">退出</div> -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 个人中心下拉 -->
+        <div class="userMoadl" v-show='moadlShow'> 
+            <div class="userChange" @click='logout'>  
+                切换账号
+            </div>
+            <div class="userImg">
+                <img class="userImg" src="res_startwe/assets/toux.jpeg" alt="">
+            </div>
+            <div class="userNameBox">用户名</div>
+            <div class="userMoadl_content">
+                <div>普通用户</div>
+                <div>15655545541</div>
+            </div>
+            <div class="userMoadl_content">XXXXXXXXXXXX@163.com</div>
+
+            <div class="userMoadl_bottom">
+                <div @click='toPersonal'>个人中心</div>
+                <div @click='logout'>退出登录</div>
+            </div>
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el:'home',
+        data: function () {
+            return {
+                checked: false,
+                input: "",
+                moadlShow:false,
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            let this_ = this
+            document.addEventListener("click", e => {
+                this.moadlShow = false
+               
+            });
+        },
+        methods: { 
+            logout:function(){
+                let that = this;
+                oui.ajaxPost('login/account/userLogout', {
+                    "accountId": oui.cookie(`userId`),
+                    "token": oui.cookie('tokenId')
+                }, function (res) {
+                    //TODO 清除cookie中保存的信息
+                    oui.cookie('tokenId', "");
+                    oui.cookie('userId', "");
+                    oui.storage.remove("startwe_user_info");
+                    oui.router.push('res_startwe/html/login.vue.html')
+                }, function (res) {
+                    that.$message.error(res.message);
+                })
+            },
+            changeMoadl() {
+                return
+                this.moadlShow = !this.moadlShow
+            },
+            toPersonal () {
+                oui.router.push('res_startwe/html/personal.vue.html')
+            }
+
+        }
+    }
+
+</script>
+<style>
+    /* 头部 */
+
+    .header {
+        border-bottom: 1px solid #f1f1f1;
+        height: 83px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .header>div{
+       
+        width: 80%;
+        margin: auto;
+        /* padding: 20px; */
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* 头部左边盒子 */
+
+    .header_left {
+        display: flex;
+    }
+
+    .header_left>img {
+        height: 40px;
+    }
+
+    .companyName {
+        margin-left: 20px;
+    }
+
+    .companyName>div:last-child {
+        font-size: 10px;
+        color: #999;
+    }
+
+    .companyName>div:first-child {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 24px;
+        color: #000;
+        letter-spacing: 5px;
+    }
+
+    /* 头部右边盒子 */
+
+    .header_right {
+        display: flex;
+    }
+
+    /* 搜索框 */
+
+    .searchBox {
+        position: relative;
+
+    }
+
+    .searchBox>input {
+        width: 200px;
+        height: 36px;
+        border: 1px solid #999;
+        border-radius: 18px;
+        padding: 0 20px;
+        outline: none;
+    }
+
+    .searchBox>img {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+    }
+
+    /* 头像 */
+
+    .headPortrait {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        /* background-color: #999; */
+        margin: 0 30px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .headPortrait>img {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* 退出 */
+
+    .signOut {
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 40px;
+    }
+
+    /* 弹框 */
+    .userMoadl{
+        width: 264px;
+        height: 348px;
+        box-shadow: 0px 4px 9px 1px rgba(0, 0, 0, 0.4);
+        background-color: #fff;
+        position: absolute;
+        z-index: 10;
+        right: 100px;
+        top: 83px;
+        padding: 15px;
+    }
+    .userImg{
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+     
+        margin: auto;
+    }
+    .userChange{
+        color: rgba(16, 16, 16, 100);
+        font-size: 14px;
+        text-align: right;
+        cursor: pointer;
+    }
+    .userNameBox{
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 9px;
+    }
+    .userMoadl_content{
+        color: rgba(135, 135, 135, 100);
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+    .userMoadl_bottom{
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-top: 37px;
+        cursor: pointer;
+    }
+</style>

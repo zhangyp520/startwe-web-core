@@ -1,0 +1,472 @@
+<!--左侧菜单-->
+<template>
+    <div class="ppt-menu">
+        <h4 class="header-head">{{header}}</h4>
+        <div class="header-body">
+            <div v-for="item in components" :class="item.controlType!='components'?'component-block component-blocker design-item':'component-block components-menu'"
+                 :control-pabs-name="item.name"
+                 :control-pabs-htmltype="item.htmlType"
+                 :control-pabs-controltype="item.controlType"
+
+                 control-pabs-formfield="false" control-pabs-style="{layoutType:'hideTitle'}" control-pabs-innerstyle="{}" control-pabs-otherattrs="{}"
+                 control-pabs-events="{}" drag-status=""
+                    >
+                <img :src="item.src" class="component-img" @click="showItems(item)"></img>
+                <div @click="showItems(item)">{{item.name}}</div>
+                <div  v-if="item.children &&item.isShow" class="components-children">
+                    <div v-for="citem in item.children"
+
+                         :class="citem.controlType!='components'?'design-item components-children-item':'components-children-item'"
+                         :control-pabs-name="citem.name"
+                         :control-pabs-htmltype="citem.htmlType"
+                         :control-pabs-controltype="citem.controlType"
+
+                         control-pabs-formfield="false" control-pabs-style="{layoutType:'hideTitle'}" control-pabs-innerstyle="{}" control-pabs-otherattrs="{}"
+                         control-pabs-events="{}" drag-status=""
+
+
+                            >
+                        <img :src="citem.src" class="component-img"></img>
+                        <div class="components-name">{{citem.name}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-tail">
+            <img class="setting-img" :src="imagesMap.settingUrl"  @click="pershow = true"/>
+            <img class="submit-img" :src="imagesMap.save2otherUrl" @click="isShowPage2Template = true" />
+            <el-button class="submit-btn"  type="primary" @click="saveDesign">保存</el-button>
+            <el-button class="review-btn" @click="submitTranslate">提交审核</el-button>
+        </div>
+
+
+        <div class="keep_model" v-if='isShowPage2Template'>
+            <div class="keep_model_box">
+                <div class="keep_model_title">
+                    另存为模板
+                </div>
+                <div class="keep_model_input">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                        <el-form-item label="模板名称" prop="name">
+                          <el-input v-model="ruleForm.name" size="small"></el-input>
+                        </el-form-item>
+                        <el-form-item label="模板分组" prop="region">
+                            <el-select v-model="ruleForm.region" placeholder="请选择模板分组" size="small" class="option">
+                                <el-option
+                                        v-for="item in groupingData"
+                                        :key="item.TagId"
+                                        :label="item.Name"
+                                        :value="item.TagId">
+                                </el-option>
+                            </el-select>
+                          </el-form-item>
+                        <el-form-item label="模板类别" prop="resource">
+                          <el-radio-group v-model="ruleForm.resource">
+                            <el-radio :label="1">私人模板</el-radio>
+                            <el-radio :label="0">公共模板</el-radio>
+                          </el-radio-group>
+                        </el-form-item>
+                        <div class="keep_model_but">
+                            <el-button @click='isShowPage2Template = false'>取消</el-button>
+                            <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+                        </div>
+                    </el-form>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed-box" v-if='pershow'>
+            <oui-include type="module"  url ='res_engine/ppt_design/preview.vue.html' :data="rightToolbarData"></oui-include>
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                rightToolbarData:{},
+                pershow:false,
+                imagesMap: {
+                    settingUrl: oui.getContextPath() + 'res_engine/ppt_design/images/ic_setting.png',
+                    save2otherUrl: oui.getContextPath() + 'res_engine/ppt_design/images/ic_save2other.png'
+                },
+                imgModule: '',
+                isShowPage2Template:false,
+                ruleForm: {
+                    name: '',
+                    region: '',
+                    resource: ""
+                },
+                rules: {
+                    name: [
+                        { required: true, message: '请输入模板名称', trigger: 'blur' },
+                    ],
+                    region: [
+                        { required: true, message: '请选择活动分组', trigger: 'change' }
+                    ],
+                    resource: [
+                        { required: true, message: '请选择活动类别', trigger: 'change' }
+                    ],
+                   
+                },
+                groupingData: [],
+            }
+        },
+        props: {
+            header: {
+                type: String,
+                default: '标题'
+            },
+            components: {
+                type: Array,
+                default: [
+                    {
+                        name: '视频',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_media.png',
+                        controlType: 'video',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '图片',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_image.png',
+                        controlType: 'image',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '混播',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_mixture_sowing.png',
+                        controlType: 'mixedplay',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '文档',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_doc.png',
+                        controlType: 'doc',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '流媒体',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_streaming_media.png',
+                        controlType: 'streammedia',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '网页',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_web_page.png',
+                        controlType: 'webpage',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '文本',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_text.png',
+                        controlType: 'text',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '富文本',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_rich_text.png',
+                        controlType: 'richtext',
+                        htmlType: 'read'
+                    },
+                    {
+                        name: '组件',
+                        src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_components.png',
+                        controlType: 'components',
+                        isShow: false,
+                        children: [
+                            {
+                                name: '字幕',
+                                src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_rolling_subtitle.png',
+                                controlType: 'subtitles',
+                                htmlType: 'read'
+                            },
+                            {
+                                name: '时间',
+                                src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_time.png',
+                                controlType: 'time',
+                                htmlType: 'read'
+                            },
+                            {
+                                name: '天气',
+                                src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_weather.png',
+                                controlType: 'weather',
+                                htmlType: 'read'
+                            },
+                            {
+                                name: '倒计时',
+                                src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_count_down.png',
+                                controlType: 'countdown',
+                                htmlType: 'read'
+                            },
+                            {
+                                name: '背景音乐',
+                                src: oui.getContextPath() + 'res_engine/ppt_design/images/ic_music.png',
+                                controlType: 'music',
+                                htmlType: 'read'
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        created: function () {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            this.loading = true;
+            var me = this;
+            this.messageFunction = function(event){
+                if(!event.data){
+                    return ;
+                }
+                me.onMessage&&me.onMessage(event.data);
+            };
+            window.addEventListener('message',this.messageFunction);
+            this.queryGroupingData()
+        },
+        methods: {
+            queryGroupingData:function() {
+                let me = this;
+                //显示模板页签
+                oui.ajaxPost(oui.pptAjaxConfig.queryCheckTagListUrl,{
+                },function(res){
+                    me.groupingData = res.TagDetialList;
+                },function (res) {
+                    console.log("查询模板失败");
+                });
+            },
+            //显示子组件列表
+            showItems:function(item){
+                if(item.controlType !='components'){
+                    return ;
+                }
+                if(item.isShow){
+                    item.isShow = false;
+                }else{
+                    item.isShow = true;
+                }
+            },
+            // 保存页面设计
+            saveDesign:function() {
+                var me = this;
+                com.oui.absolute.AbsoluteDesign.savePageDesign(function(res){
+                    me.savePagesByTranslateId();
+                });
+            },
+            //保存整个节目的设计
+            savePagesByTranslateId:function() {
+                debugger
+                let me = this;
+                //成功回调 再保存界面所有数据
+                oui.ajaxPost(oui.pptAjaxConfig.savePagesByPptIdUrl, {
+                    "Pages": com.oui.absolute.AbsoluteDesign.pageList
+                }, function (res) {
+                    me.$message({
+                        message: '保存成功..........！',
+                        type: 'success'
+                    });
+                    //成功回调 todo 给提示
+                    console.log("保存整个节目信息成功",res);
+                }, function (res) {
+                    //失败回调
+                    console.log("保存整个节目信息失败",res);
+                });
+            },
+            //提交审核
+            submitTranslate:function () {
+                var pptId = com.oui.absolute.AbsoluteDesign.pptId;
+                //成功回调 再保存界面所有数据
+                oui.ajaxPost(oui.pptAjaxConfig.submitPPtUrl, {
+                    "TranslateId": pptId
+                }, function (res) {
+                    me.$message({
+                        message: '节目提交审核成功',
+                        type: 'success'
+                    });
+                }, function (error) {
+                    //失败回调
+                    me.$message({
+                        message: error.Msg,
+                        type: 'error'
+                    });
+                });
+            },
+            //提交
+            submitForm(formName) {
+                let me = this;
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        var pptId = com.oui.absolute.AbsoluteDesign.pptId;
+                        oui.ajaxPost(oui.pptAjaxConfig.saveTranslateAsTemplate, {
+                            "TranslateId": pptId,
+                            "TemplateName": me.ruleForm.name,
+                            "TagId": me.ruleForm.region,
+                            "IsPrivate": me.ruleForm.resource
+                        }, function (res) {
+                            me.$message({
+                                message: '节目另存为模板成功',
+                                type: 'success'
+                            });
+                            me.isShowPage2Template = false
+                        }, function (error) {
+                            //失败回调
+                            me.$message({
+                                message:error.Msg,
+                                type: 'error'
+                            });
+                        });
+                        return
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            onMessage:function(data){
+                 data.cmd&&this[data.cmd]&&this[data.cmd](data.param);
+            },
+            //关闭预览弹框
+            cmd4hide() {
+                this.pershow = false
+            }
+        }
+    }
+
+</script>
+<style>
+.ppt-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #343434;
+    font-size: 14px;
+    color: #FFFFFF;
+    padding-left: 20px;
+    padding-right: 20px;
+    /*height: 80px;*/
+}
+.components-menu{
+}
+.components-children{
+    background-color: #303030;
+    z-index: 2;
+    width: 137px;
+    position: absolute;
+    top: 65px;
+    display: inline-block;
+
+}
+.components-children-item{
+    width: 137px;
+    cursor: pointer;
+    opacity: 0.65;
+    display: flex;
+    padding: 5px;
+}
+.components-children-item:hover{
+    opacity: 1;
+
+    background-color: #3E3E3E ;
+}
+.components-children-item>.component-img{
+    width: 18px;
+    height: 18px;
+}
+.components-children-item>.components-name{
+    padding-left:10px ;
+    color: #ffffff;
+}
+
+.component-block.design-item{
+
+    color:#ffffff
+}
+.header-head {
+    max-width: 20%;
+}
+.header-body {
+    max-width: 60%;
+    margin-left:200px;
+    display: flex;
+}
+.component-block {
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+
+}
+.component-img {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+    /*background: #ffffff;*/
+    margin-bottom: 5px;
+}
+.header-tail {
+
+}
+
+.icon {
+    font-size: 18px;
+    margin-right: 12px;
+}
+.setting-img,.submit-img{
+    margin-right:10px;
+}
+.submit-btn,.review-btn{
+    border-radius: 28px;
+}
+.keep_model{
+        position: fixed;
+        right: 0;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 102;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .keep_model_box{
+        position: absolute;
+        height: 320px;
+        width: 450px;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+    .keep_model_title{
+        height: 40px;
+        line-height: 40px;
+        color: #3D464D;
+        padding-left: 15px;
+        border-bottom: 1px solid #dcdcdc;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    .keep_model_input{
+        padding-right: 20px;
+    }
+    .option{
+        width: 100%;
+    }
+    .keep_model_but{
+        width: 100%;
+        position: absolute;
+        background: #f5f5f5;
+        padding: 10px;
+        bottom: 0;
+        text-align: right;
+    }
+    .fixed-box{
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 100;
+    }
+</style>

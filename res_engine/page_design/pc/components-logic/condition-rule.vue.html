@@ -1,0 +1,155 @@
+<template>
+    <div>
+        <div :class="buttonCls4showOrHideGroupConditions"  @click="showOrHideGroupConditions"> {{settingBtnText||""}}</div>
+        <div :class="groupConditionAreaAlign" >
+        <div class="group-condition-triangle"></div>
+        <div class="group-condition-title"> {{title}}</div>
+        <div :class="'group-condition-preview'+(!useOrRule?'display_none':'')" >
+            <i class="group-condition-preview-title">规则预览</i>
+            <div class="group-condition-preview-content"></div>
+        </div>
+        <div class="oui-condition-group-mask-layer" @click="hideGroupConditions"></div>
+        <div class="oui-condition-content" :style="contentStyle">
+            <div class="group-condition-rules" v-if="useOrRule">
+                <span class="group-condition-rules-match">匹配以下规则 </span>
+                <span class="group-condition-rules-addMsg">添加规则</span>
+                <button @click="addRule(null,null);">并关系(and)</button>
+                <button @click="addRule(null,null,true);">或关系(or)</button>
+            </div>
+            <ul class="oui-condition-root group-condition-rules-or-content">
+                <template v-for="(item,index) in conditionData">
+                    <li v-if="item&&item.or" class="group-condition-rules-or-li">
+                        <div class="group-condition-rules">
+                            <span class="group-condition-rules-or">或</span>
+                            <span class="group-condition-rules-match">匹配以下规则 </span>
+                            <button class="group-condition-del-group" @click="delRule(item.parentId,item.id);">删除或关系</button>
+                        </div>
+                        <oui-include type="module" url="res_engine/page_design/pc/components-logic/condition-rule.vue.html" :data="getData4Children(item)"></oui-include>
+                    </li>
+                    <li v-else-if="true" :class="item.isOneLine?'li-one-line':''">
+                        <oui-include type="module" url="res_engine/page_design/pc/components-logic/condition-rule.vue.html" :data="getData4Children(item)"></oui-include>
+                        <span :class="'group-condition-accordion '+item.hasAccordion&&item.hasAccordion()?'':'display_none'" @click="accordion(item.parentId,item.id);">accordion</span>
+                        <span :class="'group-condition-calc '+ !(item.isShowCalcRule && item.isShowCalcRule())?'display_none':''" @click="calc(item.parentId,item.id);">设置计算</span>
+                        <span class="group-condition-add" @click="add(item.parentId,item.id)">add</span>
+                        <span class="group-condition-del" @click="del(item.parentId,item.id)">del</span>
+                    </li>
+                </template>
+            </ul>
+            <button class="group-condition-add-rule" onclick="addRule(null,null);">添加条件</button>
+        </div>
+        <div class="group-condition-foot-area">
+            <span class="group-condition-more-btn display_none" @click="showOrHideMore();">展开</span>
+            <span class="group-condition-confirm-btn" @click="confirm4group();">{{confirmName}}</span>
+            <span class="group-condition-cancel-btn" @click="cancel4group();">{{cancelName}}</span>
+        </div>
+        </div>
+    </div>
+</template>
+<script>
+exports = {
+    templateType: 'vue',
+    name:'condition-rule',
+    props:["conditionData"],
+    data: function () {
+        return {
+            /** 条件组相关属性 **/
+            hideButton:false,
+            isShowGroupConditions:false,
+            settingBtnText:'',
+            buttonCls4showOrHideGroupConditions:'group-condition',
+
+            /**条件区域控制相关属性 **/
+            conditionAlign:'left',
+            conditionAreaHide:true,
+            groupConditionAreaAlign:'group-condition-area condition-left',
+
+            /**条件的基本属性配置 */
+            title:'',//标题
+            useOrRule:false,//是否启用或规则
+            contentStyle:'',//内容样式
+
+            /**条件数据相关 */
+            conditionData:[],//条件数据
+            confirmName:'确定',
+            cancelName:'取消'
+
+        };
+    },
+    computed:{
+        buttonCls4showOrHideGroupConditions:function (){
+            return 'group-condition '+(this.hideButton?'group-condition-hide':'')+(' ')+(this.settingBtnText?"condition-setting-btn":"");
+        },
+        groupConditionAreaAlign:function (){
+            return 'group-condition-area '+(this.conditionAlign||'left')+' '+(this.conditionAreaHide?'display_none':'');
+        }
+    },
+    mounted: function () {
+
+    },
+    methods: {
+        getCache:oui.getCache4include,
+        getData4Children:function (item){
+            return {
+                conditionData:item.children||[],
+                onUpdate:function (k,v){
+                    console.log('condition-rule.vue.html 中子组件变更了',arguments);
+                }
+            };
+        },
+        showOrHideGroupConditions:function (){
+            //隐藏或者显示条件组
+            if(!this.isShowGroupConditions){
+                this.showGroupConditions();
+            }else{
+                this.hideGroupConditions();
+            }
+        },
+        /**
+         * 显示条件组
+         */
+        showGroupConditions:function (){
+            //todo
+        },
+        /**
+         * 隐藏条件组
+         */
+        hideGroupConditions:function (){
+            //todo
+        },
+        /**
+         * 添加规则
+         * @param pid
+         * @param id
+         * @param isOr
+         */
+        addRule:function (pid,id,isOr){
+
+        },
+        accordion:function (parentId,id){
+
+        },
+        calc:function (parentId,id){//设置计算
+
+        },
+        add:function (parentId,id){
+
+        },
+        del:function (parentId,id){
+
+        },
+        showOrHideMore:function (){
+
+        },
+        confirm4group:function (){
+
+        },
+        cancel4group:function (){
+
+        }
+
+    }
+}
+</script>
+<style>
+
+</style>

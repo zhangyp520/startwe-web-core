@@ -1,0 +1,170 @@
+
+<template >
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">样式<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <div class="design-field ">
+                    <div class="fieldname">是否自动播放：</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                v-model="autoplay"
+                                active-text="是"
+                                inactive-text="否" @change="autoplayChange">
+                        </el-switch>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">是否显示控件：</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                v-model="controls"
+                                active-text="是"
+                                inactive-text="否" @change="controlsChange">
+                        </el-switch>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">是否循环播放：</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                v-model="loop"
+                                active-text="是"
+                                inactive-text="否" @change="loopChange">
+                        </el-switch>
+                    </div>
+                </div>
+                <div class="design-field " v-show="preloadShow">
+                    <div class="fieldname">是否提前加载：</div>
+                    <div class="fieldblock">
+                        <el-switch
+                                v-model="preload"
+                                active-text="是"
+                                inactive-text="否" @change="preloadChange">
+                        </el-switch>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">视频路径：</div>
+                    <div class="fieldblock">
+                        <el-input type="textarea" autosize v-model="videoSrc" @change="handleVideoSrcChange" ></el-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                currentControl: {},
+                width: 1 ,
+                height: 1 ,
+                videoSrc: "" ,
+                autoplay: true,
+                controls: true,
+                loop: true,
+                preload: true,
+                preloadShow: false
+            }
+        },
+        mounted:function(){
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            this.autoplay = this.currentControl.otherAttrs.autoplay;
+            if (this.currentControl.otherAttrs.autoplay == true) {
+                this.preloadShow = false;
+            } else {
+                this.preloadShow = true;
+            }
+            this.controls = this.currentControl.otherAttrs.controls;
+            this.loop = this.currentControl.otherAttrs.loop;
+            this.preload = this.currentControl.otherAttrs.preload;
+            this.videoSrc = this.currentControl.otherAttrs.videoSrc;
+        },
+        methods:{
+            autoplayChange: function (val) {
+                this.currentControl.otherAttrs.autoplay = val;
+                if (val == true) {
+                    this.preloadShow = false;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.preloadShow = this.preloadShow;
+                    this.preload = true;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.preload = this.preload;
+                } else {
+                    this.preloadShow = true;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.preloadShow = this.preloadShow;
+                }
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.autoplay = this.currentControl.otherAttrs.autoplay;
+            },
+            controlsChange: function (val) {
+                this.currentControl.otherAttrs.controls = this.controls;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.controls = this.currentControl.otherAttrs.controls;
+            },
+            loopChange: function (val) {
+                this.currentControl.otherAttrs.loop = this.loop;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.loop = this.currentControl.otherAttrs.loop;
+            },
+            preloadChange: function (val) {
+                this.currentControl.otherAttrs.preload = this.preload;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.preload = this.currentControl.otherAttrs.preload;
+            },
+            handleVideoSrcChange: function (val) {
+                this.currentControl.otherAttrs.videoSrc = this.videoSrc;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.videoSrc = this.currentControl.otherAttrs.videoSrc;
+            },
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                    //清除关系连线
+                    me._controlOnUpdate4clearRelation(bindProp,config,currentControl);
+
+                }
+
+//                this.$nextTick(function(){
+//
+//                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

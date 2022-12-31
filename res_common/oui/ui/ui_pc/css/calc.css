@@ -1,0 +1,409 @@
+@charset "UTF-8";
+/*清除谷歌浏览器*/
+#trans-tooltip, #tip-arrow-bottom, #tip-arrow-top {
+	display: none !important;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder { /* WebKit browsers */
+	color: rgba(81, 81, 81, .4);
+}
+
+input:-moz-placeholder,
+textarea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color: rgba(81, 81, 81, .4);
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color: rgba(81, 81, 81, .4);
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: rgba(81, 81, 81, .4);
+}
+*{
+	padding: 0;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: "Ping Fang SC", Arial, "Microsoft YaHei", Helvetica, sans-serif, "SimSun";
+}
+html,body{
+	background-color: #ffffff;
+	width: 100%;
+	height: 100%;
+	font-size: 14px;
+}
+.ouiCalc-content{
+	display: block;
+	height: 100%;
+	position: relative;
+	padding: 10px 20px;
+}
+.calc-name{
+	display: block;
+	padding-bottom: 5px;
+	font-size: 0;
+}
+.calc-name label{
+	display: inline-block;
+	font-size: 14px;
+	line-height: 30px;
+	padding-left: 5px;
+	color: #444444;
+}
+.calc-name .calcName-input{
+	width: 240px;
+	height: 30px;
+	padding: 0 5px 0 5px;
+	font-size: 14px;
+	line-height: 24px;
+	color: #515151;
+	border: 1px solid #D8E1E6;
+	vertical-align: top;
+	display: inline-block;
+	outline: none;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.calc-name .calcName-input:focus{
+	border-color: #3796EC;
+}
+.ouiCalc-content-preview{
+	width: 100%;
+}
+
+.ouiCalc-content-operation{
+	position: absolute;
+	left: 20px;
+	right: 20px;
+	bottom: 10px;
+	padding-left: 280px;
+}
+
+.ouiCalc-content-preview + .ouiCalc-content-operation{
+	top: 145px;
+}
+.ouiCalc-content-preview.ouiCalc-name + .ouiCalc-content-operation{
+	top: 174px;
+}
+.ouiCalc-title{
+	display: block;
+	color: #444444;
+	position: relative;
+	font-size: 0;
+	text-align: left;
+}
+
+.ouiCalc-title span{
+	max-width: 140px;
+	padding: 0 3px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	margin-right: 10px;
+	display: inline-block;
+	vertical-align: top;
+	border-bottom: 1px solid transparent;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.ouiCalc-title span.selected{
+	color: #2C82FC;
+	border-bottom-color: #2C82FC;
+}
+.clear-count{
+	background: none;
+	padding: 0 12px;
+	height: 24px;
+	line-height: 22px;
+	font-size: 12px;
+	float: right;
+	border: 0;
+	color: #76909E;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	outline: none;
+	cursor: pointer;
+	margin-right: -5px;
+}
+.clear-count:hover{
+	background: rgba(246, 92, 120, .1);
+	color: #F65C78;
+}
+.error-light-tips{
+	display: block;
+	padding: 5px;
+	font-size: 12px;
+	color: #F65C78;
+}
+.ouiCalc-preview-area{
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	background-color: #F6F6F6;
+	padding: 10px 10px 5px 10px;
+}
+.ouiCalc-preview-area .ouiCalc-preview-text{
+	background: none;
+	width: 100%;
+	display: block;
+	height: 60px;
+	font-size: 14px;
+	color: #2C82FC;
+	line-height: 1.6;
+	overflow-y: auto;
+	border: 0;
+	resize: none;
+	outline: none;
+}
+.clear-area{
+	display: block;
+}
+.clear-area:after{
+	content: "";
+	display: block;
+	visibility: hidden;
+	width: 0;
+	clear: both;
+}
+
+.ouiCalc-content-operation .ouiCalc-content-operation-l{
+	width: 280px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+}
+.calc-operation-item{
+	position: absolute;
+	top: 30px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-right: 1px solid #D8E1E6;
+	overflow: hidden;
+	overflow-y: auto;
+}
+.customInput-area{
+	display: block;
+	padding: 5px;
+}
+.calcSearch{
+	padding: 5px 0;
+	position: absolute;
+	left: 5px;
+	right: 5px;
+	top: 0;
+}
+.calcSearch .calcSearch-input,
+.customInput-area input.manual-input{
+	width: 100%;
+	height: 30px;
+	padding: 0 30px 0 5px;
+	font-size: 14px;
+	line-height: 24px;
+	color: #515151;
+	border: 1px solid #D8E1E6;
+	vertical-align: top;
+	display: inline-block;
+	outline: none;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.customInput-area input.manual-input{
+	padding-right: 5px;
+}
+.calcSearch .calcSearch-btn{
+	background: url("../images/singleSelect-search-icon.png") center no-repeat;
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	top: 5px;
+	right: 0;
+	bottom: 0;
+	border: 0;
+	outline: none;
+	cursor: pointer;
+}
+.calcSearch .calcSearch-btn-del{
+	background: url("../images/delete-info.png") center no-repeat;
+	background-size: 16px auto;
+}
+.calcSearch .calcSearch-input:focus,
+.customInput-area input.manual-input:focus{
+	border-color: #2C82FC;
+}
+.calc-info-list{
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 40px;
+	bottom: 0;
+	overflow: hidden;
+	overflow-y: auto;
+}
+.calc-info-list li{
+	display: block;
+	padding-left: 5px;
+	line-height: 30px;
+	font-size: 14px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.calc-info-list li:hover{
+	background: #d7e2ee;
+	cursor: pointer;
+}
+.calc-info-list li.selected{
+	background: #2C82FC;
+	color: #ffffff;
+}
+.ouiCalc-content-operation-r{
+	padding: 0 10px;
+	position: absolute;
+	left: 280px;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	overflow: hidden;
+	overflow-y: auto;
+}
+.ouiCalc-budget-symbol-area{
+	padding-top: 2px;
+	font-size: 0;
+	display: block;
+}
+.ouiCalc-budget-symbol-area ul{
+	width: 100%;
+	list-style: none;
+	font-size: 0;
+}
+.ouiCalc-budget-symbol-area ul li{
+	width: 25%;
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: 8px;
+}
+.budget-symbol-item{
+	display: block;
+	padding: 0 8px 0 0;
+}
+.budget-symbol-item-area{
+	width: auto;
+	display: block;
+	padding: 5px 0;
+	font-size: 12px;
+	color: #2C82FC;
+	border: 1px solid #2C82FC;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	text-align: center;
+}
+.budget-symbol-item:hover .budget-symbol-item-area{
+	background: #2C82FC;
+	color: #ffffff;
+	cursor: pointer;
+}
+.operator-icon {
+	background: url(../images/ouiCalc-icon.png) no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: top;
+}
+.icon-plus{
+	background-position: 0 0;
+}
+.budget-symbol-item:hover .icon-plus{
+	background-position: -24px 0;
+}
+.icon-minus-sign{
+	background-position: -48px 0;
+}
+.budget-symbol-item:hover .icon-minus-sign{
+	background-position: -72px 0;
+}
+.icon-multiplication{
+	background-position: 0 -24px;
+}
+.budget-symbol-item:hover .icon-multiplication{
+	background-position: -24px -24px;
+}
+.icon-division{
+	background-position: -144px 0;
+}
+.budget-symbol-item:hover .icon-division{
+	background-position: -168px 0;
+}
+.icon-left-brackets{
+	background-position: -48px -24px;
+}
+.budget-symbol-item:hover .icon-left-brackets{
+	background-position: -72px -24px;
+}
+.icon-right-brackets{
+	background-position: -192px -24px;
+}
+.budget-symbol-item:hover .icon-right-brackets{
+	background-position: -192px 0;
+}
+.icon-greater-than{
+	background-position: -96px 0;
+}
+.budget-symbol-item:hover .icon-greater-than{
+	background-position: -120px 0;
+}
+.icon-greater-than-equal{
+	background-position: 0 -48px;
+	width: 48px;
+}
+.budget-symbol-item:hover .icon-greater-than-equal{
+	background-position: -48px -48px;
+}
+.icon-less-than{
+	background-position: -96px -24px;
+}
+.budget-symbol-item:hover .icon-less-than{
+	background-position: -120px -24px;
+}
+.icon-less-than-equal{
+	background-position: 0 -72px;
+	width: 48px;
+}
+.budget-symbol-item:hover .icon-less-than-equal{
+	background-position: -48px -72px;
+}
+.icon-equality-sign{
+	background-position: -144px -24px;
+}
+.budget-symbol-item:hover .icon-equality-sign{
+	background-position: -168px -24px;
+}
+.icon-greater-than-less{
+	background-position: -96px -48px;
+	width: 48px;
+}
+.budget-symbol-item:hover .icon-greater-than-less{
+	background-position: -144px -48px;
+}
+
+
+
+
+

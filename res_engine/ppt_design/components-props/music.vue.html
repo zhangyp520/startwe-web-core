@@ -1,0 +1,592 @@
+<template>
+    <div :style="{height : slbHeight } " class="ppt-control-props-right">
+        <oui-include type="module"  url ='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData"></oui-include>
+        <div class="text-right-control" style="width: 300px;">
+            <el-collapse v-model="activeNames" class="property-collapse">
+                <el-collapse-item title="背景音乐" name="1">
+                    <div class="text-public-box">
+                        <span>自动切换</span>
+                        <div>
+                            <el-switch
+                                v-model="autoSwitch"
+                                @change="handleAutoSwitchChange">
+                            </el-switch>
+                        </div>
+                    </div>
+                    <div class="text-public-box">
+                        <span class="">音量&emsp;&emsp;</span>
+                        <el-slider class="slide-bar" v-model="volume" @change="handleVolumeChange"></el-slider>
+                        <input class="base_box_input" style="width: 50px; margin-left: 10px" v-model="volume" @change="handleVolumeChange"/>
+                    </div>
+                    <div class="text-public-box">
+                        <span>智能检测</span>
+                            <el-switch
+                                    v-model="autoDetection"
+                                    @change="handleAutoDetectionChange">
+                            </el-switch>
+                        <div class="text-content-left">内容有声音时自动关闭</div>
+                    </div>
+
+                    <div class="audios-container">
+                        <div v-for="(item,index) in audios" class="audio-item">
+                            <div class="audio-container">
+                                <!-- <audio  controls="controls" style="width: 100%; height: 100%;" :src="item.url"></audio>     -->
+                            </div>
+                            <div class="audio-content">
+                                <h4>{{item.fileName}}</h4>
+                                <div style="display: flex; justify-content: space-between; flex-direction: column; height: 100%; padding-bottom: 5px">
+                                    <div class="audio-content-property">
+                                        <span>{{item.fileDuration}}</span>
+                                        <span>{{(item.fileSize / 1024000).toFixed(2)}}M</span>
+                                    </div>
+                                    <div class="audio-content-property">
+                                        <img :src="imagesMap.uploadImg" @click='clickUp(index)'
+                                             :class="index == 0?'audio-img-operation audio-readOnly':'audio-img-operation'"/>
+                                        <img :src="imagesMap.downloadImg" @click='clickDown(index)'
+                                             :class="index == audios.length-1?'audio-img-operation audio-readOnly':'audio-img-operation'"/>
+                                        <img :src="imagesMap.trashImg" @click='deleteT(index)' class="audio-img-operation"  />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bottom_addaudio">
+                            <el-button class="addaudio_btn" :plain=false slot="trigger" size="small" @click="addMusic"><img
+                                    :src="imagesMap.addBotVideo" class="audio-img-operation" /></el-button>
+                        </div>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        data: function () {
+            return {
+                activeNames: '1',
+                slbHeight: '',
+                rightToolbarData:{},
+                //背景音乐是否自动切换
+                autoSwitch: false,
+                //背景音乐音量
+                volume: "",
+                //自动检测
+                autoDetection: false,
+                //上传的音频数组
+                audios: [],
+                //上传的文件列表
+                fileList: [],
+                imagesMap: {
+                    uploadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-up.png',
+                    downloadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-down.png',
+                    trashImg: oui.getContextPath() + 'res_engine/ppt_design/images/trash.png',
+                    arrowTop: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-top.png',
+                    arrowBottom: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-bottom.png',
+                    preview: oui.getContextPath() + 'res_engine/ppt_design/images/ic_preview.png',
+                    addVideo: oui.getContextPath() + 'res_engine/ppt_design/images/ic_add_hover.png',
+                    addBotVideo: oui.getContextPath() + 'res_engine/ppt_design/images/add_video.png',
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (typeof this.currentControl.otherAttrs.autoSwitch !== 'undefined') {
+                this.autoSwitch = this.currentControl.otherAttrs.autoSwitch;
+            }
+            if (this.currentControl.otherAttrs.volume) {
+                this.volume = this.currentControl.otherAttrs.volume
+            }
+            if (typeof this.currentControl.otherAttrs.autoDetection !== 'undefined') {
+                this.autoDetection = this.currentControl.otherAttrs.autoDetection
+            }
+            if (this.currentControl.otherAttrs.audios) {
+                this.audios = this.currentControl.otherAttrs.audios;
+            }
+        },
+        methods: {
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                // Design.setCurrPropsData4page('props', 'down2selectPage');
+                if(pptControl&&pptControl.id&&pptControl.controlType){
+                    Design.changed4props({},function(){
+                        Design.setCurrPropsData(pptControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+            //添加音频
+            addAudio(event) {
+                debugger
+                var localUrl = null;
+                if (window.createObjectURL != undefined) {
+                    // basic
+                    localUrl = window.createObjectURL(event.raw);
+                } else if (window.URL != undefined) {
+                    // mozilla(firefox)
+                    localUrl = window.URL.createObjectURL(event.raw);
+                } else if (window.webkitURL != undefined) {
+                    // webkit or chrome
+                    localUrl = window.webkitURL.createObjectURL(event.raw);
+                }
+                this.getAudioDuration(event.raw, (time) => {
+                    let audioInfo = {
+                        url: localUrl,
+                        title: event.name.split('.')[0],
+                        duration: time,
+                        size: (event.size / 1024000).toFixed(1) + 'M',
+                        autoplay:false
+                    };
+                    this.audios.unshift(audioInfo);
+                    for (const key in this.audios) {
+                        if(key == 0) {
+                            this.audios[key].autoplay = true
+                        }
+                    }
+                    this.currentControl.otherAttrs.audios = this.audios;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.audios = this.currentControl.otherAttrs.audios;
+                    this.updateCurrentControl();
+                });
+            },
+            // 获取视频长度
+            getAudioDuration(file, callback) {
+                let url = URL.createObjectURL(file);
+                let audioElement = new Audio(url);
+                let times;
+                let h = 0,
+                    m = 0,
+                    s = 0
+                audioElement.addEventListener("loadedmetadata", () => {
+                    times = audioElement.duration;
+                    if (times / 3600 >= 1) {
+                        h = parseInt(times / 3600)
+                    }
+                    if (times % 3600 >= 1) {
+                        m = parseInt((times % 3600) / 60)<10? '0'+ parseInt((times % 3600)/60):parseInt((times % 3600) / 60)
+                    }
+                    if ((times % 3600) % 60 >= 1) {
+                        s = parseInt((times % 3600) % 60)<10? '0'+parseInt((times % 3600)%60):parseInt((times % 3600) % 60)
+                    }
+                    if(h==0){
+                        times = m + ':' + s
+                    }else{
+                        times = +h + ':' + '0'+m + ':' + s
+                    }
+                    callback && callback(times);
+                });
+            },
+            //自动切换改变事件
+            handleAutoSwitchChange: function () {
+                this.currentControl.otherAttrs.autoSwitch = this.autoSwitch;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.autoSwitch = this.currentControl.otherAttrs.autoSwitch;
+                this.updateCurrentControl();
+            },
+            //背景音乐音量大小改变
+            handleVolumeChange: function () {
+                this.currentControl.otherAttrs.volume = this.volume;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.volume = this.currentControl.otherAttrs.volume;
+                this.updateCurrentControl();
+            },
+            //自动检测内容声音改变事件
+            handleAutoDetectionChange: function () {
+                this.currentControl.otherAttrs.autoDetection = this.autoDetection;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.autoDetection = this.currentControl.otherAttrs.autoDetection;
+                this.updateCurrentControl();
+            },
+            //背景音乐上传后预览事件
+            handlePreview: function () {
+                // this.currentControl.style.backgroundColor = this.backgroundColor;
+                // com.oui.absolute.AbsoluteDesign.data.currentControl.style.backgroundColor = this.currentControl.style.backgroundColor;
+                // this.updateCurrentControl();
+            },
+            //删除
+            deleteT(index) {
+                this.audios.splice(index,1);
+                for (const key in this.audios) {
+                    if(key == 0) {
+                        this.audios[key].autoplay = true
+                    }
+                }
+                this.currentControl.otherAttrs.audios = this.audios;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.audios = oui.parseJson(oui.parseString(this.currentControl.otherAttrs.audios));
+                this.updateCurrentControl(); 
+            },
+            //点击上移
+            clickUp(index){
+                if (index > 0) {
+                    let temp1 = this.audios[index - 1];
+                    let temp2 = this.audios[index];
+                    this.audios[index] = temp1;
+                    this.audios[index - 1] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.audios = oui.parseJson(
+                        oui.parseString(this.audios));
+                    this.updateCurrentControl()
+                }
+            },
+            //点击下移
+            clickDown(index){
+                if (index + 1 < this.audios.length) {
+                    let temp1 = this.audios[index];
+                    let temp2 = this.audios[index + 1];
+                    this.audios[index + 1] = temp1;
+                    this.audios[index] = temp2;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.audios = oui.parseJson(
+                        oui.parseString(this.audios));
+                    this.updateCurrentControl()
+                }
+            },
+            addMusic() {
+                let me = this;
+                com.oui.absolute.AbsoluteDesign.showFileDialog({
+                    fileType:3,
+                    fileTypes:['music'],
+                    callback:function (res) {
+                        oui.eachArray(res, function (item) {
+                            me.audios.push(item);
+                        });
+                        me.currentControl.otherAttrs.audios = me.audios;
+                        com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.audios = oui.parseJson(oui.parseString(me.currentControl.otherAttrs.audios));
+                        me.updateCurrentControl();
+                    }
+                })
+            }
+        }
+    }
+
+</script>
+
+<style scoped>
+    body {
+        background: #666;
+    }
+    .el-collapse{
+        border: none;
+    }
+    .slide-bar {
+        width: 45%;
+    }
+    .audio-img-operation.audio-readOnly:hover,
+    .audio-img-operation.audio-readOnly {
+        cursor: default;
+        opacity: 0.3;
+    }
+    .base_box_input-unit-container {
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+    .audios-container {
+        display: flex;
+        flex-direction: column;
+        padding: 0 15px;
+    }
+    .audio-item {
+        height: 112px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding-left: 8px;
+        margin-top: 10px;
+    }
+    .audio-content {
+        display: flex;
+        flex-direction: column;
+        height: 96px;
+        width: 165px;
+        padding-left: 10px;
+        opacity: 0.6;
+    }
+    .audio-content>h4{
+        text-align: center;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+
+    .audio-content-property {
+        width: 90px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .audio-content-property {
+        width: 90px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .bottom_addaudio {
+        width: 100px;
+        height: 25px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;    
+        margin: auto;
+        margin-top: 20px;
+    }
+    .addaudio_btn {
+        width: 100px;
+        height: 25px;
+        padding: 0;
+        background: #464646;
+        border: none;
+    }
+    .audio-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .audio-img-operation:hover {
+        opacity: 1;
+    }
+    .audio-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .audio-img-operation:hover {
+        opacity: 1;
+    }
+    .text-right-control .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .text-right-control .el-collapse-item__wrap {
+        background: none;
+    }
+
+    .text-right-control .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .el-icon-arrow-down:before {
+        content: none;
+    }
+
+    /* 文字颜色选择器 */
+
+    .text-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .text-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .text-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    /* 外层公共盒子 */
+
+    .text-public-box {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .text-public-box>span {
+        color: #fff;
+        width: 30%;
+        text-align: center;
+    }
+    .text-content-left{
+        margin-left: 10px;
+    }
+
+    /* 类型 */
+
+    .rolling-speed .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .rolling-speed .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .rolling-speed .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .rolling-speed .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* <!-- 格式 --> */
+
+    .date-format .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .date-format .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .date-format .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .date-format .el-input__icon {
+        line-height: 30px;
+    }
+
+    /* 字体类型 */
+
+    .font-family-input .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-family-input-box {
+        margin-right: 10px;
+        width: 47%;
+    }
+
+    /* 字体大小 */
+
+    .font-size-select .el-input__inner {
+        background-color: transparent;
+        border: 1px solid #999;
+        color: #fff;
+        height: 30px;
+        line-height: 30px;
+    }
+
+    .font-size-select .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .font-size-select .el-input__icon {
+        line-height: 30px;
+    }
+
+    .font-size-select-box {
+        width: 22%;
+    }
+
+    /* 富文本编辑器 */
+
+    .textContent-box {
+        margin-bottom: 10px;
+    }
+
+    .textContent-box .layui-layedit-tool .layui-icon {
+        color: #fff;
+    }
+
+    .textContent-box .layui-layedit {
+        border: none;
+    }
+
+    .textContent-box .layui-layedit-iframe {
+        display: none;
+    }
+
+    .textContent-box .layui-layedit-tool {
+        border: none;
+    }
+
+    .textContent-box .layui-layedit-tool .layui-icon {
+        width: 30px;
+    }
+    /* 内边距 */
+    .text-padding-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .text-padding-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+    /* 行间距 */
+    .row-spacing-input .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .row-spacing-input .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+    
+    .audio-container{
+        width: 96px;
+        height: 1;
+        height: 96px;
+        border-radius: 4px;
+        background: #2d2d2d;
+    }
+    
+</style>

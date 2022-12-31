@@ -1,0 +1,271 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>rich-text 富文本页面</title> 
+<style type="text/css">
+	.nicEdit-main{
+		text-align: center;
+		outline:none;
+		font-family: "Microsoft YaHei", SimSun, Arial, Helvetica, sans-serif;
+	}
+</style>
+</head>
+<body> 
+<textarea id="richtext" style="width:100%;height:324px;outline:none;display: none;text-align: center"></textarea>
+<script type="text/javascript">
+/**
+	 * 获取上下文
+	 */
+function getContextPath(){
+
+	var pathName = document.location.pathname;
+	var index = pathName.substr(1).indexOf("/");
+	var result = pathName.substr(0, index + 1) + "/";
+	if(result =='/res_common/' || result =='/res_apps/'){//获取的第一个目录路径与 公共路径相同则根路径为/
+		result = '/';
+	}
+	return result;
+}
+var loadConfig ={loadedAll:false,newId:0};
+function getNewTagId(){
+	loadConfig.newId ++;
+	return loadConfig.newId;
+}
+function load4sort(arr,callback){
+	if(arr.length==0){
+		callback();
+		return ;
+	}
+	var runArr = [];
+	var next = function(){
+		var idx = this.idx;
+		var len = this.len;
+		runArr[idx+1].run();
+	}
+	var run = function(){
+		var idx= this.idx;
+		var len = this.len;
+		
+		if(idx==len-1){
+			loadArr([this.url],function(){
+				callback();	
+			});
+				
+		}else{
+			var me = this;
+			loadArr([this.url],function(){
+				me.next();
+			});
+		}
+	}
+	for(var i=0,len=arr.length;i<len;i++){
+		runArr.push({
+			url:arr[i],
+			idx:i,
+			len:len,
+			next:next,
+			run: run
+		});
+	}
+	runArr[0].run();
+}
+
+/**
+ * 加载js列表资源
+ */
+function loadArr(arr,callback){
+	var idPrefix = 'script_';
+	var contextPath = getContextPath();
+	
+	for(var i=0,len=arr.length;i<len;i++){
+		var currNewId = idPrefix+getNewTagId();
+		loadConfig[currNewId] = {loaded:false};
+		loadJs(currNewId,contextPath+arr[i],function(){
+			var sid = this.getAttribute('id');
+			loadConfig[sid].loaded = true;
+			var flag = true;
+			if(!callback){
+				return ;
+			}
+			if(loadConfig.loadedAll){
+				return ;
+			}
+			for(var k in loadConfig){
+				if(k =='loadedAll' || k =='newId'){
+					continue;
+				}
+				if(!loadConfig[k].loaded){
+					flag  = false;
+				}
+			}
+			if(flag){
+				loadConfig.loadedAll = true;
+				callback();
+			}
+		});
+	}
+}
+/**
+ * 加载 js资源
+ */
+function loadJs(sid,jsurl,callback){
+	loadConfig.loadedAll = false; //没有加载完毕
+	var nodeHead = document.getElementsByTagName('head')[0];
+	var nodeScript = null;
+	if(document.getElementById(sid) == null){
+		nodeScript = document.createElement('script');
+		nodeScript.setAttribute('type', 'text/javascript');
+		nodeScript.setAttribute('src', jsurl);
+		nodeScript.setAttribute('id',sid);
+		if (callback != null) {
+			nodeScript.onload = nodeScript.onreadystatechange = function(){
+				if (nodeScript.ready) {
+					return false;
+				}
+				if (!nodeScript.readyState || nodeScript.readyState == "loaded" || nodeScript.readyState == 'complete') {
+					nodeScript.ready = true;
+					callback.call(nodeScript);
+				}
+			};
+		}
+		nodeHead.appendChild(nodeScript);
+	} else {
+		if(callback != null){
+			callback.call(document.getElementById(sid));
+		}
+	}
+};
+var console = (typeof window['console']=='undefined') ?{
+	log:function(){}
+}:window.console;
+var richDialog = getParentWindow().oui.$.ctrl.dialog.richDialog;
+var richConfig = {
+	richId:  1,
+	richElId:'richtext'
+};
+var RichEditor = {
+	
+}; 
+
+var initEnd = function(){
+	var richId = oui.getParam('richId') || richConfig.richId;
+	richConfig.richId = richId;
+	//$.cookie('richId-'+richId,oui.biz.Tool.encode(richConfig),{expires:7});
+	
+	//Tester4Editor.runById(richId,false); //第二个参数控制是否执行下一个页面测试,true不执行，false则执行
+};
+var init=function(){
+	//初始化
+	richConfig.loadStart = new Date().getTime();
+	richConfig.loadTime =richConfig.loadStart - richConfig.pageStart;
+	//console.log('加载资源时间'+richConfig.loadTime);
+	
+	$(function() {
+		$("#richtext").show();
+		RichEditor.panelInstance = new nicEditor({
+			fullPanel : true,
+			iconsPath : getContextPath()+'res_common/third/nicEdit/nicEditorIcons.gif',
+			buttons :{
+				'bold' : {name : "加粗", command : 'Bold', tags : ['B','STRONG'], css : {'font-weight' : 'bold'}, key : 'b'},
+				'italic' : {name : "倾斜", command : 'Italic', tags : ['EM','I'], css : {'font-style' : 'italic'}, key : 'i'},
+				'underline' : {name : "底线", command : 'Underline', tags : ['U'], css : {'text-decoration' : 'underline'}, key : 'u'},
+				'left' : {name : "居左", command : 'justifyleft', noActive : true},
+				'center' : {name : "居中", command : 'justifycenter', noActive : true},
+				'right' : {name : "居右", command : 'justifyright', noActive : true},
+				'justify' : {name :"两端对齐", command : 'justifyfull', noActive : true,hidden:true},
+				'ol' : {name :"有序列表",hidden:true, command : 'insertorderedlist', tags : ['OL']},
+				'ul' : 	{name : "无序列表",hidden:true, command : 'insertunorderedlist', tags : ['UL']},
+				'subscript' : {name : "下标",hidden:true, command : 'subscript', tags : ['SUB']},
+				'superscript' : {name : "上标",hidden:true, command : 'superscript', tags : ['SUP']},
+				'strikethrough' : {name : "删除线", command : 'strikeThrough', css : {'text-decoration' : 'line-through'}},
+				'removeformat' : {name : "清除样式",hidden:true, command : 'removeformat', noActive : true},
+				'indent' : {name : "缩进",hidden:true, command : 'indent', noActive : true},
+				'outdent' : {name : "删除缩进",hidden:true, command : 'outdent', noActive : true},
+				'hr' : {name : "横线",hidden:true, command : 'insertHorizontalRule', noActive : true},
+				'upload':{name : '上传图片', type : 'nicUploadButton',hidden:true},
+				'xhtml' : {name : 'Edit HTML', type : 'nicCodeButton',hidden:true}  ,
+
+				'fontSize' : {name : '字体大小', type : 'nicEditorFontSizeSelect', command : 'fontsize',hidden:false},
+				'fontFamily' : {name : '字体类型', type : 'nicEditorFontFamilySelect', command : 'fontname',hidden:false},
+//				'fontFormat' : {name : ('标题'), type : 'nicEditorFontFormatSelect', command : 'formatBlock',hidden:false},
+				'forecolor' : {name : ('字体颜色'), type : 'nicEditorColorButton', noClose : true,hidden:false},
+				'bgcolor' : {name : ('背景颜色'), type : 'nicEditorBgColorButton', noClose : true,hidden:false},
+				'link' : {name : '添加链接', type : 'nicLinkButton', tags : ['A'],hidden:false},
+				'unlink' : {name : '取消链接',  command : 'unlink', noActive : true,hidden:true}
+			},
+			buttonList : ['save','bold','italic','underline','left','center','right','justify','ol','ul','fontSize','fontFamily','fontFormat','forecolor','bgcolor',,'indent','outdent','image','link','unlink']
+			
+		}).panelInstance(richConfig.richElId);
+		RichEditor.editor = RichEditor.panelInstance.nicInstances[0];  
+		RichEditor.editor.setContent(richDialog.attr('richValue')||"");
+		try{
+			RichEditor.editor.elm.focus();
+		}catch(e){
+		}
+		richConfig.endTime = new Date().getTime();
+		richConfig.initTime = richConfig.endTime - richConfig.loadStart;
+		//console.log('富文本初始化时间:'+richConfig.initTime);
+			//alert('ready');
+		initEnd();
+    });
+	
+};
+var save = function(){
+	//保存
+	//var v = RichEditor.editor.val();
+	var value = RichEditor.editor.getContent();
+	richDialog.attr('save')&&richDialog.attr('save')(value);
+	//alert(value);
+};
+/* 清空样式*****/
+var clearStyle = function(){
+	var text =  RichEditor.editor.getText();
+	richDialog.attr('clearStyle')&&richDialog.attr('clearStyle')(text);
+	console.log(text);
+	RichEditor.editor.setContent(text);
+};
+var cancel = function(){
+	//取消
+};
+var initRequire = function(){
+	richConfig.pageStart = new Date().getTime();
+	var Tool = oui.biz.Tool;
+	Tool.require(['res_common/oui/ui/ui_pc/css/dialog.css'],function(){
+		Tool.requireWithSort([
+			"res_common/oui/ui/base-control.js",
+			"res_common/oui/ui/oui-form-control.js",
+			'res_common/oui/ui/ui_pc/dialog/dialog.js',
+			"res_common/oui/ui/ui_pc/controls/parse-plugin/parse-plugin.js",
+			'res_common/third/nicEdit/nicEdit.js'
+		],function(){
+			init();
+		});
+	});
+
+};
+/**
+ * 加载js资源后 初始化上传组件
+ */
+loadArr(['res_common/third/jquery/jquery-2.1.4.min.js',"res_common/third/template/template_debug_3_0_0.js"],function(){
+	load4sort([
+	'res_common/third/jquery-cookie-master/src/jquery.cookie.js',
+	'res_common/oui/system/oui-jsclazz.js',
+	'res_common/oui/system/oui-biz-ext.js',
+	"res_common/oui/system/oui.js",
+	"res_common/oui/system/oui-common.js"
+	],function(){
+		oui.getContextPath = getContextPath;
+		oui.biz.Tool.contextPath = getContextPath();
+
+		initRequire();
+	});
+});
+</script>
+</body> 
+</html>
+
+
+
+
+

@@ -1,0 +1,544 @@
+<template>
+    <div class="pageBasic" data-type="setting" style="width: 100%">
+        <div class=" base_box">
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title ">名称</div>
+                <input @change="modeNameChange" class="base_box_input" type="text" v-model="query.name">
+            </div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title ">透明度</div>
+                <input type="number" class="base_box_input" @change="changeOpacity" type="text" v-model="query.opacity"><span
+                    style="margin-left: 5px;">%</span>
+            </div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title ">旋转</div>
+                <input type="number" @change="rotateChange" class="base_box_input" type="text" v-model="query.rotate"><span
+                    style="margin-left: 5px;">度</span>
+            </div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title ">层级</div>
+                <div style="display: flex; justify-content: space-between">
+                    <img  @click="changeHierarchy(currentControlId,1)" :src="imagesMap.uploadImg" class="video-img-operation" style="margin-right: 20px" />
+                    <img  @click="changeHierarchy(currentControlId,2)" :src="imagesMap.arrowTop" class="video-img-operation" style="margin-right: 20px" />
+                    <img  @click="changeHierarchy(currentControlId,3)" :src="imagesMap.downloadImg" class="video-img-operation" style="margin-right: 20px" />
+                    <img  @click="changeHierarchy(currentControlId,4)":src="imagesMap.arrowBottom" class="video-img-operation" style="margin-right: 20px" />
+                </div>
+            </div>
+            <div class="seperate-line"></div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title" style="opacity: 0.38">大小及位置</div>
+            </div>
+            <div class="property-item" style="width: 280px;justify-content: space-between">
+                <div>
+                    <span>W</span>
+                    <input type="number" v-model="query.w" class="base_box_input" @change="WPosition"
+                        style="width: 80px; margin-left: 10px" />
+                </div>
+                <div>
+                    <span>H</span>
+                    <input  type="number"  v-model="query.h" @change="HPosition" class="base_box_input"
+                        style="width: 80px; margin-left: 10px" />
+                </div>
+            </div>
+            <div class="property-item" style="width: 280px;justify-content: space-between">
+                <div>
+                    <span>X</span>
+                    <input type="number" v-model="query.x" @change="XPosition" class="base_box_input"
+                        style="width: 80px; margin-left: 15px" />
+                </div>
+                <div>
+                    <span>Y</span>
+                    <input type="number" v-model="query.y" @change="YPosition" class="base_box_input"
+                        style="width: 80px; margin-left: 10px" />
+                </div>
+            </div>
+            <div class="seperate-line"></div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_title ">外观</div>
+                <span></span>
+            </div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_titleA ">描边</div>
+                <div style="display: flex; justify-content: flex-start; align-items: center; width: 200px">
+                    <input class="base_box_input" @change="borderWidthChange"
+                        style="width: 25%;margin-right: 5px;text-align: center;" type="number"
+                        v-model="query.borderWidth">
+                    <el-color-picker @change="borderBgChange" v-model="query.borderBg" size="mini">
+                    </el-color-picker>
+                    <input class="base_box_input" style="width: 35%;margin-left: 5px;" type="text"
+                        v-model="query.borderBg">
+
+                </div>
+
+            </div>
+            <div class=" property-item">
+                <div class="grid-demo grid-demo-bg1 base_titleA ">圆角</div>
+                <input style="width:60px;text-align:center" class="base_box_input" @change="bordeRadiusChange"
+                type="number" v-model="query.borderRadius">
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+
+            return {
+                currentControlId:0,
+                query: {
+                    borderBg: '#f0f0f0',
+                    borderRadius: 0,
+                    borderWidth: 0, //边框宽度
+                    opacity: '100',
+                    rotate: '0',
+                    name: '图片1',
+                    x: null,
+                    y: null,
+                    w: null,
+                    h: null,
+                },
+                imagesMap: {
+                    uploadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-up.png',
+                    downloadImg: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-down.png',
+                    arrowTop: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-top.png',
+                    arrowBottom: oui.getContextPath() + 'res_engine/ppt_design/images/arrow-bottom.png',
+                },
+            }
+        },
+        mounted() {
+
+            console.log('控件列表数据',com.oui.absolute.AbsoluteDesign.data.controls)
+
+            var currentControl = com.oui.absolute.AbsoluteDesign.data.currentControl;
+            if (!currentControl || (!currentControl.id) || (!currentControl.controlType)) {
+                return;
+            }
+            console.log('当前控件ID',currentControl.id);
+            this.currentControlId= currentControl.id
+            //拷贝
+            this.currentControl = oui.parseJson(oui.parseString(currentControl));
+            // 圆角回填
+            if (this.currentControl.otherAttrs.imgModeName) {
+                this.query.name = this.currentControl.otherAttrs.imgModeName
+            } else {
+                this.query.name = com.oui.absolute.AbsoluteDesign.data.currentControl.name
+            }
+            if (this.currentControl.style.borderRadius) {
+                this.query.borderRadius = this.currentControl.style.borderRadius
+            }
+            // 边框宽度回填
+            if (this.currentControl.style.borderLeftWidth) {
+                this.query.borderWidth = this.currentControl.style.borderLeftWidth
+            }
+            // 边框颜色回填
+            if (this.currentControl.style.borderBottomColor) {
+                this.query.borderBg = this.currentControl.style.borderBottomColor
+            }
+            //位置回填
+
+            if (this.currentControl.style) {
+                console.log(this.currentControl.style);
+                if (this.currentControl.style.left) {
+                    this.query.x = this.parseFloat(this.currentControl.style.left)
+                }
+                if (this.currentControl.style.top) {
+                    this.query.y = this.parseFloat(this.currentControl.style.top);
+                }
+                if (this.currentControl.style.width) {
+                    this.query.w = this.parseFloat(this.currentControl.style.width)
+                }
+                if (this.currentControl.style.height) {
+                    this.query.h = this.parseFloat(this.currentControl.style.height)
+                }
+
+            }
+            //透明度
+            if (this.currentControl.style.opacity) {
+                this.query.opacity = this.currentControl.style.opacity * 100
+            }
+            // <<<<<<<<<<<<<数据相关>>>>>>>>>>>>>>>>>>
+            //回显度数
+            if (this.currentControl.otherAttrs.rotate) {
+                this.query.rotate = this.currentControl.otherAttrs.rotate
+            }
+        },
+        methods: {
+            changeHierarchy(currentID,type){
+                    console.log('层级改变类型',currentID,'类型',type);
+                    let controlsList = com.oui.absolute.AbsoluteDesign.data.controls
+                    console.log( com.oui.absolute.AbsoluteDesign.data.controls);
+                    console.log( com.oui.absolute.AbsoluteDesign.data.controls[0].style.zIndex);
+                    var idx = -1;
+                    var one = oui.findOneFromArrayBy(controlsList,function(item,index){
+                        if(item.id == currentID){
+                            idx = index;
+                            return true;
+                        }
+                    });
+                    if(idx>-1){
+                        if(type == 1){
+                            if(idx+1<controlsList.length){
+                                var temp = controlsList[idx];
+                                var next = controlsList[idx+1];
+                                controlsList[idx] = next;
+                                controlsList[idx+1] = temp;
+                            }
+
+                        }else if(type ==2){
+                            
+                            controlsList.splice(idx,1);
+                            controlsList.push(one);    
+                        }else if(type ==3){
+                            if(idx-1>-1){
+                                var temp = controlsList[idx];
+                                var prev = controlsList[idx-1];
+                                controlsList[idx] = prev;
+                                controlsList[idx-1] = temp;
+                            }
+
+                        }else if(type ==4){
+                            
+                            controlsList.splice(idx,1);
+                            controlsList.splice(0,0,one);
+                        }
+                        
+                    }
+                    oui.eachArray(controlsList,function(item,index){
+                        item.style.zIndex = index+1;
+                    });
+                    this.updateCurrentControl();
+                    
+            },
+
+            //更改旋转度数
+            rotateChange() {
+                console.log('旋转度数', this.query.rotate)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.rotate = this.query.rotate;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.transform = 'rotate(' + this.query
+                    .rotate + 'deg);';
+
+                // transform: rotate(angle); 
+                this.updateCurrentControl()
+
+            },
+            modeNameChange() {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.imgModeName = this.query.name
+                com.oui.absolute.AbsoluteDesign.data.currentControl.name = this.query.name
+                this.updateCurrentControl()
+            },
+            //字符串转数字
+            parseFloat: function (num) {
+                var temp = num;
+                if (num) {
+                    if (typeof num == 'string') {
+                        temp = parseFloat(num);
+                    }
+                }
+                if (temp) {
+                    temp = temp.toFixed(2);
+                }
+                return temp;
+            },
+            // 位置改变
+            XPosition: function () {
+                console.log('X轴位置', this.query.x)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.left = this.parseFloat(this.query.x);
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+            },
+            WPosition: function () {
+                let width = this.parseFloat(this.query.w)
+                if (width < 50) {
+                    this.query.w = 50
+                    width = 50
+                }
+                console.log('宽度', this.query.w)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.width = width
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+            },
+            HPosition: function () {
+                let height = this.parseFloat(this.query.h)
+                if (height < 50) {
+                    height = 50
+                    this.query.h = 50
+
+                }
+                console.log('高度', this.query.h)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.height = height
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+            },
+            YPosition: function () {
+                console.log('Top', this.query.y);
+
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.top = this.parseFloat(this.query.y);
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+            },
+
+            // 圆角改变
+            bordeRadiusChange: function () {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderRadius = this.parseFloat(this
+                    .query.borderRadius);
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+
+            },
+            //边框宽度改变、
+            borderWidthChange: function () {
+
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderBottomWidth = this.query
+                    .borderWidth
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderLeftWidth = this.query
+                    .borderWidth
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderRightWidth = this.query
+                    .borderWidth
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderTopWidth = this.query
+                    .borderWidth
+                this.updateCurrentControl()
+            },
+            //描边宽度
+            borderBgChange: function () {
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderBottomColor = this.query
+                    .borderBg;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderLeftColor = this.query.borderBg
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderRightColor = this.query.borderBg
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.borderTopColor = this.query.borderBg
+                this.updateCurrentControl()
+            },
+            // 透明度
+            changeOpacity() {
+                console.log('透明度', this.query.opacity)
+                com.oui.absolute.AbsoluteDesign.data.currentControl.style.opacity = this.query.opacity / 100
+                this.updateCurrControlStyle()
+                this.updateCurrentControl()
+
+            },
+
+
+
+
+
+
+
+
+
+            updateCurrControlStyle: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.updateCurrControlStyle();
+                }
+            },
+            //更新
+            updateCurrentControl: function () {
+                var $scroll = $('#scroolY');
+                var scrollTop = 0;
+                if($scroll&&$scroll.length){
+                    scrollTop = $scroll[0].scrollTop;
+                }
+                oui.setPageParam('right_props_scrollTop',scrollTop);
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var currentControl = Design.data.currentControl;
+
+                $('.el-tooltip__popper').remove();
+                if (currentControl && currentControl.id) {
+                    Design.changed4props({}, function () {
+                        Design.setCurrPropsData(currentControl, 'center', 'down2selectField');
+                    });
+                }
+            },
+        }
+    }
+</script>
+<style scoped>
+    .el-color-picker__trigger {
+        width: 60px !important;
+    }
+
+    .base_titleA {
+        width: 50px;
+    }
+
+    .video-img-operation.image-readOnly:hover,
+    .video-img-operation.image-readOnly {
+        cursor: default;
+        opacity: 0.3;
+    }
+
+    .el-dropdown-menu__item {
+        width: 200px;
+    }
+
+    .addvideo_btn {
+        width: 271px;
+        height: 25px;
+        padding: 0;
+        background: #464646;
+        border: none;
+    }
+
+    .bottom_addvideo {
+        width: 271px;
+        height: 25px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .base_box_input {
+        width: 120px;
+    }
+
+    .el-collapse {
+        border: none;
+    }
+
+    .selected_val {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .selected_val>div {
+        width: 150px;
+    }
+
+    .select_fill_stylebox {
+        color: #fff;
+        outline: none;
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide-bar {
+        width: 50%;
+    }
+
+    .video-item {
+        width: 271px;
+        height: 112px;
+        opacity: 1;
+        background: #464646;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        padding-left: 8px;
+        margin-top: 10px;
+    }
+
+    .video-container {
+        width: 96px;
+        height: 96px;
+        opacity: 1;
+        background: #2d2d2d;
+        border-radius: 4px;
+    }
+
+    .videos-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .video-content {
+        display: flex;
+        flex-direction: column;
+        height: 96px;
+        width: 165px;
+        padding-left: 10px;
+        opacity: 0.6;
+    }
+
+    .video-content-property {
+        width: 120px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .video-img-operation {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+
+    .video-img-operation:hover {
+        opacity: 1;
+    }
+
+    .el-color-picker {
+        height: 36px !important;
+    }
+
+    .el-color-picker__trigger {
+        height: 36px !important;
+        width: 80px !important;
+    }
+
+    .el-color-picker__icon {
+        display: none !important;
+    }
+
+    .animation-container-in {
+        display: flex;
+        flex-direction: row;
+        flex-flow: wrap;
+    }
+
+    .animation-item-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 20px;
+        width: 50px;
+        margin-top: 10px;
+    }
+
+
+
+    .base_box_input-unit-container {
+        height: 36px;
+        background: #303030;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+        padding-left: 5px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+    }
+
+    .seconds-input {
+        height: 100%;
+        border: 0;
+        background: #303030;
+        color: #fff;
+        outline: none;
+    }
+
+    .color-choose {
+        padding: 10px 12px;
+        opacity: 1;
+        border: 1px solid #4d4d4d;
+        border-radius: 5px;
+    }
+
+    .color-container {
+        background: #fff;
+        height: 100%;
+    }
+</style>

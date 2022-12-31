@@ -1,0 +1,195 @@
+
+<template >
+    <div>
+        <div class="design-attribute-item" >
+            <div class="design-set-attribute-tit attribute-tit-active">样式<i class="retract-arrow-icon"></i></div>
+            <div class="design-set-area" >
+                <div class="design-field ">
+                    <div class="fieldname">选择倒计时类型：</div>
+                    <el-select v-model="countdownType" placeholder="请选择" @change="typeSelectChange">
+                        <el-option
+                                v-for="item in countdownTypes"
+                                :key="item.value"
+                                :label="item.display"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="design-field">
+                    <div class="fieldname">倒计时时长：</div>
+                    <div class="fieldname" v-show="showHoursInput">时：
+                        <el-input-number :min="0" size="mini" v-model="hours" controls-position="right" @change="handleHoursChange"></el-input-number>
+                    </div>
+                    <div class="fieldname" v-show="showMinutesInput">分：
+                        <el-input-number :min="0" size="mini" v-model="minutes" controls-position="right" @change="handleMinutesChange"></el-input-number>
+                    </div>
+                    <div class="fieldname" v-show="showSecondsInput">秒：
+                        <el-input-number :min="0" size="mini" v-model="seconds" controls-position="right" @change="handleSecondsChange"></el-input-number>
+                    </div>
+                </div>
+                <div class="design-field ">
+                    <div class="fieldname">间隔时间（单位：秒）：</div>
+                    <div class="fieldname">秒：
+                        <el-input-number :min="1" size="mini" v-model="intervals" controls-position="right" @change="handleIntervalsChange"></el-input-number>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+//        useVDom:true,
+        data: function () {
+            return {
+                currentControl: {},
+                showHoursInput: true,
+                showMinutesInput: true,
+                showSecondsInput: true,
+                hours: 0,//时
+                minutes: 0, //分
+                seconds: 0, //秒
+                intervals:1,//间隔时间
+                countdownType:'typeOne',
+                countdownTypes:[{
+                    value:'typeOne',
+                    display:'时分秒类型倒计时'
+                },{
+                    value:'typeTwo',
+                    display:'分秒类型倒计时'
+                },{
+                    value:'typeThree',
+                    display:'秒类型倒计时'
+                }]
+            }
+        },
+        mounted:function(){
+            this.currentControl = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data.currentControl));
+            if (this.currentControl.otherAttrs.countDownType){
+                this.countdownType = this.currentControl.otherAttrs.countDownType;
+                if (this.currentControl.otherAttrs.countDownType == 'typeOne') {
+                    this.showHoursInput = true;
+                    this.showMinutesInput = true;
+                    this.showSecondsInput = true;
+                }else if (this.currentControl.otherAttrs.countDownType == 'typeTwo') {
+                    this.showHoursInput = false;
+                    this.showMinutesInput = true;
+                    this.showSecondsInput = true;
+                } else {
+                    this.showHoursInput = false;
+                    this.showMinutesInput = false;
+                    this.showSecondsInput = true;
+                }
+            }else {
+                this.currentControl.otherAttrs.countDownType = this.countdownType;
+            }
+
+            if (this.currentControl.otherAttrs.hours) {
+                this.hours = parseInt(this.currentControl.otherAttrs.hours);
+            }
+            if (this.currentControl.otherAttrs.minutes) {
+                this.minutes = parseInt(this.currentControl.otherAttrs.minutes);
+            }
+            if (this.currentControl.otherAttrs.seconds) {
+                this.seconds = parseInt(this.currentControl.otherAttrs.seconds);
+            }
+            if (this.currentControl.otherAttrs.intervals) {
+                this.intervals = parseInt(this.currentControl.otherAttrs.intervals);
+            }
+
+        },
+        methods:{
+            //校验规则选择改变事件
+            typeSelectChange: function (val) {
+                debugger
+                if (val == 'typeOne') {
+                    this.showHoursInput = true;
+                    this.showMinutesInput = true;
+                    this.showSecondsInput = true;
+                }else if (val == 'typeTwo') {
+                    this.showHoursInput = false;
+                    this.showMinutesInput = true;
+                    this.showSecondsInput = true;
+                    this.hours = 0;
+                    this.currentControl.otherAttrs.hours = this.hours;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.hours = this.currentControl.otherAttrs.hours;
+                } else {
+                    this.showHoursInput = false;
+                    this.showMinutesInput = false;
+                    this.showSecondsInput = true;
+                    this.hours = 0;
+                    this.minutes = 0;
+                    this.currentControl.otherAttrs.hours = this.hours;
+                    this.currentControl.otherAttrs.minutes = this.minutes;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.hours = this.currentControl.otherAttrs.hours;
+                    com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.minutes = this.currentControl.otherAttrs.minutes;
+                }
+                this.currentControl.otherAttrs.countDownType = val;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.countDownType = this.currentControl.otherAttrs.countDownType;
+            },
+            handleHoursChange: function (val) {
+                this.currentControl.otherAttrs.hours = val;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.hours = this.currentControl.otherAttrs.hours;
+            },
+            handleMinutesChange: function (val) {
+                this.currentControl.otherAttrs.minutes = val;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.minutes = this.currentControl.otherAttrs.minutes;
+            },
+            handleSecondsChange: function (val) {
+                this.currentControl.otherAttrs.seconds = val;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.seconds = this.currentControl.otherAttrs.seconds;
+            },
+            handleIntervalsChange: function (val) {
+                this.currentControl.otherAttrs.intervals = val;
+                com.oui.absolute.AbsoluteDesign.data.currentControl.otherAttrs.intervals = this.currentControl.otherAttrs.intervals;
+            },
+            _controlOnUpdate:function(bindProp,config){
+                console.log(config.id);
+                var me = this;
+                if(!config.id){
+                    return ;
+                }
+                //获取当前配置变更的对象
+                var currentControl = com.oui.absolute.AbsoluteDesign.getControlById(config.id);
+
+                if(bindProp &&config && (currentControl && (currentControl.id === config.id))){ //根据当前配置的值改变 更新当前控件的值
+                    oui.JsonPathUtil.setObjByPath(bindProp,currentControl,oui.JsonPathUtil.getJsonByPath(bindProp,config),true);
+                    //清除关系连线
+                    me._controlOnUpdate4clearRelation(bindProp,config,currentControl);
+
+                }
+
+//                this.$nextTick(function(){
+//
+//                });
+            }
+        }
+    }
+</script>
+
+<style>
+    .ghost{
+        border: 1px dashed indianred;
+    }
+    .item{
+
+        padding-top:5px ;
+        padding-bottom:5px ;
+        /*height: 30px;*/
+        /*font-size: 14px;*/
+    }
+    .item-move{
+        cursor: move;
+    }
+    .item-delete{
+        padding-left: 5px;
+        color: red;
+    }
+    .item-add{
+        padding-left: 5px;
+        color: blue;
+    }
+</style>

@@ -1,0 +1,645 @@
+@charset "utf-8";
+.logicchart {
+	display: inline-block;
+	min-height: 500px;
+	width: 100%;
+	text-align: center;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	/*background-image: linear-gradient(90deg, rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%), linear-gradient(rgba(200, 0, 0, 0.15) 10%, rgba(0, 0, 0, 0) 10%);*/
+	background-size: 10px 10px;
+	border: 1px dashed rgba(0, 0, 0, 0);
+	padding: 20px 0;
+	background: white;
+}
+
+.logic-content{
+	display: none;
+	background: #191b1c;
+	height: calc(100% - 32px);
+	overflow-y: auto;
+	overflow-x: auto;
+}
+.logic-content>.pg-body{
+	 /*margin: 10px;*/
+	height: calc(100% - 32px);
+	 overflow-y: auto;
+	background: #fff;
+}
+
+.logic-content .second-menu{
+	background: #464646;
+	border-radius: 2px;
+	box-shadow: 0 0 2px rgb(40 120 255 / 11%), 0 0 4px rgb(0 0 0 / 11%);
+
+}
+.logic-content .second-menu .menu-text{
+
+	color: #ffffff;
+	font-size: 14px;
+	margin: 5px 0;
+}
+.logic-content .menu-text:hover {
+	background: #3796EC;
+	color: #fff;
+}
+
+.logic-content .menu-text:last-child:hover {
+	background: #3491FA ;
+	color: #fff;
+}
+
+
+.logicchart .hidden, .logicchart ~ .hidden {
+	display: none !important;
+}
+.logicchart .container-view-logic{
+	width: 100%;
+	height: 100%;
+}
+.logicchart *, .logicchart *:before, .logicchart *:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.logicchart.b2t {
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+}
+
+.logicchart.l2r {
+	width: auto !important;
+	transform: rotate(-90deg) rotateY(180deg);
+	-ms-transform: rotate(-90deg) rotateY(180deg);
+	-moz-transform: rotate(-90deg) rotateY(180deg);
+	-webkit-transform: rotate(-90deg) rotateY(180deg);
+	transform-origin: left top;
+	-ms-transform-origin: left top;
+	-moz-transform-origin: left top;
+	-webkit-transform-origin: left top;
+}
+
+.logicchart.r2l {
+	position: absolute;
+	transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	transform-origin: left top;
+	-ms-transform-origin: left top;
+	-moz-transform-origin: left top;
+	-webkit-transform-origin: left top;
+}
+
+.logicchart > .spinner {
+	font-size: 100px;
+	margin-top: 30px;
+	color: rgba(68, 157, 68, 0.8);
+}
+
+.logicchart table {
+	border-spacing: 0 !important;
+	border-collapse: separate !important;
+}
+
+.logicchart table:active {
+	cursor: move;
+}
+
+.logicchart > table:first-child {
+	margin: 20px auto;
+}
+
+.logicchart > table > tbody > tr:first-child td .node {
+	/*min-width: 140px;*/
+	/*width: auto;*/
+}
+
+.logicchart td {
+	text-align: center;
+	vertical-align: top;
+	padding: 0;
+}
+
+.logicchart td.top {
+	border-top: 2px solid #d8e1e6;
+}
+
+.logicchart td.bottom {
+	border-bottom: 2px solid #d8e1e6;
+}
+
+.logicchart td.right {
+	border-right: 1px solid #d8e1e6;
+	float: none;
+}
+
+.logicchart td.left {
+	border-left: 1px solid #d8e1e6;
+	float: none;
+}
+
+.logicchart td > .down {
+	background-color: #d8e1e6;
+	margin: 0px auto;
+	height: 20px;
+	width: 2px;
+	float: none;
+}
+
+.logicchart td > .down-line-border {
+	height: 3px;
+}
+
+.logicchart td > .down-join-line-height {
+	height: 43px;
+}
+
+.logicchart td > .node-line-height {
+	height: 40px;
+}
+
+.logicchart td.topHeight {
+	height: 23px;
+}
+
+/* node styling */
+.logicchart .node {
+	display: inline-block;/** inline-block**/
+	position: relative;
+	margin: 0;
+	padding: 3px;
+	border: 2px dashed transparent;
+	text-align: center;
+	/*min-width: 50px;*/
+	width: 130px;
+}
+
+.logicchart.l2r .node, .logicchart.r2l .node {
+	width: 46px;
+	height: 153px;
+}
+
+.logicchart .node > .spinner {
+	position: absolute;
+	top: calc(50% - 15px);
+	left: calc(50% - 15px);
+	vertical-align: middle;
+	font-size: 30px;
+	color: rgba(68, 157, 68, 0.8);
+}
+
+.logicchart .node:hover .title {
+	background-color: rgba(65, 199, 221, .1);
+	transition: .2s;
+	cursor: pointer;
+	z-index: 20;
+}
+
+.logicchart .node.focused {
+	background-color: rgba(65, 199, 221, .05);
+}
+
+.logicchart .node.allowedDrop {
+	border-color: rgba(65, 199, 221, .5);
+}
+
+.logicchart .node.allowedDropTarget {
+	border-color: rgba(55, 150, 236, 1);
+}
+
+.logicchart .node .title {
+
+	text-align: center;
+	font-size: 12px;
+	padding: 6px 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	background-color: #ffffff;
+	color: #41c7dd;
+	border: 1px solid #41c7dd;
+	border-radius: 4px;
+}
+
+.logicchart > table > tbody > tr:first-child td .node .title {
+	background-color: #41c7dd;
+	color: #ffffff;
+	font-size: 14px;
+}
+
+.logicchart.b2t .node .title {
+	transform: rotate(-180deg);
+	-ms-transform: rotate(-180deg);
+	-moz-transform: rotate(-180deg);
+	-webkit-transform: rotate(-180deg);
+	transform-origin: center bottom;
+	-ms-transform-origin: center bottom;
+	-moz-transform-origin: center bottom;
+	-webkit-transform-origin: center bottom;
+}
+
+.logicchart.l2r .node .title{
+	transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-ms-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-moz-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-webkit-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	transform-origin: bottom center;
+	-ms-transform-origin: bottom center;
+	-moz-transform-origin: bottom center;
+	-webkit-transform-origin: bottom center;
+	width: 152px;
+}
+.logicchart.l2r .node .second-menu{
+	transform: rotate(0deg);
+	-ms-transform:rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-webkit-transform:rotate(0deg);
+}
+.logicchart.r2l .node .title {
+	transform: rotate(-90deg) translate(-40px, -40px);
+	-ms-transform: rotate(-90deg) translate(-40px, -40px);
+	-moz-transform: rotate(-90deg) translate(-40px, -40px);
+	-webkit-transform: rotate(-90deg) translate(-40px, -40px);
+	transform-origin: bottom center;
+	-ms-transform-origin: bottom center;
+	-moz-transform-origin: bottom center;
+	-webkit-transform-origin: bottom center;
+	width: 152px;
+}
+
+
+.logicchart .node .title .symbol {
+	float: left;
+	margin-top: 13px;
+	margin-left: 5px;
+	display: none;
+}
+
+.logicchart .node .content {
+	width: 100%;
+	height: 20px;
+	font-size: 11px;
+	line-height: 18px;
+	border: 1px solid rgba(217, 83, 79, 0.8);
+	border-radius: 0 0 4px 4px;
+	text-align: center;
+	background-color: #fff;
+	color: #333;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.logicchart.b2t .node .content {
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	transform-origin: center top;
+	-ms-transform-origin: center top;
+	-moz-transform-origin: center top;
+	-webkit-transform-origin: center top;
+}
+
+.logicchart.l2r .node .content {
+	transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-ms-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-moz-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	-webkit-transform: rotate(-90deg) translate(-40px, -40px) rotateY(180deg);
+	transform-origin: top center;
+	-ms-transform-origin: top center;
+	-moz-transform-origin: top center;
+	-webkit-transform-origin: top center;
+	width: 152px;
+}
+
+.logicchart.r2l .node .content {
+	transform: rotate(-90deg) translate(-40px, -40px);
+	-ms-transform: rotate(-90deg) translate(-40px, -40px);
+	-moz-transform: rotate(-90deg) translate(-40px, -40px);
+	-webkit-transform: rotate(-90deg) translate(-40px, -40px);
+	transform-origin: top center;
+	-ms-transform-origin: top center;
+	-moz-transform-origin: top center;
+	-webkit-transform-origin: top center;
+	width: 152px;
+}
+
+.logicchart .node .edge {
+	font-size: 15px;
+	position: absolute;
+	color: rgba(68, 157, 68, 0.5);
+	cursor: default;
+	transition: .2s;
+	-webkit-transition: .2s;
+}
+
+.logicchart.noncollapsable .node .edge {
+	display: none;
+}
+
+.logicchart .edge:hover {
+	color: #449d44;
+	cursor: pointer;
+}
+
+.logicchart .node .verticalEdge {
+	width: calc(100% - 10px);
+	width: -webkit-calc(100% - 10px);
+	width: -moz-calc(100% - 10px);
+	left: 5px;
+}
+
+.logicchart .node .topEdge {
+	top: -4px;
+}
+
+.logicchart .node .bottomEdge {
+	bottom: -4px;
+}
+
+.logicchart .node .horizontalEdge {
+	width: 15px;
+	height: calc(100% - 10px);
+	height: -webkit-calc(100% - 10px);
+	height: -moz-calc(100% - 10px);
+	top: 5px;
+}
+
+.logicchart .node .rightEdge {
+	right: -4px;
+}
+
+.logicchart .node .leftEdge {
+	left: -4px;
+}
+
+.logicchart .node .horizontalEdge::before {
+	position: absolute;
+	top: calc(50% - 7px);
+	top: -webkit-calc(50% - 7px);
+	top: -moz-calc(50% - 7px);
+}
+
+.logicchart .node .rightEdge::before {
+	right: 3px;
+}
+
+.logicchart .node .leftEdge::before {
+	left: 3px;
+}
+
+.oc-export-btn {
+	display: inline-block;
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	color: #fff;
+	background-color: #5cb85c;
+	border: 1px solid transparent;
+	border-color: #4cae4c;
+	border-radius: 4px;
+}
+
+.oc-export-btn[disabled] {
+	cursor: not-allowed;
+	filter: alpha(opacity=30);
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	opacity: 0.3;
+}
+
+.oc-export-btn:hover, .oc-export-btn:focus, .oc-export-btn:active {
+	background-color: #449d44;
+	border-color: #347a34;
+}
+
+.logicchart ~ .mask {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+	z-index: 999;
+	text-align: center;
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.logicchart ~ .mask .spinner {
+	position: absolute;
+	top: calc(50% - 54px);
+	left: calc(50% - 54px);
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 108px;
+}
+
+.logicchart .node {
+	transition: all 0.3s;
+	webkit-transition: all 0.3s;
+	opacity: 1;
+	top: 0;
+	left: 0;
+}
+
+.logicchart .slide-down {
+	opacity: 0;
+	top: 40px;
+}
+
+.logicchart.l2r .node.slide-down, .logicchart.r2l .node.slide-down {
+	top: 130px;
+}
+
+.logicchart .slide-up {
+	opacity: 0;
+	top: -40px;
+}
+
+.logicchart.l2r .node.slide-up, .logicchart.r2l .node.slide-up {
+	top: -130px;
+}
+
+.logicchart .slide-right {
+	opacity: 0;
+	left: 130px;
+}
+
+.logicchart.l2r .node.slide-right, .logicchart.r2l .node.slide-right {
+	left: 40px;
+}
+
+.logicchart .slide-left {
+	opacity: 0;
+	left: -130px;
+}
+
+.logicchart.l2r .node.slide-left, .logicchart.r2l .node.slide-left {
+	left: -40px;
+}
+
+/**** 自定义图标相关**********************/
+.logicchart .second-menu-icon {
+	transition: opacity .5s;
+	opacity: 0;
+	right: -5px;
+	top: -5px;
+	z-index: 2;
+	color: rgba(68, 157, 68, 0.5);
+	font-size: 18px;
+	position: absolute;
+}
+
+.logicchart .second-menu-icon:hover {
+	color: #449d44;
+}
+
+.logicchart .node:hover .second-menu-icon {
+	opacity: 1;
+}
+
+.second-menu {
+	background: #ffffff;
+	min-width: 120px;
+	padding: 8px 8px;
+	display: inline-block;
+	/*position: absolute;*/
+	top: 0;
+	right: -6px;
+	border-radius: 3px;
+	box-shadow: 0 0 6px rgba(40, 120, 255, 0.11), 0 0 7px rgba(0, 0, 0, 0.11);
+	z-index: 1;
+	/*transform: translateX(100%);*/
+}
+
+
+.second-menu .avatar {
+	/*width: 60px;
+	height: 60px;*/
+	border-radius: 30px;
+	float: left;
+	margin: 5px;
+}
+
+.second-menu .menu-text {
+	padding: 0 5px;
+	cursor: pointer;
+	color: #515151;
+	height: 30px;
+	line-height: 30px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.menu-text:hover {
+	background: #F1F5F8;
+	color: #3796EC;
+}
+
+.menu-text:last-child:hover {
+	background: rgba(246, 92, 120, 0.1);
+	color: #F65C78;
+}
+
+.departmentInfo {
+	display: block;
+	margin-top: 2px;
+	font-size: 0;
+	text-align: center;
+}
+
+.departmentInfo i {
+	display: inline-block;
+	vertical-align: top;
+	font-size: 12px;
+	color: inherit;
+	margin: 0 5px;
+}
+
+.departmentInfo i.departmentInfo-num-unit {
+	margin: 0 0 0 -3px;
+}
+
+
+.fa-chevron-up, .fa-chevron-down {
+	background: url("../images/icon-show-hidden.png") no-repeat;
+	width: 18px !important;
+	height: 18px;
+	position: absolute;
+	left: 50% !important;
+	margin-left: -9px;
+	bottom: -8px;
+	top: auto !important;
+	transition: none !important;
+}
+.logicchart.l2r .fa-chevron-up,.logicchart.l2r .fa-chevron-down{
+	left:auto !important;
+	bottom: auto !important;
+	right: 0 !important;
+}
+.fa-chevron-up:before, .fa-chevron-down:before {
+	display: none;
+}
+
+.fa-chevron-up {
+	background-position: -18px 0;
+}
+
+.fa-chevron-up:hover {
+	background-position: -18px -18px;
+}
+
+.fa-chevron-down {
+	background-position: 0 0;
+}
+
+.fa-chevron-down:hover {
+	background-position: 0 -18px;
+}
+
+.logicchart .node .title:hover .fa-chevron-up, .logicchart .node .title:hover .fa-chevron-down {
+	display: block !important;
+}
+.node-loop-top{
+	border-top:1px dashed dodgerblue;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+}
+.node-loop-left{
+	border-left:1px dashed dodgerblue;
+}
+.node-loop-right{
+	border-right:1px dashed dodgerblue;
+}
+
+
+.node-loop-bottom{
+	border-bottom:1px dashed dodgerblue;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+
+}
+/**** 自定义图标相关 结束**********************/
+

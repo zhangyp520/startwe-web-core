@@ -1,0 +1,316 @@
+<!-- 无圈子首页项目回收站内容 -->
+<template>
+    <div>
+        <!-- 表格 -->
+        <div class="projectList">
+            <el-table :data="tableData" style="width: 100%; cursor: pointer;" :show-header="false" @cell-mouse-enter="showIcon" @cell-mouse-leave="displayIcon">
+                <el-table-column prop="project">
+                </el-table-column>
+                <el-table-column prop="edition">
+                </el-table-column>
+                <el-table-column prop="datetime">
+                    <template slot-scope='scope'>
+                        <div v-if="revokeDisplay&&scope.row.id==rowID">
+                            <img src="/res_startwe/assets/revoke.png" v-if="" alt="" @click="dialogVisible = true">
+                            <!-- 弹窗 -->
+                            <el-dialog title="恢复项目" :visible.sync="dialogVisible" width="700px" :before-close="handleClose">
+                                <div class="oneTips">您确定要恢复项目
+                                    <span>{{scope.row.project}}</span>吗？</div>
+                                <div class="twoTips">请确认是否有空余项目位置？</div>
+                                <div class="threeTips">默认为3个项目，若已满，请删除点其他项目后恢复。</div>
+                                <span slot="footer" class="dialog-footer">
+                                    <el-button class="cancelBtn" @click="dialogVisible = false">取 消</el-button>
+                                    <el-button class="determineBtn" @click="dialogVisible = false">确 定</el-button>
+                                </span>
+                            </el-dialog>
+                        </div>
+                        <div v-else>{{scope.row.datetime}}</div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- <div class="recovery">
+                <img src="/res_startwe/assets/revoke_1.png" alt=""> 恢复
+            </div> -->
+        </div>
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                dialogVisible: false,
+                revokeDisplay: false,
+                rowID: '',
+                // status:false,
+                tableData: [
+                    {
+                    id: 1,
+                    project: '今天天气真好',
+                    edition: '2.0.0',
+                    datetime: '2021/1/17 12:54'
+                },
+                {
+                    id: 2,
+                    project: '3232',
+                    edition: '2.0.0',
+                    datetime: '2021/1/17 12:54'
+                }, {
+                    id: 3,
+                    project: '43232',
+                    edition: '2.0.0',
+                    datetime: '2021/1/17 12:54'
+                },
+                ]
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+
+
+        },
+        methods: {
+            // 鼠标移入
+            showIcon: function (row) {
+                this.rowID = row.id;
+                this.dateDisplay = !this.dateDisplay;
+                this.revokeDisplay = !this.revokeDisplay;
+            },
+            // 鼠标移出
+            displayIcon: function (row) {
+                this.rowID = row.id;
+                this.dateDisplay = !this.dateDisplay;
+                this.revokeDisplay = !this.revokeDisplay;
+            },
+            // 弹框关闭提示
+            handleClose(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => { });
+            }
+
+            // 撤销点击
+            // revokeClick: function (row) {
+            //     console.log(row);
+            //     // 调取弹窗
+            //     // 保存vue的this指向
+            //     var that = this;
+            //     oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+
+            //         oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+            //             //  弹框
+            //             // 存放底层页面的获取底层页面数据并以org_info这个变量进行保存到全局，弹窗页面在到全局进行获取org_info数据时,
+            //             oui.getTop().oui.setPageParam('org_info', oui.parseString(that.ruleForm));
+            //             var dialog = oui.getTop().oui.showUrlDialog({
+
+            //                 // 调用弹框方法           + 对应弹框组件的相对路径
+            //                 // url:oui.getContextPath()+'index4vue.html#/res_apps/car/project/html/compnents/components.vue.html',
+            //                 url: oui.getContextPath() + 'index4vue.html#/res_startwe/html/versionManagement/recoveryTips.vue.html',
+            //                 // 调整弹窗页面大小
+
+            //                 contentStyle: 'width:700px;height:300px',
+            //                 // 是否隐藏底部
+            //                 isHideFooter: false,
+            //                 // 配置按钮的方法，需要传递一个actions数组对象
+            //                 actions: [{
+            //                     // 调用确认按钮的方法
+            //                     text: '确定',
+            //                     cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+            //                     action: function () {
+            //                         // 获取弹框存的全局变量
+            //                         // 
+            //                         dialog.hide();
+            //                     }
+            //                 }, {
+            //                     // 调用取消按钮的方法
+            //                     text: '取消',
+            //                     cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+            //                     action: function () {
+            //                         dialog.hide();
+            //                     }
+            //                 }],
+            //                 title: '恢复项目'
+
+            //             });
+            //         });
+            //     });
+
+            // }
+
+
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+       
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .el-table .cell {
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .el-dialog__header {
+        height: 54px;
+        background-color: #F2F2F2;
+        line-height: 22px;
+        font-size: 20px;
+        color: #524D62;
+
+    }
+
+    .el-dialog__body {
+        padding: 10px 20px;
+    }
+
+    .el-message-box__btns .el-button {
+        width: 60px;
+        height: 34px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 10px;
+    }
+
+    .el-message-box__btns .el-button>span {
+        font-size: 14px;
+    }
+
+    .el-message-box__btns .el-button:first-child:hover,
+    .el-button:first-child:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .el-message-box__btns .el-button:last-child {
+        width: 60px;
+        height: 34px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border-color: #524D62;
+    }
+
+    .el-message-box__btns .el-button:last-child:focus,
+    .el-message-box__btns .el-button:last-child:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+
+    /* 内容开始 */
+
+    /* 我的项目大盒子 */
+
+    .Project {
+        width: 80%;
+        margin: auto;
+
+    }
+
+    .oneTips {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        /* line-height: 50px; */
+        font-weight: bold;
+        margin-left: 24px;
+    }
+
+    .oneTips>span {
+        font-size: 20px;
+        /* color: rgba(0, 0, 0, 0.85); */
+        /* line-height: 50px; */
+        font-weight: bold;
+        margin: 0 10px;
+        color: #FF7D82;
+    }
+
+    .twoTips {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+
+    .threeTips {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.45);
+        text-align: left;
+        line-height: 50px;
+        font-weight: 400;
+        margin-left: 24px;
+    }
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancelBtn>span {
+        font-size: 16px;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineBtn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineBtn>span {
+        font-size: 16px;
+    }
+
+    .determineBtn:focus,
+    .determineBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

@@ -1,0 +1,85 @@
+<template>
+    <div class="leftTree pdl-5 oui-logic-tree">
+        <el-tree  :data="treeData" :props="defaultProps" :expand-on-click-node="false"
+      node-key="id" icon-class="s-icon-arrow-right" :highlight-current="true" ref="pageTree"
+      :default-expanded-keys="defaultExpandedIds" >
+      <span 
+          class="s-tree-node" 
+          :class="data.class" 
+          slot-scope="{ node, data }"
+          >
+        <span :title="node.label"> <i :class="data.icon"></i> {{ node.label }}</span>
+      </span>
+    </el-tree>
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: "vue",
+        data(){
+            return {
+                defaultExpandedIds:[],
+                nodeLevelClass:["levelsOne", "levelsTwo", "levelsThree","levelsFour"],
+                treeData: null,
+                defaultProps: {
+                    children: "children",
+                    label: "label",
+                },
+            }
+        },
+        mounted:function(){
+            // window.setlogicTreeData = loadLogicTree;
+            let Design = com.oui.absolute.AbsoluteDesign;
+            Design.loadedBaseData.then(res => {
+                if(res == "success"){
+                    // console.log(' window.setlogicTreeData = loadLogicTree;', com.oui.absolute.AbsoluteDesign.queryLogicTreesByProjectUrl);
+                    this.loadLogicTree(com.oui.absolute.AbsoluteDesign.queryCurrentModelLogicUrl)
+                }
+            })
+        },
+        methods:{
+            loadLogicTree(url){
+                let that = this;
+                oui.postData(url,{},function( res ){
+                    console.log('loadLogicTree res', res);
+                    // that.treeData = [{"label":"简单逻辑","id":0,"level":1,"class":"levelsOne","isLeaf":false,"showBtn":false,"icon":"s-icon-folder-open","children":[{"label":"新增","id":"0-0","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":1,"children":[]},{"label":"更新","id":"0-1","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":2,"children":[]},{"label":"查询","id":"0-2","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":3,"children":[]},{"label":"删除","id":"0-3","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":4,"children":[]},{"label":"加载","id":"0-4","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":5,"children":[]}]},{"label":"高级逻辑","id":1,"level":1,"class":"levelsOne","isLeaf":false,"showBtn":false,"icon":"s-icon-folder-open","children":[{"label":"关联查询","id":"1-0","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":6,"children":[]},{"label":"逻辑编排","id":"1-1","class":"levelsTwo","icon":"s-icon-page","isLeaf":false,"showBtn":false,"logicType":7,"children":[]}]}]
+                    that.treeData = that.createTreeNode(res.logicTreeNodeList) || [];
+                    console.log('that.treeData', that.treeData)
+                })
+            },
+            createTreeNode(nodes, index=0){
+                return nodes.map(n => {
+                    n.isLeaf = !n.children;
+                    n.label = n.name;
+                    n.icon = n.isLeaf ? "s-icon-page" : "s-icon-folder-open";
+                    n.isLeaf ? ()=>{} : this.defaultExpandedIds.push(n.id);
+                    // n.class = this.nodeLevelClass[index];
+                    if(!n.isLeaf){
+                        n.children = this.createTreeNode(n.children, index+1);
+                    }
+                    return n;
+                })
+            }
+        }
+    }
+</script>
+<style>
+    .oui-logic-tree .text-ellipsis{
+       text-overflow: ellipsis;
+       white-space: nowrap;
+       width: 80px;
+       overflow: hidden;
+    }
+   
+    .oui-logic-tree .s-tree-node .s-tree-leaf{
+      display: none;
+    }
+   
+    .oui-logic-tree .s-tree-node:hover .s-tree-leaf{
+      display: unset;
+    }
+
+    .pdl-5{
+        padding-left:10px;
+    }
+   </style>

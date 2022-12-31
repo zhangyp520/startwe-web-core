@@ -1,0 +1,50 @@
+<!-- 下拉选择 -->
+<template>
+    <mt-picker :tempStyle="style"
+               :id="id"
+               :slots="data"
+               :name="name"
+               :bindProp="bindProp"
+               :class="cls"
+               :placeholder="placeholder"
+               v-model="value"
+               @change="_controlOnUpdate">
+    </mt-picker>
+</template>
+
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function()
+        {
+            return {
+                id: '',
+                name: '',
+                data: [
+                    {
+                        flex: 1,
+                        values: ['选项一', '选项二', '选项三', '选项四', '选项五', '选项六'],
+                        className: 'slot1',
+                        textAlign: 'center'
+                    }
+                ],
+                bindProp: '',
+                value: '',
+                style: '',
+                cls: '',
+                placeholder: ''
+            }
+        },
+        methods: {
+            _controlOnUpdate: function(v, ov)
+            {
+                var key = this.bindProp;
+                this.onUpdate && this.onUpdate(key, v, ov, {value: v, data4DB: v, display: v}); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,629 @@
+<!-- 门户设计右侧菜单 -->
+<template>
+    <div :style="{height : slbHeight } " class="ppt-props-right">
+        <oui-include type="module" url='res_engine/ppt_design/rightToolbar.vue.html' :data="rightToolbarData">
+        </oui-include>
+        <div class="right_nav_right" id="rightNav" style="width: 100%">
+            <!-- 页面编辑 -->
+            <div class="pageBasic" data-type="setting" style="width: 100%">
+                    <el-collapse v-model="activeNames" class="property-collapse">
+                        <el-collapse-item title="页面设置" name="1">
+                            <div>
+                                <div class="property-item-box">
+                                    <div class="grid-demo grid-demo-bg1 base_title ">名称&emsp;&emsp;</div>
+                                    <el-input v-model="pageName" class="base_box_input-box" @change="updateName">
+                                    </el-input>
+                                </div>
+                                <div class="property-item-box">
+                                    <!-- <div class="grid-demo grid-demo-bg1 base_title">背景颜色</div>
+                                <div id="selectBackColor" class="layui-inline">
+                                    <div class="layui-unselect layui-colorpicker">
+                                            <span>
+                                                <span class="layui-colorpicker-trigger-span" lay-type="" style="">
+                                                    <i class="layui-icon layui-colorpicker-trigger-i layui-icon-close"></i>
+                                                </span>
+                                            </span>
+                                    </div>
+                                </div> -->
+                                    <span class="grid-demo grid-demo-bg1 base_title">背景颜色</span>
+                                    <div class="bgcolor-color-piker">
+                                        <el-color-picker v-model="pptBackgroundColor"
+                                            @change="changePortalBackgroundColor"></el-color-picker>
+                                    </div>
+                                </div>
+                                <div class="property-item-box">
+                                    <div class="grid-demo grid-demo-bg1 base_title">背景图片</div>
+                                    <div class="base_content_last background_img"
+                                        style="display: flex; align-items: center;flex-direction: column;position: relative;">
+                                        <div class="grid-demo background_img_box" @click="uploadBackgroundImg">
+<!--                                            <el-upload class="avatar-uploader" action="" :show-file-list="false"-->
+<!--                                                :on-success="handleImageSuccess" :on-change="change2selectImage"-->
+<!--                                                :before-upload="beforeImageUpload">-->
+                                                <img v-if="backgroundImageUrl" :src="backgroundImageUrl"
+                                                    class="bg-image-mini">
+                                                <div style="width: 120px; height: 120px; display: flex; align-items: center; justify-content: center"
+                                                    v-else>
+                                                    <i class="el-icon-plus avatar-uploader-icon"></i>
+                                                </div>
+<!--                                            </el-upload>-->
+                                        </div>
+
+                                        <div v-if="backgroundImageUrl" @click="handleBgImgRemove()"
+                                            class="background_img_edit" class="background-img-remove"
+                                            style="position: absolute;top: -8px;right: -16px;">
+                                            <div>
+                                                <img src="/res_engine/ppt_design/images/delImage.png" alt="移除图片"
+                                                    class="delImage">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </el-collapse-item>
+                    </el-collapse>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        data: function () {
+            return {
+                //页面名称
+                pageName: '页面1',
+                activeNames: '1', //展开的选项
+                rightToolbarData: {},
+                style: '',
+                otherAttrs: '',
+                innerStyle: '',
+                //门户整体背景颜色透明度
+                opacity: '100%',
+                clientHeight: '', //浏览器可视区域高度
+                slbHeight: '',
+                //门户整体背景颜色
+                pptBackgroundColor: '',
+                //门户整体背景图片删除按钮
+                pptImgDelTips: false,
+                //回显门户背景图片地址
+                pptImageUrl: '',
+                //背景图片大小
+                backgroundSize: '100% 100%',
+                //背景图片重复
+                backgroundRepeat: 'no-repeat',
+                //保存门户背景图片信息
+                pptBgImgData: [],
+                //上传门户背景图片地址
+                backgroundImageUrl: '',
+
+                /** 页面默认样式**/
+                "style": {
+                    backgroundImageName: '', //默认图片
+                    backgroundImage: '', //'url(' + oui.getContextPath() + 'res_engine/page_design/pc/images/timg.jpg' + ')'
+                    backgroundImageFillType: 'center',
+                    backgroundColor: '',
+                    width: 210,
+                    height: 297,
+                    paperType: 'A4',
+                    theme: '',
+                    cellType: 'mm',
+                    currControlZIndex: 0
+                },
+                "innerStyle": { //页面内控件样式
+                    "style": { //控件外框样式
+                        width: 230,
+                        height: 42,
+                        backgroundColor: '',
+                        borderRadius: 0,
+                        opacity: 1,
+                        zIndex: 0,
+                        layoutType: 'oneLine', //默认并列显示
+                        /** 边框 粗细 ***/
+                        borderLeftWidth: 0,
+                        borderTopWidth: 0,
+                        borderBottomWidth: 0,
+                        borderRightWidth: 0,
+
+                        /** 边框颜色***/
+                        borderLeftColor: '#e6e6e6',
+                        borderTopColor: '#e6e6e6',
+                        borderBottomColor: '#e6e6e6',
+                        borderRightColor: '#e6e6e6',
+
+
+                        /** 边框样式***/
+                        borderLeftStyle: 'solid',
+                        borderTopStyle: 'solid',
+                        borderBottomStyle: 'solid',
+                        borderRightStyle: 'solid'
+                    },
+                    "styleTitle": { //控件标题样式
+                        color: '#333333',
+                        lineHeight: 1.6,
+                        backgroundColor: '',
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        textAlign: 'left',
+                        verticalAlign: 'middle',
+                        whiteSpace: 'normal'
+                    },
+                    "styleFieldOuter": { //控件值外框
+                    },
+                    "styleInnerOuter": { //控件值和控件标题共同外框
+                        verticalAlign: 'middle'
+                    },
+                    "styleField": { //控件值样式
+                        color: '#333333',
+                        backgroundColor: '',
+                        lineHeight: 1.6,
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                        textAlign: 'left',
+
+                        /** 边框 粗细 ***/
+                        borderLeftWidth: 1,
+                        borderTopWidth: 1,
+                        borderBottomWidth: 1,
+                        borderRightWidth: 1,
+
+                        /** 边框颜色***/
+                        borderLeftColor: '#e6e6e6',
+                        borderTopColor: '#e6e6e6',
+                        borderBottomColor: '#e6e6e6',
+                        borderRightColor: '#e6e6e6',
+
+
+                        /** 边框样式***/
+                        borderLeftStyle: 'solid',
+                        borderTopStyle: 'solid',
+                        borderBottomStyle: 'solid',
+                        borderRightStyle: 'solid',
+                        whiteSpace: 'normal'
+                    }
+                }
+            }
+        },
+        created: function () {},
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            //            var url = oui.getContextPath() + 'com.startwe.models.file.web.FileController.upload.biz';
+            //            url = oui.addParams(url, {
+            //                userId: oui.cookie('userId'),
+            //                tokenId: oui.cookie('tokenId'),
+            //                targetUserId: oui.cookie('userId')
+            //            });
+            //门户数据
+            var pptData = com.oui.absolute.AbsoluteDesign.data;
+            var style = oui.parseJson(oui.parseString(pptData.style));
+            var otherAttrs = oui.parseJson(oui.parseString(pptData.otherAttrs));
+            var innerStyle = oui.parseJson(oui.parseString(pptData.innerStyle));
+            this.style = style;
+            this.otherAttrs = otherAttrs;
+            this.innerStyle = innerStyle;
+            //加载门户背景颜色
+            this.pptBackgroundColor = pptData.style.backgroundColor;
+            //背景颜色透明度加载
+            if (pptData.style.opacity) {
+                this.opacity = pptData.style.opacity;
+            }
+            this.backgroundImageUrl = pptData.otherAttrs.backgroundImageUrl;
+            if (this.backgroundImageUrl) {
+                pptData.style.backgroundImage = 'url(' + this.backgroundImageUrl + ');';
+            }
+            //背景图片大小加载
+            if (pptData.style.backgroundSize) {
+                this.backgroundSize = pptData.style.backgroundSize;
+            }
+            //背景图片是否重复加载
+            if (pptData.style.backgroundRepeat) {
+                this.backgroundRepeat = pptData.style.backgroundRepeat;
+            }
+            var onePage = oui.findOneFromArrayBy(com.oui.absolute.AbsoluteDesign.pageList || [], function (
+            item) {
+                if (item.PageId == com.oui.absolute.AbsoluteDesign.pageId) {
+                    return true;
+                }
+            });
+            if (onePage) {
+                this.pageName = onePage.PageName;
+            }
+
+            this.clientHeight = `${document.documentElement.clientHeight}
+            `; //获取浏览器可视区域高度
+            let that = this;
+            window.onresize = function () {
+                this.clientHeight = `${document.documentElement.clientHeight}
+                `;
+                that.slbHeight = this.clientHeight - 80 + 'px';
+            }
+        },
+        watch: {
+            clientHeight: function () { //如果clientHeight 发生改变，这个函数就会运行
+                this.changeFixed(this.clientHeight)
+            }
+        },
+        methods: {
+            // handleImageSuccess: function (res, file) {
+            //     this.backgroundImageUrl = URL.createObjectURL(file.raw);
+            // },
+            getBase64:function(imgUrl) {
+                let that = this;
+                window.URL = window.URL || window.webkitURL;
+                var xhr = new XMLHttpRequest();
+                xhr.open("get", imgUrl, true);
+                // 至关重要
+                xhr.responseType = "blob";
+                xhr.onload = function () {
+                    if (this.status == 200) {
+                        //得到一个blob对象
+                        var blob = this.response;
+                        // 至关重要
+                        let oFileReader = new FileReader();
+                        oFileReader.onloadend = function (e) {
+                            // 此处拿到的已经是 base64的图片了
+                            let base64 = e.target.result;
+                            that.backgroundImageUrl = base64; //将图片路径赋值给src
+                            var pptData = com.oui.absolute.AbsoluteDesign.data;
+                            pptData.otherAttrs.backgroundImageUrl = that.backgroundImageUrl + '';
+                            that.updateBackgroundImage && that.updateBackgroundImage();
+                        };
+                        oFileReader.readAsDataURL(blob);
+                    }
+                };
+                xhr.send();
+            },
+            uploadBackgroundImg:function() {
+                let me = this;
+                com.oui.absolute.AbsoluteDesign.showFileDialog({
+                    fileType:2,
+                    fileTypes:['image'],
+                    local:false,
+                    callback:function (res) {
+                        me.backgroundImageUrl = res[0].url;
+                        me.getBase64(me.backgroundImageUrl);
+                    }
+                })
+            },
+            beforeImageUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf(".") + 1);
+                fileType = fileType.toLowerCase();
+                var arr = ['jpeg', 'jpg', 'png', 'bmp', 'tiff', 'ico'];
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (arr.indexOf(fileType) < 0) {
+                    this.$message.error('上传图片只能是 JPG、PNG、BPM、TIFF、PSD 格式!');
+                    return false;
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传图片大小不能超过 2MB!');
+                    return false;
+                }
+                return false; //不走后台上传
+                //                return true && isLt2M;
+            },
+            //选择图片
+            change2selectImage: function (file, fileList) {
+                var _this = this;
+                var event = event || window.event;
+                var file = event.target.files[0];
+                var reader = new FileReader();
+                //转base64
+                reader.onload = function (e) {
+                    _this.backgroundImageUrl = e.target.result; //将图片路径赋值给src
+                    var pptData = com.oui.absolute.AbsoluteDesign.data;
+                    pptData.otherAttrs.backgroundImageUrl = _this.backgroundImageUrl + '';
+                    _this.updateBackgroundImage && _this.updateBackgroundImage();
+
+                };
+                reader.readAsDataURL(file);
+            },
+
+            //todo
+            updateCurrentControl: function () {
+                var Design = com.oui.absolute.AbsoluteDesign;
+                var pptData = Design.data;
+                $('.el-tooltip__popper').remove();
+                Design.setCurrPropsData4page('props', 'down2selectPage');
+                // if(pptData&&pptData.id){
+                //     Design.changed4props({},function(){
+                //         Design.setCurrPropsData(pptData, 'center', 'down2selectField');
+                //     });
+                // }
+            },
+            //修改名称
+            updateName: function () {
+                let absoluteDesign = com.oui.absolute.AbsoluteDesign;
+                let pageList = absoluteDesign.pageList;
+                let one = oui.findOneFromArrayBy(pageList, function (item) {
+                    if (item.PageId == absoluteDesign.pageId) {
+                        return true;
+                    }
+                });
+                if (one) one.PageName = this.pageName;
+            },
+            colorUpdate: function (color) {
+                console.log(color);
+                console.log(com.oui.absolute.AbsoluteDesign.data.style);
+                com.oui.absolute.AbsoluteDesign.data.style.backgroundColor = color
+            },
+
+            changeFixed: function (clientHeight) {
+                this.slbHeight = clientHeight - 80 + 'px';
+            },
+            //门户整体背景透明度改变事件
+            changePortalOpacity: function () {
+                this.style.opacity = this.opacity;
+                var pptData = com.oui.absolute.AbsoluteDesign.data;
+                pptData.style = oui.parseJson(oui.parseString(this.style));
+                this.updateCurrentControl();
+            },
+            //门户整体背景颜色改变事件
+            changePortalBackgroundColor: function () {
+                this.style.backgroundColor = this.pptBackgroundColor;
+                if (!this.style.backgroundImage) {
+                    this.style.backgroundImage = 'none';
+                }
+                if (!this.style.backgroundColor) {
+                    this.style.backgroundColor = '';
+                    if (this.style.backgroundImage == 'none') {
+                        this.style.backgroundImage = '';
+                    }
+                }
+                var pptData = com.oui.absolute.AbsoluteDesign.data;
+                pptData.style = oui.parseJson(oui.parseString(this.style));
+                this.updateCurrentControl();
+            },
+            // 门户背景图片上传
+            pptBgImgSuccess: function (res, file) {
+                let me = this;
+                if (res.success) {
+                    var id = res.ids[0]; //上传成功
+                    var imgUrl = oui.getContextPath() + 'com.startwe.models.file.web.FileController.image.biz';
+                    imgUrl = oui.addParams(imgUrl, {
+                        // userId: oui.cookie('userId'),
+                        // tokenId: oui.cookie('tokenId'),
+                        targetUserId: oui.cookie('userId'),
+                        path: res.paths[0]
+                    });
+                    me.pptImageUrl = imgUrl;
+                    me.style.backgroundImage = 'url(' + me.pptImageUrl + ')';
+                    me.style.backgroundSize = me.backgroundSize;
+                    me.style.backgroundRepeat = me.backgroundRepeat;
+                    if (this.pptBgImgData.length >= 1) {
+                        oui.postData(oui.getContextPath() +
+                            'com.startwe.models.file.web.FileController.delFiles.biz', {
+                                userId: oui.cookie('userId'),
+                                tokenId: oui.cookie('tokenId'),
+                                targetUserId: oui.cookie('userId'),
+                                files: me.pptBgImgData,
+                                projectId: oui.getParam("projectId")
+                            },
+                            function (res) {},
+                            function (res) {});
+                        me.pptBgImgData.splice(0, 1);
+                        me.pptBgImgData.push({
+                            id: res.ids[0],
+                            imgUrl: me.pptImageUrl
+                        });
+                    } else {
+                        me.pptBgImgData.push({
+                            id: res.ids[0],
+                            imgUrl: me.pptImageUrl
+                        });
+                    }
+                    var pptData = com.oui.absolute.AbsoluteDesign.data;
+                    me.otherAttrs.pptBgImgData = oui.parseJson(oui.parseString(me.pptBgImgData));
+                    pptData.style = oui.parseJson(oui.parseString(me.style));
+                    pptData.otherAttrs = oui.parseJson(oui.parseString(me.otherAttrs));
+                    this.saveDesign(function () {
+                        me.updateCurrentControl();
+                    });
+                    this.pptImgDelTips = true;
+                }
+            },
+            //保存设计
+            saveDesign: function (callback) {
+                var me = com.oui.absolute.AbsoluteDesign;
+                var data = me.getDesignData();
+                me.paramCfg.page = data;
+                me.updateParamCfgSource(me.paramCfg); //更新调用处参数
+                var plugin = me.plugin || {};
+                me.hasChange = false;
+                var param = oui.getParam();
+                if (param.pptId) {
+                    oui.postData(me.updateProjectPortalUrl, {
+                        projectPortal: data
+                    }, function (res) {
+                        callback && callback();
+                    }, function (res) {}, '保存中...');
+                }
+            },
+            updateBackgroundImage: function () {
+                var pptData = com.oui.absolute.AbsoluteDesign.data;
+                if (pptData.otherAttrs.backgroundImageUrl) {
+                    pptData.style.backgroundImage = 'url(' + pptData.otherAttrs.backgroundImageUrl + ');';
+                } else {
+                    if (pptData.style.backgroundColor) {
+                        pptData.style.backgroundImage = 'none';
+                    } else {
+                        pptData.style.backgroundImage = '';
+                    }
+                }
+                this.updateCurrentControl();
+            },
+            //处理图片删除
+            handleBgImgRemove: function () {
+                var pptData = com.oui.absolute.AbsoluteDesign.data;
+                pptData.otherAttrs.backgroundImageUrl = '';
+                if (pptData.style.backgroundColor) {
+                    pptData.style.backgroundImage = 'none';
+                } else {
+                    pptData.style.backgroundImage = '';
+                }
+                this.backgroundImageUrl = '';
+                this.updateCurrentControl();
+            },
+            //门户整体背景图片删除
+            deletePortalBackgroundImage: function () {
+                var pptData = com.oui.absolute.AbsoluteDesign.data;
+                let that = this;
+                oui.postData(oui.getContextPath() + 'com.startwe.models.file.web.FileController.delFiles.biz', {
+                    userId: oui.cookie('userId'),
+                    tokenId: oui.cookie('tokenId'),
+                    targetUserId: oui.cookie('userId'),
+                    files: that.pptBgImgData,
+                    projectId: oui.getParam("projectId")
+                }, function (res) {
+                    pptData.style.backgroundImage = "";
+                    that.saveDesign(function () {
+                        that.updateCurrentControl();
+                    });
+                    that.pptImgDelTips = false;
+                }, function (res) {});
+            }
+        }
+    }
+</script>
+<style scoped>
+    .pageBasic{
+        height: 400px;
+        width: 100%;
+        overflow-y: auto;
+    }
+    body {
+        background: #666;
+    }
+
+    .bg-image-mini {
+        width: 120px;
+        height: 120px;
+    }
+
+    .ppt-props-right {
+        display: flex;
+    }
+
+    /* 背景颜色选择器 */
+
+    .bgcolor-color-piker {
+        display: flex;
+        align-items: center;
+    }
+
+    .bgcolor-color-piker .el-color-picker__trigger {
+        height: 30px;
+        width: 60px;
+        border: 1px solid #999;
+    }
+
+    .bgcolor-color-piker .el-color-picker {
+        height: 30px;
+    }
+
+    .bgcolor-color-piker .el-icon-arrow-down:before {
+        content: none;
+    }
+
+    .property-item-box {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+        width: 100%;
+    }
+
+    .base_title {
+        width: 30%;
+        text-align: center;
+    }
+
+    .base_box_input-box {
+        width: 70%;
+        padding-right: 20px;
+    }
+
+    .base_box_input-box .el-input.is-focus .el-input__inner {
+        border-color: #999;
+    }
+
+    .base_box_input-box .el-input__inner:focus {
+        border-color: #999;
+    }
+
+    .base_box_input-box .el-input__inner {
+        color: #fff;
+        height: 30px;
+        background: transparent;
+        border-color: #999;
+    }
+
+    .background_img_box {
+        width: 120px;
+        height: 120px;
+        border: 1px dashed #999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .background_img_box>span {
+        color: #eee;
+        font-size: 40px;
+    }
+
+    .background_img_edit {
+        display: flex;
+        /* flex-direction: column; */
+        /* margin-left: 10px;
+        margin-top: 10px; */
+    }
+
+    .background_img_edit>div:first-child {
+        margin-right: 10px;
+    }
+
+    .background_img_edit>div {
+        width: 16px;
+        height: 16px;
+    }
+
+    .editImg {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .delImage {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .right_nav_right{
+    overflow-y: auto; 
+    }
+
+    .right_nav_right .el-collapse-item__header {
+        background: none;
+        color: #fff;
+        padding-left: 10px;
+        border-bottom: 1px solid #EBEEF5;
+    }
+
+    .right_nav_right .el-collapse-item__wrap {
+        background: none;
+        border: none;
+    }
+
+    .right_nav_right .el-collapse-item__content {
+        color: #fff;
+    }
+
+    .right_nav_right .el-collapse {
+        border: none;
+    }
+</style>

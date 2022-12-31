@@ -1,0 +1,54 @@
+@charset "utf-8";
+.oui-class-report,.oui-class-report-1{
+    display: block;
+    height: 300px;
+    text-align: center;
+}
+oui-report {
+    display: none;
+}
+oui-report static-keys{
+    display: none;
+}
+oui-report data{
+    display: none;
+}
+/* 暂无数据 */
+
+.form-report-no-data{
+    background: url("../images/report-no-data.png") top center no-repeat;
+    background-size: auto 90px;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #515151;
+    padding-top: 100px;
+    margin-top: 100px;
+}
+.form-report-no-data img{
+    margin-bottom: 10px;
+}
+.form-data-isLoading{
+    background: url(../images/loading.gif) top 32px center no-repeat;
+    width: 125px;
+    height: 125px;
+    background-size: auto auto;
+    padding-top: 64px !important;
+    margin: 100px auto 0 auto;
+    border-radius: 5px;
+}
+.loading-msg,
+.no-data-msg,
+.form-report-no-data.form-data-isLoading .no-data-msg{
+    display: none;
+}
+.form-report-no-data .no-data-msg,
+.form-data-isLoading .loading-msg{
+    display: block;
+}
+
+
+
+
+

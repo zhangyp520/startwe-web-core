@@ -1,0 +1,260 @@
+<template>
+    <div class="container">
+        <div class="title">
+            创建抽奖活动
+        </div>
+        <div class="content">
+            <el-form ref="form" :model="form">
+
+                <el-form-item label="活动名称">
+                    <el-input v-model="form.luckyDrawName"></el-input>
+                </el-form-item>
+                <el-form-item label="活动开始时间">
+                    <el-date-picker type="datetime" placeholder="选择日期" v-model="form.startTime" style="width: 100%;"
+                                    value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="活动结束时间">
+                    <el-date-picker type="datetime" placeholder="选择日期" v-model="form.endTime" style="width: 100%;"
+                                    value-format="yyyy-MM-dd HH:mm:ss" format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="创建人">
+                    <el-input v-model="form.creatorName"></el-input>
+                </el-form-item>
+                <el-form-item label="创建人手机号">
+                    <el-input v-model="form.creatorPhoneNo"></el-input>
+                </el-form-item>
+                <el-form-item label="预计参与人数">
+                    <el-input v-model="form.predictParticipantsNo"></el-input>
+                </el-form-item>
+
+                <el-form-item style="margin: 50px 0;color: #1890FF;">
+                    奖品信息列表
+                    <!-- <el-button>取消</el-button> -->
+                </el-form-item>
+                <el-form-item label="奖品类别">
+                    <el-table :data="form.prizes" border style="width: 100%">
+                        <el-table-column prop="prizeLevel" label="奖品类别">
+                            <template slot-scope='scope'>
+                                <el-select v-model="scope.row.prizeLevel" placeholder="奖品类别">
+                                    <el-option label="特等奖" value=1></el-option>
+                                    <el-option label="一等奖" value=2></el-option>
+                                    <el-option label="二等奖" value=3></el-option>
+                                    <el-option label="三等奖" value=4></el-option>
+                                    <el-option label="阳光普照奖" value=5></el-option>
+                                </el-select>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="prizeName" label="奖品名称">
+                            <template slot-scope='scope'>
+                                <el-input v-model="scope.row.prizeName"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="prizeNumber" label="奖品数量">
+                            <template slot-scope='scope'>
+                                <el-input v-model="scope.row.prizeNumber"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button @click="deletePrize(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="addCategory">
+                        <el-button @click="addPrize">+ 添加奖品类别</el-button>
+                    </div>
+                </el-form-item>
+                <el-row v-if="luckyDrawUrl">
+                    <el-col>
+                        抽奖地址：
+                    </el-col>
+                    <el-col>
+                        <el-input
+                                type="textarea"
+                                :rows="2"
+                                v-model="luckyDrawUrl">
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <el-row v-if="queryLuckyDrawUserInfoUrl">
+                    <el-col>
+                        查看中奖名单地址：
+                    </el-col>
+                    <el-col>
+                        <el-input
+
+                                type="textarea"
+                                :rows="2"
+                                v-model="queryLuckyDrawUserInfoUrl">
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <el-form-item class="onSubmit">
+                    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                    <!-- <el-button>取消</el-button> -->
+                </el-form-item>
+
+            </el-form>
+        </div>
+    </div>
+
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                queryLuckyDrawUserInfoUrl: "",
+                luckyDrawUrl: "",
+                form: {
+                    luckyDrawName: '',
+                    startTime: '',
+                    endTime: '',
+                    creatorName: '',
+                    creatorPhoneNo: '',
+                    predictParticipantsNo: '',
+                    prizes:[{
+                        prizeName: "",
+                        prizeLevel: "",
+                        prizeNumber: ""
+                    }]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+        },
+        methods: {
+            //新增奖品信息
+            addPrize: function () {
+                this.form.prizes.push({
+                    prizeName: "",
+                    prizeLevel: "",
+                    prizeNumber: ""
+                });
+            },
+            deletePrize: function (row) {
+                var idx = this.form.prizes.indexOf(row);
+                this.form.prizes.splice(idx, 1);
+            },
+            onSubmit() {
+                let me = this;
+                console.log(me.form.startTime);
+                oui.ajaxPost('luckyDraw/createLuckyDraw', this.form, function (res) {
+                    me.$message({
+                        message: '活动新增成功！',
+                        type: 'success'
+                    });
+                    var url = oui.getContextPath()+'res_startwe/games/index.vue.html';
+                    url = oui.addParams(url,{
+                        luckyDrawId:res.resultObj
+                    });
+                    var targetUrl = oui.getContextPath()+'index4vue.html#'+url;
+                    me.luckyDrawUrl = location.origin+targetUrl;
+
+                    var queryUrl = oui.getContextPath()+'res_startwe/games/prizeOwnerUserInfo.vue.html';
+                    queryUrl = oui.addParams(queryUrl,{
+                        luckyDrawId:res.resultObj
+                    });
+
+                    var targetQueryUrl = oui.getContextPath()+'index4vue.html#'+queryUrl;
+                    me.queryLuckyDrawUserInfoUrl = location.origin+targetQueryUrl;
+
+                }, function (res) {
+                    me.$message.error(res.message)
+                });
+            }
+        }
+
+    }
+
+</script>
+
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        font-size: 22px;
+    }
+
+    .content {
+        margin: 0 40px;
+        /* margin-top: 40px; */
+    }
+
+    .title {
+        font-size: 40px;
+        /* margin: 40px 40px 0 40px; */
+        color: #1890FF;
+        margin: 0 40px;
+        line-height: 120px;
+    }
+
+    .el-form-item__label {
+        font-size: 32px;
+        width: 204px !important;
+        text-align: left;
+        line-height: 66px;
+    }
+
+    .el-form-item {
+        display: flex;
+    }
+
+    .el-form-item__content {
+        flex: 1;
+        margin-left: 10px !important;
+        font-size: 40px;
+    }
+
+    .el-select {
+        width: 100%;
+    }
+
+    .addCategory {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px dashed #1890FF;
+        border-radius: 5px;
+        margin-top: 40px;
+    }
+    .el-input__inner {
+        height: 60px;
+        font-size: 30px;
+    }
+    .el-button{
+        height: 60px;
+        font-size: 30px;
+    }
+    .el-select-dropdown__item{
+        height: 50px;
+    }
+    .el-select-dropdown__item>span{
+        font-size: 26px;
+    }
+    .el-table th>.cell{
+        font-size: 22px;
+    }
+    .onSubmit>div{
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 40px;
+    }
+</style>

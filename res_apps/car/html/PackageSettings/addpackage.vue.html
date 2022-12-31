@@ -1,0 +1,718 @@
+<!-- 新增套餐页面 -->
+<template>
+    <div id="customer">
+        <!-- 面包屑头部盒子开始 -->
+        <div class="crumbs">
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item>
+                    <a href="index4vue.html#res_apps/car/html/compnents/home.vue.html">首页</a>
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>
+                    <a href="index4vue.html#res_apps/car/html/PackageSettings/packagesettings.vue.html">套餐设置</a>
+
+                </el-breadcrumb-item>
+                <el-breadcrumb-item>增加新的套餐</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
+        <!-- 仓库中心，物资出入库记录 -->
+
+        <!-- 面包屑头部盒子结束 -->
+        <el-main>
+
+            <!-- 右侧内部表单布局容器开始-- -->
+            <!-- 第一行数据 -->
+            <div class="content">
+                <!-- 第一层 -->
+                <div class="list_form">
+
+                    <el-form :inline="true" label-position="top" label-width="80px" :model="packageFormValue" :rules="rules" ref="packageFormValue">
+                        <!-- 第一层 -->
+                        <div class="Price">
+                            <ul>
+                                <li>
+                                    <el-form-item label="套餐类型" prop="packageType">
+                                        <el-select v-model="packageFormValue.packageType" placeholder="请选择套餐类型" style="width: 180px;">
+                                            <el-option v-for="item in packageType" :key="item.value" :label="item.label" :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </li>
+                                <li>
+                                    <el-form-item label="套餐名称" style="width: 180px;" prop="packageName">
+                                        <el-input v-model="packageFormValue.packageName" placeholder="请输入套餐名称"></el-input>
+                                    </el-form-item>
+                                </li>
+                                <li>
+                                    <el-form-item label="所属部门:" prop="deptId">
+                                    
+                                        <el-select v-model="packageFormValue.deptId" placeholder="请选择部门" style="width: 140px;">
+                                        
+                                            <el-option v-for="(item, index) in deptList"
+                                                :key="item.id" :label="item.deptName" :value="item.id"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                </li>
+                                <!-- 状态 -->
+                                <li class="state">
+                                    <span>状态：</span>
+                                    <el-switch class="switch_box" active-text="启用" inactive-text="禁用" v-model="packageFormValue.status" active-color="#1890FF"
+                                        inactive-color="#eee" :active-value="Y" :inactive-value="N">
+                                    </el-switch>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="Package_items">
+                            <ul>
+                                <li>
+                                    <div>套餐项目</div>
+                                </li>
+                                <li>
+                                    <span>合计工时数：</span>
+                                    <i>{{this.packageFormValue.packageWorkHours}}</i>
+                                </li>
+                            </ul>
+
+                        </div>
+                        <div class="Table_head">
+                            <!-- 表格头部 -->
+                            <template>
+                                <el-table :data="packageFormValue.maintainPackageMaterials" style="width: 100%" height="374">
+                                    <el-table-column type="index" label="序号">
+                                    </el-table-column>
+                                    <el-table-column prop="maintainItemId" label="执行项目">
+                                        <template slot-scope="scope">
+                                            <el-select v-model="scope.row.maintainItemId" placeholder="请选择执行项目" style="width: 140px;" @change="handleChange(scope.row)">
+                                            
+                                                <el-option v-for="(item, index) in maintainItemList"
+                                                    :key="item.id" :label="item.itemName" :value="item.id"></el-option>
+                                                </el-select>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="materialName" label="所需材料">
+                                        <template slot-scope="scope">
+                                            <div style="width: 140px">
+                                                <div style="position: relative">
+                                                
+                                                    <el-input class="Materials_required"
+                                                        placeholder="请输入内容" v-model="scope.row.materialName" clearable style="width: 140px;">
+                                                        </el-input>
+                                                
+                                                    <span style=" position: absolute; right: 6px; top: 10px; cursor:pointer"
+                                                        @click="searchData(scope.row)">
+                                                        <img src="/res_apps/car/image/sousu.png" alt="" style="width:12px; height: 12px;">
+                                                    </span>
+                                                    </div>
+                                            </div>
+                                        </template>
+
+                                    </el-table-column>
+                                    <el-table-column prop="materialQty" label="数量" width="130">
+                                        <template slot-scope="scope">
+                                            <el-input class="input_center" placeholder="数量" v-model="scope.row.materialQty" style="width: 60px; ">
+                                            </el-input>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="workHours" label="工时" width="130">
+                                        <template slot-scope="scope">
+                                            <el-input class="input_center" placeholder="工时数" v-model="scope.row.workHours" @change="workHoursChange(scope.row)" style="width: 60px;">
+                                            </el-input>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="操作" width="80">
+                                        <template slot-scope="scope">
+                                            <el-button @click="deletePackageMaterial(scope.row)">删除</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <div class="new_stock_in">
+                            <el-button @click="addPackageMaterial">+ 新增项目</el-button>
+                        </div>
+                        <div class="Total_price">
+                            <ul>
+                                <li>
+                                    <span>
+                                        <el-form-item label="销售价格：" prop="packagePrice">
+                                            <el-input v-model="packageFormValue.packagePrice" placeholder="请输入销售价格" style="width: 120px;" @change="priceChange"></el-input>
+                                        </el-form-item>
+                                    </span>
+                                    <span>
+                                        <el-form-item label="成本价格：" prop="packageCost">
+                                            <el-input v-model="packageFormValue.packageCost" placeholder="请输入内容" style="width: 120px;" @change="costChange"></el-input>
+                                        </el-form-item>
+                                    </span>
+                                    <span>
+                                        <el-form-item label="利润：" prop="profit">
+                                            <el-input v-model="packageFormValue.profit" placeholder="请输入内容" style="width: 120px;"></el-input>
+                                        </el-form-item>
+                                    </span>
+                                </li>
+                                <li>
+                                    <el-button @click="backToPackageListPage">取消</el-button>
+                                    <el-button type="primary" @click="submitMaintainPackageInfo">提交</el-button>
+                                </li>
+                            </ul>
+                        </div>
+                    </el-form>
+                </div>
+            </div>
+            <!-- 右侧内部表单布局容器结束 -->
+        </el-main>
+        <!-- </el-main> -->
+
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                Y: "Y",
+                N: "N",
+                deptList: [],
+                maintainItemList: [],
+
+                packageType: [{
+                    value: 1,
+                    label: '维修套餐'
+                }, {
+                    value: 2,
+                    label: '保养套餐'
+                }, {
+                    value: 3,
+                    label: '其他套餐'
+                }],
+                packageFormValue: {
+                    packageType: "",//
+                    packageName: "",
+                    deptId: "",
+                    packagePrice: "",//手动输入
+                    packageCost: "",//手动输入
+                    profit: "",//利润 添加时不用传
+                    packageWorkHours: 0,//计算
+                    packageFrequency: 0,//频次 添加时不用传
+                    status: "Y",//
+                    id: "",//添加时不用传
+                    maintainPackageMaterials: [
+                        {
+                            comments: "",
+                            id: "",//添加时不用传
+                            materialName: '',
+                            maintainItemId: "",
+                            maintainPackageId: "",//添加时不用传
+                            materialId: "",
+                            materialPrice: 0,
+                            materialQty: 0,
+                            workHourDiscount: 0,
+                            workHourPrice: 0,
+                            workHours: 0
+                        },
+                    ],
+                },
+                // 每个对象的验证规则
+                rules: {
+                    // packagePrice packageCost profit
+                    packageType: [
+                        { required: true, message: '请选择套餐类型', trigger: 'blur' },
+                    ],
+                    packageName: [
+                        { required: true, message: '请输入套餐名称', trigger: 'blur' },
+                        { min: 2, max: 30, message: '长度在 2 到 30 个字符', trigger: 'blur' }
+                    ],
+                    deptId: [
+                        { required: true, message: '请选择所属部门', trigger: 'blur' },
+                    ],
+                    packagePrice: [
+                        { required: true, message: '请输入套餐销售价格', trigger: 'blur' },
+                        { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确的格式,可保留两位小数' }
+                    ],
+                    packageCost: [
+                        { required: true, message: '请输入套餐成本价格', trigger: 'blur' },
+                        { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确的格式,可保留两位小数' }
+                    ],
+                    profit: [
+                        { required: true, message: '请输入套餐利润', trigger: 'blur' },
+                        { pattern: /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/, message: '请输入正确的格式,可保留两位小数' }
+                    ]
+                },
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.isLoading) {
+                return ;
+            }
+            this.isLoading  =  true;
+            this.queryDepartment();
+            this.queryMaintainItem();
+            let param = this.$router.query;
+            if (param.addOrUpdate == "update") {
+                this.packageFormValue.id = param.packageId;
+                this.queryPackageDetails(param.packageId);
+            }
+        },
+        methods: {
+            priceChange: function () {
+                this.packageFormValue.profit = this.packageFormValue.packagePrice - this.packageFormValue.packageCost
+            },
+            costChange: function () {
+                this.packageFormValue.profit = this.packageFormValue.packagePrice - this.packageFormValue.packageCost
+            },
+            // 获取部门数据
+            queryDepartment()  {
+                let me = this;
+                oui.ajaxPost('company/deptInfo/queryAllOfDepartmentInfo', {
+                }, function  (res)  {
+                    me.deptList = res.resultObj;
+                })
+            },
+            //获取项目数据
+            queryMaintainItem()  {
+                let me = this;
+                oui.ajaxPost('company/maintainItem/queryAllOfMaintainItems', {
+                }, function  (res)  {
+                    me.maintainItemList = res.resultObj;
+                })
+            },
+            workHoursChange: function (row) {
+                let me = this;
+                var result = 0;
+                var count = 0;
+                for (var i = 0, len = me.packageFormValue.maintainPackageMaterials.length; i < len; i++) {
+                    if (me.packageFormValue.maintainPackageMaterials[i].maintainItemId != "") {
+                        for (var j = i + 1; j < me.packageFormValue.maintainPackageMaterials.length; j++) {
+                            if (me.packageFormValue.maintainPackageMaterials[j].maintainItemId != "" && me.packageFormValue.maintainPackageMaterials[i].maintainItemId == me.packageFormValue.maintainPackageMaterials[j].maintainItemId) {
+                                count++;
+                            }
+                        }
+                        if (count < 1) {
+                            result += parseFloat(me.packageFormValue.maintainPackageMaterials[i].workHours);
+                        }
+                        count = 0;
+                    } else {
+                        result += parseFloat(me.packageFormValue.maintainPackageMaterials[i].workHours);
+                    }
+                }
+                this.packageFormValue.packageWorkHours = result;
+            },
+            handleChange: function (row) {
+                if (row.maintainItemId) {
+                    var one = oui.findOneFromArrayBy(this.maintainItemList, function (item) {
+                        if (row.maintainItemId == item.id) {
+                            return true;
+                        }
+                    });
+                    if (one) {
+                        row.workHours = one.itemWorkHours;
+                    }
+                } else {
+
+                }
+                let me = this;
+                var result = 0;
+                var count = 0;
+                for (var i = 0, len = me.packageFormValue.maintainPackageMaterials.length; i < len; i++) {
+                    if (me.packageFormValue.maintainPackageMaterials[i].maintainItemId != "") {
+                        for (var j = i + 1; j < me.packageFormValue.maintainPackageMaterials.length; j++) {
+                            if (me.packageFormValue.maintainPackageMaterials[j].maintainItemId != "" && me.packageFormValue.maintainPackageMaterials[i].maintainItemId == me.packageFormValue.maintainPackageMaterials[j].maintainItemId) {
+                                console.log(me.packageFormValue.maintainPackageMaterials[i].workHours);
+                                count++;
+                            }
+                        }
+                        if (count < 1) {
+                            result += parseFloat(me.packageFormValue.maintainPackageMaterials[i].workHours);
+                        }
+                        count = 0;
+                    } else {
+                        result += parseFloat(me.packageFormValue.maintainPackageMaterials[i].workHours);
+                    }
+                }
+                this.packageFormValue.packageWorkHours = result;
+            },
+            backToPackageListPage() {
+                oui.router.push("/res_apps/car/html/PackageSettings/packagesettings.vue.html");
+            },
+            addPackageMaterial: function () {
+                this.packageFormValue.maintainPackageMaterials.push({
+                    comments: "",
+                    id: "",//添加时不用传
+                    materialName: '',
+                    maintainItemId: "",
+                    maintainPackageId: "",//添加时不用传
+                    materialId: "",
+                    materialPrice: 0,
+                    materialQty: 0,
+                    workHourDiscount: 0,
+                    workHourPrice: 0,
+                    workHours: 0
+                });
+            },
+            deletePackageMaterial: function (row) {
+                var idx = this.packageFormValue.maintainPackageMaterials.indexOf(row);
+                this.packageFormValue.maintainPackageMaterials.splice(idx, 1);
+            },
+            submitMaintainPackageInfo: function () {
+                var me = this;
+                this.$refs["packageFormValue"].validate((valid) => {
+                    if (valid) {
+                        if (this.packageFormValue.id == null || this.packageFormValue.id == "") {
+                            oui.ajaxPost('company/maintainPackage/addMaintainPackage', this.packageFormValue, function (res) {
+                                me.$message({
+                                    message: '套餐新增成功！',
+                                    type: 'success'
+                                });
+                                oui.router.push("/res_apps/car/html/PackageSettings/addpackage.vue.html");
+                            }, function (res) {
+                                me.$message.error(res.message)
+                            });
+                        } else {
+                            oui.ajaxPost('company/maintainPackage/updateMaintainPackage', this.packageFormValue, function (res) {
+                                me.$message({
+                                    message: '套餐修改成功！',
+                                    type: 'success'
+                                });
+                                oui.router.push("/res_apps/car/html/PackageSettings/packagesettings.vue.html");
+                            }, function (res) {
+                                me.$message.error(res.message)
+                            });
+                        }
+                    } else {
+                        this.$message.error('内容未填写完整，请检查修改后重新提交');
+                        return false;
+                    }
+                });
+            },
+            // 搜索的弹框
+            searchData:  function  (row) {
+                // 保存vue的this指向
+                var that = this;
+                oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+                    oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+                        //  弹框
+                        // 存放底层页面的获取底层页面数据并以org_info这个变量进行保存到全局，弹窗页面在到全局进行获取org_info数据时,
+                        oui.getTop().oui.setPageParam('packageMaterialRow', oui.parseString(row));
+                        var dialog = oui.getTop().oui.showUrlDialog({
+                            // 调用弹框方法           + 对应弹框组件的相对路径
+                            // url:oui.getContextPath()+'index4vue.html#/res_apps/car/project/html/compnents/components.vue.html',
+                            url: oui.getContextPath() + 'index4vue.html#/res_apps/car/html/warehousecenter/addPackageMaterialSearch.vue.html',
+                            // 调整弹窗页面大小
+                            contentStyle: 'width:1060px;height:700px',
+                            // 是否隐藏底部
+                            isHideFooter: false,
+                            // 配置按钮的方法，需要传递一个actions数组对象
+                            actions: [{
+                                // 调用确认按钮的方法
+                                text: '确定',
+                                cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    var  materialDetailStr  =  oui.getTop().oui.getPageParam('selectMaterialDetail');
+                                    var  materialDetail  =  oui.parseJson(materialDetailStr);
+                                    row.materialId  =  materialDetail.materialId;
+                                    row.materialName  =  materialDetail.materialName;
+                                    row.materialPrice  =  materialDetail.materialPrice;
+                                    that.$set(row, 'materialName', row.materialName);
+                                    //that.$forceUpdate();
+                                    dialog.hide();
+                                }
+                            }, {
+                                // 调用取消按钮的方法
+                                text: '取消',
+                                cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    dialog.hide();
+                                }
+                            }],
+                            title: '搜索材料'
+                        });
+                    });
+                });
+            },
+            queryPackageDetails: function (param) {
+                let me = this;
+                oui.ajaxPost('company/maintainPackage/queryMaintainPackageDetails', {
+                    "id": param
+                }, function (res) {
+                    me.packageFormValue = res.resultObj;
+                    me.packageFormValue.maintainPackageMaterials = res.resultObj.packageMaterials;
+                }, function (res) {
+                    me.$message.error("没有查询到该套餐的信息")
+                });
+            }
+        }
+    }
+</script>
+<style>
+    .customer {
+        width: 1040px;
+        height: 700px;
+    }
+
+    html {
+        margin: 0 0px;
+        /* width: 1040px; */
+        /* height: 700px; */
+        /* background-color: rgb(243, 228, 21); */
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        list-style-type: none;
+    }
+
+    /* 设置侧边栏及右侧头部盒子的阴影部分 */
+
+    .el-main {
+        width: 100%;
+        height: 100%;
+        background-color: #f5f5f5;
+        color: #333;
+
+    }
+
+
+    /* 自己的样式 */
+    /* 开关状态样式 */
+    .switch_box .el-switch__label {
+        position: absolute;
+        display: none;
+        color: #fff;
+    }
+
+    /*打开时文字位置设置*/
+
+    .switch_box .el-switch__label--right {
+        z-index: 1;
+        right: -5px;
+    }
+
+    /*关闭时文字位置设置*/
+
+    .switch_box .el-switch__label--left {
+        z-index: 1;
+        left: 20px;
+    }
+
+    /*显示文字*/
+
+    .switch_box .el-switch__label.is-active {
+        display: block;
+    }
+
+    .switch_box.el-switch .el-switch__core,
+    .el-switch .el-switch__label {
+        width: 55px !important;
+        /*开关按钮的宽度大小*/
+    }
+
+    /* 文字盒子span */
+
+    .el-icon-menu>span {
+        margin-left: 1px;
+    }
+
+
+    .el-menu {
+        border: 0;
+        margin: 0 0;
+        padding: 0 0;
+    }
+
+
+
+    /* 面包屑区域开始 -------*/
+
+    .crumbs {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 2px;
+        background-color: #fff;
+    }
+
+    .el-breadcrumb {
+        line-height: 40px;
+        padding-left: 20px;
+
+    }
+
+    /* 面包屑区域结束------ */
+
+    /* 内容主体区域 */
+
+    /* 内容区域的头部为空白 */
+
+    /* 设置右侧头部盒子的边框阴影 */
+
+    .blank_head {
+        background-color: #fff;
+        height: 60px !important;
+        box-shadow: #fff 0px 0px 0px 0px;
+        line-height: 60px;
+
+    }
+
+    .blank_head>div>span {
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .el-checkbox-group {
+        display: inline;
+
+    }
+
+    /* 内容侧边栏每一项结束---- */
+
+    /* 内部盒子的内容主体区域 */
+
+    .inside_box {
+        background-color: #fff;
+        /* line-height: 160px; */
+        text-align: left !important;
+    }
+
+    /* 关键字的样式设置开始 */
+
+    /* 关键字区域 */
+
+    /* 正文区域 */
+
+    .content {
+        background-color: #fff;
+        padding: 20px;
+    }
+
+
+    /* 第一行 */
+
+    .Price>ul {
+        width: 1000px;
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .Price>ul>li {
+        width: 300px;
+        /* height: 30px; */
+    }
+
+    /* 状态 */
+
+    .state {
+        text-align: left;
+        line-height: 112px;
+    }
+
+    /* 修改全局文本框内部的input的样式 */
+
+    .el-textarea__inner {
+        width: 100%;
+        height: 35px;
+    }
+
+    /* 修改全局表格头部的样式 */
+
+    .el-table th {
+        background-color: #fafafa;
+    }
+
+    /* 表格处 */
+
+    /* 物资出入库记录 */
+
+    .material_delivery {
+        margin: 24px 0;
+        padding-top: 24px;
+        background-color: #fff;
+    }
+
+    .material_delivery_content {
+        font-weight: 700;
+        margin-left: 24px;
+    }
+
+    /* 套餐项目 */
+
+    .Package_items>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .Package_items>ul>li {
+        height: 30px;
+    }
+
+    .Package_items>ul>li>div {
+        display: inline-block;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .Package_items>ul>li>span,
+    .Package_items>ul>li>i {
+        font-size: 16px;
+        font-weight: 700;
+
+    }
+
+    .Package_items>ul>li>i {
+        font-style: normal;
+        color: #1890FF;
+
+    }
+
+
+
+    /* 新增项目 */
+
+    .new_stock_in {
+        border: 1px dashed #1890FF;
+        display: flex;
+        justify-content: center;
+        margin: 12px 40px 22px 40px;
+        border-radius: 4px;
+    }
+
+    .new_stock_in>.el-button {
+        color: #1890FF;
+        border: 1px hidden #fff;
+    }
+
+
+
+    /* 所需材料里面放大镜搜索的图标颜色 */
+
+    .Materials_required .el-input__icon {
+        color: #1890FF;
+    }
+
+    /* 数量和工时文字居中样式 */
+
+    .input_center .el-input__inner {
+        text-align: center;
+    }
+
+    /* 计算区域 */
+
+    .Total_price {
+        background-color: #fff;
+        margin-top: 20px;
+        padding: 0 36px;
+    }
+
+    .Total_price>ul {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .Total_price>ul>li>span {
+        margin-left: 40px;
+    }
+</style>

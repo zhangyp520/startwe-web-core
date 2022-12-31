@@ -1,0 +1,462 @@
+<template>
+    <div  class="call-logic">
+        <header>
+            <div class="title">逻辑调用设置</div>
+        </header>
+
+        <div  >
+             <el-row>
+                 <el-col :span="12">
+                     <div style="width: 300px; margin-bottom: 20px; background: #37383D;display: inline-block" >
+                         <oui-include type="module" v-model="callLogicData.name" :data="getData4logicSelect()" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                     </div>
+                 </el-col>
+                 <el-col :span="12">
+                     <el-input ref="input" size="mini" v-model="callLogicData.id" readonly="readOnly" />
+                 </el-col>
+             </el-row>
+        </div>
+
+
+
+        <div class="call-logic-input-output" :key="callLogicData.id">
+            <header >
+                <div class="title">输入参数</div>
+            </header>
+
+            <el-table
+                    ref="table"
+                    :data="callLogicData.inputParams"
+                    style=" margin-bottom: 10px;"
+                    :header-cell-style="{background:'#3A3B3F' }" >
+                <el-table-column
+                        prop="name"
+                        label="输入变量"
+                        width="250"
+                >
+
+
+                </el-table-column>
+
+
+                <el-table-column
+                        prop="name"
+                        label="传入参数"
+                        width="210"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        <oui-include type="module" :data="getData4inputSelect(scope.$index)" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        prop="fieldType"
+                        label="变量类型"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        {{oui.fieldTypeEnum[scope.row.fieldType].dataType}}
+                    </template>
+
+                </el-table-column>
+            </el-table>
+
+
+            <header >
+                <div class="title">输出参数</div>
+            </header>
+
+            <el-table
+                    ref="tableOut"
+                    :data="callLogicData.outputParams"
+                    style=" margin-bottom: 10px;"
+                    :header-cell-style="{background:'#3A3B3F' }"
+            >
+                <el-table-column
+                        prop="name"
+                        label="输出变量"
+                        width="250"
+                >
+                </el-table-column>
+
+                <el-table-column
+                        prop="name"
+                        label="回填参数"
+                        width="210"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        <oui-include type="module"  :data="getData4outputSelect(scope.$index)" url="res_common/oui/ui/ui_pc/components/treetableselect.vue.html"></oui-include>
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                        prop="fieldType"
+                        align="center"
+                        label="变量类型">
+                    <template slot-scope="scope">
+                        {{oui.fieldTypeEnum[scope.row.fieldType].dataType}}
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+
+
+
+    </div>
+</template>
+<script>
+    exports = {
+        templateType: 'vue',
+        name:'call-logic',
+        props:['callLogicBean','logicResources','findLogicInputAndOutputUrl','associationRuntimeQueryUrl','fields'],
+        data: function () {
+            return {
+                //输入参数
+                callLogicBean: {
+                    id:'',
+                    name:'',
+                    inner:'',
+                    category:'',
+                    logicType:'',
+                    inputParams:[],
+                    outputParams:[],
+                    targetInputParams:[],
+                    targetOutputParams:[]
+                },
+                findLogicInputAndOutputUrl:'',
+                logicResources:[],
+                associationRuntimeQueryUrl:'',
+                fields:[],
+
+                /**
+                 *  private String id;// 逻辑id
+                 *     private String name;//逻辑名称
+                 *     private boolean inner;
+                 *     private String category;
+                 *     private String logicType;
+                 *     private List<PropDefineBean> inputParams;//输入
+                 *     private List<PropDefineBean> outputParams; //输出
+                 *     private List<String> targetInputParams;
+                 *     private List<String> targetOutputParams;
+                 */
+                callLogicData:{
+                    id:'',
+                    name:'',
+                    inner:'',
+                    category:'',
+                    logicType:'',
+                    inputParams:[],
+                    outputParams:[],
+                    targetInputParams:[],
+                    targetOutputParams:[]
+                }
+            };
+        },
+        watch:{
+            logicResources:function (val){
+                this.getData4logicSelect().options= val;
+                if(this.getData4logicSelect().ref){
+                    this.getData4logicSelect().ref.options = val;
+                }
+            },
+            callLogicBean:function (val){
+                console.log(this.callLogicData.id,'callLogicData chagne');
+                if(val){
+                    this.callLogicData = val;
+
+                    this.getData4logicSelect().value=this.callLogicData.id;
+                    if(this.getData4logicSelect().ref){
+                        this.getData4logicSelect().ref.value=this.callLogicData.id;
+                    }
+                }
+            }
+        },
+        computed:{
+
+
+        },
+        mounted: function () {
+            var me = this;
+            this.callLogicData = oui.clone(this.callLogicBean);
+            this.$set(this,'callLogicData',this.callLogicData);
+            console.log(this,'mounted in callLogic.vue.html',this.callLogicData);
+        },
+        methods: {
+            destroyed:function (){
+
+            },
+            getCache:oui.getCache4include,
+
+            getData:function (){
+                return this.callLogicData;
+            },
+            //根据字段id 或namePath找
+            findFieldBy:function (fieldIdOrNamePath){
+                if(fieldIdOrNamePath){
+                    var one = oui.findOneFromTreeArrayBy(this.fields,function (item){
+                        if(item.id == fieldIdOrNamePath || (item.namePath == fieldIdOrNamePath) || (item.idPath == fieldIdOrNamePath) ){
+                            return true
+                        }
+                    });
+                    return one ;
+                }
+                return null;
+            },
+            /**
+             * 根据namePath找字段id
+             * @param namePath
+             * @returns {string}
+             */
+            findFieldIdByNamePath:function (namePath){
+                var value ='';
+                if(namePath){
+                    var one = this.findFieldBy(namePath);
+                    if(one){
+                        value = one.id;
+                    }
+                }
+                return value;
+            },
+            getData4inputSelect:function (index){
+                var me = this;
+                var key ='inputSelect_'+index+'_'+this.callLogicData.id;
+                var currNamePath = this.callLogicData.targetInputParams[index];
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:200,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        var currInputParam = me.callLogicData.inputParams[index];
+                        var fieldTypeEnum = oui.util.findDefaultFieldTypeEnum(currInputParam.fieldType);
+                        if(fieldTypeEnum.dataType==temp.dataType){//数据类型相同的进行过滤,并且排除自己
+                            return true;
+                        }
+                    },
+                    filterUpdate:function (temp){
+                        var currInputParam = me.callLogicData.inputParams[index];
+                        var fieldTypeEnum = oui.util.findDefaultFieldTypeEnum(currInputParam.fieldType);
+                        if(fieldTypeEnum.dataType!=temp.dataType){
+                            temp.disabled = true;//需要禁用
+                        }
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.callLogicData.targetInputParams[index] =namePath;
+                        curr.value = v.value;
+                        /*
+                         clearAll,clearChildren,del
+                         */
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+
+                return cache;
+            },
+            getData4outputSelect:function (index){
+                var me = this;
+                var key ='outputSelect_'+index+'_'+this.callLogicData.id;
+                var currNamePath = this.callLogicData.targetOutputParams[index];
+                var fieldId = this.findFieldIdByNamePath(currNamePath);
+                var cache = this.getCache(key,{
+                    value:fieldId, //不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.fields,
+                    width:200,
+                    columns:[
+                        {name:'name',title:'字段名称',width:300 },
+                        {name:'display',title:'显示名称',width:120 },
+                        {name:'dataType',title:'数据类型',width:120},
+                        {name:'desc',title:'字段说明',width:200 },
+                        {name:'fieldSourceType',title:'字段来源',width:120}
+                    ],
+                    filter:function (temp){
+                        var currParam = me.callLogicData.outputParams[index];
+                        var fieldTypeEnum = oui.util.findDefaultFieldTypeEnum(currParam.fieldType);
+                        if(fieldTypeEnum.dataType==temp.dataType){//数据类型相同的进行过滤,并且排除自己
+                            return true;
+                        }
+                    },
+                    filterUpdate:function (temp){
+                        var currParam = me.callLogicData.outputParams[index];
+                        var fieldTypeEnum = oui.util.findDefaultFieldTypeEnum(currParam.fieldType);
+                        if(fieldTypeEnum.dataType!=temp.dataType){
+                            temp.disabled = true;//需要禁用
+                        }
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        var curr= this;
+                        var field = me.findFieldBy(v.value);
+                        var namePath ='';
+                        if(field){
+                            namePath = field.namePath;
+                        }
+                        me.callLogicData.targetOutputParams[index] =namePath;
+                        curr.value = v.value;
+                        /*
+                         clearAll,clearChildren,del
+                         */
+                        //如果存在删除，清空的情况需要 清空子组件
+                        me.triggerUpdate();//触发父节点更新
+
+                    }
+                });
+                cache.value = fieldId;
+                if(cache.ref){
+                    cache.ref.value = fieldId;
+                }
+                return cache;
+            },
+            /**
+             * 逻辑调用
+             */
+            getData4logicSelect:function (){
+                var key ='logicSelect';
+                var me = this;
+                if(!this.callLogicData){
+                    this.callLogicData = oui.clone(this.callLogicBean||{});
+                    this.$set(this,'callLogicData',this.callLogicData);
+                }
+                var cache=  this.getCache(key,{
+                    value:this.callLogicData.id||'',//不能单纯用字段名称了，只能用namePath,因为id是动态的确保处理唯一
+                    options:this.logicResources||[],
+                    width:300,
+                    props: {
+                        parent: 'parentId',
+                        value: 'id',
+                        label: 'name',
+                        children: 'children'
+                    },
+                    columns:[
+                        {name:'name',title:'方法名称',width:450 },
+                        {name:'data.otherAttrs.methodName',title:'方法名',width:120 },
+                        {name:'data.otherAttrs.bizName',title:'业务模型',width:120},
+                        {name:'data.otherAttrs.appName',title:'所属应用',width:120},
+                        {name:'data.otherAttrs.moduleName',title:'所属模块',width:120 },
+                        {name:'data.otherAttrs.projectName',title:'所属项目',width:120},
+
+                    ],
+                    disabledRow:function (row){
+
+                        if(row.nodeType=='logic' ||(row.data&&row.data.otherAttrs&&row.data.otherAttrs.isLeaf)){
+                            return false;
+                        }else{
+                            return  true;
+                        }
+                    },
+                    onUpdate:function (k,v,ov,option){
+                        //只要有变更 就变更顺序
+
+                        console.log('callLogic.vue.html 中子组件变更了,方法调用',arguments);
+                        var oldData = oui.clone(me.getData());
+                        var curr= this;
+
+                        console.log('',arguments);
+                        //TODO 处理  方法调用
+                        curr.value = v.value;
+                        curr.display = v.display;
+                        cache.value =v.value;
+                        cache.diplay=v.display;
+                        me.callLogicData.id = v.value;
+                        var row = option.row;
+                        if(me.callLogicData.id){
+                            me.callLogicData.id = v.value;
+                            me.callLogicData.name = v.display;
+                            //加载逻辑 输入输出
+                            me.callLogicData.category = row.data.otherAttrs.category;
+                            me.callLogicData.inner = row.data.otherAttrs.inner;
+                            me.callLogicData.logicType = row.data.otherAttrs.logicType;
+                            me.loadInputOutputParams(function (res){
+                                me.callLogicData.inputParams = res.logicInfo.inputParams||[];
+                                me.callLogicData.outputParams = res.logicInfo.outputParams||[];
+                                //处理目标参数默认空值
+                                me.callLogicData.targetInputParams=[];
+                                me.callLogicData.targetOutputParams=[];
+                                oui.eachArray(me.callLogicData.inputParams,function (item){
+                                    me.callLogicData.targetInputParams.push('');
+                                });
+                                oui.eachArray(me.callLogicData.outputParams,function (item){
+                                    me.callLogicData.targetOutputParams.push('');
+                                });
+                                me.$set(me,'callLogicData',me.callLogicData);
+                                me.$refs.tableOut.data =me.callLogicData.outputParams;
+                                me.$refs.table.data = me.callLogicData.inputParams;
+                                me.$refs.input.value = me.callLogicData.id;
+                                me.onUpdate&&me.onUpdate(me.bindProp,me.getData(),oldData,{operate:'select',row:option.row});
+                            });
+                        }else{
+                            me.callLogicData.id = '';
+                            me.callLogicData.name ='';
+                            me.callLogicData.category='';
+                            me.callLogicData.inner='';
+                            me.callLogicData.logicType='';
+                            me.callLogicData.inputParams=[];
+                            me.callLogicData.outputParams=[];
+                            me.callLogicData.targetInputParams=[];
+                            me.callLogicData.targetOutputParams =[];
+                            me.$set(me,'callLogicData',me.callLogicData);
+                            me.$refs.tableOut.data =me.callLogicData.outputParams;
+                            me.$refs.table.data = me.callLogicData.inputParams;
+                            me.$refs.input.value = me.callLogicData.id;
+
+                            me.onUpdate&&me.onUpdate(me.bindProp,me.getData(),oldData,{operate:'clear',row:null});
+                        }
+                    }
+                });
+                if(this.callLogicData.id){
+                    cache.value = this.callLogicData.id;
+                    if(cache.ref){
+                        cache.ref.value = this.callLogicData.id;
+                    }
+                }else{
+                    cache.value = '';
+                    if(cache.ref){
+                        cache.ref.value = '';
+                    }
+                }
+                return cache;
+            },
+            loadInputOutputParams:function (callback){
+                var url = this.findLogicInputAndOutputUrl;
+                var me = this;
+                oui.postData(url,{
+                    logicId:this.callLogicData.id,
+                    category:this.callLogicData.category
+                },function (res){
+                    callback&&callback(res);
+                },null,'加载中...')
+            },
+            triggerUpdate:function (){
+                var me = this;
+                me.onUpdate&&me.onUpdate(me.bindProp,me.getData(),oui.clone(me.getData()),{operate:'trigger'});
+            }
+
+        }
+    }
+</script>
+<style>
+
+</style>

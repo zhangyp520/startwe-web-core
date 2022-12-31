@@ -1,0 +1,179 @@
+{
+    "id":"page_249666422426898015",//绝对布局定义Id
+    "name":"",//名称
+    "description":"",//描述
+    "content":" //设计区内容
+<div class="page-abs paper-area A4 bg-cover" //外层div css 为page-abs
+style="background-image:url(/res_engine/page_design/pc/images/timg.jpg);width:210mm;height:297mm"
+page-abs-id="page_249666422426898015"  //页面相关属性 page-abs-属性名
+page-abs-name="789"
+page-abs-description=""
+page-abs-style="{"bgImgName":"默认图片","bgImg":"url(/res_engine/page_design/pc/images/timg.jpg)","bgImgFillType":"cover","bgColor":"","width":210,"height":297,"paperType":"A4","cellType":"mm"}"
+page-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}" page-abs-otherAttrs="{}" >
+
+    <div id="ctrl_234271484295313929" class="control-abs " // 控件div,css为 control-abs
+    style="left: 186px; top: 88px; width: 140px; height: 42px"
+    control-abs-id="ctrl_234271484295313929"  //控件相关属性 control-abs-属性名
+    control-abs-name="ctrl_234271484295313929"
+    control-abs-title=""
+    control-abs-display="单行输入框"
+    control-abs-controlType="textInput"
+    control-abs-bizControlType="textfield"
+    control-abs-fieldType="string"
+    control-abs-showType="0"
+    control-abs-formField="true"
+    control-abs-style="{"left":186,"top":88,"width":140,"height":42}"
+    control-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}"
+    control-abs-otherAttrs="{}" >
+    ${ ctrl_234271484295313929 }
+    </div>
+
+    <div id="ctrl_352490079918185180" class="control-abs "
+    style="left: 373px; top: 88px; width: 140px; height: 42px"
+    control-abs-id="ctrl_352490079918185180" control-abs-name="ctrl_352490079918185180" control-abs-title="" control-abs-display="手机" control-abs-controlType="textInput" control-abs-bizControlType="cellphone" control-abs-fieldType="string" control-abs-showType="0" control-abs-formField="true" control-abs-style="{"left":373,"top":88,"width":140,"height":42}" control-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}" control-abs-otherAttrs="{}" >
+    ${ ctrl_352490079918185180 }
+    </div>
+
+    <div id="ctrl_868901840908737933_box" class="form-selection-box" style="background-image:;left: 180px; top: 17px; width: 360px; height: 270px">
+    <span class="design-text-content"></span>
+    </div>
+
+</div>
+",
+    "selectContent":" //设计区选择区域内容
+
+<div class="page-abs paper-area bg-center select-area" //设计区域 选择区域 css为 page-abs select-area
+style="width:95.3341740226986mm;height:71.40694568121104mm"
+page-abs-id="page_249666422426898015" //页面相关属性 page-abs-属性名
+page-abs-name="789"
+page-abs-description=""
+page-abs-style="{"bgImgName":"默认图片","bgImg":"url(/res_engine/page_design/pc/images/timg.jpg)","bgImgFillType":"cover","bgColor":"","width":210,"height":297,"paperType":"A4","cellType":"mm"}"
+page-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}"
+page-abs-otherAttrs="{}" >
+
+<div class="paper-area A4 bg-cover" style="left:-180px;top:-17px;background-image:url(/res_engine/page_design/pc/images/timg.jpg);width:210mm;height:297mm" >
+</div>
+
+
+<div id="ctrl_234271484295313929" class="control-abs "
+style="left: 6px; top: 71px; width: 140px; height: 42px"
+control-abs-id="ctrl_234271484295313929" control-abs-name="ctrl_234271484295313929" control-abs-title="" control-abs-display="单行输入框" control-abs-controlType="textInput" control-abs-bizControlType="textfield" control-abs-fieldType="string" control-abs-showType="0" control-abs-formField="true" control-abs-style="{"left":6,"top":71,"width":140,"height":42}" control-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}" control-abs-otherAttrs="{}" >
+${ ctrl_234271484295313929 }
+</div>
+
+<div id="ctrl_352490079918185180" class="control-abs "
+style="left: 193px; top: 71px; width: 140px; height: 42px"
+control-abs-id="ctrl_352490079918185180" control-abs-name="ctrl_352490079918185180" control-abs-title="" control-abs-display="手机" control-abs-controlType="textInput" control-abs-bizControlType="cellphone" control-abs-fieldType="string" control-abs-showType="0" control-abs-formField="true" control-abs-style="{"left":193,"top":71,"width":140,"height":42}" control-abs-innerStyle="{"styleField":{},"styleFieldOuter":{}}" control-abs-otherAttrs="{}" >
+${ ctrl_352490079918185180 }
+</div>
+
+<div id="ctrl_868901840908737933_box" class="form-selection-box" style="background-image:;left: 0px; top: 0px; width: 360px; height: 270px">
+<span class="design-text-content"></span>
+</div>
+
+</div>
+
+",
+    "style":{// 页面样式
+        "bgImgName":"默认图片",
+        "bgImg":"url(/res_engine/page_design/pc/images/timg.jpg)",
+        "bgImgFillType":"cover",
+        "bgColor":"",
+        "width":210,
+        "height":297,
+        "paperType":"A4",
+        "cellType":"mm"
+    },
+    "innerStyle":{ //页面内部样式属性
+        "style":{//控件全局设置
+
+        },
+        "styleTitle":{ //控件标题
+
+        },
+        "styleFieldOuter":{//控件值外框
+
+        },
+        "styleField":{//控件值
+
+        }
+
+    },
+    "controls":[ //控件列表
+        {
+            "id":"ctrl_234271484295313929",
+            "name":"ctrl_234271484295313929",
+            "title":"",
+            "display":"单行输入框",
+            "controlType":"textInput",
+            "bizControlType":"textfield",
+            "fieldType":"string",
+            "showType":0,
+            "formField":true,
+            "style":{ //控件样式
+                "left":186,
+                "top":88,
+                "width":140,
+                "height":42
+            },
+            "innerStyle":{ //控件内部样式
+                "styleField":{
+
+                },
+                "styleFieldOuter":{
+
+                }
+            },
+            "otherAttrs":{ //控件其它属性
+
+            }
+        },
+        {
+            "id":"ctrl_352490079918185180",
+            "name":"ctrl_352490079918185180",
+            "title":"",
+            "display":"手机",
+            "controlType":"textInput",
+            "bizControlType":"cellphone",
+            "fieldType":"string",
+            "showType":0,
+            "formField":true,
+            "style":{
+                "left":373,
+                "top":88,
+                "width":140,
+                "height":42
+            },
+            "innerStyle":{
+                "styleField":{
+
+                },
+                "styleFieldOuter":{
+
+                }
+            },
+            "otherAttrs":{
+
+            }
+        },
+        {
+            "id":"ctrl_868901840908737933",
+            "name":"ctrl_868901840908737933",
+            "display":"",
+            "controlType":"selectArea",
+            "bizControlType":"selectArea",
+            "style":{
+                "width":360,
+                "height":270,
+                "width4mm":95.3341740226986,
+                "height4mm":71.40694568121104,
+                "left":180,
+                "top":17
+            }
+        }
+    ],
+    "otherAttrs":{//页面其它属性
+
+    }
+}
+

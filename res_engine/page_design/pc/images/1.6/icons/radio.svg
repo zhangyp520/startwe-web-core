@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>single-choice</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="页面组件" transform="translate(-79.000000, -535.000000)">
+            <g id="single-choice" transform="translate(79.000000, 535.000000)">
+                <circle id="椭圆形备份" stroke="#ABABAB" stroke-width="0.833333333" fill-opacity="0" fill="#D8D8D8" cx="10" cy="10" r="9.58333333"></circle>
+                <circle id="椭圆形备份" fill="#ABABAB" cx="10" cy="10" r="5.83333333"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

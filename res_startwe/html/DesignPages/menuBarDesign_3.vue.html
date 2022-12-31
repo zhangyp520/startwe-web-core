@@ -1,0 +1,179 @@
+<!-- 菜单栏样式>>>>>>>>>>>>>>>>333333333333-->
+<template>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="left_aside">
+            <!-- logo -->
+            <div class="logo">
+                <img src="/res_startwe/html/DesignPages/assets/shangchuan_w.png" alt="">
+            </div>
+            <div class="userMsg">
+                <img src="/res_startwe/html/DesignPages/assets/headPortrait.png" alt="">
+                <div>用户名</div>
+            </div>
+            <ul class="aside_menu">
+                <li :class="checkClick==index?'menu_active':''" @click="changeMenu(index)" v-for="(item,index) in menuList">
+                    <img :src="checkClick==index?item.imgChange:item.imgUrl" alt="">
+                    <span>{{item.text}}</span>
+                </li>
+                <!-- <li>
+                    <img src="/res_startwe/html/DesignPages/assets/bianji1.png" alt="">
+                    <span>菜单名称</span>
+                </li> -->
+            </ul>
+        </div>
+        <!-- 内容 -->
+        <div class="inner_content" style="height: 100%;flex: 1;">
+
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+
+                menuList: [{
+                    imgChange: '/res_startwe/html/DesignPages/assets/bianji4.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/bianji1.png',
+                    text: '菜单名称'
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/bianji4.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/bianji1.png',
+                    text: '菜单名称'
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/bianji4.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/bianji1.png',
+                    text: '菜单名称'
+                },
+                {
+                    imgChange: '/res_startwe/html/DesignPages/assets/bianji4.png',
+                    imgUrl: '/res_startwe/html/DesignPages/assets/bianji1.png',
+                    text: '菜单名称'
+                }],
+                checkClick: 0,
+
+
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            changeMenu: function (index) {
+                var that = this;
+                that.checkClick = index;
+            }
+        }
+    }
+
+</script>
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* elementui样式修改 */
+
+    /* 侧边栏 */
+
+    .left_aside {
+        width: 208px;
+        height: 100%;
+        padding-top: 38px;
+        background: #583FD3;
+        border-radius: 0 30px 30px 0;
+    }
+
+    /* logo */
+
+    .logo {
+        /* margin-top: 38px; */
+        display: flex;
+        justify-content: center;
+    }
+
+    .logo>img {
+        width: 188px;
+    }
+
+    /* 用户信息 头像 */
+
+    .userMsg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 34px;
+    }
+
+    .userMsg>img {
+        width: 62px;
+        height: 62px;
+        border-radius: 31px;
+    }
+
+    .userMsg>div {
+        color: #fff;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .aside_menu {
+        font-size: 14px;
+        color: #FFFFFF;
+        line-height: 22px;
+        font-weight: 400;
+        margin-top: 34px;
+    }
+
+    .aside_menu>li {
+        margin-left: 34px;
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .aside_menu>li>img {
+        margin-right: 10px;
+    }
+
+    .menu_active {
+        background: #F0F2F5;
+        border-radius: 74px 0 0 74px;
+        color: #583FD3;
+    }
+</style>

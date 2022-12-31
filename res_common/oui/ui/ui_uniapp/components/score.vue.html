@@ -1,0 +1,46 @@
+<!--评分 组件 -->
+<template >
+    <el-rate
+            v-model="value"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            @change="_controlOnUpdate"
+            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+
+            >
+    </el-rate>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                placeholder:''
+
+            }
+        },
+        mounted:function(){
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -1,0 +1,211 @@
+<!-- 首页版本管理弹窗>>>>>>>>已发布的 -->
+<template>
+    <div>
+        <!-- 头部 -->
+        <div class="header">
+            <div>
+                <span :class="{'active':index==checkClick}" v-for="(item,index) in header_menu" @click="spanClick(index)">{{item.text}}</span>
+            </div>
+        </div>
+        <!-- 内容 -->
+        <!-- 页面名称 -->
+        <div v-if="checkClick==0">
+            <div class="tableBox">
+                <el-table :data="tableData" style="width: 100%" :header-cell-style="{background:'#FAFAFA'}">
+                    <el-table-column prop="versionNumber" label="版本号" align="center">
+                    </el-table-column>
+                    <el-table-column prop="CreationTime" label="创建时间" align="center">
+                    </el-table-column>
+                    <el-table-column prop="briefIntroduction" label="更新内容简介" align="center" width="200%">
+                        <template slot-scope='scope'>
+                            <div class="briefIntroduction">{{scope.row.briefIntroduction}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="releaseTime" label="预计发布时间" align="center"></el-table-column>
+                    <el-table-column prop="founder" label="创建人" align="center"></el-table-column>
+                </el-table>
+            </div>
+            <!-- 按钮 -->
+            <!-- <div class="subBtn">
+                <el-button class="cancelBtn">取消</el-button>
+                <el-button class="determineBtn">确定</el-button>
+            </div> -->
+        </div>
+        <!-- 查询模板 -->
+        <div v-show="checkClick==1">
+            <oui-include type="module" url="res_startwe/html/versionManagement/ToBeReleased.vue.html">
+            </oui-include>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                header_menu: [{
+                    text: '已发布的'
+                }, {
+                    text: '待发布的'
+                }],
+
+                checkClick: 0,
+                tableData: [{
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '1231231222222222222222222222222222222',
+                    releaseTime: '21321',
+                    founder: '11'
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+                    releaseTime: '21321',
+                    founder: '11'
+                }, {
+                    versionNumber: '123',
+                    CreationTime: '123',
+                    briefIntroduction: '123',
+                    releaseTime: '21321',
+                    founder: '11'
+                }],
+                Y: "Y",
+                N: "N",
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+
+        },
+        methods: {
+            // 导航切换
+            spanClick: function (index) {
+                // console.log(index);
+                var that = this;
+                that.checkClick = index;
+            },
+            //改变项目状态
+            changeStatus: function (row) {
+
+            },
+
+        }
+    }
+
+</script>
+
+<style>
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        font-size: 14px;
+        border: none;
+    }
+
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 头部 */
+
+    .header {
+        font-size: 20px;
+        color: #8C8C8C;
+        line-height: 22px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .header>div {
+        margin-left: 24px;
+    }
+
+    .header span {
+        display: inline-block;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 10px;
+        margin-right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+
+    }
+
+    .active {
+        font-size: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 22px;
+        font-weight: bold;
+    }
+
+    /* 表格 */
+
+    .tableBox {
+        margin: 24px 24px 0 24px;
+    }
+    .briefIntroduction{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* 按钮 */
+
+    .subBtn {
+        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cancelBtn {
+        width: 140px;
+        height: 40px;
+        background: #fff;
+        border-radius: 2px;
+        color: #000;
+        margin-right: 34px;
+    }
+
+    .cancelBtn:focus,
+    .cancelBtn:hover {
+        color: #000;
+        background-color: #fff;
+        border-color: #DCDFE6;
+    }
+
+    .determineBtn {
+        width: 140px;
+        height: 40px;
+        background: #524D62;
+        border-radius: 2px;
+        color: #fff;
+        border: none;
+    }
+
+    .determineBtn:focus,
+    .determineBtn:hover {
+        color: #fff;
+        border: none;
+        background-color: #524D62;
+    }
+</style>

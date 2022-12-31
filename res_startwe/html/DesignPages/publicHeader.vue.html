@@ -1,0 +1,237 @@
+<!-- 设计页头部 -->
+<template>
+    <div class="DesignHeader">
+        <!-- logo -->
+        <div>
+            <img src="/res_startwe/assets/logo2.png" alt="">
+        </div>
+        <div class="right-box">
+            <div>
+                <!-- 保存撤销盒子 -->
+                <div class="inner_box" v-for="(item,index) in buttons" key="item">
+                    <div :oui-e-click="'com.oui.absolute.AbsoluteDesign.event2'+item.name">
+                        <img :src="item.imgUrl" alt="">
+                        <div>{{item.display}}</div>
+                     
+                    </div>
+                </div>
+            </div>
+            <!-- 自定义 -->
+          <div>
+            <div>
+                <div  class="flexVCenter" style="cursor: pointer;" @click='addGateway'>
+                    <img src="/res_startwe/assets/diymenhu.png" alt="">
+                    <div>自定义门户</div>
+                </div>
+            </div>
+            <div>
+                <div  class="flexVCenter" @click="saveModule" style="cursor: pointer;">
+                    <img src="/res_startwe/assets/lingcun.png" alt="">
+                    <div>另存为模板</div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        templateType: 'vue',
+        el: 'home',
+        data: function () {
+            return {
+                buttons: [],
+            }
+        },
+        created() {
+        },
+        mounted: function () {
+            if (this.loading) {
+                return;
+            }
+            if (!this.loading) {
+                this.loading = true;
+            }
+            this.buildButtonsData()
+        },
+        methods: {
+            buildButtonsData: function () {
+                let me = this;
+                var AbsoluteDesign = com.oui.absolute.AbsoluteDesign;
+                var buttons = AbsoluteDesign.buttons;
+
+                var button = AbsoluteDesign.findButtonsByNames(buttons);
+                oui.removeFromArrayBy(button,function(item){
+                    if (item.display == "截取页面") {
+                        return true;
+                    }
+                })
+                me.buttons = button;
+                for(var i=0;i<me.buttons.length;i++){
+                        var url='/res_startwe/assets/'+me.buttons[i].name+'.png'
+                        me.buttons[i].imgUrl = url;
+                }
+            },
+            addGateway() {
+                let url =  oui.getContextPath() + 'index4vue.html#res_engine/portal_design/portalCustom.vue.html'
+                oui.go4replace(url)
+
+            },
+
+            saveModule:function(){
+                var that = this;
+                oui.getTop().oui.require4notSort([oui.getContextPath() + 'res_common/oui/ui/ui_pc/css/dialog.css'], function () {
+
+                    oui.getTop().oui.require([oui.getContextPath() + 'res_common/oui/ui/ui_pc/dialog/dialog.js'], function () {
+                        //  弹框
+                        // 存放底层页面的获取底层页面数据并以org_info这个变量进行保存到全局，弹窗页面在到全局进行获取org_info数据时,
+                        // oui.getTop().oui.setPageParam('org_info', oui.parseString(that.ruleForm));
+                        var dialog = oui.getTop().oui.showUrlDialog({
+                            // 调用弹框方法           + 对应弹框组件的相对路径
+                            url: oui.getContextPath() + 'index4vue.html#/res_engine/portal_design/saveModule.vue.html',
+                            // 调整弹窗页面大小
+                            contentStyle: 'width:700px;height:600px',
+                            // 是否隐藏底部
+                            isHideFooter: false,
+                            // 配置按钮的方法，需要传递一个actions数组对象
+                            actions: [{
+                                // 调用取消按钮的方法
+                                text: '取消',
+                                cls: 'oui-dialog-cancel',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    dialog.hide();
+                                }
+                            },{
+                                // 调用确认按钮的方法
+                                text: '确定',
+                                cls: 'oui-dialog-ok',//cls:'',//指定自定义样式名 可以实现自定义按钮样式和位置
+                                action: function () {
+                                    console.log(com.oui.absolute.AbsoluteDesign.data);
+                                    // 获取弹框存的全局变量
+                                    var portalData = oui.parseJson(oui.parseString(com.oui.absolute.AbsoluteDesign.data));
+                                    var url = portalData.extraAttrs.savePortalTemplateDesignUrl;
+                                    portalData.tempControl=null;
+                                    portalData.id = null;
+                                    portalData.tempData = null;
+                                    portalData.version = null;
+                                    portalData.canCloneControl = null;
+                                    portalData.currentControl = null;
+                                    portalData.enName = null;
+                                    portalData.modelType = null;
+                                    portalData.projectId = null;
+                                    portalData.selectContent = null;
+                                    var  portalTemplateStr  =  oui.getTop().oui.getPageParam('portalTemplate');
+                                    var  portalTemplate  =  oui.parseJson(portalTemplateStr);
+                                    portalData.name = portalTemplate.name;
+                                    portalData.permission = portalTemplate.permission;
+                                    portalData.templateCategoryId = portalTemplate.templateCategoryId;
+                                    //发送请求 保存模板信息
+                                    oui.postData(url, {
+                                        "portalTemplate": portalData
+                                    }, function (res) {
+                                        console.log(res);
+                                    }, function (res) {
+                                        console.log(res);
+                                    });
+                                    dialog.hide();
+                                }
+                            }],
+                            title: '另存为模板'
+                        });
+                    });
+                });
+            }
+        }
+    }
+
+</script>
+<style>
+    .flexVCenter{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+    html {
+        width: 100%;
+        height: 100%;
+    }
+
+    * {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        background-repeat: no-repeat;
+        border: none;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+        background-size: cover
+    }
+
+    /* 头部 */
+
+    .DesignHeader {
+        /* width: 100%; */
+        display: flex;
+        padding: 5px;
+        border-bottom: 1px solid #979797;
+        background: #fff;
+    }
+
+    .right-box {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        margin-left: 50px;
+    }
+
+    .right-box>div:first-child {
+        display: flex;
+        flex: 1;
+    }
+
+    .right-box>div:last-child {
+    width: 25%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 50px;
+    }
+
+    .right-box>div:last-child>div {
+        margin-right: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inner_box {
+        display: flex;
+        align-items: center;
+    }
+
+    .inner_box>div {
+        margin-right: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .inner_box>div>img {
+        width: 32px;
+    }
+
+    .designScaling {
+        margin-top: 4px;
+    }
+
+    .designZoom {
+        margin-top: 10px;
+    }
+</style>

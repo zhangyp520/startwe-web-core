@@ -1,0 +1,69 @@
+<template>
+    <div class="oui-class-text curr">
+
+        <div id='textContent'></div>
+    </div>
+</template>
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                content:"",
+                //自动切换
+                autoSwitch: false,
+                rollingSpeed: "",
+                rollingContent:'',
+                richList:[],
+                index:0,
+                time:2,
+                setTimeFun:null
+            }
+        },
+        
+        mounted:function(){
+            this.textContent()
+            
+        },
+        methods: {
+            textContent: function () {
+                var me = this;
+                oui.require([
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/css/bootstrap.min.css",
+                    oui.getContextPath() + "res_common/third/bootstrap-3.3.7/js/bootstrap.min.js",
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.css',
+                    oui.getContextPath() + 'res_common/third/editor/dist/summernote.min.js',
+                    oui.getContextPath() + 'res_common/third/editor/dist/lang/summernote-zh-CN.js'
+                ], function () {
+
+                    me.$nextTick(function () {
+                        $('#textContent').summernote({
+                            height: 300,
+                            tabsize: 2,
+                            lang: 'zh-CN'
+                        });
+                    });
+                });
+            },
+        }
+    }
+</script>
+
+<style>
+    .oui-class-text{
+        font-size: 14px;
+    }
+    .oui-class-text.curr{
+        {style}}
+    }
+    .oui-class-text.curr{
+        border-top-style: none !important;
+        border-bottom-style: none !important;
+        border-right-style: none !important;
+        border-left-style: none !important;
+    }
+    .textcolor{
+        {{style}}
+    }
+</style>

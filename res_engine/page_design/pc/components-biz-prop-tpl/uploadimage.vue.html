@@ -1,0 +1,69 @@
+
+<template >
+    <!--图片上传-->
+    <el-upload
+            action="https://jsonplaceholder.typicode.com/posts/"
+            v-model="value"
+            :id="id"
+            :name="name"
+            :bindProp="bindProp"
+            :tempStyle="style"
+            :class="cls"
+            :placeholder="placeholder"
+            @change="_controlOnUpdate"
+
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            :multiple="multiple"
+            :limit="limit"
+            :on-exceed="handleExceed"
+            :file-list="data">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">{{uploadTipMessage}}</div>
+    </el-upload>
+</template>
+
+
+<script>
+    exports = {
+        templateType:'vue',
+        data: function () {
+            return {
+                id:'',
+                name:'',
+                data:[],
+                bindProp:'',
+                value: '',
+                style:'',
+                cls:'',
+                limit:3,
+                multiple:true,
+                placeholder:'',
+                uploadTipMessage:'只能上传jpg/png文件，且不超过500kb'
+            }
+        },
+        methods:{
+            _controlOnUpdate:function(v,ov){
+                var key = this.bindProp;
+                this.onUpdate&&this.onUpdate(key,v,ov,{value:v, data4DB:v, display:v }); //外部构造的方法调用
+            },
+            handleRemove:function(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview:function(file) {
+                console.log(file);
+            },
+            handleExceed:function(files, fileList) {
+//                this.$message.warning('当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件');
+            },
+            beforeRemove:function(file, fileList) {
+                return this.$confirm('确定移除 '+file.name+'？');
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>
